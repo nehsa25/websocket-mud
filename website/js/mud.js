@@ -2,7 +2,7 @@ var socket;
 
 $(document).ready(function () {
   var host = "127.0.0.1";
-  var port = 1234;
+  var port = 81;
   var full_address = "ws://" + host + ":" + port + "/"
 
   // Focus on the command bar
@@ -44,10 +44,15 @@ $(document).ready(function () {
         msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.top_response + "</span><br>";
       }
 
-      // there will always be a room name + description
-      msg += "<br><span style=\"color: yellow;\">[" + data.name + "]</span>";
-      msg += "<br><span style=\"color: antiquewhite;\">" + data.description + "</span>";
+      // check if there's a room name
+      if (data.name != "") {
+        msg += "<br><span style=\"color: yellow;\">" + data.name + "</span>";
+      }
 
+      // check if there's a room descrption
+      if (data.description != "") {
+        msg += "<br><span style=\"color: antiquewhite;\">" + data.description + "</span>";
+      }
       // check for monsters
       if (data.monsters != "") {
         msg += "<br><span style=\"color: antiquewhite;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span>";
@@ -66,6 +71,11 @@ $(document).ready(function () {
       // check if there's any response text
       if (data.bottom_response != "") {
         msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.bottom_response + "</span><br>";
+      }
+
+      // check if there's any response text
+      if (data.prompt != "") {
+        msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.prompt + "</span><br>";
       }
       unescape(msg);
       

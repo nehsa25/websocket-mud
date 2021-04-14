@@ -22,9 +22,6 @@ class Mud:
     perception = 30
     player = Player(name, hp, mana, location, perception)
 
-    # prompt
-    where_next_action = f"[HP={hp}/MA={mana}]: "
-
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
         # exit stuff..
@@ -100,10 +97,13 @@ class Mud:
                             monsters = ""
                             for monster in room["monsters"]:
                                 monsters += monster.name + ', '
-                                # if there are monsters in the room, attack!
-                                bottom_response += f"{monster.name} prepares to attack you!<br>"
+                                bottom_response += Attack.run_attack(monster, self.player)
                             monsters = monsters[0:len(monsters)-2]
- 
+
+                            # prompt
+                            prompt = f"[HP={self.player.hitpoints}]: "
+
+                            # formulate message to client
                             json_msg = {
                                 "type": 'room',
                                 "name": room["name"],
@@ -112,7 +112,8 @@ class Mud:
                                 "exits": exits,
                                 "monsters": monsters,
                                 "top_response": response,
-                                "bottom_response": bottom_response
+                                "bottom_response": bottom_response,
+                                "prompt": prompt
                             }
 
                             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
@@ -150,7 +151,7 @@ if __name__ == "__main__":
 
         port = SysArgs.read_sys_args("--port=")
         if port == None:
-            port = '1234'
+            port = '81'
 
         LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
         
