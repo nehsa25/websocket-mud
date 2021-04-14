@@ -8,6 +8,7 @@ from player import Player
 from attack import Attack
 from log_utils import LogUtils, Level
 from rooms import Rooms
+from sysargs_utils import SysArgs
 
 class Mud:
     # number of players
@@ -143,8 +144,14 @@ if __name__ == "__main__":
         m = Mud()
 
         # start websocket
-        host = '127.0.0.1'
-        port = '1234'
+        host = SysArgs.read_sys_args("--host=")
+        if host == None:
+            host = '127.0.0.1'
+
+        port = SysArgs.read_sys_args("--port=")
+        if port == None:
+            port = '1234'
+
         LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
         
         # start websocket server
