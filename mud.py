@@ -84,7 +84,7 @@ class Mud:
                 "type": 'event',
                 "event": "A gentle breeze blows by you..",
             }
-            rand = randint(1, 200)
+            rand = randint(1, 400)
             await asyncio.sleep(rand)
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
