@@ -228,6 +228,11 @@ class Mud:
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                     await websocket.send(json.dumps(json_msg))
 
+                    # send updated hp
+                    json_msg = { "type": 'health', "health": f"[HP={self.player.hitpoints}]" }
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
+
                     # wait for a command to be sent
                     LogUtils.info(f"Waiting for command...", logger)
                     message = await websocket.recv()
