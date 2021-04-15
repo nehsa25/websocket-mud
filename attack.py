@@ -5,8 +5,8 @@ from random import randint
 class Attack:
     @staticmethod
     def run_attack(monster, player):
-        # if there are monsters in the room, attack!
-        response = f"{monster.name} prepares to attack you!<br>"
+        response = ""
+        # response = f"{monster.name} prepares to attack you!<br>"
 
         # need to understand what damage monster can do        
         # roll dice

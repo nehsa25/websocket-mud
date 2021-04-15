@@ -1,11 +1,10 @@
-from random import random
+from random import random, randint
 from log_utils import LogUtils, Level
 from items import Items
+
 class Command:
     @staticmethod
     def check_inventory(item, player, logger=None):
-
-        
         LogUtils.info(f"check_inventory Returning: {str(found_item)}", logger)
         return found_item
 
@@ -169,7 +168,48 @@ class Command:
         # if it's an "equip" command
         elif command.startswith('eq ') or command.startswith('equip '):
             wanted_item = command.split(' ', 1)[1]
+
+        # if it's an "drink quaff" command
+        elif command.startswith('drink ') or command.startswith('quaff '):
+            wanted_drink = command.split(' ', 1)[1]
+
+        # if it's an "Attack" command
+        elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '):
+            # att skeleton
+            wanted_monster = command.split(' ', 1)[1] # wanted_monster == skeleton
+
+            # see if this monster is in the room.
+            room_monsters = room['monsters']
+            for monster in room['monsters']:
+                if wanted_monster.lower() == monster.name.lower():
+                    # see what weapon we have equiped.
+                    equip = False
+                    
+                    # determine attack damage
+                    attack_potential = "1d2"
+                    if equip == True:
+                        # set attack_potential to item damage_potential
+                        pass
+
+                    # attack monster
+                    obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
+                    dice = int(obj[0]) # 1
+                    damage_potential = int(obj[1]) # 2
+                    damage_multipler = randint(1, damage_potential)
+                    damage = dice * damage_multipler
+                    response = f"You punch {monster.name} for {str(damage)} damage!"
+
+                    # subtract from monsters health
+                    monster.hitpoints = monster.hitpoints - damage
+
+                    if monster.hitpoints <= 0:
+                        response = f"You vanquished {monster.name}!"
+                        room_monsters.remove(monster)
+            room['monsters'] = room_monsters
+
         else:
             response = "I don't understand that command."
+
+
 
         return player, response
