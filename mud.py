@@ -207,8 +207,6 @@ class Mud:
                         "items": items,
                         "exits": exits,
                         "monsters": monsters,
-                        "top_response": response,
-                        "bottom_response": bottom_response
                     }
 
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
@@ -222,7 +220,7 @@ class Mud:
                     if msg_obj["type"] == "cmd":
                         LogUtils.debug(f"Received: cmd", logger)
                         received_command = True
-                        self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+                        self.player = await Command.run_command(msg_obj["cmd"], room, self.player, websocket, logger)
                     else:
                         LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:

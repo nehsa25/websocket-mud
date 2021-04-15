@@ -29,9 +29,6 @@ $(document).ready(function () {
   socket.addEventListener('message', function(event) {    
     var data = JSON.parse(event.data);
     msg = $("#messages").html() + "";
-
-    // clear command
-    $("#command").val("");
     
     switch (data.type) {        
     case 'request_hostname':
@@ -46,6 +43,12 @@ $(document).ready(function () {
         msg += "<br><span style=\"color: yellow;\">" + data.event + "</span><br>";
       }
       break;
+      case 'info':
+        // check if there's an event
+        if (data.info != "") {
+          msg += "<br><span style=\"color: darksalmon;\">" + data.info + "</span><br>";
+        }
+        break;
       case 'attack':
         // check if there's an event
         if (data.attack != "") {
@@ -60,11 +63,6 @@ $(document).ready(function () {
         break;
     case 'room':
       console.log("Inside room switch");
-
-      // check if there's any response text
-      if (data.top_response != "") {
-        msg += "<br><span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.top_response + "</span><br>";
-      }
 
       // check if there's a room name
       if (data.name != "") {
@@ -90,10 +88,6 @@ $(document).ready(function () {
         msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br>";
       }
 
-      // check if there's any response text
-      if (data.bottom_response != "") {
-        msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.bottom_response + "</span><br>";
-      }
       break
     case 'get_clients':
       console.log("Inside get_clients switch");
@@ -134,6 +128,9 @@ function send_command() {
     console.log("Sending: " + cmd);
     console.log(full_cmd);
     socket.send(JSON.stringify(full_cmd));
+    
+    // clear command
+    $("#command").val("");
   } else {
     console.log("Websocket is closed..");
   }  
