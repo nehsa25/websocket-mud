@@ -1,6 +1,7 @@
 from random import random, randint
 from log_utils import LogUtils, Level
 from items import Items
+from muddirections import MudDirections
 
 class Command:
     @staticmethod
@@ -26,19 +27,6 @@ class Command:
 
     @staticmethod
     def run_command(command, room, player, logger=None):
-        # directions
-        up = ('u', 'Up')
-        down = ('d', 'Down')
-        north = ('n', 'North')
-        south = ('s', 'South')
-        east = ('e', 'East')
-        west = ('w', 'West')
-        northwest = ('nw', 'Northwest')
-        northeast = ('ne', 'Northeast')
-        southeast = ('se', 'Southeast')
-        southwest = ('sw', 'Southwest')
-        directions = [up[0], up[1], down[0], down[1], north[0], north[1].lower(), south[0], south[1].lower(), east[0], east[1].lower(), west[0], west[1].lower(), northwest[0], northwest[1].lower(), northeast[0], northeast[1].lower(), southeast[0], southeast[1].lower(), southwest[0], southwest[1].lower()]
-        pretty_directions = [up, down, north, south, east, west, northwest, northeast, southeast, southwest]
         LogUtils.debug(f"Command: \"{command}\"", logger)
         response = ""
         command = command.lower()
@@ -46,19 +34,17 @@ class Command:
             response = "look, get, dig, inventory, drop, search, hide, stash"
         
         # if it's a direction do this...        
-        elif command.lower() in directions:
+        elif command.lower() in MudDirections.directions:
             found_exit = False
-            for available_exit in room["exits"]:
-                if command == available_exit["direction"]:    
-                    for direction in pretty_directions:
-                        if command.lower() == direction[0] or command.lower() == direction[1].lower():
-                            response = f"You travel {direction[1]}."                            
-                    player.location = available_exit["id"]
+            for avail_exit in room["exits"]:
+                if command in avail_exit["direction"]:
+                    response = f"You travel {avail_exit['direction'][1]}."                            
+                    player.location = avail_exit["id"]
                     found_exit = True
                     break
             if found_exit == False:
-                for direction in pretty_directions:
-                    if command.lower() == direction[0] or command.lower() == direction[1].lower():
+                for direction in MudDirections.pretty_directions:
+                    if command.lower() in direction:
                         response = f"You cannot go {direction[1]}."
 
         # if it's a look
@@ -124,7 +110,7 @@ class Command:
                 response += f"<br>You notice nothing."
 
         # if it's an "drop" command
-        elif command.startswith('d ') or command.startswith('drop '):
+        elif command.startswith('dr ') or command.startswith('drop '):
             wanted_item = command.split(' ', 1)[1] 
             found_item = False
 

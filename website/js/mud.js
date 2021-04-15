@@ -63,7 +63,7 @@ $(document).ready(function () {
 
       // check if there's any response text
       if (data.top_response != "") {
-        msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.top_response + "</span><br>";
+        msg += "<br><span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.top_response + "</span><br>";
       }
 
       // check if there's a room name

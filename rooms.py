@@ -1,18 +1,20 @@
 from mobs import Mobs
 from items import Items
+from muddirections import MudDirections
 
 class Rooms:
+    dirs = MudDirections()
     rooms = [
         { 
             "id": 0,
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.",
             "exits": [ 
-                    { "direction": "w", "id": 1 },
-                    { "direction": "n", "id": 2 },
-                    { "direction": "ne", "id": 3 },
-                    { "direction": "e", "id": 4 },
-                    { "direction": "d", "id": 5 }
+                    { "direction": dirs.west, "id": 1 },
+                    { "direction": dirs.north, "id": 2 },
+                    { "direction": dirs.northeast, "id": 3 },
+                    { "direction": dirs.east, "id": 4 },
+                    { "direction": dirs.down, "id": 5 }
                 ],
             "items": [Items.helmet, Items.stick],
             "hidden_items": [],
@@ -23,7 +25,7 @@ class Rooms:
             "id": 1,
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
-            "exits": [ { "direction": "e", "id": 0 } ],
+            "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
             "grave_items": [Items.ring],
@@ -33,7 +35,7 @@ class Rooms:
             "id": 2,
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.",
-            "exits": [ { "direction": "s", "id": 0 } ],
+            "exits": [ { "direction": dirs.south, "id": 0 } ],
             "items": [],
             "hidden_items": [],
             "grave_items": [Items.cloth_pants],
@@ -44,8 +46,8 @@ class Rooms:
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
             "exits": [ 
-                    { "direction": "sw", "id": 0 }, 
-                    { "direction": "s", "id": 4 } ],
+                    { "direction": dirs.southwest, "id": 0 }, 
+                    { "direction": dirs.south, "id": 4 } ],
             "items": [],
             "hidden_items": [Items.lockpick],
             "grave_items": [Items.shirt],
@@ -56,8 +58,8 @@ class Rooms:
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
             "exits": [ 
-                    { "direction": "w", "id": 0 }, 
-                    { "direction": "n", "id": 3 } ],
+                    { "direction": dirs.west, "id": 0 }, 
+                    { "direction": dirs.northeast, "id": 3 } ],
             "items": [],
             "hidden_items": [],
             "grave_items": [Items.club],

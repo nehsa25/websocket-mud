@@ -27,6 +27,7 @@ class Mud:
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
         # exit stuff..
 
+    # used to update webpage on user count
     async def notify_users(self):
         print('inside notify_users')
         json_msg = {
@@ -39,6 +40,7 @@ class Mud:
             print(f"Sending updated client list to {client['name']}")
             await client['socket'].send(json.dumps(json_msg))
 
+    # calls at the beginning of the connection
     async def register(self, websocket):
         LogUtils.debug(f"A new client has connected, registering..", logger)
         # get the client hostname
@@ -58,15 +60,17 @@ class Mud:
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
 
+    # called when a client disconnects
     async def unregister(self, websocket):
         LogUtils.debug(f"Unregistering client..", logger)
         self.clients = [i for i in self.clients if not (i['socket'] == websocket)] 
         await self.notify_users()
 
+    # It begins to rain..
     async def rain(self, websocket):
         while True:
             json_msg = { "type": 'event', "event": "It begins to rain.." }
-            rand = randint(1, 800)
+            rand = randint(1, 1600)
             await asyncio.sleep(rand)
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
@@ -74,21 +78,35 @@ class Mud:
             # wait for it to stop
             rand = randint(100, 500)
             await asyncio.sleep(rand)
-            json_msg = { "type": 'event', "event": "The rain pitters to a stop and the sun begins to shine through the clouds.." }
+            json_msg = { "type": 'event', "event": "The rain pitter-patters to a stop and the sun begins to shine through the clouds.." }
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
-    async def breeze(self, websocket):
+    # A gentle breeze blows by you..
+    async def breeze(self, websocket):        
         while True:
             json_msg = {
                 "type": 'event',
                 "event": "A gentle breeze blows by you..",
             }
-            rand = randint(1, 400)
+            rand = randint(1, 1400)
             await asyncio.sleep(rand)
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
+    # An eerie silence settles on the room..
+    async def eerie_silence(self, websocket):
+        while True:
+            json_msg = {
+                "type": 'event',
+                "event": "An eerie silence settles on the room..",
+            }
+            rand = randint(500, 2000)
+            await asyncio.sleep(rand)
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+
+    # runs the combat
     async def start_mob_combat(self, room, websocket):
         run_combat = False
         if len(room["monsters"]) > 0:
@@ -132,6 +150,7 @@ class Mud:
                 await websocket.send(json.dumps(json_msg))
                 await asyncio.sleep(self.combat_wait_secs)
 
+    # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets
         await self.register(websocket)
@@ -142,6 +161,7 @@ class Mud:
             # schedule some events that'll do shit
             breeze_task = asyncio.create_task(self.breeze(websocket))
             rain_task = asyncio.create_task(self.rain(websocket))
+            eerie_task = asyncio.create_task(self.eerie_silence(websocket))
 
             response = ""
             while True:
@@ -170,7 +190,7 @@ class Mud:
                     # offer possible exits
                     exits = ""
                     for available_exit in room["exits"]:
-                        exits += available_exit['direction'] + ', '
+                        exits += available_exit['direction'][1] + ', '
                     exits = exits[0:len(exits)-2]
 
                     # show monsters

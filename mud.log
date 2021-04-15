@@ -33953,3 +33953,586 @@ websockets.exceptions.ConnectionClosedOK: code = 1001 (going away), no reason
 2021-04-13 21:44:45,476 [MainThread] [DEBUG]  received_command: True
 2021-04-13 21:44:45,477 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "You travel South.", "bottom_response": "Skeleton prepares to attack you!<br>Zombie prepares to attack you!<br>"}
 2021-04-13 21:44:45,478 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:05:57,801 [MainThread] [DEBUG]  logger started
+2021-04-15 10:05:57,803 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 10:05:57,803 [MainThread] [INFO]  Starting websocket server
+2021-04-15 10:08:10,090 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 10:08:10,091 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 10:08:10,092 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 10:08:10,111 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618506490111"}
+2021-04-15 10:08:10,112 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 10:08:10,112 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 10:08:10,115 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 10:08:10,116 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:08:10,118 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 10:08:10,120 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 10:08:10,121 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=23]"}
+2021-04-15 10:08:13,637 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 10:08:13,637 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 10:08:13,638 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=22]"}
+2021-04-15 10:08:14,422 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 10:08:14,422 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 10:08:14,423 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "e", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 10:08:14,424 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:12:53,073 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 10:13:36,083 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:16:37,340 [MainThread] [DEBUG]  logger started
+2021-04-15 10:16:37,342 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 10:16:37,342 [MainThread] [INFO]  Starting websocket server
+2021-04-15 10:16:44,203 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 10:16:44,204 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 10:16:44,206 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 10:16:44,226 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618507004217"}
+2021-04-15 10:16:44,228 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 10:16:44,228 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 10:16:44,231 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 10:16:44,233 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:16:44,234 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 10:16:44,236 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 10:16:44,237 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=20]"}
+2021-04-15 10:16:47,749 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 10:16:47,750 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 10:16:47,751 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=18]"}
+2021-04-15 10:16:51,254 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 10:16:51,255 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 10:16:51,256 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=16]"}
+2021-04-15 10:16:54,770 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 10:16:54,771 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 10:16:54,772 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=8]"}
+2021-04-15 10:16:55,163 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 10:16:55,164 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 10:16:55,165 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "e", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 10:16:55,166 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:22:56,036 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 10:22:56,037 [MainThread] [DEBUG]  Command: "e"
+2021-04-15 10:22:56,038 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "You travel East.", "bottom_response": ""}
+2021-04-15 10:22:56,039 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:22:56,040 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 10:22:56,041 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 10:22:56,042 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=2]"}
+2021-04-15 10:22:59,554 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 10:22:59,555 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 10:22:59,556 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=1]"}
+2021-04-15 10:23:03,067 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 10:23:03,068 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "You died."}
+2021-04-15 10:23:04,235 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:23:12,332 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 10:23:12,333 [MainThread] [DEBUG]  Command: ""
+2021-04-15 10:23:12,334 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "Crossen looks around the room.", "bottom_response": ""}
+2021-04-15 10:23:12,335 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:23:12,336 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 10:23:12,337 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "You died."}
+2021-04-15 10:23:22,746 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 10:23:22,746 [MainThread] [DEBUG]  Command: ""
+2021-04-15 10:23:22,747 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "Crossen looks around the room.", "bottom_response": ""}
+2021-04-15 10:23:22,748 [MainThread] [INFO]  Waiting for command...
+2021-04-15 10:23:22,749 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 10:23:22,751 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "You died."}
+2021-04-15 10:28:20,255 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:29:24,233 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 10:32:06,230 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 10:34:18,255 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:36:10,236 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 10:39:25,255 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 10:40:15,261 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:45:23,275 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:45:29,281 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:45:51,228 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 10:47:32,273 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:50:47,273 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 10:51:38,234 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 10:52:38,278 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:53:38,276 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 10:53:46,278 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 10:58:03,289 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 10:59:32,277 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 11:03:14,301 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:08:34,314 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:11:08,323 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:12:17,292 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 11:12:36,316 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:15:40,307 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 11:18:27,334 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:23:27,339 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:23:38,259 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 11:26:58,307 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 11:27:02,343 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:29:17,349 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:32:16,367 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:33:00,309 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 11:34:56,379 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:38:37,385 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:39:40,383 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:39:45,272 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 11:43:40,280 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 11:44:49,306 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 11:44:55,400 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:47:26,292 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 11:49:24,404 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:50:49,414 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:51:32,318 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 11:52:51,418 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:55:55,327 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 11:58:22,417 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 11:58:38,328 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:00:17,417 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:04:34,420 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:04:39,351 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 12:05:19,422 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:07:11,368 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:08:07,427 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:10:06,428 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:12:36,299 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 12:12:52,374 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 12:15:55,430 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:21:05,381 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:21:06,442 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:21:29,448 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:26:52,448 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:29:47,445 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:31:18,388 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 12:34:23,313 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 12:35:43,455 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:35:44,388 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:38:16,464 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:43:20,472 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:45:17,491 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:46:09,503 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:46:49,401 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 12:48:01,518 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:52:42,418 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:53:48,427 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 12:54:07,319 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 12:54:10,525 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:58:26,525 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 12:59:19,439 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 12:59:55,448 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 13:00:48,341 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 13:04:42,533 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:05:28,455 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 13:10:18,549 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:13:07,472 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 13:16:20,564 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:19:27,495 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 13:20:58,568 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:21:17,572 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:23:28,566 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:24:01,503 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 13:25:05,587 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:25:41,604 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:27:01,604 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:27:10,605 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:28:29,345 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "An eerie silence settles on the room.."}
+2021-04-15 13:30:11,614 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:31:51,508 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 13:34:11,628 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:35:26,507 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 13:39:27,645 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:39:49,654 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:41:02,508 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "The rain pitters to a stop and the sun begins to shine through the clouds.."}
+2021-04-15 13:46:17,661 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:48:56,675 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:51:08,512 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "It begins to rain.."}
+2021-04-15 13:53:35,687 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:54:45,680 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 13:56:31,537 [MainThread] [DEBUG]  logger started
+2021-04-15 13:56:31,539 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 13:56:31,539 [MainThread] [INFO]  Starting websocket server
+2021-04-15 13:56:35,311 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 13:56:35,312 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 13:56:35,314 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 13:56:35,650 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618520195649"}
+2021-04-15 13:56:35,651 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 13:56:35,651 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 13:56:35,654 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 13:56:35,655 [MainThread] [INFO]  Waiting for command...
+2021-04-15 13:56:35,656 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 13:56:35,658 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 13:56:35,659 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=20]"}
+2021-04-15 13:56:39,175 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 13:56:39,176 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 13:56:39,178 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=18]"}
+2021-04-15 13:56:42,680 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 13:56:42,681 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 13:56:42,682 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=14]"}
+2021-04-15 13:56:46,196 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 13:56:46,197 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 13:56:46,198 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=8]"}
+2021-04-15 13:56:48,245 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 13:56:48,246 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 13:56:48,247 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "e", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 13:56:48,248 [MainThread] [INFO]  Waiting for command...
+2021-04-15 13:58:42,676 [MainThread] [DEBUG]  logger started
+2021-04-15 13:58:42,678 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 13:58:42,679 [MainThread] [INFO]  Starting websocket server
+2021-04-15 13:58:43,733 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 13:58:43,738 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 13:58:43,740 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 13:58:43,743 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618520323743"}
+2021-04-15 13:58:43,745 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 13:58:43,746 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 13:58:43,749 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "w, n, ne, e, d", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 13:58:43,751 [MainThread] [INFO]  Waiting for command...
+2021-04-15 13:58:43,753 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 13:58:43,756 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 13:58:43,757 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=19]"}
+2021-04-15 13:58:46,149 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 13:58:46,150 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 13:58:46,151 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "e", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 13:58:46,152 [MainThread] [INFO]  Waiting for command...
+2021-04-15 13:58:51,893 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 13:58:51,894 [MainThread] [DEBUG]  Command: "l"
+2021-04-15 13:58:51,895 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "e", "monsters": "", "top_response": "Crossen looks around the room.", "bottom_response": ""}
+2021-04-15 13:58:51,896 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:09:12,403 [MainThread] [DEBUG]  logger started
+2021-04-15 14:09:12,404 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:09:12,405 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:09:14,404 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:09:14,405 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:09:14,406 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:09:14,750 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618520954749"}
+2021-04-15 14:09:14,751 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:09:14,752 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:09:14,763 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 193, in main
+    exits += available_exit['direction'] + ', '
+TypeError: can only concatenate tuple (not "str") to tuple
+
+2021-04-15 14:09:14,765 [MainThread] [DEBUG]  Unregistering client..
+2021-04-15 14:09:14,768 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:09:14,769 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 14:09:14,770 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=23]"}
+2021-04-15 14:09:18,285 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 14:10:55,125 [MainThread] [DEBUG]  logger started
+2021-04-15 14:10:55,126 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:10:55,127 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:10:58,602 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:10:58,603 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:10:58,605 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:10:58,633 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521058632"}
+2021-04-15 14:10:58,634 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:10:58,635 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:10:58,645 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 193, in main
+    exits += available_exit['direction'] + ', '
+TypeError: can only concatenate tuple (not "str") to tuple
+
+2021-04-15 14:10:58,647 [MainThread] [DEBUG]  Unregistering client..
+2021-04-15 14:10:58,649 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:10:58,651 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 14:10:58,652 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=20]"}
+2021-04-15 14:11:02,162 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 14:11:49,665 [MainThread] [DEBUG]  logger started
+2021-04-15 14:11:49,669 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:11:49,669 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:11:51,467 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:11:51,468 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:11:51,470 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:11:51,474 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521111473"}
+2021-04-15 14:11:51,475 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:11:51,476 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:11:51,479 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:11:51,480 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:11:51,482 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:11:51,483 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 14:11:51,484 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=19]"}
+2021-04-15 14:11:55,001 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:11:55,002 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 14:11:55,003 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=18]"}
+2021-04-15 14:11:56,286 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:11:56,286 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:11:56,287 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "You cannot go West.", "bottom_response": ""}
+2021-04-15 14:11:56,288 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:11:56,290 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:11:56,292 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 14:11:56,299 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=13]"}
+2021-04-15 14:11:59,810 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 14:11:59,810 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 14:11:59,811 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=6]"}
+2021-04-15 14:12:03,312 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 14:12:03,314 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 14:12:03,315 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=4]"}
+2021-04-15 14:12:06,816 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:12:06,817 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 14:12:06,818 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=2]"}
+2021-04-15 14:12:10,334 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:12:10,336 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 14:12:10,337 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "You died."}
+2021-04-15 14:14:33,685 [MainThread] [DEBUG]  logger started
+2021-04-15 14:14:33,687 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:14:33,687 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:14:34,758 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:14:34,759 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:14:34,761 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:14:34,772 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521274770"}
+2021-04-15 14:14:34,773 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:14:34,774 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:14:34,778 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:14:34,780 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:14:34,783 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:14:34,784 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 14:14:34,786 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=24]"}
+2021-04-15 14:14:35,784 [MainThread] [DEBUG]  Sending json: {"type": "event", "event": "A gentle breeze blows by you.."}
+2021-04-15 14:14:38,094 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:14:38,095 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:15:47,721 [MainThread] [DEBUG]  logger started
+2021-04-15 14:15:47,722 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:15:47,723 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:15:49,641 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:15:49,642 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:15:49,644 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:15:49,646 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521349646"}
+2021-04-15 14:15:49,648 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:15:49,648 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:15:49,651 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:15:49,653 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:15:49,655 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 14:15:49,659 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 14:15:49,662 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=21]"}
+2021-04-15 14:15:52,462 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:15:52,463 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:16:52,458 [MainThread] [DEBUG]  logger started
+2021-04-15 14:16:52,460 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:16:52,461 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:16:54,372 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:16:54,373 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:16:54,375 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:16:54,385 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521414381"}
+2021-04-15 14:16:54,386 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:16:54,388 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:16:54,391 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:16:54,392 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:16:54,395 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:16:54,396 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 14:16:54,397 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=21]"}
+2021-04-15 14:16:56,694 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:16:56,695 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:17:04,189 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 225, in main
+    self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+  File "d:\src\websocket-mud\run_command.py", line 41, in run_command
+    response = f"You travel {direction[1]}."
+NameError: name 'direction' is not defined
+
+2021-04-15 14:17:09,024 [MainThread] [DEBUG]  logger started
+2021-04-15 14:17:09,026 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:17:09,026 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:23:03,354 [MainThread] [DEBUG]  logger started
+2021-04-15 14:23:03,356 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:23:03,357 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:23:06,204 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:23:06,205 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:23:06,206 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:23:06,215 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521786215"}
+2021-04-15 14:23:06,216 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:23:06,216 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:23:06,219 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:23:06,221 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:23:06,223 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:23:06,224 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie missed!"}
+2021-04-15 14:23:06,225 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=24]"}
+2021-04-15 14:23:08,869 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:23:08,870 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:23:16,504 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 225, in main
+    self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+  File "d:\src\websocket-mud\run_command.py", line 39, in run_command
+    avail_exit = [avail_exit for available_exit in room["exits"] if command in avail_exit["direction"]]
+  File "d:\src\websocket-mud\run_command.py", line 39, in <listcomp>
+    avail_exit = [avail_exit for available_exit in room["exits"] if command in avail_exit["direction"]]
+NameError: free variable 'avail_exit' referenced before assignment in enclosing scope
+
+2021-04-15 14:23:16,506 [MainThread] [DEBUG]  Unregistering client..
+2021-04-15 14:23:16,512 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:23:38,664 [MainThread] [DEBUG]  logger started
+2021-04-15 14:23:38,665 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:23:38,666 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:23:41,189 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:23:41,190 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:23:41,192 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:23:41,198 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521821198"}
+2021-04-15 14:23:41,199 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:23:41,200 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:23:41,203 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:23:41,205 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:23:41,207 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 14:23:41,208 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 14:23:41,210 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=21]"}
+2021-04-15 14:23:42,845 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:23:42,846 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:24:00,171 [MainThread] [DEBUG]  logger started
+2021-04-15 14:24:00,173 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:24:00,173 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:24:04,238 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:24:04,239 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:24:04,240 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:24:04,271 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521844266"}
+2021-04-15 14:24:04,272 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:24:04,273 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:24:04,276 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:24:04,278 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:24:04,280 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 14:24:04,282 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 14:24:04,283 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=20]"}
+2021-04-15 14:24:06,318 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:24:06,319 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:24:27,158 [MainThread] [DEBUG]  logger started
+2021-04-15 14:24:27,159 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:24:27,160 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:24:29,172 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:24:29,173 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:24:29,174 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:24:29,181 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521869180"}
+2021-04-15 14:24:29,183 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:24:29,183 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:24:29,186 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:24:29,187 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:24:29,189 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:24:29,191 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 14:24:29,192 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=21]"}
+2021-04-15 14:24:32,142 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:24:32,143 [MainThread] [DEBUG]  Command: "u"
+2021-04-15 14:24:32,152 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 225, in main
+    self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+  File "d:\src\websocket-mud\run_command.py", line 39, in run_command
+    avail_exit = [avail_exit for avail_exit in room["exits"] if command in avail_exit["direction"]][0]
+IndexError: list index out of range
+
+2021-04-15 14:24:32,154 [MainThread] [DEBUG]  Unregistering client..
+2021-04-15 14:24:32,690 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 14:24:37,431 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:24:37,432 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:24:37,433 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:24:37,451 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521877436"}
+2021-04-15 14:24:37,452 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:24:37,453 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:24:37,455 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:24:37,457 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:24:37,460 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 14:24:37,461 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 14:24:37,463 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=15]"}
+2021-04-15 14:24:39,423 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:24:39,424 [MainThread] [DEBUG]  Command: "u"
+2021-04-15 14:24:50,039 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 225, in main
+    self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+  File "d:\src\websocket-mud\run_command.py", line 39, in run_command
+    avail_exit = [avail_exit for avail_exit in room["exits"] if command in avail_exit["direction"]][0]
+IndexError: list index out of range
+
+2021-04-15 14:25:56,054 [MainThread] [DEBUG]  logger started
+2021-04-15 14:25:56,055 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:25:56,056 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:25:58,110 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:25:58,111 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:25:58,113 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:25:58,119 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618521958118"}
+2021-04-15 14:25:58,120 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:25:58,120 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:25:58,123 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:25:58,125 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:25:58,127 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 4!"}
+2021-04-15 14:25:58,129 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 3!"}
+2021-04-15 14:25:58,130 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=18]"}
+2021-04-15 14:25:59,572 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:25:59,573 [MainThread] [DEBUG]  Command: "u"
+2021-04-15 14:26:08,026 [MainThread] [ERROR]  An error occurred!
+Exception:
+Traceback (most recent call last):
+  File "d:\src\websocket-mud\mud.py", line 225, in main
+    self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+  File "d:\src\websocket-mud\run_command.py", line 46, in run_command
+    response = f"You cannot go {direction[1]}."
+IndexError: list index out of range
+
+2021-04-15 14:26:08,029 [MainThread] [DEBUG]  Unregistering client..
+2021-04-15 14:26:08,034 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 2!"}
+2021-04-15 14:27:18,278 [MainThread] [DEBUG]  logger started
+2021-04-15 14:27:18,280 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:27:18,281 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:27:19,556 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:27:19,557 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:27:19,558 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:27:19,590 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618522039589"}
+2021-04-15 14:27:19,591 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:27:19,592 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:27:19,595 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:27:19,597 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:27:19,600 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 14:27:19,601 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 14:27:19,602 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=18]"}
+2021-04-15 14:27:21,430 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:27:21,431 [MainThread] [DEBUG]  Command: "q"
+2021-04-15 14:27:21,431 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "I don't understand that command.", "bottom_response": ""}
+2021-04-15 14:27:21,433 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:27:21,435 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 3!"}
+2021-04-15 14:27:21,436 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 2!"}
+2021-04-15 14:27:21,437 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=13]"}
+2021-04-15 14:27:23,806 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:27:23,807 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:27:39,271 [MainThread] [DEBUG]  logger started
+2021-04-15 14:27:39,273 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:27:39,274 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:27:41,039 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:27:41,040 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:27:41,042 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:27:41,080 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618522061079"}
+2021-04-15 14:27:41,081 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:27:41,082 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:27:41,084 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:27:41,086 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:27:41,087 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 14:27:41,088 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 14:27:41,089 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=24]"}
+2021-04-15 14:27:44,173 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:27:44,174 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:27:54,883 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "East", "monsters": "", "top_response": "", "bottom_response": ""}
+2021-04-15 14:27:54,885 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:27:59,686 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:27:59,687 [MainThread] [DEBUG]  Command: "e"
+2021-04-15 14:29:05,015 [MainThread] [DEBUG]  logger started
+2021-04-15 14:29:05,017 [MainThread] [INFO]  Server started at 127.0.0.1:81.  Waiting for client connections...
+2021-04-15 14:29:05,017 [MainThread] [INFO]  Starting websocket server
+2021-04-15 14:29:07,695 [MainThread] [DEBUG]  A new client has connected, registering..
+2021-04-15 14:29:07,696 [MainThread] [DEBUG]  Requesting client hostname..
+2021-04-15 14:29:07,698 [MainThread] [DEBUG]  Awaiting client name response from client..
+2021-04-15 14:29:07,704 [MainThread] [DEBUG]  Message received: {"type": "hostname_answer", "host": "webclient_1618522147704"}
+2021-04-15 14:29:07,706 [MainThread] [DEBUG]  Request received from 127.0.0.1: hostname_answer
+2021-04-15 14:29:07,707 [MainThread] [DEBUG]  A guest (127.0.0.1) on lab page has connected
+2021-04-15 14:29:07,710 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "", "bottom_response": ""}
+2021-04-15 14:29:07,711 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:29:07,713 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton has hit you for 1!"}
+2021-04-15 14:29:07,715 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 1!"}
+2021-04-15 14:29:07,717 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=23]"}
+2021-04-15 14:29:09,975 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:29:09,976 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:29:16,827 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "East", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 14:29:16,829 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:29:18,726 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:29:18,727 [MainThread] [DEBUG]  Command: "u"
+2021-04-15 14:29:18,727 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "East", "monsters": "", "top_response": "You cannot go Up.", "bottom_response": ""}
+2021-04-15 14:29:18,728 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:29:21,422 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:29:21,423 [MainThread] [DEBUG]  Command: "e"
+2021-04-15 14:29:21,424 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.", "items": "Helmet, Stick", "exits": "West, North, Northeast, East, Down", "monsters": "Skeleton, Zombie", "top_response": "You travel East.", "bottom_response": ""}
+2021-04-15 14:29:21,425 [MainThread] [INFO]  Waiting for command...
+2021-04-15 14:29:21,426 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Skeleton missed!"}
+2021-04-15 14:29:21,427 [MainThread] [DEBUG]  Sending json: {"type": "attack", "attack": "Zombie has hit you for 4!"}
+2021-04-15 14:29:21,428 [MainThread] [DEBUG]  Sending json: {"type": "health", "health": "[HP=19]"}
+2021-04-15 14:29:23,149 [MainThread] [DEBUG]  Received: cmd
+2021-04-15 14:29:23,150 [MainThread] [DEBUG]  Command: "w"
+2021-04-15 14:29:23,151 [MainThread] [DEBUG]  Sending json: {"type": "room", "name": "Graveyard", "description": "You are in a dark, gloomy graveyard, lit only by moonlight.", "items": "", "exits": "East", "monsters": "", "top_response": "You travel West.", "bottom_response": ""}
+2021-04-15 14:29:23,152 [MainThread] [INFO]  Waiting for command...
