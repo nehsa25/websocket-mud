@@ -63,6 +63,21 @@ class Mud:
         self.clients = [i for i in self.clients if not (i['socket'] == websocket)] 
         await self.notify_users()
 
+    async def rain(self, websocket):
+        while True:
+            json_msg = { "type": 'event', "event": "It begins to rain.." }
+            rand = randint(1, 800)
+            await asyncio.sleep(rand)
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+
+            # wait for it to stop
+            rand = randint(100, 500)
+            await asyncio.sleep(rand)
+            json_msg = { "type": 'event', "event": "The rain pitters to a stop and sunshine arrives.." }
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+
     async def breeze(self, websocket):
         while True:
             json_msg = {
@@ -81,7 +96,8 @@ class Mud:
         received_command = True
         try:
             # schedule some events that'll do shit
-            task = asyncio.create_task(self.breeze(websocket))
+            breeze_task = asyncio.create_task(self.breeze(websocket))
+            rain_task = asyncio.create_task(self.rain(websocket))
 
             response = ""
             while True:
