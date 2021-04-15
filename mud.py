@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
+from random import randint
 from run_command import Command
 from player import Player
 from attack import Attack
@@ -62,6 +63,17 @@ class Mud:
         self.clients = [i for i in self.clients if not (i['socket'] == websocket)] 
         await self.notify_users()
 
+    async def breeze(self, websocket):
+        while True:
+            json_msg = {
+                "type": 'event',
+                "event": "A gentle breeze blows by you..",
+            }
+            rand = randint(1, 200)
+            await asyncio.sleep(rand)
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+
     async def main(self, websocket, path):
         # register client websockets
         await self.register(websocket)
@@ -69,7 +81,10 @@ class Mud:
         received_command = True
         try:
             response = ""
-            while True:                
+            while True:       
+                # schedule some events that'll do shit
+                task = asyncio.create_task(self.breeze(websocket))
+
                 # display room user is in
                 for room in Rooms.rooms:
                     bottom_response = ""
@@ -135,7 +150,6 @@ class Mud:
         except:
             LogUtils.error(f"An error occurred!\nException:\n{traceback.format_exc()}", logger)
         finally:
-            LogUtils.info("Unregistering client!", logger)
             await self.unregister(websocket)
 
 if __name__ == "__main__":

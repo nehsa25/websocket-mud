@@ -28,6 +28,11 @@ $(document).ready(function () {
   //Listen to messages
   socket.addEventListener('message', function(event) {    
     var data = JSON.parse(event.data);
+    msg = $("#messages").html() + "";
+
+    // clear command
+    $("#command").val("");
+    
     switch (data.type) {        
     case 'request_hostname':
       console.log("Inside request_hostname switch");
@@ -35,9 +40,14 @@ $(document).ready(function () {
       console.log("Server is requesting our name, sending back: " + resp);      
       socket.send(resp);
       break;
+    case 'event':
+      // check if there's an event
+      if (data.event != "") {
+        msg += "<br><span style=\"color: yellow;\">" + data.event + "</span><br>";
+      }
+      break;
     case 'room':
       console.log("Inside room switch");
-      msg = $("#messages").html() + "";
 
       // check if there's any response text
       if (data.top_response != "") {
@@ -77,15 +87,6 @@ $(document).ready(function () {
       if (data.prompt != "") {
         msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.prompt + "</span><br>";
       }
-      unescape(msg);
-      
-      $("#messages").html(msg);
-      
-      // place us at bottom of div
-      scrollSmoothToBottom("messages");
-
-      // clear command
-      $("#command").val("");
       break
     case 'get_clients':
       console.log("Inside get_clients switch");
@@ -93,6 +94,12 @@ $(document).ready(function () {
     default:
       console.error("unsupported event", JSON.stringify(event));
     }
+    unescape(msg);
+      
+    $("#messages").html(msg);
+    
+    // place us at bottom of div
+    scrollSmoothToBottom("messages");
   });
 });
 
