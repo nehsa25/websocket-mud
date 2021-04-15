@@ -80,59 +80,59 @@ class Mud:
 
         received_command = True
         try:
+            # schedule some events that'll do shit
+            task = asyncio.create_task(self.breeze(websocket))
+
             response = ""
-            while True:       
-                # schedule some events that'll do shit
-                task = asyncio.create_task(self.breeze(websocket))
-
+            while True:
                 # display room user is in
-                for room in Rooms.rooms:
-                    bottom_response = ""
-                    if room["id"] == self.player.location:
-                        LogUtils.debug(f"received_command: {received_command}", logger)
-                        if received_command == True:
-                            received_command = False
-                            # get the   description
-                            description = room["description"]
+                room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+                bottom_response = ""
+                if room["id"] == self.player.location:
+                    LogUtils.debug(f"received_command: {received_command}", logger)
+                    if received_command == True:
+                        received_command = False
+                        # get the description
+                        description = room["description"]
 
-                            # show items
-                            items = ""
-                            if len(room['items']) > 0:
-                                for item in room['items']:
-                                    items += item.name + ', '
-                                items = items[0:len(items)-2]
+                        # show items
+                        items = ""
+                        if len(room['items']) > 0:
+                            for item in room['items']:
+                                items += item.name + ', '
+                            items = items[0:len(items)-2]
 
-                            # offer possible exits
-                            exits = ""
-                            for available_exit in room["exits"]:
-                                exits += available_exit['direction'] + ', '
-                            exits = exits[0:len(exits)-2]
+                        # offer possible exits
+                        exits = ""
+                        for available_exit in room["exits"]:
+                            exits += available_exit['direction'] + ', '
+                        exits = exits[0:len(exits)-2]
 
-                            # show monsters
-                            monsters = ""
-                            for monster in room["monsters"]:
-                                monsters += monster.name + ', '
-                                bottom_response += Attack.run_attack(monster, self.player)
-                            monsters = monsters[0:len(monsters)-2]
+                        # show monsters
+                        monsters = ""
+                        for monster in room["monsters"]:
+                            monsters += monster.name + ', '
+                            bottom_response += Attack.run_attack(monster, self.player)
+                        monsters = monsters[0:len(monsters)-2]
 
-                            # prompt
-                            prompt = f"[HP={self.player.hitpoints}]: "
+                        # prompt
+                        prompt = f"[HP={self.player.hitpoints}]: "
 
-                            # formulate message to client
-                            json_msg = {
-                                "type": 'room',
-                                "name": room["name"],
-                                "description": description,
-                                "items": items,
-                                "exits": exits,
-                                "monsters": monsters,
-                                "top_response": response,
-                                "bottom_response": bottom_response,
-                                "prompt": prompt
-                            }
+                        # formulate message to client
+                        json_msg = {
+                            "type": 'room',
+                            "name": room["name"],
+                            "description": description,
+                            "items": items,
+                            "exits": exits,
+                            "monsters": monsters,
+                            "top_response": response,
+                            "bottom_response": bottom_response,
+                            "prompt": prompt
+                        }
 
-                            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                            await websocket.send(json.dumps(json_msg))
+                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                        await websocket.send(json.dumps(json_msg))
 
                         # wait for a command to be sent
                         LogUtils.info(f"Waiting for command...", logger)
