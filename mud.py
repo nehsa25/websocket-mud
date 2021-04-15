@@ -14,6 +14,7 @@ class Mud:
     # number of players
     clients = []
     combat_wait_secs = 3.5
+    tasks = []
 
     # create player
     name = "Crossen"
@@ -106,6 +107,17 @@ class Mud:
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
+    # cancels all tasks and states you died if you die
+    async def you_died(self, websocket):
+        # cancel all tasks
+        for task in self.tasks:
+            task.cancel()
+
+        # state you died
+        json_msg = { "type": 'event', "event": "You died." }
+        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+        await websocket.send(json.dumps(json_msg))
+
     # runs the combat
     async def start_mob_combat(self, room, websocket):
         run_combat = False
@@ -137,9 +149,7 @@ class Mud:
                 # no point in continuing if player is dead..
                 if self.player.hitpoints <= 0:
                     run_combat = False
-                    json_msg = { "type": 'event', "event": "You died." }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await self.you_died(websocket)
                     break
 
             # wait combat_wait seconds
@@ -163,17 +173,19 @@ class Mud:
             rain_task = asyncio.create_task(self.rain(websocket))
             eerie_task = asyncio.create_task(self.eerie_silence(websocket))
 
+            # if you die, we'll cancel these
+            self.tasks.append(breeze_task)
+            self.tasks.append(rain_task)
+            self.tasks.append(eerie_task)
+
             response = ""
             while True:
-                # if we received a command
-                if attack_task != None:
-                    attack_task.cancel()
-
                 # display room user is in
                 room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
 
                 # start combat
                 attack_task = asyncio.create_task(self.start_mob_combat(room, websocket))
+                self.tasks.append(attack_task)
 
                 bottom_response = ""
                 if room["id"] == self.player.location:
