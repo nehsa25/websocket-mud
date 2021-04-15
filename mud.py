@@ -180,6 +180,10 @@ class Mud:
 
             response = ""
             while True:
+                # if we changed rooms, cancel attack
+                if attack_task != None:
+                    attack_task.cancel()
+					
                 # display room user is in
                 room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
 

@@ -40,30 +40,28 @@ $(document).ready(function () {
     case 'event':
       // check if there's an event
       if (data.event != "") {
-        msg += "<br><span style=\"color: yellow;\">" + data.event + "</span><br>";
+        msg += "<br><br><span style=\"color: yellow;\">" + data.event + "</span><br>";
       }
       break;
       case 'info':
         // check if there's an event
         if (data.info != "") {
-          msg += "<br><span style=\"color: darksalmon;\">" + data.info + "</span><br>";
+          msg += "<br><br><span style=\"color: darksalmon;\">" + data.info + "</span><br>";
         }
         break;
       case 'attack':
         // check if there's an event
         if (data.attack != "") {
-          msg += "<br><span style=\"color: red;\">" + data.attack + "</span><br>";
+          msg += "<br><span style=\"color: red;\">" + data.attack + "</span>";
         }
         break;
       case 'health':
         // check if there's an event
         if (data.health != "") {
-          msg += "<br><span style=\"color: white;\">" + data.health + "</span><br>";
+          msg += "<br><span style=\"color: white;\">" + data.health + "</span>";
         }
         break;
     case 'room':
-      console.log("Inside room switch");
-
       // check if there's a room name
       if (data.name != "") {
         msg += "<br><span style=\"color: yellow;\">" + data.name + "</span>";
@@ -85,7 +83,7 @@ $(document).ready(function () {
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br>";
+        msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span>";
       }
 
       break
