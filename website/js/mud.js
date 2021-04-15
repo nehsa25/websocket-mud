@@ -16,7 +16,7 @@ $(document).ready(function () {
       }
   });
 
-  console.log("Setting up websockect connection at " + full_address)
+  console.log("Setting up websocket connection at " + full_address)
   // configure_websocket(host, port);
   socket = new WebSocket(full_address);
 
@@ -46,6 +46,18 @@ $(document).ready(function () {
         msg += "<br><span style=\"color: yellow;\">" + data.event + "</span><br>";
       }
       break;
+      case 'attack':
+        // check if there's an event
+        if (data.attack != "") {
+          msg += "<br><span style=\"color: red;\">" + data.attack + "</span><br>";
+        }
+        break;
+      case 'health':
+        // check if there's an event
+        if (data.health != "") {
+          msg += "<br><span style=\"color: white;\">" + data.health + "</span><br>";
+        }
+        break;
     case 'room':
       console.log("Inside room switch");
 
@@ -81,11 +93,6 @@ $(document).ready(function () {
       // check if there's any response text
       if (data.bottom_response != "") {
         msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.bottom_response + "</span><br>";
-      }
-
-      // check if there's any response text
-      if (data.prompt != "") {
-        msg += "<span style=\"color: darksalmon; font-style: italic; font-weight: bold;\">" + data.prompt + "</span><br>";
       }
       break
     case 'get_clients':

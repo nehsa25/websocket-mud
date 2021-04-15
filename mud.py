@@ -6,7 +6,6 @@ import traceback
 from random import randint
 from run_command import Command
 from player import Player
-from attack import Attack
 from log_utils import LogUtils, Level
 from rooms import Rooms
 from sysargs_utils import SysArgs
@@ -14,10 +13,11 @@ from sysargs_utils import SysArgs
 class Mud:
     # number of players
     clients = []
+    combat_wait_secs = 3.5
 
     # create player
     name = "Crossen"
-    hp = 10
+    hp = 25
     mana = 4
     location = 0
     perception = 30
@@ -89,78 +89,122 @@ class Mud:
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
+    async def start_mob_combat(self, room, websocket):
+        run_combat = False
+        if len(room["monsters"]) > 0:
+            run_combat = True
+
+        while run_combat == True:
+            for monster in room["monsters"]:
+                # response = f"{monster.name} prepares to attack you!<br>"            
+                obj = monster.damage.split('d')
+                dice = int(obj[0])
+                damage_potential = int(obj[1])
+                damage_multipler = randint(0, damage_potential)
+
+                # roll dice
+                damage = dice * damage_multipler
+                if damage > 0:
+                    response = f"{monster.name} has hit you for {str(damage)}!"
+                else:
+                    response = f"{monster.name} missed!"
+                
+                # update hp
+                self.player.hitpoints = self.player.hitpoints - damage
+
+                json_msg = { "type": 'attack', "attack": response }
+                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                await websocket.send(json.dumps(json_msg))
+
+                # no point in continuing if player is dead..
+                if self.player.hitpoints <= 0:
+                    run_combat = False
+                    json_msg = { "type": 'event', "event": "You died." }
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
+                    break
+
+            # wait combat_wait seconds
+            if run_combat == True:
+                # send updated hp
+                json_msg = { "type": 'health', "health": f"[HP={self.player.hitpoints}]" }
+                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                await websocket.send(json.dumps(json_msg))
+                await asyncio.sleep(self.combat_wait_secs)
+
     async def main(self, websocket, path):
         # register client websockets
         await self.register(websocket)
 
-        received_command = True
         try:
+            attack_task = None
+
             # schedule some events that'll do shit
             breeze_task = asyncio.create_task(self.breeze(websocket))
             rain_task = asyncio.create_task(self.rain(websocket))
 
             response = ""
             while True:
+                # if we received a command
+                if attack_task != None:
+                    attack_task.cancel()
+
                 # display room user is in
                 room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+
+                # start combat
+                attack_task = asyncio.create_task(self.start_mob_combat(room, websocket))
+
                 bottom_response = ""
                 if room["id"] == self.player.location:
-                    LogUtils.debug(f"received_command: {received_command}", logger)
-                    if received_command == True:
-                        received_command = False
-                        # get the description
-                        description = room["description"]
+                     # get the description
+                    description = room["description"]
 
-                        # show items
-                        items = ""
-                        if len(room['items']) > 0:
-                            for item in room['items']:
-                                items += item.name + ', '
-                            items = items[0:len(items)-2]
+                    # show items
+                    items = ""
+                    if len(room['items']) > 0:
+                        for item in room['items']:
+                            items += item.name + ', '
+                        items = items[0:len(items)-2]
 
-                        # offer possible exits
-                        exits = ""
-                        for available_exit in room["exits"]:
-                            exits += available_exit['direction'] + ', '
-                        exits = exits[0:len(exits)-2]
+                    # offer possible exits
+                    exits = ""
+                    for available_exit in room["exits"]:
+                        exits += available_exit['direction'] + ', '
+                    exits = exits[0:len(exits)-2]
 
-                        # show monsters
-                        monsters = ""
-                        for monster in room["monsters"]:
-                            monsters += monster.name + ', '
-                            bottom_response += Attack.run_attack(monster, self.player)
-                        monsters = monsters[0:len(monsters)-2]
+                    # show monsters
+                    monsters = ""
+                    for monster in room["monsters"]:
+                        monsters += monster.name + ', '
+                    monsters = monsters[0:len(monsters)-2]
 
-                        # prompt
-                        prompt = f"[HP={self.player.hitpoints}]: "
+                    # formulate message to client
+                    json_msg = {
+                        "type": 'room',
+                        "name": room["name"],
+                        "description": description,
+                        "items": items,
+                        "exits": exits,
+                        "monsters": monsters,
+                        "top_response": response,
+                        "bottom_response": bottom_response
+                    }
 
-                        # formulate message to client
-                        json_msg = {
-                            "type": 'room',
-                            "name": room["name"],
-                            "description": description,
-                            "items": items,
-                            "exits": exits,
-                            "monsters": monsters,
-                            "top_response": response,
-                            "bottom_response": bottom_response,
-                            "prompt": prompt
-                        }
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
 
-                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                        await websocket.send(json.dumps(json_msg))
+                    # wait for a command to be sent
+                    LogUtils.info(f"Waiting for command...", logger)
+                    message = await websocket.recv()
+                    msg_obj = json.loads(message)
 
-                        # wait for a command to be sent
-                        LogUtils.info(f"Waiting for command...", logger)
-                        message = await websocket.recv()
-                        msg_obj = json.loads(message)
-
-                        if msg_obj["type"] == "cmd":
-                            LogUtils.debug(f"Received: cmd", logger)
-                            received_command = True
-                            self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
-                        else:
-                            LogUtils.error(f"Received unknown message: {message}", logger)
+                    if msg_obj["type"] == "cmd":
+                        LogUtils.debug(f"Received: cmd", logger)
+                        received_command = True
+                        self.player, response = Command.run_command(msg_obj["cmd"], room, self.player, logger)
+                    else:
+                        LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
             loop.stop()
         except:
