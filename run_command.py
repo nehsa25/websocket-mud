@@ -177,6 +177,16 @@ class Command:
         elif command.startswith('eq ') or command.startswith('equip '):
             wanted_item = command.split(' ', 1)[1]
 
+        # if it's a stat command
+        elif command == 'stat':
+            msg = "You have the following attributes:<br>"
+            msg += f"* Health {player.hitpoints}<br>"
+            msg += f"* Strength {player.strength}<br>"
+            msg += f"* Perception {player.perception}"
+            json_msg = { "type": 'info', "info": msg }
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+
         # if it's an "drink quaff" command
         elif command.startswith('drink ') or command.startswith('quaff '):
             wanted_drink = command.split(' ', 1)[1]
@@ -198,7 +208,7 @@ class Command:
                         equip = False
                         
                         # determine attack damage
-                        attack_potential = "1d6" # for punching
+                        attack_potential = "1d2" # for punching
                         if equip == True:
                             # set attack_potential to item damage_potential
                             pass
@@ -208,7 +218,7 @@ class Command:
                         dice = int(obj[0]) # 1
                         damage_potential = int(obj[1]) # 2
                         damage_multipler = randint(0, damage_potential)
-                        damage = dice * damage_multipler
+                        damage = dice * damage_multipler * player.strength
                         if damage == 0:
                             response = f"You swing wildly but miss!<br>"
                         else:
