@@ -107,6 +107,19 @@ class Mud:
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
+    # shows color-coded health bar
+    async def show_health(self, websocket):
+        color = 'red'
+        if self.player.hitpoints / self.player.max_hitpoints >= .75:
+            color = 'green'
+        elif self.player.hitpoints / self.player.max_hitpoints >= .25:
+            color = 'yellow'
+
+        health = f"[HP=<span style=\"color: {color};\">{self.player.hitpoints}</span>]"
+        json_msg = { "type": 'health', "health": health }
+        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+        await websocket.send(json.dumps(json_msg))
+
     # cancels all tasks and states you died if you die
     async def you_died(self, websocket):
         # cancel all tasks
@@ -154,10 +167,7 @@ class Mud:
 
             # wait combat_wait seconds
             if run_combat == True:
-                # send updated hp
-                json_msg = { "type": 'health', "health": f"[HP={self.player.hitpoints}]" }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await self.show_health(websocket)
                 await asyncio.sleep(self.combat_wait_secs)
 
     # main loop when client connects
@@ -229,9 +239,7 @@ class Mud:
                     await websocket.send(json.dumps(json_msg))
 
                     # send updated hp
-                    json_msg = { "type": 'health', "health": f"[HP={self.player.hitpoints}]" }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await self.show_health(websocket)
 
                     # wait for a command to be sent
                     LogUtils.info(f"Waiting for command...", logger)
