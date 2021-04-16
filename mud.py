@@ -18,11 +18,10 @@ class Mud:
 
     # create player
     name = "Crossen"
-    hp = 25
-    mana = 4
+    hp = 5
     location = 0
     perception = 30
-    player = Player(name, hp, mana, location, perception)
+    player = Player(name, hp, location, perception)
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -133,6 +132,10 @@ class Mud:
 
     # runs the combat
     async def start_mob_combat(self, room, websocket):
+        # if the player is dead, don't do anything..
+        if self.player.hitpoints <= 0:
+            return player
+
         run_combat = False
         if len(room["monsters"]) > 0:
             run_combat = True

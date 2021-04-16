@@ -12,6 +12,12 @@ class Command:
         LogUtils.debug(f"Command: \"{command}\"", logger)
         response = ""
         command = command.lower()
+
+        # if the player is dead, don't do anything..
+        if player.hitpoints <= 0:
+            return player
+
+        # display usage information
         if command == 'help':
             response = "look, get, dig, inventory, drop, search, hide, stash"
         
