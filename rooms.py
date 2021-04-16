@@ -19,7 +19,7 @@ class Rooms:
             "items": [Items.helmet, Items.stick],
             "hidden_items": [],
             "grave_items": [Items.ring],
-            "monsters": [Mobs.skeleton, Mobs.zombie]            
+            "monsters": [Mobs.skeleton, Mobs.zombie, Mobs.ghoul]            
         },
         { 
             "id": 1,
@@ -70,11 +70,11 @@ class Rooms:
             "name": "Crypt",
             "description": "You are in a dark room.  You can't see anything!",
             "exits": [ 
-                    { "direction": "u", "id": 0 }
+                    { "direction": dirs.up, "id": 0 }
                 ],
-            "items": [Items.ring],
+            "items": [],
             "hidden_items": [],
             "grave_items": [],
-            "monsters": [Mobs.ghoul]
+            "monsters": []
         }
     ]

@@ -15,6 +15,7 @@ class Mud:
     clients = []
     combat_wait_secs = 3.5
     tasks = []
+    current_room = None
 
     # create player
     name = "Crossen"
@@ -126,22 +127,31 @@ class Mud:
             task.cancel()
 
         # state you died
-        json_msg = { "type": 'event', "event": "You died." }
+        json_msg = { "type": 'event', "event": "You die.  You awaken in the crypt." }
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
 
+        # set player location to crypt
+        self.player.location = 5
+
+        # set hits back to max
+        self.player.hitpoints = self.player.max_hitpoints
+
+        # force room refresh
+        self.current_room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+
     # runs the combat
-    async def start_mob_combat(self, room, websocket):
+    async def start_mob_combat(self, websocket):
         # if the player is dead, don't do anything..
         if self.player.hitpoints <= 0:
             return player
 
         run_combat = False
-        if len(room["monsters"]) > 0:
+        if len(self.current_room["monsters"]) > 0:
             run_combat = True
 
         while run_combat == True:
-            for monster in room["monsters"]:
+            for monster in self.current_room["monsters"]:
                 # response = f"{monster.name} prepares to attack you!<br>"            
                 obj = monster.damage.split('d')
                 dice = int(obj[0])
@@ -198,40 +208,41 @@ class Mud:
                     attack_task.cancel()
 					
                 # display room user is in
-                room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+                self.current_room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
 
                 # start combat
-                attack_task = asyncio.create_task(self.start_mob_combat(room, websocket))
+                attack_task = asyncio.create_task(self.start_mob_combat(websocket))
                 self.tasks.append(attack_task)
 
                 bottom_response = ""
-                if room["id"] == self.player.location:
+                if self.current_room["id"] == self.player.location:
+                    
                      # get the description
-                    description = room["description"]
+                    description = self.current_room["description"]
 
                     # show items
                     items = ""
-                    if len(room['items']) > 0:
-                        for item in room['items']:
+                    if len(self.current_room['items']) > 0:
+                        for item in self.current_room['items']:
                             items += item.name + ', '
                         items = items[0:len(items)-2]
 
                     # offer possible exits
                     exits = ""
-                    for available_exit in room["exits"]:
+                    for available_exit in self.current_room["exits"]:
                         exits += available_exit['direction'][1] + ', '
                     exits = exits[0:len(exits)-2]
 
                     # show monsters
                     monsters = ""
-                    for monster in room["monsters"]:
+                    for monster in self.current_room["monsters"]:
                         monsters += monster.name + ', '
                     monsters = monsters[0:len(monsters)-2]
 
                     # formulate message to client
                     json_msg = {
                         "type": 'room',
-                        "name": room["name"],
+                        "name": self.current_room["name"],
                         "description": description,
                         "items": items,
                         "exits": exits,
@@ -252,7 +263,7 @@ class Mud:
                     if msg_obj["type"] == "cmd":
                         LogUtils.debug(f"Received: cmd", logger)
                         received_command = True
-                        self.player = await Command.run_command(msg_obj["cmd"], room, self.player, websocket, logger)
+                        self.player = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
                     else:
                         LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
