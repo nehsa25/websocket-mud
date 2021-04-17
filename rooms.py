@@ -19,7 +19,7 @@ class Rooms:
             "items": [Items.helmet, Items.stick],
             "hidden_items": [],
             "grave_items": [Items.ring],
-            "monsters": [Mobs.skeleton, Mobs.zombie, Mobs.ghoul]            
+            "monsters": []            
         },
         { 
             "id": 1,
@@ -29,13 +29,15 @@ class Rooms:
             "items": [],
             "hidden_items": [Items.shovel],
             "grave_items": [Items.ring],
-            "monsters": []
+            "monsters": [Mobs.skeleton, Mobs.zombie, Mobs.ghoul]
         },
         { 
             "id": 2,
             "name": "Graveyard",
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.",
-            "exits": [ { "direction": dirs.south, "id": 0 } ],
+            "exits": [ 
+                    { "direction": dirs.south, "id": 0 },
+                    { "direction": dirs.northeast, "id": 6 } ],
             "items": [],
             "hidden_items": [],
             "grave_items": [Items.cloth_pants],
@@ -47,7 +49,8 @@ class Rooms:
             "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
             "exits": [ 
                     { "direction": dirs.southwest, "id": 0 }, 
-                    { "direction": dirs.south, "id": 4 } ],
+                    { "direction": dirs.south, "id": 4 },
+                    { "direction": dirs.north, "id": 6} ],
             "items": [],
             "hidden_items": [Items.lockpick],
             "grave_items": [Items.shirt],
@@ -72,6 +75,18 @@ class Rooms:
             "exits": [ 
                     { "direction": dirs.up, "id": 0 }
                 ],
+            "items": [],
+            "hidden_items": [],
+            "grave_items": [],
+            "monsters": []
+        },
+        { 
+            "id": 6,
+            "name": "Church",
+            "description": "You are at the entrance of a church.",
+            "exits": [ 
+                    { "direction": dirs.south, "id": 3 }, 
+                    { "direction": dirs.southwest, "id": 2 } ],
             "items": [],
             "hidden_items": [],
             "grave_items": [],
