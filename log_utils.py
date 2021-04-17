@@ -3,9 +3,6 @@ import logging.handlers
 import os
 from enum import Enum
 
-# from script utils
-from slack_utils import SlackUtils
-from msteams_utils import MSTeamsUtils
 
 class Level(Enum):
 	DEBUG = 'debug'
@@ -77,7 +74,7 @@ class LogUtils:
 		return logger
 
 	@staticmethod
-	def log_msg(msg, logger=None, level=None, send_slack=False, channel='qa-automation'):
+	def log_msg(msg, logger=None, level=None):
 		if logger == None:
 			# if logger not set, just print every message to screen
 			print(msg + ' (logger == None)')
@@ -92,29 +89,25 @@ class LogUtils:
 		elif level == logging.DEBUG:
 			logger.debug(msg)
 
-		if send_slack == True:
-			SlackUtils.send_msg_to_slack(msg, channel)
-			MSTeamsUtils.send_msg(msg)
-		
 	@staticmethod
-	def critical(msg, logger=None, send_slack=False, channel='qa-automation'):
-		LogUtils.log_msg(msg, logger, logging.CRITICAL, send_slack, channel)
+	def critical(msg, logger=None):
+		LogUtils.log_msg(msg, logger, logging.CRITICAL)
 
 	@staticmethod
-	def error(msg, logger=None, send_slack=False, channel='qa-automation'):
-		LogUtils.log_msg(msg, logger, logging.ERROR, send_slack, channel)
+	def error(msg, logger=None):
+		LogUtils.log_msg(msg, logger, logging.ERROR)
 
 	@staticmethod
-	def warn(msg, logger=None, send_slack=False, channel='qa-automation'):
-		LogUtils.log_msg(msg, logger, logging.WARNING, send_slack, channel)
+	def warn(msg, logger=None):
+		LogUtils.log_msg(msg, logger, logging.WARNING)
 
 	@staticmethod
-	def info(msg, logger=None, send_slack=False, channel='qa-automation'):
-		LogUtils.log_msg(msg, logger, logging.INFO, send_slack, channel)
+	def info(msg, logger=None):
+		LogUtils.log_msg(msg, logger, logging.INFO)
 
 	@staticmethod
-	def debug(msg, logger=None, send_slack=False, channel='qa-automation'):
-		LogUtils.log_msg(msg, logger, logging.DEBUG, send_slack, channel)
+	def debug(msg, logger=None):
+		LogUtils.log_msg(msg, logger, logging.DEBUG)
 
 	@staticmethod
 	def close(logger):
