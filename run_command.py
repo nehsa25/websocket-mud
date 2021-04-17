@@ -2,9 +2,12 @@ import time
 import asyncio
 import json
 from random import random, randint
+
+# my stuff
 from log_utils import LogUtils, Level
 from items import Items
 from muddirections import MudDirections
+from items import Items
 
 class Command:
     @staticmethod
@@ -208,21 +211,34 @@ class Command:
                         equip = False
                         
                         # determine attack damage
-                        attack_potential = "1d2" # for punching
+                        weapon = Items.punch
+                        attack_potential = weapon.damage_potential                   
                         if equip == True:
                             # set attack_potential to item damage_potential
+                            # weapon = SOMETHING
+                            # attack_potential = "SOMETHING"
                             pass
 
-                        # attack monster
-                        obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
-                        dice = int(obj[0]) # 1
-                        damage_potential = int(obj[1]) # 2
-                        damage_multipler = randint(0, damage_potential)
-                        damage = dice * damage_multipler * player.strength
+                        # for number of swings here 
+                        num_swings = 1
+                        num_swings += int(player.dexerity / weapon.weight_class.value)
+                        
+                        LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
+
+                        damage = 0
+                        for x in range(0, num_swings):
+                            LogUtils.debug(f"Swinging!", logger)
+                            # attack monster
+                            obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
+                            dice = int(obj[0]) # 1
+                            damage_potential = int(obj[1]) # 2
+                            damage_multipler = randint(0, damage_potential)
+                            damage += dice * damage_multipler * player.strength
+
                         if damage == 0:
                             response = f"You swing wildly but miss!<br>"
                         else:
-                            response = f"You punch {monster.name} for {str(damage)} damage!<br>"
+                            response = f"You punch {monster.name} {num_swings} times for {str(damage)} damage!<br>"
                         json_msg = { "type": 'attack', "attack": response }
                         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                         await websocket.send(json.dumps(json_msg))

@@ -20,10 +20,11 @@ class Mud:
     # create player
     name = "Crossen"
     hp = 30
-    strength = 30
+    strength = 1 # 0 - 30
+    dexerity = 1 # 0 - 30
     location = 0
     perception = 50
-    player = Player(name, hp, strength, location, perception)
+    player = Player(name, hp, strength, dexerity, location, perception)
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
