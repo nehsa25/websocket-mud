@@ -28,9 +28,27 @@ $(document).ready(function () {
   //Listen to messages
   socket.addEventListener('message', function(event) {    
     var data = JSON.parse(event.data);
-    msg = $("#messages").html() + "";
+
+    // get the previous html and trim as necessary
+    msg = trimHtml();
+
+    // process the command
+    msg = processCommand(data, msg)
+
+    // unescape
+    unescape(msg);
+      
+    // set the new HTML
+    //$("#messages").html(msg);
+    document.getElementById('messages').innerHTML = msg;
     
-    switch (data.type) {        
+    // place us at bottom of div
+    scrollSmoothToBottom("messages");
+  });
+});
+
+function processCommand(data, msg) {
+  switch (data.type) {        
     case 'request_hostname':
       console.log("Inside request_hostname switch");
       var resp = '{"type": "hostname_answer", "host": "' + "webclient_" + new Date().getTime() + '"}'
@@ -85,7 +103,6 @@ $(document).ready(function () {
       if (data.exits != "") {
         msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span>";
       }
-
       break
     case 'get_clients':
       console.log("Inside get_clients switch");
@@ -93,20 +110,31 @@ $(document).ready(function () {
     default:
       console.error("unsupported event", JSON.stringify(event));
     }
-    unescape(msg);
-      
-    $("#messages").html(msg);
-    
-    // place us at bottom of div
-    scrollSmoothToBottom("messages");
-  });
-});
+
+    return msg;
+}
+
+function trimHtml() {
+  msg = $("#messages").html() + "";
+  console.log("HTML length: " + msg.length);
+  // if (msg.length > 2000) {
+  //   lines = msg.split('<br>');
+  //   new_msg = "";
+  //   for (var x = lines.length; x >= lines.length; x--) {
+  //     new_msg
+  //   }
+  //   start_len = msg_len - 2000;
+  //   msg = msg.substring(start_len, msg_len);
+  //   console.log("Trimed html from " + msg.length.toString() + " to " + start_len.toString());
+  // }
+  return msg;
+}
 
 function scrollSmoothToBottom(id) {
   var div = document.getElementById(id);
   $('#' + id).animate({
      scrollTop: div.scrollHeight - div.clientHeight
-  }, 250);
+  }, 50);
 }
 
 function resetfocus() {
