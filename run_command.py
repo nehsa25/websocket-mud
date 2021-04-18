@@ -179,6 +179,20 @@ class Command:
         # if it's an "equip" command
         elif command.startswith('eq ') or command.startswith('equip '):
             wanted_item = command.split(' ', 1)[1]
+            found_item = False
+
+            # check if the item is in our inventory
+            for item in player.inventory:
+                if item.name.lower() == wanted_item.lower():
+                    json_msg = { "type": 'info', "info": f"You equip {item.name}." }
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
+                    item.equip = True
+                    found_item = True
+            if found_item == False:
+                json_msg = { "type": 'info', "info": f"You cannot equip {wanted_item}." }
+                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                await websocket.send(json.dumps(json_msg))
 
         # if it's a stat command
         elif command == 'stat':

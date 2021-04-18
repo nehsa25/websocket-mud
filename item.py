@@ -4,6 +4,7 @@ class Item:
     name = None
     damage_potential = None
     weight_class = None
+    equiped = False
 
     # weight classes
     class WeightClass(Enum):
