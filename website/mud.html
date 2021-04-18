@@ -8,12 +8,24 @@
 </head>
 
 <body>
-    <div id="messages" class="scrollbar" onclick="resetfocus()"></div>
-    <div class="command_input">
-        <input id="command" spellcheck="false" placeholder="What do you want to do?" type="textarea" />                
-        <input id="submit_btn" type="button" text="text" value="Send Command" onclick="send_command()" />
-        <span id="users_connected">&nbsp;</span>
-    </div>
+
+
+    <div class="grid">
+        <div>&nbsp;</div>
+        <div><span id="title">NehsaMUD</span></div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div id="messages" class="scrollbar" onclick="resetfocus()"></div>
+        <div>&nbsp;</div>
+        <div>&nbsp;</div>
+        <div>
+            <input id="command" spellcheck="false" placeholder="What do you want to do?" type="textarea" />                
+            <input id="submit_btn" type="button" text="text" value="Send Command" onclick="send_command()" />
+            <span id="users_connected">&nbsp;</span>
+        </div>
+        <div>&nbsp;</div>
+      </div>
+
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/mud.js"></script>
 </body>

@@ -1,27 +1,31 @@
-body {
-    background-color: black;
+.grid {
+  display:grid;
+  grid-template-columns: 10% auto 10%;
+  grid-template-rows: 5% auto 10%;
+  grid-gap:10px;
+  height: calc(100vh - 10px);
 }
 
+#title {
+  font-family: 'Times New Roman', serif;
+  font-size: 2rem;
+}
 
 #messages {
-    width: 80%;
-    height: 75vh;
-    border: 2px solid #cccccc;
-    -webkit-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    outline: none;
-    text-align: left;
-    margin: 0 auto;
-    padding: 2em;
-    overflow-wrap: break-word;
-    background-color: #333333;
+  border: 2px solid #cccccc;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  overflow-wrap: break-word;
+  background-color: #333333;
+  outline: none;
+  text-align: left;
+  padding: 2em;
 }
 
 /* the div surrounding input and submit button */
 .command_input {
-    width: 80%;
     -webkit-border-radius: 10px;
     -ms-border-radius: 10px;
     -moz-border-radius: 10px;
@@ -36,9 +40,9 @@ body {
 
 /* the input itself */
 #command {
-    width: 80%;
     height: 30px;
     padding: 1em;
+    width: 80%;
 }
 
 #submit_btn {
