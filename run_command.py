@@ -47,6 +47,11 @@ class Command:
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                     await websocket.send(json.dumps(json_msg))
 
+    async def process_look(player, websocket, logger=None):
+        json_msg = { "type": 'info', "info": f"You look around the room."}
+        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+        await websocket.send(json.dumps(json_msg))
+
     @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
         LogUtils.debug(f"Command: \"{command}\"", logger)
@@ -67,9 +72,7 @@ class Command:
 
         # if it's a look
         elif command == "" or command == 'l' or command == 'look':
-            json_msg = { "type": 'info', "info": f"{player.name} looks around the room."}
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Command.process_look(player, websocket, logger)
 
         # if it's a "get" command        
         elif command.startswith('g ') or command.startswith('get '):
