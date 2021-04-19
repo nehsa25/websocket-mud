@@ -21,13 +21,31 @@ class Command:
         return eq_item
 
     @staticmethod
-    async def send_help(websocket, logger=None):
+    async def process_help(websocket, logger=None):
         help = "look, get, dig, inventory, drop, search, hide, stash, equip"
 
         json_msg = { "type": 'info', "info": help }
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))     
 
+
+    @staticmethod
+    async def process_direction(wanted_direction, player, websocket, exits, logger=None):
+        found_exit = False
+        for avail_exit in exits:
+            if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
+                json_msg = { "type": 'info', "info": f"You travel {avail_exit['direction'][1]}." }
+                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                await websocket.send(json.dumps(json_msg))               
+                player.location = avail_exit["id"]
+                found_exit = True
+                break
+        if found_exit == False:
+            for direction in MudDirections.pretty_directions:
+                if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
+                    json_msg = { "type": 'info', "info": f"You cannot go {direction[1]}."}
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
 
     @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
@@ -41,25 +59,11 @@ class Command:
 
         # display usage information
         if command == 'help':
-            await Command.send_help(websocket, logger)
+            await Command.process_help(websocket, logger)
         
         # if it's a direction do this...        
         elif command.lower() in MudDirections.directions:
-            found_exit = False
-            for avail_exit in room["exits"]:
-                if command in avail_exit["direction"]:
-                    json_msg = { "type": 'info', "info": f"You travel {avail_exit['direction'][1]}." }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))               
-                    player.location = avail_exit["id"]
-                    found_exit = True
-                    break
-            if found_exit == False:
-                for direction in MudDirections.pretty_directions:
-                    if command.lower() in direction:
-                        json_msg = { "type": 'info', "info": f"You cannot go {direction[1]}."}
-                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                        await websocket.send(json.dumps(json_msg))
+            await Command.process_direction(command.lower(), player, websocket, room["exits"], logger)
 
         # if it's a look
         elif command == "" or command == 'l' or command == 'look':
