@@ -6,10 +6,21 @@ from random import random, randint
 # my stuff
 from log_utils import LogUtils, Level
 from items import Items
+from item import Item
 from muddirections import MudDirections
-from items import Items
 
 class Command:
+
+    @staticmethod
+    def get_equiped_weapon(player, logger=None):
+        eq_item = Items.punch
+        for item in player.inventory:
+            if item.item_type == Item.ItemType.WEAPON and item.equiped == True:
+                eq_item = item
+
+        return eq_item
+
+
     @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
         LogUtils.debug(f"Command: \"{command}\"", logger)
@@ -72,11 +83,16 @@ class Command:
         # if it's an "inv" command
         elif command == 'i' or command == 'inv' or command == 'inventory':
             if player.inventory != []:
-                json_msg = { "type": 'info', "info": "You have the following items in your inventory:<br>"}
+                msg = "You have the following items in your inventory:<br>"
+                for item in player.inventory:
+                    if item.equiped == True:
+                        msg += f"* {item.name} (Equiped)<br>"
+                    else:
+                        msg += f"* {item.name}<br>"
+
+                json_msg = { "type": 'info', "info": msg}
                 LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                 await websocket.send(json.dumps(json_msg))
-                for item in player.inventory:
-                    response += "* " + item.name + "<br>"
             else:
                 json_msg = { "type": 'info', "info": "You have nothing in your inventory."}
                 LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
@@ -187,7 +203,7 @@ class Command:
                     json_msg = { "type": 'info', "info": f"You equip {item.name}." }
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                     await websocket.send(json.dumps(json_msg))
-                    item.equip = True
+                    item.equiped = True
                     found_item = True
             if found_item == False:
                 json_msg = { "type": 'info', "info": f"You cannot equip {wanted_item}." }
@@ -225,13 +241,8 @@ class Command:
                         equip = False
                         
                         # determine attack damage
-                        weapon = Items.punch
-                        attack_potential = weapon.damage_potential                   
-                        if equip == True:
-                            # set attack_potential to item damage_potential
-                            # weapon = SOMETHING
-                            # attack_potential = "SOMETHING"
-                            pass
+                        weapon = Command.get_equiped_weapon(player, logger)
+                        attack_potential = weapon.damage_potential  
 
                         # for number of swings here 
                         num_swings = 1
@@ -252,7 +263,7 @@ class Command:
                         if damage == 0:
                             response = f"You swing wildly but miss!<br>"
                         else:
-                            response = f"You punch {monster.name} {num_swings} times for {str(damage)} damage!<br>"
+                            response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name} for {str(damage)} damage!<br>"
                         json_msg = { "type": 'attack', "attack": response }
                         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                         await websocket.send(json.dumps(json_msg))

@@ -16,7 +16,7 @@ class Rooms:
                     { "direction": dirs.east, "id": 4 },
                     { "direction": dirs.down, "id": 5 }
                 ],
-            "items": [Items.helmet, Items.stick],
+            "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
             "grave_items": [Items.ring],
             "monsters": []            

@@ -1,7 +1,7 @@
 var socket;
 
 $(document).ready(function () {
-  var host = "127.0.0.1";
+  var host = "208.52.52.157";
   var port = 81;
   var full_address = "ws://" + host + ":" + port + "/"
 
