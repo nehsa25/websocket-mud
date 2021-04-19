@@ -132,6 +132,11 @@ class Mud:
         json_msg = { "type": 'event', "event": "You die.  You awaken in the crypt." }
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
+        
+        # drop all items
+        for item in self.player.inventory:
+              self.current_room["items"].append(item)
+        self.player.inventory = []
 
         # set player location to crypt
         self.player.location = 5
