@@ -20,6 +20,14 @@ class Command:
 
         return eq_item
 
+    @staticmethod
+    async def send_help(websocket, logger=None):
+        help = "look, get, dig, inventory, drop, search, hide, stash, equip"
+
+        json_msg = { "type": 'info', "info": help }
+        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+        await websocket.send(json.dumps(json_msg))     
+
 
     @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
@@ -33,7 +41,7 @@ class Command:
 
         # display usage information
         if command == 'help':
-            response = "look, get, dig, inventory, drop, search, hide, stash"
+            await Command.send_help(websocket, logger)
         
         # if it's a direction do this...        
         elif command.lower() in MudDirections.directions:
