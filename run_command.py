@@ -236,10 +236,9 @@ class Command:
                     json_msg = { "type": 'info', "info": f"You begin to attack {monster.name}!<br>" }
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                     await websocket.send(json.dumps(json_msg))
-                    while monster.hitpoints > 0 and player.hitpoints > 0:
-                        # see what weapon we have equiped.
-                        equip = False
-                        
+
+                    # if you die and go to the crypt then your room ide will change..
+                    while monster.hitpoints > 0 and player.location == room['id']:
                         # determine attack damage
                         weapon = Command.get_equiped_weapon(player, logger)
                         attack_potential = weapon.damage_potential  
@@ -261,9 +260,9 @@ class Command:
                             damage += dice * damage_multipler * player.strength
 
                         if damage == 0:
-                            response = f"You swing wildly but miss!<br>"
+                            response = f"You swing wildly and miss!<br>"
                         else:
-                            response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name} for {str(damage)} damage!<br>"
+                            response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
                         json_msg = { "type": 'attack', "attack": response }
                         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                         await websocket.send(json.dumps(json_msg))
