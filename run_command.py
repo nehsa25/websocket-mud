@@ -48,12 +48,14 @@ class Command:
                     await websocket.send(json.dumps(json_msg))
         return player, room
 
+    @staticmethod
     async def process_look(player, room, websocket, logger=None):
         json_msg = { "type": 'info', "info": f"You look around the room."}
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
         return player, room
 
+    @staticmethod
     async def process_get(command, player, room, websocket, logger=None):
         wanted_item = command.split(' ', 1)[1].lower()
         found_item = False
@@ -71,6 +73,25 @@ class Command:
                     break
         if found_item == False:
             json_msg = { "type": 'info', "info": f"You cannot find {wanted_item}."}
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+        return player, room
+
+    @staticmethod
+    async def process_inventory(player, room, websocket, logger=None):
+        if player.inventory != []:
+            msg = "You have the following items in your inventory:<br>"
+            for item in player.inventory:
+                if item.equiped == True:
+                    msg += f"* {item.name} (Equiped)<br>"
+                else:
+                    msg += f"* {item.name}<br>"
+
+            json_msg = { "type": 'info', "info": msg}
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+        else:
+            json_msg = { "type": 'info', "info": "You have nothing in your inventory."}
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
         return player, room
@@ -100,25 +121,10 @@ class Command:
         # if it's a "get" command        
         elif command.startswith('g ') or command.startswith('get '):
             player, room = await Command.process_get(command, player, room, websocket, logger)
-            pass
 
         # if it's an "inv" command
         elif command == 'i' or command == 'inv' or command == 'inventory':
-            if player.inventory != []:
-                msg = "You have the following items in your inventory:<br>"
-                for item in player.inventory:
-                    if item.equiped == True:
-                        msg += f"* {item.name} (Equiped)<br>"
-                    else:
-                        msg += f"* {item.name}<br>"
-
-                json_msg = { "type": 'info', "info": msg}
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
-            else:
-                json_msg = { "type": 'info', "info": "You have nothing in your inventory."}
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+            player, room = await Command.process_inventory(player, room, websocket, logger)
 
         # if it's an "dig grave" command
         elif command == 'dig':
