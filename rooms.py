@@ -71,7 +71,7 @@ class Rooms:
         { 
             "id": 5,
             "name": "Crypt",
-            "description": "You are in a dark room.  You can't see anything!",
+            "description": "You are in a dark room.  A staircase leads up.",
             "exits": [ 
                     { "direction": dirs.up, "id": 0 }
                 ],

@@ -158,7 +158,7 @@ class Mud:
                 # update hp
                 self.player.hitpoints = self.player.hitpoints - damage
 
-                json_msg = { "type": 'attack', "attack": response }
+                json_msg = { "type": 'attack', "message": response }
                 LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                 await websocket.send(json.dumps(json_msg))
 
