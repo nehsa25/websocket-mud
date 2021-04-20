@@ -270,7 +270,7 @@ class Mud:
                     if msg_obj["type"] == "cmd":
                         LogUtils.debug(f"Received: cmd", logger)
                         received_command = True
-                        self.player = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
+                        self.player, self.current_room = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
                     else:
                         LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:

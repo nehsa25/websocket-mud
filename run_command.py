@@ -21,18 +21,18 @@ class Command:
         return eq_item
 
     @staticmethod
-    async def process_help(websocket, logger=None):
+    async def process_help(player, room, websocket, logger=None):
         help = "look, get, dig, inventory, drop, search, hide, stash, equip"
 
         json_msg = { "type": 'info', "info": help }
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))     
-
+        return player, room
 
     @staticmethod
-    async def process_direction(wanted_direction, player, websocket, exits, logger=None):
+    async def process_direction(wanted_direction, player, room, websocket, logger=None):
         found_exit = False
-        for avail_exit in exits:
+        for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
                 json_msg = { "type": 'info', "info": f"You travel {avail_exit['direction'][1]}." }
                 LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
@@ -46,11 +46,34 @@ class Command:
                     json_msg = { "type": 'info', "info": f"You cannot go {direction[1]}."}
                     LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
                     await websocket.send(json.dumps(json_msg))
+        return player, room
 
-    async def process_look(player, websocket, logger=None):
+    async def process_look(player, room, websocket, logger=None):
         json_msg = { "type": 'info', "info": f"You look around the room."}
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
+        return player, room
+
+    async def process_get(command, player, room, websocket, logger=None):
+        wanted_item = command.split(' ', 1)[1].lower()
+        found_item = False
+        if room['items'] != []:
+            for item in room['items']:
+                if wanted_item == item.name.lower():
+                    found_item = True
+                    json_msg = { "type": 'info', "info": f"You picked up {item.name}."}
+                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+                    await websocket.send(json.dumps(json_msg))
+                    # remove from room
+                    room['items'].remove(item)
+                    # add to our inventory
+                    player.inventory.append(item)
+                    break
+        if found_item == False:
+            json_msg = { "type": 'info', "info": f"You cannot find {wanted_item}."}
+            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+            await websocket.send(json.dumps(json_msg))
+        return player, room
 
     @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
@@ -64,36 +87,20 @@ class Command:
 
         # display usage information
         if command == 'help':
-            await Command.process_help(websocket, logger)
+            player, room = await Command.process_help(player, room, websocket, logger)
         
         # if it's a direction do this...        
-        elif command.lower() in MudDirections.directions:
-            await Command.process_direction(command.lower(), player, websocket, room["exits"], logger)
+        elif command in MudDirections.directions:
+            player, room = await Command.process_direction(command, player, room, websocket, logger)
 
         # if it's a look
         elif command == "" or command == 'l' or command == 'look':
-            await Command.process_look(player, websocket, logger)
+            player, room = await Command.process_look(player, room, websocket, logger)
 
         # if it's a "get" command        
         elif command.startswith('g ') or command.startswith('get '):
-            wanted_item = command.split(' ', 1)[1].lower()
-            found_item = False
-            if room['items'] != []:
-                for item in room['items']:
-                    if wanted_item == item.name.lower():
-                        found_item = True
-                        json_msg = { "type": 'info', "info": f"You picked up {item.name}."}
-                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                        await websocket.send(json.dumps(json_msg))
-                        # remove from room
-                        room['items'].remove(item)
-                        # add to our inventory
-                        player.inventory.append(item)
-                        break
-            if found_item == False:
-                json_msg = { "type": 'info', "info": f"You cannot find {wanted_item}."}
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+            player, room = await Command.process_get(command, player, room, websocket, logger)
+            pass
 
         # if it's an "inv" command
         elif command == 'i' or command == 'inv' or command == 'inventory':
@@ -299,4 +306,4 @@ class Command:
             LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
             await websocket.send(json.dumps(json_msg))
 
-        return player
+        return player, room
