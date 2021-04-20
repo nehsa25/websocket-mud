@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
+from shared import Shared
 from random import randint
 from run_command import Command
 from player import Player
@@ -19,7 +20,7 @@ class Mud:
 
     # create player
     name = "Crossen"
-    hp = 30
+    hp = 5
     strength = 1 # 0 - 30
     dexerity = 1 # 0 - 30
     location = 0
@@ -72,42 +73,28 @@ class Mud:
     # It begins to rain..
     async def rain(self, websocket):
         while True:
-            json_msg = { "type": 'event', "event": "It begins to rain.." }
             rand = randint(1, 1600)
             await asyncio.sleep(rand)
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg("It begins to rain..", 'event', websocket, logger)
 
             # wait for it to stop
             rand = randint(100, 500)
             await asyncio.sleep(rand)
-            json_msg = { "type": 'event', "event": "The rain pitter-patters to a stop and the sun begins to shine through the clouds.." }
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg("The rain pitter-patters to a stop and the sun begins to shine through the clouds..", 'event', websocket, logger)
 
     # A gentle breeze blows by you..
     async def breeze(self, websocket):        
         while True:
-            json_msg = {
-                "type": 'event',
-                "event": "A gentle breeze blows by you..",
-            }
             rand = randint(1, 1400)
             await asyncio.sleep(rand)
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self, websocket):
         while True:
-            json_msg = {
-                "type": 'event',
-                "event": "An eerie silence settles on the room..",
-            }
             rand = randint(500, 2000)
             await asyncio.sleep(rand)
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
 
     # shows color-coded health bar
     async def show_health(self, websocket):
@@ -118,9 +105,7 @@ class Mud:
             color = 'yellow'
 
         health = f"[HP=<span style=\"color: {color};\">{self.player.hitpoints}</span>]"
-        json_msg = { "type": 'health', "health": health }
-        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-        await websocket.send(json.dumps(json_msg))
+        await Shared.send_msg(health, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, websocket):
@@ -129,9 +114,7 @@ class Mud:
             task.cancel()
 
         # state you died
-        json_msg = { "type": 'event', "event": "You die.  You awaken in the crypt." }
-        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-        await websocket.send(json.dumps(json_msg))
+        await Shared.send_msg("You die.... but awaken in the crypt.", 'event', websocket, logger)
         
         # drop all items
         for item in self.player.inventory:

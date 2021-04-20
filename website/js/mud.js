@@ -57,28 +57,28 @@ function processCommand(data, msg) {
       break;
     case 'event':
       // check if there's an event
-      if (data.event != "") {
-        msg += "<br><br><span style=\"color: yellow;\">" + data.event + "</span><br>";
+      if (data.message != "") {
+        msg += "<br><br><span style=\"color: yellow;\">" + data.message + "</span><br>";
       }
       break;
-      case 'info':
-        // check if there's an event
-        if (data.info != "") {
-          msg += "<br><br><span style=\"color: darksalmon;\">" + data.info + "</span><br>";
-        }
-        break;
-      case 'attack':
-        // check if there's an event
-        if (data.attack != "") {
-          msg += "<br><span style=\"color: red;\">" + data.attack + "</span>";
-        }
-        break;
-      case 'health':
-        // check if there's an event
-        if (data.health != "") {
-          msg += "<br><span style=\"color: white;\">" + data.health + "</span>";
-        }
-        break;
+    case 'info':
+      // check if there's an event
+      if (data.message != "") {
+        msg += "<br><br><span style=\"color: darksalmon;\">" + data.message + "</span><br>";
+      }
+      break;
+    case 'attack':
+      // check if there's an event
+      if (data.message != "") {
+        msg += "<br><span style=\"color: red;\">" + data.message + "</span>";
+      }
+      break;
+    case 'health':
+      // check if there's an event
+      if (data.message != "") {
+        msg += "<br><span style=\"color: white;\">" + data.message + "</span>";
+      }
+      break;
     case 'room':
       // check if there's a room name
       if (data.name != "") {
@@ -103,12 +103,14 @@ function processCommand(data, msg) {
       if (data.exits != "") {
         msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span>";
       }
-      break
+      break;
     case 'get_clients':
       console.log("Inside get_clients switch");
       $("#users_connected").text(data.value + " users connected.");
+      break;
     default:
       console.error("unsupported event", JSON.stringify(event));
+      break;
     }
 
     return msg;

@@ -8,6 +8,7 @@ from log_utils import LogUtils, Level
 from items import Items
 from item import Item
 from muddirections import MudDirections
+from shared import Shared
 
 class Command:
 
@@ -22,11 +23,8 @@ class Command:
 
     @staticmethod
     async def process_help(player, room, websocket, logger=None):
-        help = "look, get, dig, inventory, drop, search, hide, stash, equip"
-
-        json_msg = { "type": 'info', "info": help }
-        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-        await websocket.send(json.dumps(json_msg))     
+        help_msg = "look, get, dig, inventory, drop, search, hide, stash, equip"
+        await Shared.send_msg(help_msg, 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -34,25 +32,19 @@ class Command:
         found_exit = False
         for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
-                json_msg = { "type": 'info', "info": f"You travel {avail_exit['direction'][1]}." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))               
+                await Shared.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
                 found_exit = True
                 break
         if found_exit == False:
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
-                    json_msg = { "type": 'info', "info": f"You cannot go {direction[1]}."}
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg(f"You cannot go {direction[1]}.", 'info', websocket, logger)   
         return player, room
 
     @staticmethod
     async def process_look(player, room, websocket, logger=None):
-        json_msg = { "type": 'info', "info": f"You look around the room."}
-        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-        await websocket.send(json.dumps(json_msg))
+        await Shared.send_msg("You look around the room.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -63,18 +55,14 @@ class Command:
             for item in room['items']:
                 if wanted_item == item.name.lower():
                     found_item = True
-                    json_msg = { "type": 'info', "info": f"You picked up {item.name}."}
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg(f"You picked up {item.name}.", 'info', websocket, logger)
                     # remove from room
                     room['items'].remove(item)
                     # add to our inventory
                     player.inventory.append(item)
                     break
         if found_item == False:
-            json_msg = { "type": 'info', "info": f"You cannot find {wanted_item}."}
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg(f"You cannot find {wanted_item}.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -86,14 +74,9 @@ class Command:
                     msg += f"* {item.name} (Equiped)<br>"
                 else:
                     msg += f"* {item.name}<br>"
-
-            json_msg = { "type": 'info', "info": msg}
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg(msg, 'info', websocket, logger)
         else:
-            json_msg = { "type": 'info', "info": "You have nothing in your inventory."}
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg("You have nothing in your inventory.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -104,7 +87,7 @@ class Command:
 
         # if the player is dead, don't do anything..
         if player.hitpoints <= 0:
-            return player
+            return player, room
 
         # display usage information
         if command == 'help':
@@ -131,18 +114,14 @@ class Command:
             # check if user has shovel
             if Items.shovel in player.inventory:
                 if len(room['grave_items']) > 0:
-                    json_msg = { "type": 'info', "info": f"You found something while digging!"}
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg("You found something while digging!", 'info', websocket, logger)
                     for item in room['grave_items']:
                         # remove item from hidden items
                         room['grave_items'].remove(item)
                         # add to items in room
                         room['items'].append(item)
             else:
-                json_msg = { "type": 'info', "info": "You need a shovel to dig." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg("You need a shovel to dig.", 'info', websocket, logger)
 
         # if it's an "search" command
         elif command == 'sea' or command == 'search':
@@ -152,9 +131,7 @@ class Command:
             if success == True:
                 if len(room['hidden_items']) > 0:
                     for item in room['hidden_items']:
-                        json_msg = { "type": 'info', "info": "<br>You found something!" }
-                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                        await websocket.send(json.dumps(json_msg))
+                        await Shared.send_msg("You found something!", 'info', websocket, logger)
 
                         # remove from "hidden items"
                         room['hidden_items'].remove(item)
@@ -162,13 +139,9 @@ class Command:
                         # add to items in room
                         room['items'].append(item)
                 else:
-                    json_msg = { "type": 'info', "info": "<br>After an exhaustive search, you find nothing." }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
             else:
-                json_msg = { "type": 'info', "info": f"<br>You notice nothing." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg("You notice nothing.", 'info', websocket, logger)
 
         # if it's an "drop" command
         elif command.startswith('dr ') or command.startswith('drop '):
@@ -186,14 +159,10 @@ class Command:
             if found_item == True:
                 # remove from inventory
                 player.inventory.remove(item_obj)
-                json_msg = { "type": 'info', "info": f"You dropped {item_obj.name}" }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
                 room['items'].append(item_obj)
             else:
-                json_msg = { "type": 'info', "info": f"You can't drop {wanted_item}" }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg(f"You can't drop {wanted_item}", 'info', websocket, logger)
 
         # if it's an "hide" command
         elif command.startswith('hide ') or command.startswith('stash '):
@@ -211,14 +180,10 @@ class Command:
             if found_item == True:
                 # remove from inventory
                 player.inventory.remove(item_obj)
-                json_msg = { "type": 'info', "info": f"You hid {item_obj.name}." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
                 room['hidden_items'].append(item_obj)
             else:
-                json_msg = { "type": 'info', "info": f"You aren't carrying {wanted_item} to hide." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'info', websocket, logger)
 
         # if it's an "equip" command
         elif command.startswith('eq ') or command.startswith('equip '):
@@ -228,15 +193,11 @@ class Command:
             # check if the item is in our inventory
             for item in player.inventory:
                 if item.name.lower() == wanted_item.lower():
-                    json_msg = { "type": 'info', "info": f"You equip {item.name}." }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
                     item.equiped = True
                     found_item = True
             if found_item == False:
-                json_msg = { "type": 'info', "info": f"You cannot equip {wanted_item}." }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
+                await Shared.send_msg(f"You cannot equip {wanted_item}.", 'info', websocket, logger)
 
         # if it's a stat command
         elif command == 'stat':
@@ -244,9 +205,7 @@ class Command:
             msg += f"* Health {player.hitpoints}<br>"
             msg += f"* Strength {player.strength}<br>"
             msg += f"* Perception {player.perception}"
-            json_msg = { "type": 'info', "info": msg }
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg(msg, 'info', websocket, logger)
 
         # if it's an "drink quaff" command
         elif command.startswith('drink ') or command.startswith('quaff '):
@@ -261,9 +220,7 @@ class Command:
             room_monsters = room['monsters']
             for monster in room['monsters']:
                 if wanted_monster.lower() == monster.name.lower():
-                    json_msg = { "type": 'info', "info": f"You begin to attack {monster.name}!<br>" }
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
+                    await Shared.send_msg(f"You begin to attack {monster.name}!", 'info', websocket, logger)
 
                     # if you die and go to the crypt then your room ide will change..
                     while monster.hitpoints > 0 and player.location == room['id']:
@@ -291,25 +248,19 @@ class Command:
                             response = f"You swing wildly and miss!<br>"
                         else:
                             response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
-                        json_msg = { "type": 'attack', "attack": response }
-                        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                        await websocket.send(json.dumps(json_msg))
+                        await Shared.send_msg(response, 'attack', websocket, logger)
 
                         # subtract from monsters health
                         monster.hitpoints = monster.hitpoints - damage
 
                         if monster.hitpoints <= 0:
-                            json_msg = { "type": 'info', "info": f"You vanquished {monster.name}!" }
-                            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                            await websocket.send(json.dumps(json_msg))
+                            await Shared.send_msg(f"You vanquished {monster.name}!", 'info', websocket, logger)
                             room_monsters.remove(monster)
 
                         await asyncio.sleep(3)
             room['monsters'] = room_monsters
 
         else:
-            json_msg = { "type": 'error', "error": "I don't understand that command." }
-            LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-            await websocket.send(json.dumps(json_msg))
+            await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 
         return player, room
