@@ -38,7 +38,7 @@ class Rooms:
             "exits": [ 
                     { "direction": dirs.south, "id": 0 },
                     { "direction": dirs.northeast, "id": 6 } ],
-            "items": [],
+            "items": [Items.shovel],
             "hidden_items": [],
             "grave_items": [Items.cloth_pants],
             "monsters": [Mobs.skeleton]

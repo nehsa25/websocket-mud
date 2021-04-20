@@ -20,7 +20,7 @@ class Mud:
 
     # create player
     name = "Crossen"
-    hp = 5
+    hp = 50
     strength = 1 # 0 - 30
     dexerity = 1 # 0 - 30
     location = 0

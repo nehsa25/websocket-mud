@@ -80,6 +80,21 @@ class Command:
         return player, room
 
     @staticmethod
+    async def process_dig(player, room, websocket, logger=None):
+        # check if user has shovel
+        if Items.shovel in player.inventory:
+            if len(room['grave_items']) > 0:
+                await Shared.send_msg("You found something while digging!", 'info', websocket, logger)
+                for item in room['grave_items']:
+                    # remove item from hidden items
+                    room['grave_items'].remove(item)
+                    # add to items in room
+                    room['items'].append(item)
+        else:
+            await Shared.send_msg("You need a shovel to dig.", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
     async def run_command(command, room, player, websocket, logger=None):
         LogUtils.debug(f"Command: \"{command}\"", logger)
         response = ""
@@ -111,17 +126,7 @@ class Command:
 
         # if it's an "dig grave" command
         elif command == 'dig':
-            # check if user has shovel
-            if Items.shovel in player.inventory:
-                if len(room['grave_items']) > 0:
-                    await Shared.send_msg("You found something while digging!", 'info', websocket, logger)
-                    for item in room['grave_items']:
-                        # remove item from hidden items
-                        room['grave_items'].remove(item)
-                        # add to items in room
-                        room['items'].append(item)
-            else:
-                await Shared.send_msg("You need a shovel to dig.", 'info', websocket, logger)
+            player, room = await Command.process_dig(player, room, websocket, logger)
 
         # if it's an "search" command
         elif command == 'sea' or command == 'search':
