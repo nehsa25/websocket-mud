@@ -82,7 +82,7 @@ function processCommand(data, msg) {
     case 'room':
       // check if there's a room name
       if (data.name != "") {
-        msg += "<br><span style=\"color: yellow;\">" + data.name + "</span>";
+        msg += "<br><br><span style=\"color: yellow;\">" + data.name + "</span>";
       }
 
       // check if there's a room descrption
@@ -101,7 +101,7 @@ function processCommand(data, msg) {
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span>";
+        msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br>";
       }
       break;
     case 'get_clients':

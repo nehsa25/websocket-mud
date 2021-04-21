@@ -85,6 +85,18 @@ class Command:
         return player, room
 
     @staticmethod
+    async def process_look_direction(command, player, room, websocket, logger):
+        wanted_direction = command.split(' ', 1)[1].lower()
+        valid_direction = False
+
+        # check if it's a valid direction in the room
+        for avail_exit in room["exits"]:
+            if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
+                # look up ID
+                player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
+        return player, room
+
+    @staticmethod
     async def process_look(player, room, websocket, logger):
         await Shared.send_msg("You look around the room.", 'info', websocket, logger)
         return player, room
@@ -287,29 +299,31 @@ class Command:
             return player, room
 
         # process each command
-        if command == 'help':
+        if command == 'help': # display help
             player, room = await Command.process_help(player, room, websocket, logger)
-        elif command in MudDirections.directions:
+        elif command in MudDirections.directions: # process direction
             player, room = await Command.process_direction(command, player, room, websocket, logger)
-        elif command == "" or command == 'l' or command == 'look':
+        elif command == "" or command == 'l' or command == 'look': # look
             player, room = await Command.process_look(player, room, websocket, logger)
-        elif command.startswith('g ') or command.startswith('get '):
+        elif command.startswith('l ') or command.startswith('look '): # look <direction>
+            player, room = await Command.process_look_direction(command, player, room, websocket, logger)
+        elif command.startswith('g ') or command.startswith('get '): # get
             player, room = await Command.process_get(command, player, room, websocket, logger)
-        elif command == 'i' or command == 'inv' or command == 'inventory':
+        elif command == 'i' or command == 'inv' or command == 'inventory': # inv
             player, room = await Command.process_inventory(player, room, websocket, logger)
-        elif command == 'dig':
+        elif command == 'dig': # dig
             player, room = await Command.process_dig(player, room, websocket, logger)
-        elif command == 'sea' or command == 'search':
+        elif command == 'sea' or command == 'search': # search
             player, room = await Command.process_search(player, room, websocket, logger)
-        elif command.startswith('dr ') or command.startswith('drop '):
+        elif command.startswith('dr ') or command.startswith('drop '): # drop
             player, room = await Command.process_drop(command, player, room, websocket, logger)
-        elif command.startswith('hide ') or command.startswith('stash '):
+        elif command.startswith('hide ') or command.startswith('stash '): # hide
             player, room = await Command.process_hide_item(command, player, room, websocket, logger)
-        elif command.startswith('eq ') or command.startswith('equip '):
+        elif command.startswith('eq ') or command.startswith('equip '): # eq
             player, room = await Command.process_equip_item(command, player, room, websocket, logger)
-        elif command == 'stat':
+        elif command == 'stat': # stat
             player, room = await Command.process_stat(player, room, websocket, logger)
-        elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '):
+        elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '): # attack
             player, room = await Command.process_attack_mob(command, player, room, websocket, logger)
         else:
             await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
