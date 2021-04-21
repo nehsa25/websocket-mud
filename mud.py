@@ -140,8 +140,13 @@ class Mud:
             run_combat = True
 
         while run_combat == True:
+            # let user know monsters are attacking but wait before first attack
             for monster in self.current_room["monsters"]:
-                # response = f"{monster.name} prepares to attack you!<br>"            
+                await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
+            await asyncio.sleep(self.combat_wait_secs)     
+
+            # perform attack
+            for monster in self.current_room["monsters"]:
                 obj = monster.damage.split('d')
                 dice = int(obj[0])
                 damage_potential = int(obj[1])
@@ -153,13 +158,12 @@ class Mud:
                     response = f"{monster.name} has hit you for {str(damage)}!"
                 else:
                     response = f"{monster.name} missed!"
-                
+
+                # send our attack messages
+                await Shared.send_msg(response, 'attack', websocket, logger)
+
                 # update hp
                 self.player.hitpoints = self.player.hitpoints - damage
-
-                json_msg = { "type": 'attack', "message": response }
-                LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                await websocket.send(json.dumps(json_msg))
 
                 # no point in continuing if player is dead..
                 if self.player.hitpoints <= 0:
