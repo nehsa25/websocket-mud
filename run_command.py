@@ -13,7 +13,7 @@ from shared import Shared
 class Command:
 
     @staticmethod
-    def get_equiped_weapon(player, logger=None):
+    def get_equiped_weapon(player, logger):
         eq_item = Items.punch
         for item in player.inventory:
             if item.item_type == Item.ItemType.WEAPON and item.equiped == True:
@@ -22,13 +22,13 @@ class Command:
         return eq_item
 
     @staticmethod
-    async def process_help(player, room, websocket, logger=None):
+    async def process_help(player, room, websocket, logger):
         help_msg = "look, get, dig, inventory, drop, search, hide, stash, equip"
         await Shared.send_msg(help_msg, 'info', websocket, logger)
         return player, room
 
     @staticmethod
-    async def process_direction(wanted_direction, player, room, websocket, logger=None):
+    async def process_direction(wanted_direction, player, room, websocket, logger):
         found_exit = False
         for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
@@ -43,12 +43,12 @@ class Command:
         return player, room
 
     @staticmethod
-    async def process_look(player, room, websocket, logger=None):
+    async def process_look(player, room, websocket, logger):
         await Shared.send_msg("You look around the room.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
-    async def process_get(command, player, room, websocket, logger=None):
+    async def process_get(command, player, room, websocket, logger):
         wanted_item = command.split(' ', 1)[1].lower()
         found_item = False
         if room['items'] != []:
@@ -66,7 +66,7 @@ class Command:
         return player, room
 
     @staticmethod
-    async def process_inventory(player, room, websocket, logger=None):
+    async def process_inventory(player, room, websocket, logger):
         if player.inventory != []:
             msg = "You have the following items in your inventory:<br>"
             for item in player.inventory:
@@ -80,7 +80,7 @@ class Command:
         return player, room
 
     @staticmethod
-    async def process_dig(player, room, websocket, logger=None):
+    async def process_dig(player, room, websocket, logger):
         # check if user has shovel
         if Items.shovel in player.inventory:
             if len(room['grave_items']) > 0:
@@ -95,7 +95,147 @@ class Command:
         return player, room
 
     @staticmethod
-    async def run_command(command, room, player, websocket, logger=None):
+    async def process_search(player, room, websocket, logger):
+        rand = random() 
+        success = rand < (player.perception / 100)
+        if success == True:
+            if len(room['hidden_items']) > 0:
+                for item in room['hidden_items']:
+                    await Shared.send_msg("You found something!", 'info', websocket, logger)
+
+                    # remove from "hidden items"
+                    room['hidden_items'].remove(item)
+
+                    # add to items in room
+                    room['items'].append(item)
+            else:
+                await Shared.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
+        else:
+            await Shared.send_msg("You search around but notice nothing.", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
+    async def process_drop(command, player, room, websocket, logger):
+        wanted_item = command.split(' ', 1)[1] 
+        found_item = False
+
+        # check if it's in our inventory
+        item_obj = None
+        for item_in_inv in player.inventory:
+            if wanted_item.lower() == item_in_inv.name.lower():
+                item_obj = item_in_inv
+                found_item = True
+                break
+
+        if found_item == True:
+            # remove from inventory
+            player.inventory.remove(item_obj)
+            await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
+            room['items'].append(item_obj)
+        else:
+            await Shared.send_msg(f"You can't drop {wanted_item}", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
+    async def process_hide_item(command, player, room, websocket, logger):
+        wanted_item = command.split(' ', 1)[1] 
+        found_item = False
+
+        # check if it's in our inventory
+        item_obj = None
+        for item_in_inv in player.inventory:
+            if wanted_item.lower() == item_in_inv.name.lower():
+                item_obj = item_in_inv
+                found_item = True
+                break
+
+        if found_item == True:
+            # remove from inventory
+            player.inventory.remove(item_obj)
+            await Shared.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
+            room['hidden_items'].append(item_obj)
+        else:
+            await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
+    async def process_equip_item(command, player, room, websocket, logger):
+        wanted_item = command.split(' ', 1)[1]
+        found_item = False
+
+        # check if the item is in our inventory
+        for item in player.inventory:
+            if item.name.lower() == wanted_item.lower():
+                await Shared.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
+                item.equiped = True
+                found_item = True
+        if found_item == False:
+            await Shared.send_msg(f"You cannot equip {wanted_item}.", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
+    async def process_stat(player, room, websocket, logger):
+        msg = "You have the following attributes:<br>"
+        msg += f"* Health {player.hitpoints}<br>"
+        msg += f"* Strength {player.strength}<br>"
+        msg += f"* Dexterity {player.dexerity}<br>"
+        msg += f"* Perception {player.perception}"
+        await Shared.send_msg(msg, 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
+    async def process_attack_mob(command, player, room, websocket, logger):
+        # att skeleton
+        wanted_monster = command.split(' ', 1)[1] # wanted_monster == skeleton
+
+        # see if this monster is in the room.
+        room_monsters = room['monsters']
+        for monster in room['monsters']:
+            if wanted_monster.lower() == monster.name.lower():
+                await Shared.send_msg(f"You begin to attack {monster.name}!", 'info', websocket, logger)
+
+                # if you die and go to the crypt then your room ide will change..
+                while monster.hitpoints > 0 and player.location == room['id']:
+                    # determine attack damage
+                    weapon = Command.get_equiped_weapon(player, logger)
+                    attack_potential = weapon.damage_potential  
+
+                    # for number of swings here 
+                    num_swings = 1
+                    num_swings += int(player.dexerity / weapon.weight_class.value)
+                    
+                    LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
+
+                    damage = 0
+                    for x in range(0, num_swings):
+                        LogUtils.debug(f"Swinging!", logger)
+                        # attack monster
+                        obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
+                        dice = int(obj[0]) # 1
+                        damage_potential = int(obj[1]) # 2
+                        damage_multipler = randint(0, damage_potential)
+                        damage += dice * damage_multipler * player.strength
+
+                    if damage == 0:
+                        response = f"You swing wildly and miss!<br>"
+                    else:
+                        response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
+                    await Shared.send_msg(response, 'attack', websocket, logger)
+
+                    # subtract from monsters health
+                    monster.hitpoints = monster.hitpoints - damage
+
+                    if monster.hitpoints <= 0:
+                        await Shared.send_msg(f"You vanquished {monster.name}!", 'info', websocket, logger)
+                        room_monsters.remove(monster)
+
+                    await asyncio.sleep(3)
+        room['monsters'] = room_monsters
+        return player, room
+
+    # main function that runs all the rest
+    @staticmethod
+    async def run_command(command, room, player, websocket, logger):
         LogUtils.debug(f"Command: \"{command}\"", logger)
         response = ""
         command = command.lower()
@@ -104,168 +244,33 @@ class Command:
         if player.hitpoints <= 0:
             return player, room
 
-        # display usage information
+        # process each command
         if command == 'help':
             player, room = await Command.process_help(player, room, websocket, logger)
-        
-        # if it's a direction do this...        
         elif command in MudDirections.directions:
             player, room = await Command.process_direction(command, player, room, websocket, logger)
-
-        # if it's a look
         elif command == "" or command == 'l' or command == 'look':
             player, room = await Command.process_look(player, room, websocket, logger)
-
-        # if it's a "get" command        
         elif command.startswith('g ') or command.startswith('get '):
             player, room = await Command.process_get(command, player, room, websocket, logger)
-
-        # if it's an "inv" command
         elif command == 'i' or command == 'inv' or command == 'inventory':
             player, room = await Command.process_inventory(player, room, websocket, logger)
-
-        # if it's an "dig grave" command
         elif command == 'dig':
             player, room = await Command.process_dig(player, room, websocket, logger)
-
-        # if it's an "search" command
         elif command == 'sea' or command == 'search':
-            response = "You search around.."
-            rand = random() 
-            success = rand < (player.perception / 100)
-            if success == True:
-                if len(room['hidden_items']) > 0:
-                    for item in room['hidden_items']:
-                        await Shared.send_msg("You found something!", 'info', websocket, logger)
-
-                        # remove from "hidden items"
-                        room['hidden_items'].remove(item)
-
-                        # add to items in room
-                        room['items'].append(item)
-                else:
-                    await Shared.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
-            else:
-                await Shared.send_msg("You notice nothing.", 'info', websocket, logger)
-
-        # if it's an "drop" command
+            player, room = await Command.process_search(player, room, websocket, logger)
         elif command.startswith('dr ') or command.startswith('drop '):
-            wanted_item = command.split(' ', 1)[1] 
-            found_item = False
-
-            # check if it's in our inventory
-            item_obj = None
-            for item_in_inv in player.inventory:
-                if wanted_item.lower() == item_in_inv.name.lower():
-                    item_obj = item_in_inv
-                    found_item = True
-                    break
-
-            if found_item == True:
-                # remove from inventory
-                player.inventory.remove(item_obj)
-                await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
-                room['items'].append(item_obj)
-            else:
-                await Shared.send_msg(f"You can't drop {wanted_item}", 'info', websocket, logger)
-
-        # if it's an "hide" command
+            player, room = await Command.process_drop(command, player, room, websocket, logger)
         elif command.startswith('hide ') or command.startswith('stash '):
-            wanted_item = command.split(' ', 1)[1] 
-            found_item = False
-
-            # check if it's in our inventory
-            item_obj = None
-            for item_in_inv in player.inventory:
-                if wanted_item.lower() == item_in_inv.name.lower():
-                    item_obj = item_in_inv
-                    found_item = True
-                    break
-
-            if found_item == True:
-                # remove from inventory
-                player.inventory.remove(item_obj)
-                await Shared.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
-                room['hidden_items'].append(item_obj)
-            else:
-                await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'info', websocket, logger)
-
-        # if it's an "equip" command
+            player, room = await Command.process_hide_item(command, player, room, websocket, logger)
         elif command.startswith('eq ') or command.startswith('equip '):
-            wanted_item = command.split(' ', 1)[1]
-            found_item = False
-
-            # check if the item is in our inventory
-            for item in player.inventory:
-                if item.name.lower() == wanted_item.lower():
-                    await Shared.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
-                    item.equiped = True
-                    found_item = True
-            if found_item == False:
-                await Shared.send_msg(f"You cannot equip {wanted_item}.", 'info', websocket, logger)
-
-        # if it's a stat command
+            player, room = await Command.process_equip_item(command, player, room, websocket, logger)
         elif command == 'stat':
-            msg = "You have the following attributes:<br>"
-            msg += f"* Health {player.hitpoints}<br>"
-            msg += f"* Strength {player.strength}<br>"
-            msg += f"* Perception {player.perception}"
-            await Shared.send_msg(msg, 'info', websocket, logger)
-
-        # if it's an "drink quaff" command
-        elif command.startswith('drink ') or command.startswith('quaff '):
-            wanted_drink = command.split(' ', 1)[1]
-
-        # if it's an "Attack" command
+            player, room = await Command.process_stat(player, room, websocket, logger)
         elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '):
-            # att skeleton
-            wanted_monster = command.split(' ', 1)[1] # wanted_monster == skeleton
-
-            # see if this monster is in the room.
-            room_monsters = room['monsters']
-            for monster in room['monsters']:
-                if wanted_monster.lower() == monster.name.lower():
-                    await Shared.send_msg(f"You begin to attack {monster.name}!", 'info', websocket, logger)
-
-                    # if you die and go to the crypt then your room ide will change..
-                    while monster.hitpoints > 0 and player.location == room['id']:
-                        # determine attack damage
-                        weapon = Command.get_equiped_weapon(player, logger)
-                        attack_potential = weapon.damage_potential  
-
-                        # for number of swings here 
-                        num_swings = 1
-                        num_swings += int(player.dexerity / weapon.weight_class.value)
-                        
-                        LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
-
-                        damage = 0
-                        for x in range(0, num_swings):
-                            LogUtils.debug(f"Swinging!", logger)
-                            # attack monster
-                            obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
-                            dice = int(obj[0]) # 1
-                            damage_potential = int(obj[1]) # 2
-                            damage_multipler = randint(0, damage_potential)
-                            damage += dice * damage_multipler * player.strength
-
-                        if damage == 0:
-                            response = f"You swing wildly and miss!<br>"
-                        else:
-                            response = f"{weapon.hit_message} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
-                        await Shared.send_msg(response, 'attack', websocket, logger)
-
-                        # subtract from monsters health
-                        monster.hitpoints = monster.hitpoints - damage
-
-                        if monster.hitpoints <= 0:
-                            await Shared.send_msg(f"You vanquished {monster.name}!", 'info', websocket, logger)
-                            room_monsters.remove(monster)
-
-                        await asyncio.sleep(3)
-            room['monsters'] = room_monsters
-
+            player, room = await Command.process_attack_mob(command, player, room, websocket, logger)
         else:
             await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
+
 
         return player, room

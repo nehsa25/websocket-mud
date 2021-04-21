@@ -21,8 +21,8 @@ class Mud:
     # create player
     name = "Crossen"
     hp = 50
-    strength = 1 # 0 - 30
-    dexerity = 1 # 0 - 30
+    strength = 10 # 0 - 30
+    dexerity = 10 # 0 - 30
     location = 0
     perception = 50
     player = Player(name, hp, strength, dexerity, location, perception)
