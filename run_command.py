@@ -92,8 +92,15 @@ class Command:
         # check if it's a valid direction in the room
         for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
-                # look up ID
-                player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
+                valid_direction = True
+                break
+
+        if valid_direction == True:
+            await Shared.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
+            player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
+        else: 
+            await Shared.send_msg(f"{wanted_direction} is not a valid direction.", 'info', websocket, logger)
+            
         return player, room
 
     @staticmethod
