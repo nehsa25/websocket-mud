@@ -9,6 +9,7 @@ from items import Items
 from item import Item
 from muddirections import MudDirections
 from shared import Shared
+from rooms import Rooms
 
 class Command:
 
@@ -20,6 +21,47 @@ class Command:
                 eq_item = item
 
         return eq_item
+
+    @staticmethod
+    async def process_room(room_id, player, websocket, logger):
+        # display room user is in
+        current_room = [room for room in Rooms.rooms if room["id"] == room_id][0]
+
+        # get the description
+        description = current_room["description"]
+
+        # show items
+        items = ""
+        if len(current_room['items']) > 0:
+            for item in current_room['items']:
+                items += item.name + ', '
+            items = items[0:len(items)-2]
+
+        # offer possible exits
+        exits = ""
+        for available_exit in current_room["exits"]:
+            exits += available_exit['direction'][1] + ', '
+        exits = exits[0:len(exits)-2]
+
+        # show monsters
+        monsters = ""
+        for monster in current_room["monsters"]:
+            monsters += monster.name + ', '
+        monsters = monsters[0:len(monsters)-2]
+
+        # formulate message to client
+        json_msg = {
+            "type": 'room',
+            "name": current_room["name"],
+            "description": description,
+            "items": items,
+            "exits": exits,
+            "monsters": monsters,
+        }
+
+        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
+        await websocket.send(json.dumps(json_msg))
+        return player, current_room
 
     @staticmethod
     async def process_help(player, room, websocket, logger):

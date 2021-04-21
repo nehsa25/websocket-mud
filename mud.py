@@ -8,7 +8,6 @@ from random import randint
 from run_command import Command
 from player import Player
 from log_utils import LogUtils, Level
-from rooms import Rooms
 from sysargs_utils import SysArgs
 
 class Mud:
@@ -196,66 +195,28 @@ class Mud:
                 # if we changed rooms, cancel attack
                 if attack_task != None:
                     attack_task.cancel()
-					
-                # display room user is in
-                self.current_room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
 
-                # start combat
+                # start combat (if monsters in room)
                 attack_task = asyncio.create_task(self.start_mob_combat(websocket))
                 self.tasks.append(attack_task)
 
-                bottom_response = ""
-                if self.current_room["id"] == self.player.location:
-                    
-                     # get the description
-                    description = self.current_room["description"]
+                # send the room the player is in
+                self.player, self.current_room = await Command.process_room(self.player.location, self.player, websocket, logger)
 
-                    # show items
-                    items = ""
-                    if len(self.current_room['items']) > 0:
-                        for item in self.current_room['items']:
-                            items += item.name + ', '
-                        items = items[0:len(items)-2]
+                # send updated hp
+                await self.show_health(websocket)
 
-                    # offer possible exits
-                    exits = ""
-                    for available_exit in self.current_room["exits"]:
-                        exits += available_exit['direction'][1] + ', '
-                    exits = exits[0:len(exits)-2]
+                # wait for a command to be sent
+                LogUtils.info(f"Waiting for command...", logger)
+                message = await websocket.recv()
+                msg_obj = json.loads(message)
 
-                    # show monsters
-                    monsters = ""
-                    for monster in self.current_room["monsters"]:
-                        monsters += monster.name + ', '
-                    monsters = monsters[0:len(monsters)-2]
-
-                    # formulate message to client
-                    json_msg = {
-                        "type": 'room',
-                        "name": self.current_room["name"],
-                        "description": description,
-                        "items": items,
-                        "exits": exits,
-                        "monsters": monsters,
-                    }
-
-                    LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
-                    await websocket.send(json.dumps(json_msg))
-
-                    # send updated hp
-                    await self.show_health(websocket)
-
-                    # wait for a command to be sent
-                    LogUtils.info(f"Waiting for command...", logger)
-                    message = await websocket.recv()
-                    msg_obj = json.loads(message)
-
-                    if msg_obj["type"] == "cmd":
-                        LogUtils.debug(f"Received: cmd", logger)
-                        received_command = True
-                        self.player, self.current_room = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
-                    else:
-                        LogUtils.error(f"Received unknown message: {message}", logger)
+                if msg_obj["type"] == "cmd":
+                    LogUtils.debug(f"Received: cmd", logger)
+                    received_command = True
+                    self.player, self.current_room = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
+                else:
+                    LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
             loop.stop()
         except:
