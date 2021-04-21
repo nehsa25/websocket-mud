@@ -76,7 +76,7 @@ function processCommand(data, msg) {
     case 'health':
       // check if there's an event
       if (data.message != "") {
-        msg += "<br><span style=\"color: white;\">" + data.message + "</span>";
+        $('#health').html(data.message);
       }
       break;
     case 'room':
