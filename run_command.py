@@ -109,7 +109,7 @@ class Command:
             for item in room['items']:
                 if wanted_item == item.name.lower():
                     found_item = True
-                    await Shared.send_msg(f"You picked up {item.name}.", 'info', websocket, logger)
+                    await Shared.send_msg(f"You pick up {item.name}.", 'info', websocket, logger)
                     # remove from room
                     room['items'].remove(item)
                     # add to our inventory
