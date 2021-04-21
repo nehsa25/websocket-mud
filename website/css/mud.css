@@ -1,3 +1,6 @@
+html {
+  background-color: darksalmon;
+}
 .grid {
   display:grid;
   grid-template-columns: 10% auto 10%;
@@ -9,6 +12,10 @@
 #title {
   font-family: 'Times New Roman', serif;
   font-size: 2rem;
+}
+
+#subtitle {
+  vertical-align: super;
 }
 
 #messages {
@@ -43,6 +50,11 @@
     height: 30px;
     padding: 1em;
     width: 80%;
+}
+
+#health {
+  font-size: 3rem;
+  text-align: right;
 }
 
 #submit_btn {
