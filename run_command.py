@@ -215,7 +215,7 @@ class Command:
     @staticmethod
     async def process_equip_item(command, player, room, websocket, logger):
         wanted_item = command.split(' ', 1)[1]
-        found_item = False
+        found_item = None
 
         # check if the item is in our inventory
         for item in player.inventory:
@@ -223,7 +223,14 @@ class Command:
                 await Shared.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
                 item.equiped = True
                 found_item = True
-        if found_item == False:
+                found_item = item
+
+        # if you eq'd an item, deselect any previous items
+        for item in player.inventory:
+            if found_item.item_type == item.item_type and found_item.name != item.name:
+                await Shared.send_msg(f"You unequip {item.name}.", 'info', websocket, logger)
+                item.equiped = False
+        if found_item == None:
             await Shared.send_msg(f"You cannot equip {wanted_item}.", 'info', websocket, logger)
         return player, room
 

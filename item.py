@@ -10,9 +10,13 @@ class Item:
 
     # item types
     class ItemType(Enum):
-        ARMOR = 1
-        WEAPON = 2
-        ITEM = 3
+        WEAPON = 1
+        ITEM = 2
+        ARMOR_HEAD = 3
+        ARMOR_FEET = 4
+        ARMOR_HANDS = 5
+        ARMOR_LEGS = 6
+        ARMOR_TORSO = 7
 
     # weight classes
     class WeightClass(Enum):
