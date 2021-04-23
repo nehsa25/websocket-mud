@@ -248,7 +248,7 @@ class Command:
         msg = "You have the following attributes:<br>"
         msg += f"* Health {player.hitpoints}<br>"
         msg += f"* Strength {player.strength}<br>"
-        msg += f"* Dexterity {player.dexerity}<br>"
+        msg += f"* Agility {player.agility}<br>"
         msg += f"* Perception {player.perception}"
         await Shared.send_msg(msg, 'info', websocket, logger)
         return player, room
@@ -272,7 +272,7 @@ class Command:
 
                     # for number of swings here 
                     num_swings = 1
-                    num_swings += int(player.dexerity / weapon.weight_class.value)
+                    num_swings += int(player.agility / weapon.weight_class.value)
                     
                     LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
 
@@ -298,8 +298,8 @@ class Command:
                     if monster.hitpoints <= 0:
                         await Shared.send_msg(f"You vanquished {monster.name}!", 'info', websocket, logger)
                         room_monsters.remove(monster)
-
-                    await asyncio.sleep(3)
+                    else:
+                        await asyncio.sleep(3)
         room['monsters'] = room_monsters
         return player, room
 
