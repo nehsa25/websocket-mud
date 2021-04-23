@@ -313,11 +313,13 @@ class Command:
             return player, room
 
         # process each command
-        if command == 'help': # display help
+        if command == "":
+            pass # no nothing
+        elif command == 'help': # display help
             player, room = await Command.process_help(player, room, websocket, logger)
         elif command in MudDirections.directions: # process direction
             player, room = await Command.process_direction(command, player, room, websocket, logger)
-        elif command == "" or command == 'l' or command == 'look': # look
+        elif command == 'l' or command == 'look': # look
             player, room = await Command.process_look(player, room, websocket, logger)
         elif command.startswith('l ') or command.startswith('look '): # look <direction>
             player, room = await Command.process_look_direction(command, player, room, websocket, logger)
