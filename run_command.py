@@ -99,7 +99,9 @@ class Command:
             await Shared.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
             player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
         else: 
-            await Shared.send_msg(f"{wanted_direction} is not a valid direction.", 'info', websocket, logger)
+            for direction in MudDirections.pretty_directions:
+                if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
+                    await Shared.send_msg(f"{direction[1]} is not a valid direction to look.", 'info', websocket, logger)
             
         return player, room
 
