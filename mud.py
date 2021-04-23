@@ -138,13 +138,12 @@ class Mud:
         run_combat = False
         if len(self.current_room["monsters"]) > 0:
             run_combat = True
-
-        while run_combat == True:
             # let user know monsters are attacking but wait before first attack
             for monster in self.current_room["monsters"]:
                 await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
             await asyncio.sleep(self.combat_wait_secs)     
 
+        while run_combat == True:
             # perform attack
             for monster in self.current_room["monsters"]:
                 obj = monster.damage.split('d')
