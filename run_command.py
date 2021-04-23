@@ -191,6 +191,9 @@ class Command:
                 break
 
         if found_item == True:
+            # set eq'd to False
+            item_obj.equiped = False
+            
             # remove from inventory
             player.inventory.remove(item_obj)
             await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
@@ -236,7 +239,7 @@ class Command:
 
         # if you eq'd an item, deselect any previous items
         for item in player.inventory:
-            if found_item.item_type == item.item_type and found_item.name != item.name:
+            if (found_item.item_type == item.item_type and item.equiped == True) and found_item.name != item.name:
                 await Shared.send_msg(f"You unequip {item.name}.", 'info', websocket, logger)
                 item.equiped = False
         if found_item == None:
