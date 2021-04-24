@@ -193,7 +193,7 @@ class Command:
         if found_item == True:
             # set eq'd to False
             item_obj.equiped = False
-            
+
             # remove from inventory
             player.inventory.remove(item_obj)
             await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
@@ -345,7 +345,7 @@ class Command:
         elif command == 'stat': # stat
             player, room = await Command.process_stat(player, room, websocket, logger)
         elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '): # attack
-            player, room = await Command.process_attack_mob(command, player, room, websocket, logger)
+            asyncio.create_task(Command.process_attack_mob(command, player, room, websocket, logger))
         else:
             await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 
