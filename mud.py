@@ -9,13 +9,17 @@ from run_command import Command
 from player import Player
 from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
+from world import World
 
 class Mud:
+    # create our WORLD object that'll contain things like breeze and rain events
+    world = World()
+
     # number of players
     clients = []
     combat_wait_secs = 3.5
     tasks = []
-    current_room = None
+    room = None
     first_loop = True # send the room on first load
     attack_time = True # true so we run once to begin loop
 
@@ -74,7 +78,7 @@ class Mud:
     # It begins to rain..
     async def rain(self, websocket):
         while True:
-            rand = randint(1, 1600)
+            rand = randint(500, 1600)
             await asyncio.sleep(rand)
             await Shared.send_msg("It begins to rain..", 'event', websocket, logger)
 
@@ -86,7 +90,7 @@ class Mud:
     # A gentle breeze blows by you..
     async def breeze(self, websocket):        
         while True:
-            rand = randint(1, 1400)
+            rand = randint(500, 2800)
             await asyncio.sleep(rand)
             await Shared.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
 
@@ -105,7 +109,7 @@ class Mud:
         elif self.player.hitpoints / self.player.max_hitpoints >= .25:
             color = 'yellow'
 
-        health = f"[HP=<span style=\"color: {color};\">{self.player.hitpoints}</span>]"
+        health = f"Health: <span style=\"color: {color};\">{self.player.hitpoints}</span>"
         await Shared.send_msg(health, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
@@ -142,11 +146,11 @@ class Mud:
             return player
 
         # let user know monsters are attacking them but wait before first attack
-        if len(self.current_room["monsters"]) > 0:
+        if len(self.room["monsters"]) > 0:
 
             # we only want to print these messages the first time the user sees the monsters
             if self.player.in_combat == False:
-                for monster in self.current_room["monsters"]:
+                for monster in self.room["monsters"]:
                     await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
 
                 # player is now in combat
@@ -155,10 +159,10 @@ class Mud:
                 # wait before launching first attack
                 await asyncio.sleep(self.combat_wait_secs)     
 
-        while self.player.in_combat == True and len(self.current_room["monsters"]) > 0:
+        while self.player.in_combat == True and len(self.room["monsters"]) > 0:
             if self.attack_time == True: 
                 # perform monster attacks
-                for monster in self.current_room["monsters"]:
+                for monster in self.room["monsters"]:
                     obj = monster.damage.split('d')
                     dice = int(obj[0])
                     damage_potential = int(obj[1])
@@ -193,25 +197,20 @@ class Mud:
 
     # main loop when client connects
     async def main(self, websocket, path):
-        # register client websockets
+        # register client websockets - runs onces each time a new person starts
         await self.register(websocket)
 
         try:
-            attack_task = None
-
             # schedule some events that'll do shit
-            breeze_task = asyncio.create_task(self.breeze(websocket))
-            rain_task = asyncio.create_task(self.rain(websocket))
-            eerie_task = asyncio.create_task(self.eerie_silence(websocket))
+            self.world.breeze_task = asyncio.create_task(self.breeze(websocket))
+            self.world.rain_task = asyncio.create_task(self.rain(websocket))
+            self.world.eerie_task = asyncio.create_task(self.eerie_silence(websocket))
 
-            # if you die, we'll cancel these
-            self.tasks.append(breeze_task)
-            self.tasks.append(rain_task)
-            self.tasks.append(eerie_task)
+            attack_task = None
 
             response = ""
             while True:
-                # if we changed rooms, cancel attack
+                # if we changed rooms, cancel attack <-- THIS IS WRONG.  THIS SHOULD BE DONE IN PROCESS_DIRECTION.
                 if attack_task != None:
                     attack_task.cancel()
 
@@ -221,8 +220,8 @@ class Mud:
 
                 # send the room the player is in
                 if self.first_loop == True:
-                    self.player, self.current_room = await Command.process_room(self.player.location, self.player, websocket, logger)
-                    first_loop = False
+                    self.player, self.room = await Command.process_room(self.player.location, self.player, websocket, logger)
+                    self.first_loop = False
 
                 # send updated hp
                 await self.show_health(websocket)
@@ -235,7 +234,7 @@ class Mud:
                 if msg_obj["type"] == "cmd":
                     LogUtils.debug(f"Received: cmd", logger)
                     received_command = True
-                    self.player, self.current_room = await Command.run_command(msg_obj["cmd"], self.current_room, self.player, websocket, logger)
+                    self.player, self.room = await Command.run_command(msg_obj["cmd"], self.room, self.player, websocket, logger)
                 else:
                     LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
