@@ -24,11 +24,11 @@ html {
   -ms-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  overflow-wrap: break-word;
   background-color: #333333;
   outline: none;
   text-align: left;
   padding: 2em;
+  overflow-wrap: break-word;
 }
 
 /* the div surrounding input and submit button */

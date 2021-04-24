@@ -82,26 +82,26 @@ function processCommand(data, msg) {
     case 'room':
       // check if there's a room name
       if (data.name != "") {
-        msg += "<br><br><span style=\"color: yellow;\">" + data.name + "</span>";
+        msg += "<br><span style=\"color: yellow;\">" + data.name + "</span><br>";
       }
 
       // check if there's a room descrption
       if (data.description != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">" + data.description + "</span>";
+        msg += "<span style=\"color: antiquewhite;\">" + data.description + "</span><br>";
       }
       // check for monsters
       if (data.monsters != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span>";
+        msg += "<span style=\"color: antiquewhite;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span><br>";
       }
 
       // check for items
       if (data.items != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">You see </span><span style=\"color: green;\">" + data.items + "</span>";
+        msg += "<span style=\"color: antiquewhite;\">You see </span><span style=\"color: green;\">" + data.items + "</span><br>";
       }
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<br><span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br>";
+        msg += "<span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br>";
       }
       break;
     case 'get_clients':
@@ -118,17 +118,16 @@ function processCommand(data, msg) {
 
 function trimHtml() {
   msg = $("#messages").html() + "";
+  msg = msg.trim();
   console.log("HTML length: " + msg.length);
-  // if (msg.length > 2000) {
-  //   lines = msg.split('<br>');
-  //   new_msg = "";
-  //   for (var x = lines.length; x >= lines.length; x--) {
-  //     new_msg
-  //   }
-  //   start_len = msg_len - 2000;
-  //   msg = msg.substring(start_len, msg_len);
-  //   console.log("Trimed html from " + msg.length.toString() + " to " + start_len.toString());
+
+  // new_msg = "";
+  // for (var x = lines.length; x >= lines.length; x--) {
+  //   new_msg
   // }
+  // start_len = msg_len - 2000;
+  // msg = msg.substring(start_len, msg_len);
+  // console.log("Trimmed html from " + msg.length.toString() + " to " + start_len.toString());
   return msg;
 }
 
