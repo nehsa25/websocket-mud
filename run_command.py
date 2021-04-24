@@ -76,6 +76,7 @@ class Command:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
                 await Shared.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
+                player, room = await Command.process_room(player.location, player, websocket, logger)
                 found_exit = True
                 break
         if found_exit == False:
@@ -108,7 +109,7 @@ class Command:
     @staticmethod
     async def process_look(player, room, websocket, logger):
         await Shared.send_msg("You look around the room.", 'info', websocket, logger)
-        return player, room
+        return await Command.process_room(player.location, player, websocket, logger)
 
     @staticmethod
     async def process_get(command, player, room, websocket, logger):
@@ -319,7 +320,7 @@ class Command:
 
         # process each command
         if command == "":
-            pass # no nothing
+            player, room = await Command.process_room(player.location, player, websocket, logger)
         elif command == 'help': # display help
             player, room = await Command.process_help(player, room, websocket, logger)
         elif command in MudDirections.directions: # process direction

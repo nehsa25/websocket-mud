@@ -16,6 +16,7 @@ class Mud:
     combat_wait_secs = 3.5
     tasks = []
     current_room = None
+    first_loop = True # send the room on first load
     attack_time = True # true so we run once to begin loop
 
     # create player
@@ -219,7 +220,9 @@ class Mud:
                 self.tasks.append(attack_task)
 
                 # send the room the player is in
-                self.player, self.current_room = await Command.process_room(self.player.location, self.player, websocket, logger)
+                if self.first_loop == True:
+                    self.player, self.current_room = await Command.process_room(self.player.location, self.player, websocket, logger)
+                    first_loop = False
 
                 # send updated hp
                 await self.show_health(websocket)
