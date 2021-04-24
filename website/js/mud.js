@@ -55,32 +55,27 @@ function processCommand(data, msg) {
       console.log("Server is requesting our name, sending back: " + resp);      
       socket.send(resp);
       break;
-    case 'event':
-      // check if there's an event
+    case 'event': // check if there's an event # breeze, silence, rain
       if (data.message != "") {
-        msg += "<br><br><span style=\"color: yellow;\">" + data.message + "</span><br>";
+        msg += "<br><span style=\"color: yellow;\">" + data.message + "</span>";
       }
       break;
-    case 'info':
-      // check if there's an event
+    case 'info': // check if there's an info event      
       if (data.message != "") {
-        msg += "<br><br><span style=\"color: darksalmon;\">" + data.message + "</span><br>";
+        msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span><br>";
       }
       break;
-    case 'attack':
-      // check if there's an event
+    case 'attack': // check if there's an attack event
       if (data.message != "") {
         msg += "<br><span style=\"color: red;\">" + data.message + "</span>";
       }
       break;
-    case 'health':
-      // check if there's an event
+    case 'health': // check if there's an health event
       if (data.message != "") {
         $('#health').html(data.message);
       }
       break;
-    case 'room':
-      // check if there's a room name
+    case 'room': // check if there's a room name
       if (data.name != "") {
         msg += "<br><span style=\"color: yellow;\">" + data.name + "</span><br>";
       }
