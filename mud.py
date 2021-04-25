@@ -126,7 +126,7 @@ class Mud:
         
         # drop all items
         for item in self.player.inventory:
-              self.current_room["items"].append(item)
+              self.room["items"].append(item)
         self.player.inventory = []
 
         # set player location to crypt
