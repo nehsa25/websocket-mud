@@ -106,7 +106,7 @@ function processCommand(data, msg) {
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<br><span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
+        msg += "<br><span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br class=\"break\">";
       }
       break;
     case 'get_clients':
@@ -122,7 +122,7 @@ function processCommand(data, msg) {
 }
 
 function trimHtml() {
-  trim_length = 5000;
+  trim_length = 3000;
   break_msg = '<br class="break">';
   msg = $("#messages").html() + "";
   msg = msg.trim();
