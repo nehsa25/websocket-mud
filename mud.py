@@ -132,11 +132,12 @@ class Mud:
         # set player location to crypt
         self.player.location = 5
 
-        # set hits back to max
+        # set hits back to max / force health refresh
         self.player.hitpoints = self.player.max_hitpoints
+        await self.show_health(websocket)
 
         # force room refresh
-        self.room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+        self.player, self.room = await Command.process_room(self.player.location, self.player, websocket, logger)
 
     # runs the combat
     async def start_mob_combat(self, websocket):
