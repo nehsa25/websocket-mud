@@ -298,7 +298,10 @@ class Command:
                     if damage == 0:
                         response = f"You swing wildly and miss!<br>"
                     else:
-                        response = f"You {weapon.verb} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
+                        if num_swings == 1:
+                            response = f"You {weapon.verb} {monster.name} with your {weapon.name.lower()} for {str(damage)} damage!<br>"
+                        else:
+                            response = f"You {weapon.verb} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
                     await Shared.send_msg(response, 'attack', websocket, logger)
 
                     # subtract from monsters health
