@@ -1,4 +1,4 @@
-from mobs import Mobs
+from monsters import Monsters
 from items import Items
 from muddirections import MudDirections
 
@@ -29,7 +29,7 @@ class Rooms:
             "items": [],
             "hidden_items": [Items.shovel],
             "grave_items": [Items.ring],
-            "monsters": [Mobs.skeleton, Mobs.zombie, Mobs.ghoul]
+            "monsters": [Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()]
         },
         { 
             "id": 2,
@@ -41,7 +41,7 @@ class Rooms:
             "items": [Items.shovel],
             "hidden_items": [],
             "grave_items": [Items.cloth_pants],
-            "monsters": [Mobs.skeleton]
+            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton()]
         },
         { 
             "id": 3,

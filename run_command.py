@@ -82,7 +82,7 @@ class Command:
         if found_exit == False:
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
-                    await Shared.send_msg(f"You cannot go {direction[1]}.", 'info', websocket, logger)   
+                    await Shared.send_msg(f"You cannot go {direction[1]}.", 'error', websocket, logger)   
         return player, room
 
     @staticmethod
@@ -102,7 +102,7 @@ class Command:
         else: 
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
-                    await Shared.send_msg(f"{direction[1]} is not a valid direction to look.", 'info', websocket, logger)
+                    await Shared.send_msg(f"{direction[1]} is not a valid direction to look.", 'error', websocket, logger)
             
         return player, room
 
@@ -126,7 +126,7 @@ class Command:
                     player.inventory.append(item)
                     break
         if found_item == False:
-            await Shared.send_msg(f"You cannot find {wanted_item}.", 'info', websocket, logger)
+            await Shared.send_msg(f"You cannot find {wanted_item}.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -200,7 +200,7 @@ class Command:
             await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
             room['items'].append(item_obj)
         else:
-            await Shared.send_msg(f"You can't drop {wanted_item}", 'info', websocket, logger)
+            await Shared.send_msg(f"You can't drop {wanted_item}", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -222,7 +222,7 @@ class Command:
             await Shared.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
             room['hidden_items'].append(item_obj)
         else:
-            await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'info', websocket, logger)
+            await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -244,7 +244,7 @@ class Command:
                 await Shared.send_msg(f"You unequip {item.name}.", 'info', websocket, logger)
                 item.equiped = False
         if found_item == None:
-            await Shared.send_msg(f"You cannot equip {wanted_item}.", 'info', websocket, logger)
+            await Shared.send_msg(f"You cannot equip {wanted_item}.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -265,56 +265,66 @@ class Command:
     @staticmethod
     async def process_attack_mob(command, player, room, websocket, logger):
         # att skeleton
-        wanted_monster = command.split(' ', 1)[1] # wanted_monster == skeleton
+        wanted_monster = command.split(' ', 1)[1].lower() # wanted_monster == skeleton
 
         # see if this monster is in the room.
+        current_monster = None
         room_monsters = room['monsters']
         for monster in room['monsters']:
-            if wanted_monster.lower() == monster.name.lower():
-                await Shared.send_msg(f"You begin to attack {monster.name}!", 'info', websocket, logger)
+            monster_name = monster.name.lower().strip()
+            monster_name_parts = monster_name.split(' ')
+            for name in monster_name_parts:
+                if name.startswith(wanted_monster):
+                    current_monster = monster
+                    break
 
-                # if you die and go to the crypt then your room ide will change..
-                while monster.hitpoints > 0 and player.location == room['id']:
-                    # determine attack damage
-                    weapon = Command.get_equiped_weapon(player, logger)
-                    attack_potential = weapon.damage_potential  
+        if current_monster != None:
+            await Shared.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
 
-                    # for number of swings here 
-                    num_swings = 1
-                    num_swings += int(player.agility / weapon.weight_class.value)
-                    
-                    LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
+            # if you die and go to the crypt then your room ide will change..
+            while monster.hitpoints > 0 and player.location == room['id']:
+                # determine attack damage
+                weapon = Command.get_equiped_weapon(player, logger)
+                attack_potential = weapon.damage_potential  
 
-                    damage = 0
-                    for x in range(0, num_swings):
-                        LogUtils.debug(f"Swinging!", logger)
-                        # attack monster
-                        obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
-                        dice = int(obj[0]) # 1
-                        damage_potential = int(obj[1]) # 2
-                        damage_multipler = randint(0, damage_potential)
-                        damage += dice * damage_multipler * player.strength
+                # for number of swings here 
+                num_swings = 1
+                num_swings += int(player.agility / weapon.weight_class.value)
+                
+                LogUtils.debug(f"We're going to swing {num_swings} times!", logger)
 
-                    if damage == 0:
-                        response = f"You swing wildly and miss!<br>"
+                damage = 0
+                for x in range(0, num_swings):
+                    LogUtils.debug(f"Swinging!", logger)
+                    # attack monster
+                    obj = attack_potential.split('d') # obj = obj[0] == 1, obj[1] == 2
+                    dice = int(obj[0]) # 1
+                    damage_potential = int(obj[1]) # 2
+                    damage_multipler = randint(0, damage_potential)
+                    damage += dice * damage_multipler * player.strength
+
+                if damage == 0:
+                    response = f"You swing wildly and miss!<br>"
+                else:
+                    if num_swings == 1:
+                        response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!<br>"
                     else:
-                        if num_swings == 1:
-                            response = f"You {weapon.verb} {monster.name} with your {weapon.name.lower()} for {str(damage)} damage!<br>"
-                        else:
-                            response = f"You {weapon.verb} {monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
-                    await Shared.send_msg(response, 'attack', websocket, logger)
+                        response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
+                await Shared.send_msg(response, 'attack', websocket, logger)
 
-                    # subtract from monsters health
-                    monster.hitpoints = monster.hitpoints - damage
+                # subtract from monsters health
+                current_monster.hitpoints = current_monster.hitpoints - damage
 
-                    if monster.hitpoints <= 0:
-                        # remove monster
-                        room_monsters.remove(monster)
-                        # give experience
-                        player.experience += monster.experience
-                        await Shared.send_msg(f"You vanquished {monster.name}!<br>You received {monster.experience} experience.", 'event', websocket, logger)
-                    else:
-                        await asyncio.sleep(3)
+                if current_monster.hitpoints <= 0:
+                    # remove monster
+                    room_monsters.remove(current_monster)
+                    # give experience
+                    player.experience += current_monster.experience
+                    await Shared.send_msg(f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience.<br>", 'event', websocket, logger)
+                else:
+                    await asyncio.sleep(3)
+        else:
+            await Shared.send_msg(f"{wanted_monster} is not a valid attack target.", 'error', websocket, logger)
         room['monsters'] = room_monsters
         return player, room
 
