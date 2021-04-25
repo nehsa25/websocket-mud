@@ -258,6 +258,11 @@ class Command:
         return player, room
 
     @staticmethod
+    async def process_exp(player, room, websocket, logger):
+        await Shared.send_msg(f"You have {player.experience} experience.", 'info', websocket, logger)
+        return player, room
+
+    @staticmethod
     async def process_attack_mob(command, player, room, websocket, logger):
         # att skeleton
         wanted_monster = command.split(' ', 1)[1] # wanted_monster == skeleton
@@ -300,8 +305,11 @@ class Command:
                     monster.hitpoints = monster.hitpoints - damage
 
                     if monster.hitpoints <= 0:
-                        await Shared.send_msg(f"You vanquished {monster.name}!", 'info', websocket, logger)
+                        # remove monster
                         room_monsters.remove(monster)
+                        # give experience
+                        player.experience += monster.experience
+                        await Shared.send_msg(f"You vanquished {monster.name}!<br>You received {monster.experience} experience.", 'event', websocket, logger)
                     else:
                         await asyncio.sleep(3)
         room['monsters'] = room_monsters
@@ -347,6 +355,8 @@ class Command:
             player, room = await Command.process_stat(player, room, websocket, logger)
         elif command.startswith('a ') or command.startswith('att ') or command.startswith('attack '): # attack
             asyncio.create_task(Command.process_attack_mob(command, player, room, websocket, logger))
+        elif command == ('exp') or command == ('experience'): # experience
+            player, room = await Command.process_exp(player, room, websocket, logger)
         else:
             await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 

@@ -6,6 +6,7 @@ class Player:
     strength = 0
     agility = 0
     perception = 0
+    experience = 0
     in_combat = False
     inventory = []
 
