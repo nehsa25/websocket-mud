@@ -5,7 +5,7 @@ class Item:
     damage_potential = None
     weight_class = None
     item_type = None
-    hit_message = None
+    verb = None
     equiped = False
 
     # item types
@@ -26,10 +26,10 @@ class Item:
         HEAVY_WEIGHT = 10
         SUPER_HEAVY_WEIGHT = 15
 
-    def __init__(self, name, item_type, damage_potential, weight_class, hit_message):
+    def __init__(self, name, item_type, damage_potential, weight_class, verb):
         self.name = name
         self.damage_potential = damage_potential
         self.weight_class = weight_class
         self.item_type = item_type
-        self.hit_message = hit_message
+        self.verb = verb
     
