@@ -65,9 +65,14 @@ function processCommand(data, msg) {
         msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span><br>";
       }
       break;
+    case 'error': // check if there's an info event      
+      if (data.message != "") {
+        msg += "<br><span style=\"color: #790604;\">" + data.message + "</span>";
+      }
+      break;
     case 'attack': // check if there's an attack event
       if (data.message != "") {
-        msg += "<br><span style=\"color: red;\">" + data.message + "</span>";
+        msg += "<br><span style=\"color: #7851a9;\">" + data.message + "</span>";
       }
       break;
     case 'health': // check if there's an health event
@@ -77,26 +82,26 @@ function processCommand(data, msg) {
       break;
     case 'room': // check if there's a room name
       if (data.name != "") {
-        msg += "<br><span style=\"color: yellow;\">" + data.name + "</span><br>";
+        msg += "<br><span style=\"color: green; text-weight: bold;\">" + data.name + "</span><br>";
       }
 
       // check if there's a room descrption
       if (data.description != "") {
-        msg += "<span style=\"color: antiquewhite;\">" + data.description + "</span><br>";
+        msg += "<span style=\"color: #F9F5EC;\">" + data.description + "</span><br>";
       }
       // check for monsters
       if (data.monsters != "") {
-        msg += "<span style=\"color: antiquewhite;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span><br>";
+        msg += "<span style=\"color: #F9F5EC;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span><br>";
       }
 
       // check for items
       if (data.items != "") {
-        msg += "<span style=\"color: antiquewhite;\">You see </span><span style=\"color: green;\">" + data.items + "</span><br>";
+        msg += "<span style=\"color: #F9F5EC;\">You see </span><span style=\"color: green;\">" + data.items + "</span><br>";
       }
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
+        msg += "<span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
       }
       break;
     case 'get_clients':
