@@ -57,7 +57,7 @@ function processCommand(data, msg) {
       break;
     case 'event': // check if there's an event # breeze, silence, rain
       if (data.message != "") {
-        msg += "<br><span style=\"color: yellow;\">" + data.message + "</span>";
+        msg += "<br><span style=\"color: yellow;\">" + data.message + "</span><br>";
       }
       break;
     case 'info': // check if there's an info event      
