@@ -304,13 +304,13 @@ class Command:
                     damage += dice * damage_multipler * player.strength
 
                 if damage == 0:
-                    response = f"You swing wildly and miss!<br>"
+                    response = f"You swing wildly and miss!"
                 else:
                     if num_swings == 1:
-                        response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!<br>"
+                        response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
                     else:
-                        response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!<br>"
-                await Shared.send_msg(response, 'attack', websocket, logger)
+                        response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
+                await Shared.send_msg(response, 'you_attack', websocket, logger)
 
                 # subtract from monsters health
                 current_monster.hitpoints = current_monster.hitpoints - damage

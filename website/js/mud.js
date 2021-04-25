@@ -57,12 +57,17 @@ function processCommand(data, msg) {
       break;
     case 'event': // check if there's an event # breeze, silence, rain
       if (data.message != "") {
-        msg += "<br><span style=\"color: yellow;\">" + data.message + "</span><br>";
+        msg += "<br><span style=\"color: yellow;\">" + data.message + "</span>";
       }
       break;
     case 'info': // check if there's an info event      
       if (data.message != "") {
-        msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span><br>";
+        msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span>";
+      }
+      break;
+    case 'you_attack': // check if there's an info event      
+      if (data.message != "") {
+        msg += "<br><span style=\"color: #98FB98;\">" + data.message + "</span>";
       }
       break;
     case 'error': // check if there's an info event      
@@ -82,26 +87,26 @@ function processCommand(data, msg) {
       break;
     case 'room': // check if there's a room name
       if (data.name != "") {
-        msg += "<br><span style=\"color: green; text-weight: bold;\">" + data.name + "</span><br>";
+        msg += "<br><span style=\"color: green; text-weight: bold;\">" + data.name + "</span>";
       }
 
       // check if there's a room descrption
       if (data.description != "") {
-        msg += "<span style=\"color: #F9F5EC;\">" + data.description + "</span><br>";
+        msg += "<br><span style=\"color: #F9F5EC;\">" + data.description + "</span>";
       }
       // check for monsters
       if (data.monsters != "") {
-        msg += "<span style=\"color: #F9F5EC;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span><br>";
+        msg += "<br><span style=\"color: #F9F5EC;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span>";
       }
 
       // check for items
       if (data.items != "") {
-        msg += "<span style=\"color: #F9F5EC;\">You see </span><span style=\"color: green;\">" + data.items + "</span><br>";
+        msg += "<br><span style=\"color: #F9F5EC;\">You see </span><span style=\"color: green;\">" + data.items + "</span>";
       }
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
+        msg += "<br><span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
       }
       break;
     case 'get_clients':
