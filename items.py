@@ -10,5 +10,5 @@ class Items:
     lockpick = Item('Lockpick', Item.ItemType.ITEM, None, None, None)
     club = Item('Club', Item.ItemType.WEAPON, '1d4', Item.WeightClass.MEDIUM_WEIGHT, 'bludgeon')
     maul = Item('Maul', Item.ItemType.WEAPON, '1d5', Item.WeightClass.HEAVY_WEIGHT, 'smash')
-    punch = Item('Punch', Item.ItemType.WEAPON, '1d2', Item.WeightClass.SUPER_LIGHT_WEIGHT, 'punch')
+    punch = Item('Fists', Item.ItemType.WEAPON, '1d2', Item.WeightClass.SUPER_LIGHT_WEIGHT, 'punch')
     dragon_tooth = Item('Dragon Tooth', Item.ItemType.WEAPON, '1d6', Item.WeightClass.SUPER_HEAVY_WEIGHT, 'poke')
