@@ -282,7 +282,7 @@ class Command:
             await Shared.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
 
             # if you die and go to the crypt then your room ide will change..
-            while monster.hitpoints > 0 and player.location == room['id']:
+            while current_monster.hitpoints > 0 and player.location == room['id']:
                 # determine attack damage
                 weapon = Command.get_equiped_weapon(player, logger)
                 attack_potential = weapon.damage_potential  
@@ -320,7 +320,7 @@ class Command:
                     room_monsters.remove(current_monster)
                     # give experience
                     player.experience += current_monster.experience
-                    await Shared.send_msg(f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience.<br>", 'event', websocket, logger)
+                    await Shared.send_msg(f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience.", 'event', websocket, logger)
                 else:
                     await asyncio.sleep(3)
         else:
