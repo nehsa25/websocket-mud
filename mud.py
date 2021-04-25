@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
+import random
 from shared import Shared
 from random import randint
 from run_command import Command
@@ -24,7 +25,8 @@ class Mud:
     attack_time = True # true so we run once to begin loop
 
     # create player
-    name = "Crossen"
+    names = ['Crossen', 'Ashen', 'Kelsek', 'Renkath', 'Bink']
+    name = random.choice(names)
     hp = 50
     strength = 2 # 0 - 30
     agility = 2 # 0 - 30

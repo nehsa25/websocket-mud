@@ -249,7 +249,9 @@ class Command:
 
     @staticmethod
     async def process_stat(player, room, websocket, logger):
-        msg = "You have the following attributes:<br>"
+        msg = f"Hello {player.name}<br>"
+        msg += "***********************<br>"
+        msg += "You have the following attributes:<br>"
         msg += f"* Health {player.hitpoints}<br>"
         msg += f"* Strength {player.strength}<br>"
         msg += f"* Agility {player.agility}<br>"
