@@ -2,7 +2,7 @@ from item import Item
 
 class Items:
     stick = Item('Stick', Item.ItemType.WEAPON, '1d3', Item.WeightClass.LIGHT_WEIGHT, 'swish')
-    shovel = Item('Shovel', Item.ItemType.WEAPON,'1d2', Item.WeightClass.MEDIUM_WEIGHT, 'thunk')
+    shovel = Item('Shovel', Item.ItemType.WEAPON,'1d2', Item.WeightClass.MEDIUM_WEIGHT, 'thwack')
     helmet = Item('Helmet', Item.ItemType.ARMOR_HEAD, None, None, None)
     ring = Item('Ring', Item.ItemType.ITEM, None, None, None)
     cloth_pants = Item('Cloth Pants', Item.ItemType.ARMOR_LEGS, None, None, None)
