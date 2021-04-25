@@ -25,7 +25,7 @@ class Mud:
 
     # create player
     name = "Crossen"
-    hp = 50
+    hp = 5
     strength = 2 # 0 - 30
     agility = 2 # 0 - 30
     location = 0
@@ -136,7 +136,7 @@ class Mud:
         self.player.hitpoints = self.player.max_hitpoints
 
         # force room refresh
-        self.current_room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
+        self.room = [room for room in Rooms.rooms if room["id"] == self.player.location][0]
 
     # runs the combat
     async def start_mob_combat(self, websocket):
