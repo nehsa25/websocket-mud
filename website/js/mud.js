@@ -96,7 +96,7 @@ function processCommand(data, msg) {
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br>";
+        msg += "<span style=\"color: antiquewhite;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br><br class=\"break\">";
       }
       break;
     case 'get_clients':
@@ -112,17 +112,28 @@ function processCommand(data, msg) {
 }
 
 function trimHtml() {
+  trim_length = 5000;
+  break_msg = '<br class="break">';
   msg = $("#messages").html() + "";
   msg = msg.trim();
   console.log("HTML length: " + msg.length);
+  
+  if (msg.length > trim_length) {
+    trim_point = 0;
+    spans = msg.split(break_msg);
+    for (var x = 0; x <= spans.length; x++) {
+      // if we get below trim_length then we just need to go 1 back
+      if (msg.lastIndexOf(spans[x]) > trim_length) {
+        trim_point = msg.lastIndexOf(spans[x-1]);
+        break;
+      }
+    }
 
-  // new_msg = "";
-  // for (var x = lines.length; x >= lines.length; x--) {
-  //   new_msg
-  // }
-  // start_len = msg_len - 2000;
-  // msg = msg.substring(start_len, msg_len);
-  // console.log("Trimmed html from " + msg.length.toString() + " to " + start_len.toString());
+    // let's do some trimming
+    if (trim_point > 0) {
+      msg = msg.substring(trim_point, msg.length);
+    }
+  }
   return msg;
 }
 
