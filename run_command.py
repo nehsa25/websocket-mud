@@ -8,8 +8,9 @@ from log_utils import LogUtils, Level
 from items import Items
 from item import Item
 from muddirections import MudDirections
-from shared import Shared
+from utility import Utility
 from rooms import Rooms
+from run_command_utility import CommandUtility
 
 class Command:
 
@@ -67,7 +68,7 @@ class Command:
     @staticmethod
     async def process_help(player, room, websocket, logger):
         help_msg = "look, get, dig, inventory, drop, search, hide, stash, equip"
-        await Shared.send_msg(help_msg, 'info', websocket, logger)
+        await Utility.send_msg(help_msg, 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -75,7 +76,7 @@ class Command:
         found_exit = False
         for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
-                await Shared.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
+                await Utility.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
                 player, room = await Command.process_room(player.location, player, websocket, logger)
                 found_exit = True
@@ -83,7 +84,7 @@ class Command:
         if found_exit == False:
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
-                    await Shared.send_msg(f"You cannot go {direction[1]}.", 'error', websocket, logger)   
+                    await Utility.send_msg(f"You cannot go {direction[1]}.", 'error', websocket, logger)   
         return player, room
 
     @staticmethod
@@ -98,18 +99,18 @@ class Command:
                 break
 
         if valid_direction == True:
-            await Shared.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
+            await Utility.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
             player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
         else: 
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():
-                    await Shared.send_msg(f"{direction[1]} is not a valid direction to look.", 'error', websocket, logger)
+                    await Utility.send_msg(f"{direction[1]} is not a valid direction to look.", 'error', websocket, logger)
             
         return player, room
 
     @staticmethod
     async def process_look(player, room, websocket, logger):
-        await Shared.send_msg("You look around the room.", 'info', websocket, logger)
+        await Utility.send_msg("You look around the room.", 'info', websocket, logger)
         return await Command.process_room(player.location, player, websocket, logger)
 
     @staticmethod
@@ -120,20 +121,20 @@ class Command:
             for item in room['items']:
                 if wanted_item == item.name.lower():
                     found_item = True
-                    await Shared.send_msg(f"You pick up {item.name}.", 'info', websocket, logger)
+                    await Utility.send_msg(f"You pick up {item.name}.", 'info', websocket, logger)
                     # remove from room
                     room['items'].remove(item)
                     # add to our inventory
                     player.inventory.append(item)
                     break
         if found_item == False:
-            await Shared.send_msg(f"You cannot find {wanted_item}.", 'error', websocket, logger)
+            await Utility.send_msg(f"You cannot find {wanted_item}.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
     async def process_inventory(player, room, websocket, logger):
         if player.inventory == [] and player.money == []:
-            await Shared.send_msg("You have nothing in your inventory.", 'info', websocket, logger)
+            await Utility.send_msg("You have nothing in your inventory.", 'info', websocket, logger)
         else:
             msg = "You have the following items in your inventory:<br>"
             for item in player.inventory:
@@ -149,7 +150,7 @@ class Command:
             else:
                 msg += f"You have no money.<br>"
 
-            await Shared.send_msg(msg, 'info', websocket, logger)
+            await Utility.send_msg(msg, 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -157,14 +158,14 @@ class Command:
         # check if user has shovel
         if Items.shovel in player.inventory:
             if len(room['grave_items']) > 0:
-                await Shared.send_msg("You found something while digging!", 'info', websocket, logger)
+                await Utility.send_msg("You found something while digging!", 'info', websocket, logger)
                 for item in room['grave_items']:
                     # remove item from hidden items
                     room['grave_items'].remove(item)
                     # add to items in room
                     room['items'].append(item)
         else:
-            await Shared.send_msg("You need a shovel to dig.", 'info', websocket, logger)
+            await Utility.send_msg("You need a shovel to dig.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -174,7 +175,7 @@ class Command:
         if success == True:
             if len(room['hidden_items']) > 0:
                 for item in room['hidden_items']:
-                    await Shared.send_msg("You found something!", 'info', websocket, logger)
+                    await Utility.send_msg("You found something!", 'info', websocket, logger)
 
                     # remove from "hidden items"
                     room['hidden_items'].remove(item)
@@ -182,34 +183,21 @@ class Command:
                     # add to items in room
                     room['items'].append(item)
             else:
-                await Shared.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
+                await Utility.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
         else:
-            await Shared.send_msg("You search around but notice nothing.", 'info', websocket, logger)
+            await Utility.send_msg("You search around but notice nothing.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
     async def process_drop(command, player, room, websocket, logger):
-        wanted_item = command.split(' ', 1)[1] 
-        found_item = False
+        wanted_item = command.split(' ', 1)[1]         
+        found_item = await CommandUtility.drop_item(wanted_item, player, room, websocket, logger) 
+        found_coin = await CommandUtility.drop_coin(wanted_item, player, room, websocket, logger)
 
-        # check if it's in our inventory
-        item_obj = None
-        for item_in_inv in player.inventory:
-            if wanted_item.lower() == item_in_inv.name.lower():
-                item_obj = item_in_inv
-                found_item = True
-                break
-
-        if found_item == True:
-            # set eq'd to False
-            item_obj.equiped = False
-
-            # remove from inventory
-            player.inventory.remove(item_obj)
-            await Shared.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
-            room['items'].append(item_obj)
-        else:
-            await Shared.send_msg(f"You can't drop {wanted_item}", 'error', websocket, logger)
+        # if we didn't find the item, check if it's currency
+        if not found_item and not found_coin:
+            await Utility.send_msg(f"You can't drop {wanted_item}", 'error', websocket, logger)
+            
         return player, room
 
     @staticmethod
@@ -228,10 +216,10 @@ class Command:
         if found_item == True:
             # remove from inventory
             player.inventory.remove(item_obj)
-            await Shared.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
+            await Utility.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
             room['hidden_items'].append(item_obj)
         else:
-            await Shared.send_msg(f"You aren't carrying {wanted_item} to hide.", 'error', websocket, logger)
+            await Utility.send_msg(f"You aren't carrying {wanted_item} to hide.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -242,7 +230,7 @@ class Command:
         # check if the item is in our inventory
         for item in player.inventory:
             if item.name.lower() == wanted_item.lower():
-                await Shared.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
+                await Utility.send_msg(f"You equip {item.name}.", 'info', websocket, logger)
                 item.equiped = True
                 found_item = True
                 found_item = item
@@ -250,10 +238,10 @@ class Command:
         # if you eq'd an item, deselect any previous items
         for item in player.inventory:
             if (found_item.item_type == item.item_type and item.equiped == True) and found_item.name != item.name:
-                await Shared.send_msg(f"You unequip {item.name}.", 'info', websocket, logger)
+                await Utility.send_msg(f"You unequip {item.name}.", 'info', websocket, logger)
                 item.equiped = False
         if found_item == None:
-            await Shared.send_msg(f"You cannot equip {wanted_item}.", 'error', websocket, logger)
+            await Utility.send_msg(f"You cannot equip {wanted_item}.", 'error', websocket, logger)
         return player, room
 
     @staticmethod
@@ -269,12 +257,12 @@ class Command:
         msg += f"* Agility {player.agility}<br>"
         msg += f"* Perception {player.perception}<br>"
         msg += "**************************************************"
-        await Shared.send_msg(msg, 'info', websocket, logger)
+        await Utility.send_msg(msg, 'info', websocket, logger)
         return player, room
 
     @staticmethod
     async def process_exp(player, room, websocket, logger):
-        await Shared.send_msg(f"You have {player.experience} experience.", 'info', websocket, logger)
+        await Utility.send_msg(f"You have {player.experience} experience.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -294,7 +282,7 @@ class Command:
                     break
 
         if current_monster != None:
-            await Shared.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
+            await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
 
             # if you die and go to the crypt then your room id will change..
             while current_monster.hitpoints > 0 and player.location == room['id']:
@@ -325,7 +313,7 @@ class Command:
                         response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
                     else:
                         response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
-                await Shared.send_msg(response, 'you_attack', websocket, logger)
+                await Utility.send_msg(response, 'you_attack', websocket, logger)
 
                 # subtract from monsters health
                 current_monster.hitpoints = current_monster.hitpoints - damage
@@ -338,7 +326,7 @@ class Command:
                     current_monster.is_alive = False
 
                     msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
-                    await Shared.send_msg(msg, 'event', websocket, logger)
+                    await Utility.send_msg(msg, 'event', websocket, logger)
 
                     # add (Dead) to monster 
                     current_monster.name = f"(Dead) {current_monster.name}"
@@ -349,7 +337,7 @@ class Command:
                 else:
                     await asyncio.sleep(3)
         else:
-            await Shared.send_msg(f"{wanted_monster} is not a valid attack target.", 'error', websocket, logger)
+            await Utility.send_msg(f"{wanted_monster} is not a valid attack target.", 'error', websocket, logger)
         room['monsters'] = room_monsters
         return player, room
 
@@ -369,10 +357,10 @@ class Command:
                     break
 
         if current_monster == None:
-            await Shared.send_msg(f"You cannot loot {wanted_monster}", 'info', websocket, logger)
+            await Utility.send_msg(f"You cannot loot {wanted_monster}", 'info', websocket, logger)
         else:
             if monster.is_alive == True:
-                await Shared.send_msg(f"You cannot loot {current_monster.name}", 'info', websocket, logger)
+                await Utility.send_msg(f"You cannot loot {current_monster.name}", 'info', websocket, logger)
             else:
                 # remove monster
                 room_monsters.remove(current_monster)
@@ -382,9 +370,9 @@ class Command:
                 if len(current_monster.money) > 0:
                     player.money.extend(current_monster.money)
                     msg = f"You take {len(current_monster.money)} copper from {monster_name}."
-                    await Shared.send_msg(msg, 'info', websocket, logger)
+                    await Utility.send_msg(msg, 'info', websocket, logger)
                 else:
-                    await Shared.send_msg(f"You found no coins on {monster_name}.", 'info', websocket, logger)
+                    await Utility.send_msg(f"You found no coins on {monster_name}.", 'info', websocket, logger)
         return player, room
 
     # main function that runs all the rest
@@ -432,7 +420,7 @@ class Command:
         elif command.startswith('loot '): # loot corpse
             player, room = await Command.process_loot(command, player, room, websocket, logger)
         else:
-            await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
+            await Utility.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 
 
         return player, room

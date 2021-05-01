@@ -4,7 +4,7 @@ import websockets
 import json
 import traceback
 import random
-from shared import Shared
+from utility import Utility
 from random import randint
 from run_command import Command
 from player import Player
@@ -82,26 +82,26 @@ class Mud:
         while True:
             rand = randint(500, 1600)
             await asyncio.sleep(rand)
-            await Shared.send_msg("It begins to rain..", 'event', websocket, logger)
+            await Utility.send_msg("It begins to rain..", 'event', websocket, logger)
 
             # wait for it to stop
             rand = randint(100, 500)
             await asyncio.sleep(rand)
-            await Shared.send_msg("The rain pitter-patters to a stop and the sun begins to shine through the clouds..", 'event', websocket, logger)
+            await Utility.send_msg("The rain pitter-patters to a stop and the sun begins to shine through the clouds..", 'event', websocket, logger)
 
     # A gentle breeze blows by you..
     async def breeze(self, websocket):        
         while True:
             rand = randint(500, 2800)
             await asyncio.sleep(rand)
-            await Shared.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
+            await Utility.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self, websocket):
         while True:
             rand = randint(500, 2000)
             await asyncio.sleep(rand)
-            await Shared.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
+            await Utility.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
 
     # shows color-coded health bar
     async def show_health(self, websocket):
@@ -112,7 +112,7 @@ class Mud:
             color = 'yellow'
 
         health = f"Health: <span style=\"color: {color};\">{self.player.hitpoints}</span>"
-        await Shared.send_msg(health, 'health', websocket, logger)
+        await Utility.send_msg(health, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, websocket):
@@ -124,7 +124,7 @@ class Mud:
             task.cancel()
 
         # state you died
-        await Shared.send_msg("You die.... but awaken in the crypt.", 'event', websocket, logger)
+        await Utility.send_msg("You die.... but awaken in the crypt.", 'event', websocket, logger)
         
         # drop all items
         for item in self.player.inventory:
@@ -159,7 +159,7 @@ class Mud:
             if self.player.in_combat == False:
                 for monster in self.room["monsters"]:
                     if monster.is_alive == True:
-                        await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
+                        await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
 
                 # player is now in combat
                 self.player.in_combat = True
@@ -194,7 +194,7 @@ class Mud:
                                 found_monsters = True
 
                             # send our attack messages
-                            await Shared.send_msg(response, 'attack', websocket, logger)
+                            await Utility.send_msg(response, 'attack', websocket, logger)
                             self.attack_time = False
 
                             # update hp
