@@ -72,7 +72,7 @@ function processCommand(data, msg) {
       break;
     case 'error': // check if there's an info event      
       if (data.message != "") {
-        msg += "<br><span style=\"color: #790604;\">" + data.message + "</span>";
+        msg += "<br><span style=\"color: red;\">" + data.message + "</span>";
       }
       break;
     case 'attack': // check if there's an attack event

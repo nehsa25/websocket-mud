@@ -1,5 +1,6 @@
 class Player:
     name = ""
+    level = 1
     hitpoints = 0
     max_hitpoints = 0
     location = 0
@@ -9,6 +10,7 @@ class Player:
     experience = 0
     in_combat = False
     inventory = []
+    money = []
 
     def __init__(self, name, hp, strength, agility, location, perception):
         self.name = name

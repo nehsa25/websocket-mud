@@ -149,54 +149,70 @@ class Mud:
             return player
 
         # let user know monsters are attacking them but wait before first attack
-        if len(self.room["monsters"]) > 0:
+        found_monsters = False
+        for monster in self.room["monsters"]:
+            if not monster.name.lower().startswith('(dead)'):
+                found_monsters = True
 
+        if found_monsters == True:
             # we only want to print these messages the first time the user sees the monsters
             if self.player.in_combat == False:
                 for monster in self.room["monsters"]:
-                    await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
+                    if monster.is_alive == True:
+                        await Shared.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
 
                 # player is now in combat
                 self.player.in_combat = True
 
                 # wait before launching first attack
                 await asyncio.sleep(self.combat_wait_secs)     
+            
+            # keep_attacking is set to True so we go into the loop but then false unless we find a valid monster
+            keep_attacking = True
+            while self.player.in_combat == True and keep_attacking == True:
+                keep_attacking = False
+                # force a sleep between rounds
+                if self.attack_time == True: 
+                    # perform monster attacks
+                    for monster in self.room["monsters"]: # 3 monsters
+                        if monster.is_alive == True:
+                            keep_attacking = True
+                            obj = monster.damage.split('d')
+                            dice = int(obj[0])
+                            damage_potential = int(obj[1])
+                            damage_multipler = randint(0, damage_potential)
 
-        while self.player.in_combat == True and len(self.room["monsters"]) > 0:
-            if self.attack_time == True: 
-                # perform monster attacks
-                for monster in self.room["monsters"]:
-                    obj = monster.damage.split('d')
-                    dice = int(obj[0])
-                    damage_potential = int(obj[1])
-                    damage_multipler = randint(0, damage_potential)
+                            # roll dice
+                            damage = dice * damage_multipler
+                            if damage > 0:
+                                response = f"{monster.name} has hit you for {str(damage)}!"
+                            else:
+                                response = f"{monster.name} missed!"
 
-                    # roll dice
-                    damage = dice * damage_multipler
-                    if damage > 0:
-                        response = f"{monster.name} has hit you for {str(damage)}!"
-                    else:
-                        response = f"{monster.name} missed!"
+                            # check if monster is dead
+                            if monster.is_alive == False:
+                                found_monsters = True
 
-                    # send our attack messages
-                    await Shared.send_msg(response, 'attack', websocket, logger)
-                    self.attack_time = False
+                            # send our attack messages
+                            await Shared.send_msg(response, 'attack', websocket, logger)
+                            self.attack_time = False
 
-                    # update hp
-                    self.player.hitpoints = self.player.hitpoints - damage
-                    await self.show_health(websocket)
+                            # update hp
+                            self.player.hitpoints = self.player.hitpoints - damage
+                            await self.show_health(websocket)
 
-                    # no point in continuing if player is dead..
-                    if self.player.hitpoints <= 0:
-                        await self.you_died(websocket)
-                        break
-            else:
-                # while combat is running, wait x seconds between rounds                
-                await asyncio.sleep(self.combat_wait_secs)
-                self.attack_time = True
+                            # no point in continuing if player is dead..
+                            if self.player.hitpoints <= 0:
+                                await self.you_died(websocket)
+                                break
+                else:
+                    # while combat is running, wait x seconds between rounds                
+                    await asyncio.sleep(self.combat_wait_secs)
+                    self.attack_time = True
+                    keep_attacking = True
 
-        # set in_combat to false once combat is over
-        self.player.in_combat = False
+            # set in_combat to false once combat is over
+            self.player.in_combat = False
 
     # main loop when client connects
     async def main(self, websocket, path):

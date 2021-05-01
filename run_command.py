@@ -47,6 +47,7 @@ class Command:
         monsters = ""
         for monster in current_room["monsters"]:
             monsters += monster.name + ', '
+
         monsters = monsters[0:len(monsters)-2]
 
         # formulate message to client
@@ -131,16 +132,24 @@ class Command:
 
     @staticmethod
     async def process_inventory(player, room, websocket, logger):
-        if player.inventory != []:
+        if player.inventory == [] and player.money == []:
+            await Shared.send_msg("You have nothing in your inventory.", 'info', websocket, logger)
+        else:
             msg = "You have the following items in your inventory:<br>"
             for item in player.inventory:
                 if item.equiped == True:
                     msg += f"* {item.name} (Equiped)<br>"
                 else:
                     msg += f"* {item.name}<br>"
+
+            # get money
+            money = len(player.money)
+            if money > 0:
+                msg += f"{money} copper<br>"
+            else:
+                msg += f"You have no money.<br>"
+
             await Shared.send_msg(msg, 'info', websocket, logger)
-        else:
-            await Shared.send_msg("You have nothing in your inventory.", 'info', websocket, logger)
         return player, room
 
     @staticmethod
@@ -250,12 +259,16 @@ class Command:
     @staticmethod
     async def process_stat(player, room, websocket, logger):
         msg = f"Hello {player.name}<br>"
-        msg += "***********************<br>"
+        msg += "**************************************************<br>"
+        msg += f"Level: {player.level}<br>"
+        msg += f"Experience: {player.experience}<br>"
+        msg += "**************************************************<br>"
         msg += "You have the following attributes:<br>"
         msg += f"* Health {player.hitpoints}<br>"
         msg += f"* Strength {player.strength}<br>"
         msg += f"* Agility {player.agility}<br>"
-        msg += f"* Perception {player.perception}"
+        msg += f"* Perception {player.perception}<br>"
+        msg += "**************************************************"
         await Shared.send_msg(msg, 'info', websocket, logger)
         return player, room
 
@@ -276,14 +289,14 @@ class Command:
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(' ')
             for name in monster_name_parts:
-                if name.startswith(wanted_monster):
+                if name.startswith(wanted_monster) and monster.is_alive == True:
                     current_monster = monster
                     break
 
         if current_monster != None:
             await Shared.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
 
-            # if you die and go to the crypt then your room ide will change..
+            # if you die and go to the crypt then your room id will change..
             while current_monster.hitpoints > 0 and player.location == room['id']:
                 # determine attack damage
                 weapon = Command.get_equiped_weapon(player, logger)
@@ -318,16 +331,60 @@ class Command:
                 current_monster.hitpoints = current_monster.hitpoints - damage
 
                 if current_monster.hitpoints <= 0:
-                    # remove monster
-                    room_monsters.remove(current_monster)
                     # give experience
                     player.experience += current_monster.experience
-                    await Shared.send_msg(f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience.", 'event', websocket, logger)
+
+                    # set monster as dead
+                    current_monster.is_alive = False
+
+                    msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
+                    await Shared.send_msg(msg, 'event', websocket, logger)
+
+                    # add (Dead) to monster 
+                    current_monster.name = f"(Dead) {current_monster.name}"
+
+                    # show room
+                    await Command.process_room(player.location, player, websocket, logger)
+
                 else:
                     await asyncio.sleep(3)
         else:
             await Shared.send_msg(f"{wanted_monster} is not a valid attack target.", 'error', websocket, logger)
         room['monsters'] = room_monsters
+        return player, room
+
+    @staticmethod
+    async def process_loot(command, player, room, websocket, logger):
+        wanted_monster = command.split(' ', 1)[1] # loot skeleton
+
+        # see if this monster is in the room.
+        current_monster = None
+        room_monsters = room['monsters']
+        for monster in room['monsters']:
+            monster_name = monster.name.lower().strip()
+            monster_name_parts = monster_name.split(' ')
+            for name in monster_name_parts:
+                if name.startswith(wanted_monster):
+                    current_monster = monster
+                    break
+
+        if current_monster == None:
+            await Shared.send_msg(f"You cannot loot {wanted_monster}", 'info', websocket, logger)
+        else:
+            if monster.is_alive == True:
+                await Shared.send_msg(f"You cannot loot {current_monster.name}", 'info', websocket, logger)
+            else:
+                # remove monster
+                room_monsters.remove(current_monster)
+
+                # take money
+                monster_name = current_monster.name.replace('(Dead) ', '')
+                if len(current_monster.money) > 0:
+                    player.money.extend(current_monster.money)
+                    msg = f"You take {len(current_monster.money)} copper from {monster_name}."
+                    await Shared.send_msg(msg, 'info', websocket, logger)
+                else:
+                    await Shared.send_msg(f"You found no coins on {monster_name}.", 'info', websocket, logger)
         return player, room
 
     # main function that runs all the rest
@@ -372,6 +429,8 @@ class Command:
             asyncio.create_task(Command.process_attack_mob(command, player, room, websocket, logger))
         elif command == ('exp') or command == ('experience'): # experience
             player, room = await Command.process_exp(player, room, websocket, logger)
+        elif command.startswith('loot '): # loot corpse
+            player, room = await Command.process_loot(command, player, room, websocket, logger)
         else:
             await Shared.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 

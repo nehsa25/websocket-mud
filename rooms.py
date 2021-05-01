@@ -19,7 +19,7 @@ class Rooms:
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
             "grave_items": [Items.ring],
-            "monsters": []            
+            "monsters": [Monsters.get_skeleton()]            
         },
         { 
             "id": 1,
