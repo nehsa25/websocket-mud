@@ -17,22 +17,11 @@ class Mud:
     world = World()
 
     # number of players
-    world.clients = []
     combat_wait_secs = 3.5
     tasks = []
     room = None
     first_loop = True # send the room on first load
     attack_time = True # true so we run once to begin loop
-
-    # create player
-    # names = ['Crossen', 'Ashen', 'Kelsek', 'Renkath', 'Bink']
-    # name = random.choice(names)
-    hp = 50
-    strength = 2 # 0 - 30
-    agility = 2 # 0 - 30
-    location = 0
-    perception = 50
-    player = Player(hp, strength, agility, location, perception)
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -54,38 +43,23 @@ class Mud:
     # calls at the beginning of the connection
     async def register(self, player, websocket):
         LogUtils.debug(f"A new client has connected, registering..", logger)
-
-        # get the internal name based on IP to re-give connection
-        int_name = None
-        if websocket.origin != None:
-            int_name = websocket.origin
+        # get the client hostname
+        LogUtils.debug(f"Requesting client hostname..", logger)   
+        await websocket.send('{"type": "request_hostname"}')
+        LogUtils.debug(f"Awaiting client name response from client..", logger)
+        msg = await websocket.recv()
+        LogUtils.debug(f"Message received: {msg}", logger)
+        websocket_client = json.loads(msg)
+        ip = websocket.remote_address[0]
+        LogUtils.debug(f"Request received from {ip}: {websocket_client['type']}", logger)
+        if websocket_client['type'] == 'hostname_answer':
+            LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
+            player.name = websocket_client['host']
+            new_client = dict(name=player.name, socket=websocket)
+            self.world.clients.append(new_client)
+            await self.notify_users()
         else:
-            int_name = websocket.local_address[0]
-
-        found_client = False
-        for client in self.world.clients:
-            if client['internal_name'] == int_name:
-                found_client = True
-                break
-
-        if found_client == False:
-            # get the client hostname
-            LogUtils.debug(f"Requesting client hostname..", logger)   
-            await websocket.send('{"type": "request_hostname"}')
-            LogUtils.debug(f"Awaiting client name response from client..", logger)
-            msg = await websocket.recv()
-            LogUtils.debug(f"Message received: {msg}", logger)
-            websocket_client = json.loads(msg)
-            ip = websocket.remote_address[0]
-            LogUtils.debug(f"Request received from {ip}: {websocket_client['type']}", logger)
-            if websocket_client['type'] == 'hostname_answer':
-                LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
-                player.name = websocket_client['host']
-                new_client = dict(name=player.name, socket=websocket, internal_name=int_name)
-                self.world.clients.append(new_client)
-                await self.notify_users()
-            else:
-                LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
+            LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player
 
     # called when a client disconnects
@@ -121,14 +95,14 @@ class Mud:
             await Utility.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
 
     # shows color-coded health bar
-    async def show_health(self, websocket):
+    async def show_health(self, player, websocket):
         color = 'red'
-        if self.player.hitpoints / self.player.max_hitpoints >= .75:
+        if player.hitpoints / player.max_hitpoints >= .75:
             color = 'green'
-        elif self.player.hitpoints / self.player.max_hitpoints >= .25:
+        elif player.hitpoints / player.max_hitpoints >= .25:
             color = 'yellow'
 
-        health = f"Health: <span style=\"color: {color};\">{self.player.hitpoints}</span>"
+        health = f"Health: <span style=\"color: {color};\">{player.hitpoints}</span>"
         await Utility.send_msg(health, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
@@ -233,8 +207,15 @@ class Mud:
 
     # main loop when client connects
     async def main(self, websocket, path):
+        hp = 50
+        strength = 2 # 0 - 30
+        agility = 2 # 0 - 30
+        location = 0
+        perception = 50
+        player = Player(hp, strength, agility, location, perception)
+
         # register client websockets - runs onces each time a new person starts
-        player = await self.register(self.player, websocket)
+        player = await self.register(player, websocket)
 
         try:
             # schedule some events that'll do shit
@@ -256,11 +237,11 @@ class Mud:
 
                 # send the room the player is in
                 if self.first_loop == True:
-                    self.player, self.room, self.world = await Command.process_room(self.player.location, self.player, self.world, websocket, logger)
+                    player, self.room, self.world = await Command.process_room(player.location, player, self.world, websocket, logger)
                     self.first_loop = False
 
                 # send updated hp
-                await self.show_health(websocket)
+                await self.show_health(player, websocket)
 
                 # wait for a command to be sent
                 LogUtils.info(f"Waiting for command...", logger)
@@ -270,7 +251,7 @@ class Mud:
                 if msg_obj["type"] == "cmd":
                     LogUtils.debug(f"Received: cmd", logger)
                     received_command = True
-                    self.player, self.room, self.world = await Command.run_command(msg_obj["cmd"], self.room, self.player, self.world, websocket, logger)
+                    player, self.room, self.world = await Command.run_command(msg_obj["cmd"], self.room, player, self.world, websocket, logger)
                 else:
                     LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
