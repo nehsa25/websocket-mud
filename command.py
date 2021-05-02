@@ -10,7 +10,7 @@ from item import Item
 from muddirections import MudDirections
 from utility import Utility
 from rooms import Rooms
-from run_command_utility import CommandUtility
+from command_utility import CommandUtility
 
 class Command:
 
@@ -53,7 +53,8 @@ class Command:
         # show people
         people = ""
         for client in world.clients:
-            people += client['name'] + ', '
+            if player.name != client['name']:
+                people += client['name'] + ', '
         people = people[0:len(people)-2]
 
         # formulate message to client
@@ -84,7 +85,7 @@ class Command:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
                 await Utility.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
-                player, room = await Command.process_room(player.location, player, websocket, logger)
+                player, room, world = await Command.process_room(player.location, player, world, websocket, logger)
                 found_exit = True
                 break
         if found_exit == False:
@@ -106,7 +107,7 @@ class Command:
 
         if valid_direction == True:
             await Utility.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
-            player, new_room = await Command.process_room(avail_exit["id"], player, websocket, logger)
+            player, new_room, world = await Command.process_room(avail_exit["id"], player, world, websocket, logger)
         else: 
             for direction in MudDirections.pretty_directions:
                 if wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower():

@@ -6,7 +6,7 @@ import traceback
 import random
 from utility import Utility
 from random import randint
-from run_command import Command
+from command import Command
 from player import Player
 from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
@@ -25,14 +25,14 @@ class Mud:
     attack_time = True # true so we run once to begin loop
 
     # create player
-    names = ['Crossen', 'Ashen', 'Kelsek', 'Renkath', 'Bink']
-    name = random.choice(names)
+    # names = ['Crossen', 'Ashen', 'Kelsek', 'Renkath', 'Bink']
+    # name = random.choice(names)
     hp = 50
     strength = 2 # 0 - 30
     agility = 2 # 0 - 30
     location = 0
     perception = 50
-    player = Player(name, hp, strength, agility, location, perception)
+    player = Player(hp, strength, agility, location, perception)
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -52,7 +52,7 @@ class Mud:
             await client['socket'].send(json.dumps(json_msg))
 
     # calls at the beginning of the connection
-    async def register(self, websocket):
+    async def register(self, player, websocket):
         LogUtils.debug(f"A new client has connected, registering..", logger)
         # get the client hostname
         LogUtils.debug(f"Requesting client hostname..", logger)   
@@ -65,11 +65,13 @@ class Mud:
         LogUtils.debug(f"Request received from {ip}: {websocket_client['type']}", logger)
         if websocket_client['type'] == 'hostname_answer':
             LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
-            new_client = dict(name=websocket_client['host'], socket=websocket)
+            player.name = websocket_client['host']
+            new_client = dict(name=player.name, socket=websocket)
             self.world.clients.append(new_client)
             await self.notify_users()
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
+        return player
 
     # called when a client disconnects
     async def unregister(self, websocket):
@@ -217,7 +219,7 @@ class Mud:
     # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
-        await self.register(websocket)
+        player = await self.register(self.player, websocket)
 
         try:
             # schedule some events that'll do shit

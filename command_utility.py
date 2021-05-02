@@ -19,7 +19,7 @@ class CommandUtility:
 
             # remove from inventory
             player.inventory.remove(item_obj)
-            await Utility.send_msg(f"You dropped {item_obj.name}", 'info', websocket, logger)
+            await Utility.send_msg(f"You dropped {item_obj.name}.", 'info', websocket, logger)
             room['items'].append(item_obj)
         return found_item
 
@@ -34,6 +34,10 @@ class CommandUtility:
                 found_coin = True
                 break
 
-        if found_coin == True:      
+        if found_coin == True:  
+            # add to room    
             room['items'].append(item_obj)
-            await Utility.send_msg(f"yay", 'info', websocket, logger)
+
+            # remove from player inventory
+            player.inventory.remove(item_obj)
+            await Utility.send_msg(f"You dropped {coin.Name}.", 'info', websocket, logger)
