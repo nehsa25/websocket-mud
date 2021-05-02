@@ -54,23 +54,38 @@ class Mud:
     # calls at the beginning of the connection
     async def register(self, player, websocket):
         LogUtils.debug(f"A new client has connected, registering..", logger)
-        # get the client hostname
-        LogUtils.debug(f"Requesting client hostname..", logger)   
-        await websocket.send('{"type": "request_hostname"}')
-        LogUtils.debug(f"Awaiting client name response from client..", logger)
-        msg = await websocket.recv()
-        LogUtils.debug(f"Message received: {msg}", logger)
-        websocket_client = json.loads(msg)
-        ip = websocket.remote_address[0]
-        LogUtils.debug(f"Request received from {ip}: {websocket_client['type']}", logger)
-        if websocket_client['type'] == 'hostname_answer':
-            LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
-            player.name = websocket_client['host']
-            new_client = dict(name=player.name, socket=websocket)
-            self.world.clients.append(new_client)
-            await self.notify_users()
+
+        # get the internal name based on IP to re-give connection
+        int_name = None
+        if websocket.origin != None:
+            int_name = websocket.origin
         else:
-            LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
+            int_name = websocket.local_address[0]
+
+        found_client = False
+        for client in self.world.clients:
+            if client['internal_name'] == int_name:
+                found_client = True
+                break
+
+        if found_client == False:
+            # get the client hostname
+            LogUtils.debug(f"Requesting client hostname..", logger)   
+            await websocket.send('{"type": "request_hostname"}')
+            LogUtils.debug(f"Awaiting client name response from client..", logger)
+            msg = await websocket.recv()
+            LogUtils.debug(f"Message received: {msg}", logger)
+            websocket_client = json.loads(msg)
+            ip = websocket.remote_address[0]
+            LogUtils.debug(f"Request received from {ip}: {websocket_client['type']}", logger)
+            if websocket_client['type'] == 'hostname_answer':
+                LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
+                player.name = websocket_client['host']
+                new_client = dict(name=player.name, socket=websocket, internal_name=int_name)
+                self.world.clients.append(new_client)
+                await self.notify_users()
+            else:
+                LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player
 
     # called when a client disconnects
