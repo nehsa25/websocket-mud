@@ -17,7 +17,7 @@ class Mud:
     world = World()
 
     # number of players
-    clients = []
+    world.clients = []
     combat_wait_secs = 3.5
     tasks = []
     room = None
@@ -43,11 +43,11 @@ class Mud:
         print('inside notify_users')
         json_msg = {
             "type": "get_clients",
-            "value": len(self.clients)
+            "value": len(self.world.clients)
         }
 
         print(f"Sending json to each connected client: {json.dumps(json_msg)}")
-        for client in self.clients:
+        for client in self.world.clients:
             print(f"Sending updated client list to {client['name']}")
             await client['socket'].send(json.dumps(json_msg))
 
@@ -66,7 +66,7 @@ class Mud:
         if websocket_client['type'] == 'hostname_answer':
             LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
             new_client = dict(name=websocket_client['host'], socket=websocket)
-            self.clients.append(new_client)
+            self.world.clients.append(new_client)
             await self.notify_users()
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
@@ -74,7 +74,7 @@ class Mud:
     # called when a client disconnects
     async def unregister(self, websocket):
         LogUtils.debug(f"Unregistering client..", logger)
-        self.clients = [i for i in self.clients if not (i['socket'] == websocket)] 
+        self.world.clients = [i for i in self.world.clients if not (i['socket'] == websocket)] 
         await self.notify_users()
 
     # It begins to rain..
@@ -239,7 +239,7 @@ class Mud:
 
                 # send the room the player is in
                 if self.first_loop == True:
-                    self.player, self.room = await Command.process_room(self.player.location, self.player, websocket, logger)
+                    self.player, self.room, self.world = await Command.process_room(self.player.location, self.player, self.world, websocket, logger)
                     self.first_loop = False
 
                 # send updated hp
@@ -253,7 +253,7 @@ class Mud:
                 if msg_obj["type"] == "cmd":
                     LogUtils.debug(f"Received: cmd", logger)
                     received_command = True
-                    self.player, self.room = await Command.run_command(msg_obj["cmd"], self.room, self.player, websocket, logger)
+                    self.player, self.room, self.world = await Command.run_command(msg_obj["cmd"], self.room, self.player, self.world, websocket, logger)
                 else:
                     LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:

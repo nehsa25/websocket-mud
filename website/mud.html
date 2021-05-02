@@ -8,29 +8,30 @@
 </head>
 
 <body>
-    <div class="grid">
-        <!-- top -->
-        <div>&nbsp;</div>
-        <div><div style="float: left;"><span id="title">NehsaMUD</span><span id="subtitle">  - A rouge-like, text-based MUD</span></div><div id="health"></div></div>
-        <div>&nbsp;</div>
+  <div id="grid1">
 
-        <!-- main body -->
-        <div>&nbsp;</div>
-        <div id="messages" class="scrollbar" onclick="resetfocus()"></div>
-        <div>&nbsp;</div>
-
-        <!-- bottom-->
-        <div>&nbsp;</div>
-        <div>
-            <input id="command" spellcheck="false" placeholder="What do you want to do?" type="textarea" />                
-            <input id="submit_btn" type="button" text="text" value="Send Command" onclick="send_command()" />
-            <span id="users_connected">&nbsp;</span>
+    <div></div>
+    <div id="grid2">
+      <div id="title"><span id="title_span">NehsaMUD<span id="subtitle">  - A rouge-like, text-based MUD</span></span></div>
+      <div id="messages_wrapper" class="scrollbar" onclick="resetfocus()">
+        <div id="messages">&nbsp;</div>
+        <div id="status">
+          <div id="health">&nbsp;</div>
         </div>
-        <div>&nbsp;</div>
       </div>
+      <div id="grid3">
+        <div id="command_wrapper"><input id="command" spellcheck="false" placeholder="What do you want to do?" type="textarea" /></div>
+        <div id="submit_btn_wrapper"><input id="submit_btn" type="button" text="text" value="Send Command" onclick="send_command()" /></div>
+      </div>
+      <div id="users_connected"></div>
+    </div>
+    <div></div>
+  </div>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/mud.js"></script>
+
+
+  <script src="js/jquery-3.3.1.min.js"></script>
+  <script src="js/mud.js"></script>
 </body>
 <!-- Global site tag (gtag.js) - Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-HLW8G28E0B"></script>

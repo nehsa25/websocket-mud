@@ -1,24 +1,85 @@
 html {
-  background-color: darksalmon;
+  background-color: cadetblue;
+  background-image: url("../images/skulls.svg");
+  background-repeat: repeat;
 }
+
+body {
+  margin: 0px;
+}
+
 .grid {
-  display:grid;
+  display: grid;
   grid-template-columns: 10% auto 10%;
   grid-template-rows: 5% auto 10%;
-  grid-gap:10px;
+  grid-gap: 10px;
   height: calc(100vh - 10px);
+}
+
+#grid1 {
+  display: grid;
+  grid-template-columns: 10% auto 10%;
+  grid-template-rows: auto;
+  height: 100vh;
+}
+
+#grid2 {
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: 5% auto 5% 5%;
+  background-color: lightskyblue;
+  grid-gap: 10px;
+}
+
+#grid3 {
+  display: grid;
+  grid-template-columns: auto 30%;
+  grid-template-rows: 10% auto 10% 5%;
 }
 
 #title {
   font-family: 'Times New Roman', serif;
   font-size: 2rem;
+  margin: 0 15px;
+  position: relative;
+}
+
+#title_span {
+  position: absolute;
+  bottom: 0;
 }
 
 #subtitle {
-  vertical-align: super;
+  font-size: 1rem;
 }
 
-#messages {
+
+#command_wrapper {
+  text-align: center;
+}
+
+/* the input itself */
+#command {
+    padding: 1em;
+    width: 90%;
+    font-size: 1rem;
+}
+
+#submit_btn_wrapper {
+  text-align: center;
+}
+
+#submit_btn {
+    -webkit-border-radius: 10px;
+    -ms-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    padding: 1em;
+    margin-left: 40px;
+    font-size: 1rem;
+}
+
+#messages_wrapper {
   border: 2px solid #cccccc;
   -webkit-border-radius: 10px;
   -ms-border-radius: 10px;
@@ -30,49 +91,21 @@ html {
   padding: 2em;
   overflow-wrap: break-word;
   font-size: 1.5rem;
-}
-
-/* the div surrounding input and submit button */
-.command_input {
-    -webkit-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    outline: none;
-    text-align: left;
-    margin: 0 auto;
-    padding: 2em;
-    overflow-wrap: break-word;
-    background-color: black;
-}
-
-/* the input itself */
-#command {
-    height: 30px;
-    padding: 1em;
-    width: 80%;
-}
-
-#health {
-  font-size: 3rem;
-  text-align: right;
-}
-
-#submit_btn {
-    -webkit-border-radius: 10px;
-    -ms-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    padding: 1em;
-    margin-left: 40px;
+  position: relative;
+  max-height: 70vh;
 }
 
 #users_connected {
-    font-size: 2em;
-    display: block;
-    padding-left: inherit;
-    color: #cccccc;
-    text-align: center;
+  font-size: 2em;
+  display: block;
+  padding-left: inherit;
+  text-align: center;
+}
+
+#status {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 
 /* START - scrollbar */

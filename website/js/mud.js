@@ -43,7 +43,7 @@ $(document).ready(function () {
     document.getElementById('messages').innerHTML = msg;
     
     // place us at bottom of div
-    scrollSmoothToBottom("messages");
+    scrollSmoothToBottom("messages_wrapper");
   });
 });
 
@@ -51,7 +51,7 @@ function processCommand(data, msg) {
   switch (data.type) {        
     case 'request_hostname':
       console.log("Inside request_hostname switch");
-      var resp = '{"type": "hostname_answer", "host": "' + "webclient_" + new Date().getTime() + '"}'
+      var resp = '{"type": "hostname_answer", "host": "' + prompt("Please enter your name", "Crossen") + '"}'
       console.log("Server is requesting our name, sending back: " + resp);      
       socket.send(resp);
       break;
@@ -94,6 +94,12 @@ function processCommand(data, msg) {
       if (data.description != "") {
         msg += "<br><span style=\"color: #F9F5EC;\">" + data.description + "</span>";
       }
+
+      // check for people
+      if (data.people != "") {
+        msg += "<br><span style=\"color: #F9F5EC;\">People: </span><span style=\"color: antiquewhite;\">" + data.people + "</span>";
+      }
+
       // check for monsters
       if (data.monsters != "") {
         msg += "<br><span style=\"color: #F9F5EC;\">Monsters: </span><span style=\"color: red;\">" + data.monsters + "</span>";
@@ -122,7 +128,7 @@ function processCommand(data, msg) {
 }
 
 function trimHtml() {
-  trim_length = 3000;
+  trim_length = 2000;
   break_msg = '<br class="break">';
   msg = $("#messages").html() + "";
   msg = msg.trim();
