@@ -403,7 +403,7 @@ class Command:
         elif command == 'l' or command == 'look': # look
             player, room, world = await Command.process_look(player, room, world, websocket, logger)
         elif command.startswith('l ') or command.startswith('look '): # look <direction>
-            player, room, world = await Command.process_look_direction(command, player, world, room, websocket, logger)
+            player, room, world = await Command.process_look_direction(command, player, room, world, websocket, logger)
         elif command.startswith('g ') or command.startswith('get '): # get
             player, room, world = await Command.process_get(command, player, room, world, websocket, logger)
         elif command == 'i' or command == 'inv' or command == 'inventory': # inv
