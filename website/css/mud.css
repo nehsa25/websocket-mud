@@ -108,6 +108,13 @@ body {
   position: absolute;
   top: 0;
   right: 0;
+  margin: 10px;
+  border: 2px solid white;
+  background-color: antiquewhite;
+}
+
+#health {
+  font-size: 3rem;
 }
 
 .sidebar {
