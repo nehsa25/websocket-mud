@@ -133,10 +133,9 @@ class Mud:
         self.player, self.room = await Command.process_room(self.player.location, self.player, websocket, logger)
 
     # runs the combat
-    async def start_mob_combat(self, websocket):
+    async def start_mob_combat(self, player, websocket):
         # if the player is dead, don't do anything..
-        if self.player.hitpoints <= 0:
-            self.combat_started = False
+        if player.hitpoints <= 0:
             return player
 
         # let user know monsters are attacking them but wait before first attack
@@ -147,20 +146,20 @@ class Mud:
 
         if found_monsters == True:
             # we only want to print these messages the first time the user sees the monsters
-            if self.player.in_combat == False:
+            if player.in_combat == False:
                 for monster in self.room["monsters"]:
                     if monster.is_alive == True:
                         await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
 
                 # player is now in combat
-                self.player.in_combat = True
+                player.in_combat = True
 
                 # wait before launching first attack
                 await asyncio.sleep(self.combat_wait_secs)     
             
             # keep_attacking is set to True so we go into the loop but then false unless we find a valid monster
             keep_attacking = True
-            while self.player.in_combat == True and keep_attacking == True:
+            while player.in_combat == True and keep_attacking == True:
                 keep_attacking = False
                 # force a sleep between rounds
                 if self.attack_time == True: 
@@ -189,11 +188,11 @@ class Mud:
                             self.attack_time = False
 
                             # update hp
-                            self.player.hitpoints = self.player.hitpoints - damage
+                            player.hitpoints = self.player.hitpoints - damage
                             await self.show_health(websocket)
 
                             # no point in continuing if player is dead..
-                            if self.player.hitpoints <= 0:
+                            if player.hitpoints <= 0:
                                 await self.you_died(websocket)
                                 break
                 else:
@@ -203,7 +202,7 @@ class Mud:
                     keep_attacking = True
 
             # set in_combat to false once combat is over
-            self.player.in_combat = False
+            player.in_combat = False
 
     # main loop when client connects
     async def main(self, websocket, path):
@@ -232,7 +231,7 @@ class Mud:
                     attack_task.cancel()
 
                 # start combat (if monsters in room)
-                attack_task = asyncio.create_task(self.start_mob_combat(websocket))
+                attack_task = asyncio.create_task(self.start_mob_combat(player, websocket))
                 self.tasks.append(attack_task)
 
                 # send the room the player is in
