@@ -114,7 +114,7 @@ function processCommand(data, msg) {
 
       // check for available exits
       if (data.exits != "") {
-        msg += "<br><span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span><br class=\"break\">";
+        msg += "<br><span style=\"color: #F9F5EC;\">Available exits: </span><span style=\"color: green;\">" + data.exits + "</span>";
       }
       break;
     case 'get_clients':
@@ -126,32 +126,38 @@ function processCommand(data, msg) {
       break;
     }
 
-    return msg;
+    return msg + "<br class=\"break\">";
 }
 
-function trimHtml() {
-  trim_length = 2000;
-  break_msg = '<br class="break">';
-  msg = $("#messages").html() + "";
-  msg = msg.trim();
-  console.log("HTML length: " + msg.length);
+// function trimHtml() {
+//   trim_length = 500;
+//   break_msg = '<br class="break">';
+//   msg = $("#messages").html() + "";
+//   msg = msg.trim();
+//   console.log("HTML length: " + msg.length);
   
-  if (msg.length > trim_length) {
-    trim_point = 0;
-    spans = msg.split(break_msg);
-    for (var x = 0; x <= spans.length; x++) {
-      // if we get below trim_length then we just need to go 1 back
-      if (msg.lastIndexOf(spans[x]) > trim_length) {
-        trim_point = msg.lastIndexOf(spans[x-5]);
-        break;
-      }
-    }
+//   // only run if we've built up a bit
+//   if (msg.length > trim_length) {
+//     trim_point = 0;
+//     spans = msg.split(break_msg); // every message from websocket ends with "break_msg"
+//     for (var x = 0; x <= spans.length; x++) {
+//       // if we get below trim_length then we just need to go 1 back
+//       if (msg.indexOf(spans[x]) > trim_length) {
+//         trim_point = msg.indexOf(spans[x-1]);
+//         break;
+//       }
+//     }
 
-    // let's do some trimming
-    if (trim_point > 0) {
-      msg = msg.substring(trim_point, msg.length);
-    }
-  }
+//     // let's do some trimming
+//     if (trim_point > 0) {
+//       msg = msg.substring(trim_point, msg.length);
+//     }
+//   }
+//   return msg;
+// }
+
+function trimHtml() {
+  msg = $("#messages").html() + "";
   return msg;
 }
 

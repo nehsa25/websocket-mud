@@ -392,7 +392,7 @@ class Command:
 
         # if the player is dead, don't do anything..
         if player.hitpoints <= 0:
-            return player, room
+            return player, room, world
 
         # process each command
         if command == "":

@@ -41,7 +41,14 @@ class Mud:
             await client['socket'].send(json.dumps(json_msg))
 
     # calls at the beginning of the connection
-    async def register(self, player, websocket):
+    async def register(self, websocket):
+        hp = 50
+        strength = 2 # 0 - 30
+        agility = 2 # 0 - 30
+        location = 0
+        perception = 50
+        player = Player(hp, strength, agility, location, perception)
+
         LogUtils.debug(f"A new client has connected, registering..", logger)
         # get the client hostname
         LogUtils.debug(f"Requesting client hostname..", logger)   
@@ -188,8 +195,8 @@ class Mud:
                             self.attack_time = False
 
                             # update hp
-                            player.hitpoints = self.player.hitpoints - damage
-                            await self.show_health(websocket)
+                            player.hitpoints = player.hitpoints - damage
+                            await self.show_health(player, websocket)
 
                             # no point in continuing if player is dead..
                             if player.hitpoints <= 0:
@@ -200,21 +207,16 @@ class Mud:
                     await asyncio.sleep(self.combat_wait_secs)
                     self.attack_time = True
                     keep_attacking = True
-
+            
             # set in_combat to false once combat is over
             player.in_combat = False
 
+            await Utility.send_msg("Combat ended.", 'info', websocket, logger)
+
     # main loop when client connects
     async def main(self, websocket, path):
-        hp = 50
-        strength = 2 # 0 - 30
-        agility = 2 # 0 - 30
-        location = 0
-        perception = 50
-        player = Player(hp, strength, agility, location, perception)
-
         # register client websockets - runs onces each time a new person starts
-        player = await self.register(player, websocket)
+        player = await self.register(websocket)
 
         try:
             # schedule some events that'll do shit
