@@ -5,6 +5,8 @@ $(document).ready(function () {
   var port = 81;
   var full_address = "ws://" + host + ":" + port + "/"
 
+  $("#formdiv").hide();
+
   // Focus on the command bar
   $("#command").focus();
 
@@ -51,7 +53,7 @@ function processCommand(data, msg) {
   switch (data.type) {        
     case 'request_hostname':
       console.log("Inside request_hostname switch");
-      var resp = '{"type": "hostname_answer", "host": "' + prompt("Please enter your name", "Crossen") + '"}'
+      var resp = '{"type": "hostname_answer", "host": "' + prompt("Please enter your name", "Crossen") + '"}';
       console.log("Server is requesting our name, sending back: " + resp);      
       socket.send(resp);
       break;
