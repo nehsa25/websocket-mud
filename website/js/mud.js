@@ -142,7 +142,7 @@ function trimHtml() {
     for (var x = 0; x <= spans.length; x++) {
       // if we get below trim_length then we just need to go 1 back
       if (msg.lastIndexOf(spans[x]) > trim_length) {
-        trim_point = msg.lastIndexOf(spans[x-1]);
+        trim_point = msg.lastIndexOf(spans[x-5]);
         break;
       }
     }
