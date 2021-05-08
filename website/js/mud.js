@@ -126,7 +126,7 @@ function processCommand(data, msg) {
       break;
     }
 
-    return msg + "<br class=\"break\">";
+    return msg;
 }
 
 // function trimHtml() {
