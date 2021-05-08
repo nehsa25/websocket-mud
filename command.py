@@ -55,7 +55,8 @@ class Command:
         for client in world.clients:
             if player.name != client['name']:
                 people += client['name'] + ', '
-        people = people[0:len(people)-2]
+        if people != "":
+            people = people[0:len(people)-2]
 
         # formulate message to client
         json_msg = {
