@@ -42,7 +42,7 @@ class Mud:
 
     # calls at the beginning of the connection
     async def register(self, websocket):
-        hp = 50
+        hp = 5
         strength = 2 # 0 - 30
         agility = 2 # 0 - 30
         location = 0
@@ -113,9 +113,9 @@ class Mud:
         await Utility.send_msg(health, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
-    async def you_died(self, websocket):
+    async def you_died(self, player, websocket):
         # set combat to false
-        self.player.in_combat = False
+        player.in_combat = False
 
         # cancel all tasks
         for task in self.tasks:
@@ -125,19 +125,20 @@ class Mud:
         await Utility.send_msg("You die.... but awaken in the crypt.", 'event', websocket, logger)
         
         # drop all items
-        for item in self.player.inventory:
+        for item in player.inventory:
               self.room["items"].append(item)
-        self.player.inventory = []
+        player.inventory = []
 
         # set player location to crypt
-        self.player.location = 5
+        player.location = 5
 
         # set hits back to max / force health refresh
-        self.player.hitpoints = self.player.max_hitpoints
-        await self.show_health(websocket)
+        player.hitpoints = player.max_hitpoints
+        await self.show_health(player, websocket)
 
         # force room refresh
-        self.player, self.room = await Command.process_room(self.player.location, self.player, websocket, logger)
+        player, self.room, self.world = await Command.process_room(player.location, player, self.world, websocket, logger)
+        pass
 
     # runs the combat
     async def start_mob_combat(self, player, websocket):
@@ -196,12 +197,13 @@ class Mud:
 
                             # update hp
                             player.hitpoints = player.hitpoints - damage
-                            await self.show_health(player, websocket)
 
                             # no point in continuing if player is dead..
                             if player.hitpoints <= 0:
-                                await self.you_died(websocket)
+                                player, self.room, self.world = await self.you_died(player, websocket)
                                 break
+
+                            await self.show_health(player, websocket)
                 else:
                     # while combat is running, wait x seconds between rounds                
                     await asyncio.sleep(self.combat_wait_secs)
@@ -212,6 +214,8 @@ class Mud:
             player.in_combat = False
 
             await Utility.send_msg("Combat ended.", 'info', websocket, logger)
+
+            return player
 
     # main loop when client connects
     async def main(self, websocket, path):
