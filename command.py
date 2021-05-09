@@ -401,6 +401,9 @@ class Command:
         response = ""
         command = command.lower()
 
+        # send back the command we received as info
+        await Utility.send_msg(command, 'event', websocket, logger)
+
         # if the player is dead, don't do anything..
         if player.hitpoints <= 0:
             return player, room, world
