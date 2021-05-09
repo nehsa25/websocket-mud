@@ -42,9 +42,9 @@ class Mud:
 
     # calls at the beginning of the connection
     async def register(self, websocket):
-        hp = 5
-        strength = 2 # 0 - 30
-        agility = 2 # 0 - 30
+        hp = 50
+        strength = 3 # 0 - 30
+        agility = 3 # 0 - 30
         location = 0
         perception = 50
         player = Player(hp, strength, agility, location, perception)
@@ -65,6 +65,13 @@ class Mud:
             player.websocket = websocket
             self.world.players.append(player)
             await self.notify_users()
+
+            # send msg to everyone
+            for world_player in self.world.players:
+                if world_player.name == player.name:
+                    await Utility.send_msg(f"Welcome {player.name}!", 'event', websocket, logger)
+                else:
+                    await Utility.send_msg(f"{player.name} joined the game!", 'event', world_player.websocket, logger)
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player
@@ -78,7 +85,7 @@ class Mud:
     # It begins to rain..
     async def rain(self, websocket):
         while True:
-            rand = randint(500, 1600)
+            rand = randint(1000, 3600)
             await asyncio.sleep(rand)
             await Utility.send_msg("It begins to rain..", 'event', websocket, logger)
 
@@ -87,17 +94,24 @@ class Mud:
             await asyncio.sleep(rand)
             await Utility.send_msg("The rain pitter-patters to a stop and the sun begins to shine through the clouds..", 'event', websocket, logger)
 
+    # You hear thunder off in the distane..
+    async def thunder(self, websocket):
+        while True:
+            rand = randint(1000, 3800)
+            await asyncio.sleep(rand)
+            await Utility.send_msg("You hear thunder off in the distance..", 'event', websocket, logger)
+
     # A gentle breeze blows by you..
     async def breeze(self, websocket):        
         while True:
-            rand = randint(500, 2800)
+            rand = randint(1000, 3800)
             await asyncio.sleep(rand)
             await Utility.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self, websocket):
         while True:
-            rand = randint(500, 2000)
+            rand = randint(1000, 4000)
             await asyncio.sleep(rand)
             await Utility.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
 
@@ -227,6 +241,7 @@ class Mud:
             self.world.breeze_task = asyncio.create_task(self.breeze(websocket))
             self.world.rain_task = asyncio.create_task(self.rain(websocket))
             self.world.eerie_task = asyncio.create_task(self.eerie_silence(websocket))
+            self.world.thunder_task = asyncio.create_task(self.thunder(websocket))
 
             attack_task = None
 
