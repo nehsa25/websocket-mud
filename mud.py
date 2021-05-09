@@ -20,7 +20,6 @@ class Mud:
     combat_wait_secs = 3.5
     tasks = []
     room = None
-    first_loop = True # send the room on first load
     attack_time = True # true so we run once to begin loop
 
     async def exit_handler(self, signal, frame):
@@ -72,6 +71,9 @@ class Mud:
                     await Utility.send_msg(f"Welcome {player.name}!", 'event', websocket, logger)
                 else:
                     await Utility.send_msg(f"{player.name} joined the game!", 'event', world_player.websocket, logger)
+
+            # show room
+            player, self.room, self.world = await Command.process_room(player.location, player, self.world, websocket, logger)
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player
@@ -254,11 +256,6 @@ class Mud:
                 # start combat (if monsters in room)
                 attack_task = asyncio.create_task(self.start_mob_combat(player, websocket))
                 self.tasks.append(attack_task)
-
-                # send the room the player is in
-                if self.first_loop == True:
-                    player, self.room, self.world = await Command.process_room(player.location, player, self.world, websocket, logger)
-                    self.first_loop = False
 
                 # send updated hp
                 await self.show_health(player, websocket)
