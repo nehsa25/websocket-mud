@@ -110,6 +110,15 @@ class Command:
 
         if valid_direction == True:
             await Utility.send_msg(f"You look to the {avail_exit['direction'][1]}", 'info', websocket, logger)
+
+            # send message to any players in same room
+            for world_player in world.players:
+                if player.name == world_player.name:
+                    continue
+                if world_player.location == player.location:
+                   await Utility.send_msg(f"You notice {player.name} look to the {avail_exit['direction'][1]}.", 'info', world_player.websocket, logger)
+
+
             player, new_room, world = await Command.process_room(avail_exit["id"], player, world, websocket, logger)
         else: 
             for direction in MudDirections.pretty_directions:
