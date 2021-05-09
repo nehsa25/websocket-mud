@@ -34,7 +34,6 @@ body {
 #grid3 {
   display: grid;
   grid-template-columns: auto 30%;
-  grid-template-rows: 10% auto 10% 5%;
 }
 
 #title {
