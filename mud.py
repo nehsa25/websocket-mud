@@ -32,13 +32,13 @@ class Mud:
         print('inside notify_users')
         json_msg = {
             "type": "get_clients",
-            "value": len(self.world.clients)
+            "value": len(self.world.players)
         }
 
         print(f"Sending json to each connected client: {json.dumps(json_msg)}")
-        for client in self.world.clients:
-            print(f"Sending updated client list to {client['name']}")
-            await client['socket'].send(json.dumps(json_msg))
+        for player in self.world.players:
+            print(f"Sending updated client list to {player.name}")
+            await player.websocket.send(json.dumps(json_msg))
 
     # calls at the beginning of the connection
     async def register(self, websocket):
@@ -62,8 +62,8 @@ class Mud:
         if websocket_client['type'] == 'hostname_answer':
             LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
             player.name = websocket_client['host']
-            new_client = dict(name=player.name, socket=websocket)
-            self.world.clients.append(new_client)
+            player.websocket = websocket
+            self.world.players.append(player)
             await self.notify_users()
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
@@ -221,9 +221,6 @@ class Mud:
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
         player = await self.register(websocket)
-
-        # add to our global players 
-        self.world.players.append(player)
 
         try:
             # schedule some events that'll do shit

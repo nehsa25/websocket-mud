@@ -11,6 +11,7 @@ class Player:
     in_combat = False
     inventory = []
     money = []
+    websocket = None
 
     def __init__(self, hp, strength, agility, location, perception):
         self.hitpoints = hp
