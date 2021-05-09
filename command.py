@@ -52,9 +52,11 @@ class Command:
 
         # show people
         people = ""
-        for client in world.clients:
-            if player.name != client['name']:
-                people += client['name'] + ', '
+        for world_player in world.players:
+            if player.name == world_player.name:
+                continue
+            if world_player.location == room_id:
+                people += world_player.name + ', '
         if people != "":
             people = people[0:len(people)-2]
 

@@ -222,6 +222,9 @@ class Mud:
         # register client websockets - runs onces each time a new person starts
         player = await self.register(websocket)
 
+        # add to our global players 
+        self.world.players.append(player)
+
         try:
             # schedule some events that'll do shit
             self.world.breeze_task = asyncio.create_task(self.breeze(websocket))
