@@ -67,6 +67,11 @@ function processCommand(data, msg) {
         msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span>";
       }
       break;
+      case 'command': // check if there's an info event      
+      if (data.message != "") {
+        msg += "<br><span style=\"color: #F9F5EC;\">" + data.message + "</span>";
+      }
+      break;
     case 'you_attack': // check if there's an info event      
       if (data.message != "") {
         msg += "<br><span style=\"color: #98FB98;\">" + data.message + "</span>";
