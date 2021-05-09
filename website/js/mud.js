@@ -129,35 +129,13 @@ function processCommand(data, msg) {
     return msg;
 }
 
-// function trimHtml() {
-//   trim_length = 500;
-//   break_msg = '<br class="break">';
-//   msg = $("#messages").html() + "";
-//   msg = msg.trim();
-//   console.log("HTML length: " + msg.length);
-  
-//   // only run if we've built up a bit
-//   if (msg.length > trim_length) {
-//     trim_point = 0;
-//     spans = msg.split(break_msg); // every message from websocket ends with "break_msg"
-//     for (var x = 0; x <= spans.length; x++) {
-//       // if we get below trim_length then we just need to go 1 back
-//       if (msg.indexOf(spans[x]) > trim_length) {
-//         trim_point = msg.indexOf(spans[x-1]);
-//         break;
-//       }
-//     }
-
-//     // let's do some trimming
-//     if (trim_point > 0) {
-//       msg = msg.substring(trim_point, msg.length);
-//     }
-//   }
-//   return msg;
-// }
-
 function trimHtml() {
   msg = $("#messages").html() + "";
+  lines = msg.split('<br>');
+  if (lines.length > 100) {
+    msg = lines.slice(Math.max(lines.length - 100, 0)).join('<br>')
+  }
+  
   return msg;
 }
 
