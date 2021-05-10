@@ -394,6 +394,15 @@ class Command:
                     await Utility.send_msg(f"You found no coins on {monster_name}.", 'info', websocket, logger)
         return player, room, world
 
+    @staticmethod
+    async def process_who(player, room, world, websocket, logger):
+        players = ""
+        for player in world.players:
+            players += f"{player.name}<br>"
+
+        await Utility.send_msg(f"Players Online:<br>{players}", 'info', websocket, logger)
+        return player, room, world 
+
     # main function that runs all the rest
     @staticmethod
     async def run_command(command, room, player, world, websocket, logger):
@@ -441,6 +450,8 @@ class Command:
             player, room, world = await Command.process_exp(player, room, world, websocket, logger)
         elif command.startswith('loot '): # loot corpse
             player, room, world = await Command.process_loot(command, player, room, world, websocket, logger)
+        elif command == ('who'):
+            player, room, world = await Command.process_who(player, room, world, websocket, logger)
         else:
             await Utility.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
 
