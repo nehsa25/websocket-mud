@@ -81,8 +81,13 @@ class Mud:
     # called when a client disconnects
     async def unregister(self, websocket):
         LogUtils.debug(f"Unregistering client..", logger)
+        current_player = [i for i in self.world.players if i.websocket == websocket][0]
         self.world.players = [i for i in self.world.players if not (i.websocket == websocket)] 
         await self.notify_users()
+
+        # let folks know someone left
+        for world_player in self.world.players:
+            await Utility.send_msg(f"{current_player.name} left the game.", 'event', world_player.websocket, logger)
 
     # It begins to rain..
     async def rain(self, websocket):
