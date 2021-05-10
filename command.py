@@ -452,8 +452,11 @@ class Command:
             player, room, world = await Command.process_loot(command, player, room, world, websocket, logger)
         elif command == ('who'):
             player, room, world = await Command.process_who(player, room, world, websocket, logger)
-        else:
-            await Utility.send_msg(f"I don't understand command: {command}", 'info', websocket, logger)
-
+        else: # you're going to say it to the room..
+            for world_player in world.players:
+                if world_player.name == player.name:
+                    await Utility.send_msg(f"You say \"{command}\"", 'info', world_player.websocket, logger)
+                else:
+                    await Utility.send_msg(f"{player.name} says \"{command}\"", 'info', world_player.websocket, logger)
 
         return player, room, world
