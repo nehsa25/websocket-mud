@@ -107,12 +107,16 @@ body {
 }
 
 #status {
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 10px;
-  border: 2px solid white;
+  position: fixed;
+  top: 25px;
+  right: 25px;
+  border: 2px solid #cccccc;
   background-color: antiquewhite;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 1em;
 }
 
 #health {
