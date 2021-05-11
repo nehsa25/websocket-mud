@@ -50,7 +50,7 @@ class Command:
             monsters += monster.name + ', '
         monsters = monsters[0:len(monsters)-2]
 
-        # show people
+         # show people
         people = ""
         for world_player in world.players:
             if player.name == world_player.name:
@@ -93,7 +93,7 @@ class Command:
                     if world_player.location == player.location:
                         await Utility.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.", 'info', world_player.websocket, logger)
 
-                await Utility.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
+                await Utility.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
                 player, room, world = await Command.process_room(player.location, player, world, websocket, logger)
 
