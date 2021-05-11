@@ -153,6 +153,14 @@ class Command:
     @staticmethod
     async def process_look(player, room, world, websocket, logger):
         await Utility.send_msg("You look around the room.", 'info', websocket, logger)
+
+        # send message to any players in same room that you left
+        for world_player in world.players:
+            if player.name == world_player.name:
+                continue
+            if world_player.location == player.location:
+                await Utility.send_msg(f"You notice {player.name} looking around the room.", 'info', world_player.websocket, logger)
+
         return await Command.process_room(player.location, player, world, websocket, logger)
 
     @staticmethod
