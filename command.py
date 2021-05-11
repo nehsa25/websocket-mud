@@ -86,9 +86,32 @@ class Command:
         found_exit = False
         for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
+                # send message to any players in same room that you left
+                for world_player in world.players:
+                    if player.name == world_player.name:
+                        continue
+                    if world_player.location == player.location:
+                        await Utility.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.", 'info', world_player.websocket, logger)
+
                 await Utility.send_msg(f"You travel {avail_exit['direction'][1]}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
                 player, room, world = await Command.process_room(player.location, player, world, websocket, logger)
+
+                # send message to any players in same room that you're here
+                for world_player in world.players:
+                    if player.name == world_player.name:
+                        continue
+                    if world_player.location == player.location:
+                        # FIND OPPISITE DIRECTION HERE
+                        opp_direction = None
+                        for opp_dir in MudDirections.opp_directions:
+                            if avail_exit['direction'] == opp_dir[0]:
+                                 opp_direction = opp_dir[1]
+                            if avail_exit['direction'] == opp_dir[1]:
+                                opp_direction = opp_dir[0]
+
+                        await Utility.send_msg(f"{player.name} arrives from the {opp_direction[1].lower()}.", 'info', world_player.websocket, logger)
+
                 found_exit = True
                 break
         if found_exit == False:

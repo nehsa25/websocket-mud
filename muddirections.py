@@ -32,3 +32,11 @@ class MudDirections:# directions
         southwest[1].lower()
     ]
     pretty_directions = [up, down, north, south, east, west, northwest, northeast, southeast, southwest]
+
+    opp_directions = [
+        (up, down), 
+        (east, west),
+        (north, south),
+        (northeast, southwest),
+        (northwest, southeast)
+    ]
