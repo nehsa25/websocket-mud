@@ -2,6 +2,11 @@ import random
 from monster import Monster
 
 class Monsters:    
+    def get_crab():
+        monsters = ['', '', '', '', '', '', '', '', 'Armless', 'Rotting', 'Mad']
+        name = f"{random.choice(monsters)} Crab"
+        return Monster(name.strip(), 12, '1d4', 150, (0,100))
+
     def get_skeleton():
         monsters = ['', '', '', '', '', '', '', '', 'Nasty', 'Ravaged', 'Rotting']
         name = f"{random.choice(monsters)} Skeleton"

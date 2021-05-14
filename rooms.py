@@ -7,8 +7,8 @@ class Rooms:
     rooms = [
         { 
             "id": 0,
-            "name": "Graveyard",
-            "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.",
+            "name": "Beach",
+            "description": "You are on a white-sand beach.  You see paths leading off in several directions.",
             "exits": [ 
                     { "direction": dirs.west, "id": 1 },
                     { "direction": dirs.north, "id": 2 },
@@ -18,8 +18,7 @@ class Rooms:
                 ],
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
-            "grave_items": [Items.ring],
-            "monsters": [Monsters.get_skeleton()]            
+            "monsters": [Monsters.get_crab()]            
         },
         { 
             "id": 1,
@@ -28,7 +27,6 @@ class Rooms:
             "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
-            "grave_items": [Items.ring],
             "monsters": [Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()]
         },
         { 
@@ -40,7 +38,6 @@ class Rooms:
                     { "direction": dirs.northeast, "id": 6 } ],
             "items": [Items.shovel],
             "hidden_items": [],
-            "grave_items": [Items.cloth_pants],
             "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton()]
         },
         { 
@@ -53,7 +50,6 @@ class Rooms:
                     { "direction": dirs.north, "id": 6} ],
             "items": [],
             "hidden_items": [Items.lockpick],
-            "grave_items": [Items.shirt],
             "monsters": []
         },
         { 
@@ -65,7 +61,6 @@ class Rooms:
                     { "direction": dirs.northeast, "id": 3 } ],
             "items": [],
             "hidden_items": [],
-            "grave_items": [Items.club],
             "monsters": []
         },
         { 
@@ -77,7 +72,6 @@ class Rooms:
                 ],
             "items": [],
             "hidden_items": [],
-            "grave_items": [],
             "monsters": []
         },
         { 
@@ -89,7 +83,6 @@ class Rooms:
                     { "direction": dirs.southwest, "id": 2 } ],
             "items": [],
             "hidden_items": [],
-            "grave_items": [],
             "monsters": []
         }
     ]

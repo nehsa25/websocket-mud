@@ -77,7 +77,7 @@ class Command:
 
     @staticmethod
     async def process_help(player, room, world, websocket, logger):
-        help_msg = "look, get, dig, inventory, drop, search, hide, stash, equip"
+        help_msg = "look, get, inventory, drop, search, hide, stash, equip"
         await Utility.send_msg(help_msg, 'info', websocket, logger)
         return player, room, world
 
@@ -201,21 +201,6 @@ class Command:
                 msg += f"You have no money.<br>"
 
             await Utility.send_msg(msg, 'info', websocket, logger)
-        return player, room, world
-
-    @staticmethod
-    async def process_dig(player, room, world, websocket, logger):
-        # check if user has shovel
-        if Items.shovel in player.inventory:
-            if len(room['grave_items']) > 0:
-                await Utility.send_msg("You found something while digging!", 'info', websocket, logger)
-                for item in room['grave_items']:
-                    # remove item from hidden items
-                    room['grave_items'].remove(item)
-                    # add to items in room
-                    room['items'].append(item)
-        else:
-            await Utility.send_msg("You need a shovel to dig.", 'info', websocket, logger)
         return player, room, world
 
     @staticmethod
@@ -463,8 +448,6 @@ class Command:
             player, room, world = await Command.process_get(command, player, room, world, websocket, logger)
         elif command == 'i' or command == 'inv' or command == 'inventory': # inv
             player, room, world = await Command.process_inventory(player, room, world, websocket, logger)
-        elif command == 'dig': # dig
-            player, room, world = await Command.process_dig(player, room, world, websocket, logger)
         elif command == 'sea' or command == 'search': # search
             player, room, world = await Command.process_search(player, room, world, websocket, logger)
         elif command.startswith('dr ') or command.startswith('drop '): # drop
