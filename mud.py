@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
+from random import randint
 from utility import Utility
 from command import Command
 from player import Player
@@ -128,32 +129,29 @@ class Mud:
 
     # runs the combat
     async def start_mob_combat(self, player, websocket):
-        # if the player is dead, don't do anything..
-        if player.hitpoints <= 0:
-            return player
+        while True:
+            # wait before launching first attack
+            await asyncio.sleep(.1)     
 
-        # let user know monsters are attacking them but wait before first attack
-        found_monsters = False
-        for monster in self.room["monsters"]:
-            if not monster.name.lower().startswith('(dead)'):
-                found_monsters = True
-
-        if found_monsters == True:
             # we only want to print these messages the first time the user sees the monsters
+            found_monsters = False
             if player.in_combat == False:
                 for monster in self.room["monsters"]:
                     if monster.is_alive == True:
                         await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
+                        found_monsters = True
 
-                # player is now in combat
-                player.in_combat = True
+                if found_monsters:
+                    # player is now in combat
+                    player.in_combat = True
 
-                # wait before launching first attack
-                await asyncio.sleep(self.combat_wait_secs)     
-            
+                    # wait before launching first attack
+                    await asyncio.sleep(self.combat_wait_secs)     
+                
             # keep_attacking is set to True so we go into the loop but then false unless we find a valid monster
             keep_attacking = True
             while player.in_combat == True and keep_attacking == True:
+                print(f"Room: {self.room['id']}")
                 keep_attacking = False
                 # force a sleep between rounds
                 if self.attack_time == True: 
@@ -197,11 +195,9 @@ class Mud:
                     keep_attacking = True
             
             # set in_combat to false once combat is over
-            player.in_combat = False
-
-            await Utility.send_msg("Combat ended.", 'info', websocket, logger)
-
-            return player
+            if player.in_combat == True:                
+                player.in_combat = False
+                await Utility.send_msg("Combat ended.", 'info', websocket, logger)
 
     # main loop when client connects
     async def main(self, websocket, path):
@@ -215,18 +211,11 @@ class Mud:
             self.world.eerie_task = asyncio.create_task(self.world.eerie_silence(websocket, logger))
             self.world.thunder_task = asyncio.create_task(self.world.thunder(websocket, logger))
 
-            attack_task = None
+            # start our mob combat task
+            asyncio.create_task(self.start_mob_combat(player, websocket))
 
-            response = ""
+            # enter our player input loop
             while True:
-                # if we changed rooms, cancel attack <-- THIS IS WRONG.  THIS SHOULD BE DONE IN PROCESS_DIRECTION.
-                if attack_task != None:
-                    attack_task.cancel()
-
-                # start combat (if monsters in room)
-                attack_task = asyncio.create_task(self.start_mob_combat(player, websocket))
-                self.tasks.append(attack_task)
-
                 # send updated hp
                 await self.show_health(player, websocket)
 
