@@ -3,9 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
-import random
 from utility import Utility
-from random import randint
 from command import Command
 from player import Player
 from log_utils import LogUtils, Level
@@ -88,39 +86,6 @@ class Mud:
         # let folks know someone left
         for world_player in self.world.players:
             await Utility.send_msg(f"{current_player.name} left the game.", 'event', world_player.websocket, logger)
-
-    # It begins to rain..
-    async def rain(self, websocket):
-        while True:
-            rand = randint(1000, 3600)
-            await asyncio.sleep(rand)
-            await Utility.send_msg("It begins to rain..", 'event', websocket, logger)
-
-            # wait for it to stop
-            rand = randint(100, 500)
-            await asyncio.sleep(rand)
-            await Utility.send_msg("The rain pitter-patters to a stop and the sun begins to shine through the clouds..", 'event', websocket, logger)
-
-    # You hear thunder off in the distane..
-    async def thunder(self, websocket):
-        while True:
-            rand = randint(1000, 3800)
-            await asyncio.sleep(rand)
-            await Utility.send_msg("You hear thunder off in the distance..", 'event', websocket, logger)
-
-    # A gentle breeze blows by you..
-    async def breeze(self, websocket):        
-        while True:
-            rand = randint(1000, 3800)
-            await asyncio.sleep(rand)
-            await Utility.send_msg("A gentle breeze blows by you..", 'event', websocket, logger)
-
-    # An eerie silence settles on the room..
-    async def eerie_silence(self, websocket):
-        while True:
-            rand = randint(1000, 4000)
-            await asyncio.sleep(rand)
-            await Utility.send_msg("An eerie silence settles on the room..", 'event', websocket, logger)
 
     # shows color-coded health bar
     async def show_health(self, player, websocket):
@@ -245,10 +210,10 @@ class Mud:
 
         try:
             # schedule some events that'll do shit
-            self.world.breeze_task = asyncio.create_task(self.breeze(websocket))
-            self.world.rain_task = asyncio.create_task(self.rain(websocket))
-            self.world.eerie_task = asyncio.create_task(self.eerie_silence(websocket))
-            self.world.thunder_task = asyncio.create_task(self.thunder(websocket))
+            self.world.breeze_task = asyncio.create_task(self.world.breeze(websocket, logger))
+            self.world.rain_task = asyncio.create_task(self.world.rain(websocket, logger))
+            self.world.eerie_task = asyncio.create_task(self.world.eerie_silence(websocket, logger))
+            self.world.thunder_task = asyncio.create_task(self.world.thunder(websocket, logger))
 
             attack_task = None
 
