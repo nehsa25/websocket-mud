@@ -95,6 +95,7 @@ class Command:
 
                 await Utility.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", 'info', websocket, logger)   
                 player.location = avail_exit["id"]
+                player.in_combat = False
                 player, room, world = await Command.process_room(player.location, player, world, websocket, logger)
 
                 # send message to any players in same room that you're here
@@ -102,7 +103,6 @@ class Command:
                     if player.name == world_player.name:
                         continue
                     if world_player.location == player.location:
-                        # FIND OPPISITE DIRECTION HERE
                         opp_direction = None
                         for opp_dir in MudDirections.opp_directions:
                             if avail_exit['direction'] == opp_dir[0]:

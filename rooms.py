@@ -27,7 +27,7 @@ class Rooms:
             "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
-            "monsters": [Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()]
+            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()]
         },
         { 
             "id": 2,
