@@ -10,6 +10,7 @@ from player import Player
 from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
 from world import World
+from operator import itemgetter
 
 class Mud:
     # create our WORLD object that'll contain things like breeze and rain events
@@ -142,6 +143,8 @@ class Mud:
                 attack_time = True
 
                 # process attacks
+                total_damage = 0
+                monsters_damage = []
                 for monster in self.room["monsters"]:
                     if monster.is_alive == True:
                         # while combat is running, wait x seconds between rounds    
@@ -154,25 +157,39 @@ class Mud:
                         damage_potential = int(obj[1])
                         damage_multipler = randint(0, damage_potential)
 
-                        # roll dice
+                        # roll dice for a monster
                         damage = dice * damage_multipler
-                        if damage > 0:
-                            response = f"{monster.name} has hit you for {str(damage)}!"
-                        else:
-                            response = f"{monster.name} missed!"
+                        total_damage += damage
 
-                                                    # send our attack messages
-                        await Utility.send_msg(response, 'attack', websocket, logger)
+                        # add to our monster damage list
+                        monster_damage = dict(name=monster.name, damage=damage)
+                        monsters_damage.append(monster_damage)
 
-                        # update hp
-                        player.hitpoints = player.hitpoints - damage
+                # sort based on damage
+                monsters_damage = sorted(monsters_damage, key=lambda k: k['damage'], reverse=True) 
 
-                        # no point in continuing if player is dead..
-                        if player.hitpoints <= 0:
-                            player, self.room, self.world = await self.you_died(player, websocket)
-                            break
+                # build our attack message
+                attack_msg = f"You were hit for {total_damage} damage!"
+                attack_msg += " ("
+                for monster_damage in monsters_damage:
+                    if monster_damage['damage'] > 0:
+                        attack_msg += f"{monster_damage['name']}: {monster_damage['damage']}, "
 
-                        await self.show_health(player, websocket)
+                attack_msg = attack_msg[0:len(attack_msg)-2]
+                attack_msg += ")"
+
+                # send our attack messages
+                await Utility.send_msg(attack_msg, 'attack', websocket, logger)
+
+                # update hp
+                player.hitpoints = player.hitpoints - damage
+
+                # no point in continuing if player is dead..
+                if player.hitpoints <= 0:
+                    player, self.room, self.world = await self.you_died(player, websocket)
+                    break
+
+                await self.show_health(player, websocket)
 
                 # pause before attacking again
                 attack_time = False

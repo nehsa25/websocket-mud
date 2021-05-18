@@ -86,7 +86,8 @@ function processCommand(data, msg) {
       break;
     case 'attack': // check if there's an attack event
       if (data.message != "") {
-        msg += "<br><span style=\"color: #7851a9;\">" + data.message + "</span>";
+        attack_txt = data.message.split('! ')
+        msg += "<br><span style=\"color: red;\">" + attack_txt[0] + "!</span><br><span style=\"font-size: 1rem; vertical-align: super; color: #cccccc;\">" + attack_txt[1] + "</span>";
       }
       break;
     case 'health': // check if there's an health event
