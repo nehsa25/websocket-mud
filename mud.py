@@ -71,7 +71,7 @@ class Mud:
                     await Utility.send_msg(f"{player.name} joined the game!", 'event', world_player.websocket, logger)
 
             # show room
-            player, self.room, self.world = await Command.process_room(player.location, player, self.world, websocket, logger)
+            player, self.room, self.world = await Command.move_room(player.location, player, self.world, websocket, logger)
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player

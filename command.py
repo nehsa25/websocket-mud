@@ -24,7 +24,7 @@ class Command:
         return eq_item
 
     @staticmethod
-    async def process_room(new_room_id, player, world, websocket, logger):
+    async def move_room(new_room_id, player, world, websocket, logger):
         old_room = [room for room in Rooms.rooms if room["id"] == player.location][0]
         new_room = [room for room in Rooms.rooms if room["id"] == new_room_id][0]
 
@@ -33,11 +33,20 @@ class Command:
             for monster in old_room["monsters"]:
                 monster.in_combat = ""
 
-            # remove player from old room        
+            # remove player from old room
             old_room['players'].remove(player)
 
-        # add player to new room
+        # add player to new room        
         new_room['players'].append(player)
+        player.location = new_room["id"]
+
+        # show new room
+        await Command.process_room(new_room_id, player, world, websocket, logger)
+        return player, new_room, world
+    
+    @staticmethod
+    async def process_room(new_room_id, player, world, websocket, logger):
+        new_room = [room for room in Rooms.rooms if room["id"] == new_room_id][0]
 
         # get the description
         description = new_room["description"]
@@ -106,7 +115,7 @@ class Command:
 
                 await Utility.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", 'info', websocket, logger)   
                 player.in_combat = False
-                player, room, world = await Command.process_room(avail_exit["id"], player, world, websocket, logger)
+                player, room, world = await Command.move_room(avail_exit["id"], player, world, websocket, logger)
 
                 # send message to any players in same room that you're here
                 for world_player in world.players:

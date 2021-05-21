@@ -14,7 +14,7 @@ class Rooms:
                     { "direction": dirs.north, "id": 2 },
                     { "direction": dirs.northeast, "id": 3 },
                     { "direction": dirs.east, "id": 4 },
-                    { "direction": dirs.down, "id": 5 }
+                    { "direction": dirs.south, "id": 5 }
                 ],
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
@@ -23,8 +23,8 @@ class Rooms:
         },
         { 
             "id": 1,
-            "name": "Graveyard",
-            "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
+            "name": "Beach",
+            "description": "You are on a white-sand beach.",
             "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
@@ -33,8 +33,8 @@ class Rooms:
         },
         { 
             "id": 2,
-            "name": "Graveyard",
-            "description": "You are in a dark, gloomy graveyard, lit only by moonlight.  You see a gravestone.",
+            "name": "Beach",
+            "description": "You are on a white-sand beach.",
             "exits": [ 
                     { "direction": dirs.south, "id": 0 },
                     { "direction": dirs.northeast, "id": 6 } ],
@@ -45,8 +45,8 @@ class Rooms:
         },
         { 
             "id": 3,
-            "name": "Graveyard",
-            "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
+            "name": "Beach",
+            "description": "You are on a white-sand beach.",
             "exits": [ 
                     { "direction": dirs.southwest, "id": 0 }, 
                     { "direction": dirs.south, "id": 4 },
@@ -58,8 +58,8 @@ class Rooms:
         },
         { 
             "id": 4,
-            "name": "Graveyard",
-            "description": "You are in a dark, gloomy graveyard, lit only by moonlight.",
+            "name": "Beach",
+            "description": "You are on a white-sand beach.",
             "exits": [ 
                     { "direction": dirs.west, "id": 0 }, 
                     { "direction": dirs.northeast, "id": 3 } ],
@@ -70,10 +70,10 @@ class Rooms:
         },
         { 
             "id": 5,
-            "name": "Crypt",
-            "description": "You are in a dark room.  A staircase leads up.",
+            "name": "Beach Shore",
+            "description": "You awaken on a white sandy beach shore.  There's an odd tension in the air.",
             "exits": [ 
-                    { "direction": dirs.up, "id": 0 }
+                    { "direction": dirs.north, "id": 0 }
                 ],
             "items": [],
             "hidden_items": [],
@@ -82,14 +82,14 @@ class Rooms:
         },
         { 
             "id": 6,
-            "name": "Church",
-            "description": "You are at the entrance of a church.",
+            "name": "Beachside Church",
+            "description": "You are at the entrance of an old forgotten church.  There's a lock on the door.",
             "exits": [ 
                     { "direction": dirs.south, "id": 3 }, 
                     { "direction": dirs.southwest, "id": 2 } ],
             "items": [],
             "hidden_items": [],
-            "monsters": [],
+            "monsters": [Monsters.get_thug()],
             "players": []          
         }
     ]

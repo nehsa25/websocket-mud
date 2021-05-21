@@ -127,3 +127,11 @@ body {
   border-left: 2px solid black;
   border-right: 2px solid black;
 }
+
+.sidebar_menu_item {
+  padding: 1em;
+}
+
+.commands {
+  visibility: hidden;
+}
