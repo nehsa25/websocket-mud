@@ -9,6 +9,8 @@ class Monster:
     money_potential = None
     money = []
     is_alive = True
+    in_combat = None
+    num_attack_targets = 1
 
     def __init__(self, name, hitpoints, damage_potential, experience, money_potential):
         self.name = name

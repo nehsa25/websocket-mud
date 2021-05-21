@@ -18,7 +18,8 @@ class Rooms:
                 ],
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
-            "monsters": [Monsters.get_crab()]            
+            "monsters": [Monsters.get_crab()],
+            "players": []          
         },
         { 
             "id": 1,
@@ -27,7 +28,8 @@ class Rooms:
             "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
-            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()]
+            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()],
+            "players": []          
         },
         { 
             "id": 2,
@@ -38,7 +40,8 @@ class Rooms:
                     { "direction": dirs.northeast, "id": 6 } ],
             "items": [Items.shovel],
             "hidden_items": [],
-            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton()]
+            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton()],
+            "players": []          
         },
         { 
             "id": 3,
@@ -50,7 +53,8 @@ class Rooms:
                     { "direction": dirs.north, "id": 6} ],
             "items": [],
             "hidden_items": [Items.lockpick],
-            "monsters": []
+            "monsters": [],
+            "players": []          
         },
         { 
             "id": 4,
@@ -61,7 +65,8 @@ class Rooms:
                     { "direction": dirs.northeast, "id": 3 } ],
             "items": [],
             "hidden_items": [],
-            "monsters": []
+            "monsters": [],
+            "players": []          
         },
         { 
             "id": 5,
@@ -72,7 +77,8 @@ class Rooms:
                 ],
             "items": [],
             "hidden_items": [],
-            "monsters": []
+            "monsters": [],
+            "players": []          
         },
         { 
             "id": 6,
@@ -83,6 +89,7 @@ class Rooms:
                     { "direction": dirs.southwest, "id": 2 } ],
             "items": [],
             "hidden_items": [],
-            "monsters": []
+            "monsters": [],
+            "players": []          
         }
     ]

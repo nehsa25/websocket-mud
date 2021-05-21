@@ -3,6 +3,7 @@ import asyncio
 import websockets
 import json
 import traceback
+import random
 from random import randint
 from utility import Utility
 from command import Command
@@ -127,17 +128,29 @@ class Mud:
             # Allow other tasks to complete
             await asyncio.sleep(.1)
 
+            found_monsters = False
+
             # show the initial "prepares to attack you text"
-            if player.in_combat == False:
-                for monster in self.room["monsters"]:
-                    if monster.is_alive == True:
-                        await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', websocket, logger)
-                        found_monsters = True
+            player_to_attack = None
+            for monster in self.room["monsters"]:
+                if monster.is_alive == True:
+                    found_monsters = True
+
+                    # determine who to attack
+                    player_to_attack = random.choice(self.room["players"])
+                    
+                    # set who monster is in combat with
+                    monster.in_combat = player_to_attack.name
+
+                    # cycle through all players
+                    for attack_player in self.room["players"]:
+                        if monster.in_combat == attack_player.name:
+                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
+                        else:
+                            await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', websocket, logger)
+                        monster.in_combat = True
 
             if found_monsters == True:
-                # player is now in combat
-                player.in_combat = True
-
                 # wait before launching first attack
                 await asyncio.sleep(self.combat_wait_secs)
                 attack_time = True
@@ -151,19 +164,21 @@ class Mud:
                         if attack_time != True:                                        
                             await asyncio.sleep(self.combat_wait_secs)
 
-                        # calculate our damage
-                        obj = monster.damage.split('d')
-                        dice = int(obj[0])
-                        damage_potential = int(obj[1])
-                        damage_multipler = randint(0, damage_potential)
+                        # need to check here if combat is still going.. we may have killed everything or moved rooms
+                        if monster.is_alive == True:
+                            # calculate our damage
+                            obj = monster.damage.split('d')
+                            dice = int(obj[0])
+                            damage_potential = int(obj[1])
+                            damage_multipler = randint(0, damage_potential)
 
-                        # roll dice for a monster
-                        damage = dice * damage_multipler
-                        total_damage += damage
+                            # roll dice for a monster
+                            damage = dice * damage_multipler
+                            total_damage += damage
 
-                        # add to our monster damage list
-                        monster_damage = dict(name=monster.name, damage=damage)
-                        monsters_damage.append(monster_damage)
+                            # add to our monster damage list
+                            monster_damage = dict(name=monster.name, damage=damage)
+                            monsters_damage.append(monster_damage)
 
                 # sort based on damage
                 monsters_damage = sorted(monsters_damage, key=lambda k: k['damage'], reverse=True) 
@@ -174,12 +189,14 @@ class Mud:
                 for monster_damage in monsters_damage:
                     if monster_damage['damage'] > 0:
                         attack_msg += f"{monster_damage['name']}: {monster_damage['damage']}, "
-
                 attack_msg = attack_msg[0:len(attack_msg)-2]
                 attack_msg += ")"
 
                 # send our attack messages
-                await Utility.send_msg(attack_msg, 'attack', websocket, logger)
+                if total_damage > 0:
+                    await Utility.send_msg(attack_msg, 'attack', websocket, logger)
+                else:
+                    await Utility.send_msg("No monsters dealt you any damage!", 'info', websocket, logger)
 
                 # update hp
                 player.hitpoints = player.hitpoints - damage

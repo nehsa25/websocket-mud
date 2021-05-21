@@ -24,29 +24,40 @@ class Command:
         return eq_item
 
     @staticmethod
-    async def process_room(room_id, player, world, websocket, logger):
-        # display room user is in
-        current_room = [room for room in Rooms.rooms if room["id"] == room_id][0]
+    async def process_room(new_room_id, player, world, websocket, logger):
+        old_room = [room for room in Rooms.rooms if room["id"] == player.location][0]
+        new_room = [room for room in Rooms.rooms if room["id"] == new_room_id][0]
+
+        if old_room != new_room:
+            # reset all monsters in previous room <-- hasn't been tested
+            for monster in old_room["monsters"]:
+                monster.in_combat = ""
+
+            # remove player from old room        
+            old_room['players'].remove(player)
+
+        # add player to new room
+        new_room['players'].append(player)
 
         # get the description
-        description = current_room["description"]
+        description = new_room["description"]
 
         # show items
         items = ""
-        if len(current_room['items']) > 0:
-            for item in current_room['items']:
+        if len(new_room['items']) > 0:
+            for item in new_room['items']:
                 items += item.name + ', '
             items = items[0:len(items)-2]
 
         # offer possible exits
         exits = ""
-        for available_exit in current_room["exits"]:
+        for available_exit in new_room["exits"]:
             exits += available_exit['direction'][1] + ', '
         exits = exits[0:len(exits)-2]
 
         # show monsters
         monsters = ""
-        for monster in current_room["monsters"]:
+        for monster in new_room["monsters"]:
             monsters += monster.name + ', '
         monsters = monsters[0:len(monsters)-2]
 
@@ -55,7 +66,7 @@ class Command:
         for world_player in world.players:
             if player.name == world_player.name:
                 continue
-            if world_player.location == room_id:
+            if world_player.location == new_room_id:
                 people += world_player.name + ', '
         if people != "":
             people = people[0:len(people)-2]
@@ -63,7 +74,7 @@ class Command:
         # formulate message to client
         json_msg = {
             "type": 'room',
-            "name": current_room["name"],
+            "name": new_room["name"],
             "description": description,
             "items": items,
             "exits": exits,
@@ -73,7 +84,7 @@ class Command:
 
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
-        return player, current_room, world
+        return player, new_room, world
 
     @staticmethod
     async def process_help(player, room, world, websocket, logger):
@@ -94,9 +105,8 @@ class Command:
                         await Utility.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.", 'info', world_player.websocket, logger)
 
                 await Utility.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", 'info', websocket, logger)   
-                player.location = avail_exit["id"]
                 player.in_combat = False
-                player, room, world = await Command.process_room(player.location, player, world, websocket, logger)
+                player, room, world = await Command.process_room(avail_exit["id"], player, world, websocket, logger)
 
                 # send message to any players in same room that you're here
                 for world_player in world.players:
