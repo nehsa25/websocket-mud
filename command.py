@@ -31,7 +31,7 @@ class Command:
         if old_room != new_room:
             # reset all monsters in previous room <-- hasn't been tested
             for monster in old_room["monsters"]:
-                monster.in_combat = ""
+                monster.in_combat = None
 
             # remove player from old room
             old_room['players'].remove(player)

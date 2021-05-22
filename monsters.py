@@ -17,6 +17,11 @@ class Monsters:
         name = f"{random.choice(monsters)} Zombie"
         return Monster(name.strip(), 12, '1d4', 150, (0,100))
 
+    def get_zombie_surfer():
+        monsters = ['', '', '', '', '', '', '', 'Rotting', 'Scarred', 'Dirty', 'Angry']
+        name = f"{random.choice(monsters)} Zombie Surfer"
+        return Monster(name.strip(), 15, '1d6', 175, (0,1000))
+
     def get_ghoul():
         monsters = ['', '', '', '', '', '', '', '', 'Gluttonous', 'Scarred', 'Ragged']
         name = f"{random.choice(monsters)} Ghoul"
@@ -26,3 +31,5 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', '', 'Scarred', 'Dirty', 'Angry']
         name = f"{random.choice(monsters)} Thug"
         return Monster(name.strip(), 15, '1d6', 175, (0,1000))
+
+

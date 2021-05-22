@@ -53,7 +53,7 @@ class Rooms:
                     { "direction": dirs.north, "id": 6} ],
             "items": [],
             "hidden_items": [Items.lockpick],
-            "monsters": [],
+            "monsters": [Monsters.get_zombie_surfer()],
             "players": []          
         },
         { 
