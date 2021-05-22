@@ -377,7 +377,7 @@ class Command:
                     player.experience += current_monster.experience
 
                     # set monster as dead
-                    current_monster.is_alive = False
+                    current_monster.kill()
 
                     msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
                     await Utility.send_msg(msg, 'event', websocket, logger)

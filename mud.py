@@ -12,6 +12,7 @@ from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
 from world import World
 from operator import itemgetter
+from rooms import Rooms
 
 class Mud:
     # create our WORLD object that'll contain things like breeze and rain events
@@ -219,6 +220,31 @@ class Mud:
                 # pause before attacking again
                 attack_time = False
 
+    # resurrect mobs
+    async def respawn_mobs(self):
+        # every 2 seconds, search through every room and reset monsters
+        while True:
+            # sleep 2 seconds
+            await asyncio.sleep(2)
+
+            # look through each room 
+            for room in Rooms.rooms:
+
+                # and if the room has monsters
+                if len(room['monsters']) > 0:
+                    for monster in room['monsters']:
+
+                        # check if they're dead
+                        if monster.is_alive == False:
+                            current_epoch = int(time.time())
+
+                            # if monster has been dead for more than 2 minutes, resurrect him 
+                            # (we should consider making then kinda random (2-5 minutes for example))
+                            secs_since_death = current_epoch - monster.dead_epoch
+                            if secs_since_death >= monster.respawn_rate_secs:
+                                # resurrect them..
+                                monster.resurrect()
+
     # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
@@ -233,6 +259,9 @@ class Mud:
 
             # start our mob combat task
             asyncio.create_task(self.start_mob_combat(player, websocket))
+
+            # start our resurrection task
+            asyncio.create_task(self.respawn_mobs())
 
             # enter our player input loop
             while True:
