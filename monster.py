@@ -1,6 +1,7 @@
 import time
 from random import randint
 from money import Money
+from utility import Utility
 
 class Monster:
     name = ""
@@ -15,9 +16,12 @@ class Monster:
     respawn_rate_secs = 60 # minute
     dead_epoch = None
     death_cry = None
-    resurrect_cry = None
+    entrance_cry = None
+    monster_type = None
 
-    def __init__(self, name, hitpoints, damage_potential, experience, money_potential, num_attack_targets = 1, respawn_rate_secs = 60, death_cry = None, resurrect_cry = None):
+    def __init__(self, name, monster_type, hitpoints, damage_potential, 
+                experience, money_potential, death_cry, entrance_cry,
+                num_attack_targets = 1, respawn_rate_secs = 60):
         self.name = name
         self.hitpoints = hitpoints
         self.damage = damage_potential
@@ -26,7 +30,8 @@ class Monster:
         self.num_attack_targets = num_attack_targets
         self.respawn_rate_secs = respawn_rate_secs
         self.death_cry = death_cry
-        self.resurrect_cry = resurrect_cry
+        self.entrance_cry = entrance_cry
+        self.monster_type = monster_type
 
         # calculate money
         money = randint(money_potential[0], money_potential[1])
@@ -35,21 +40,10 @@ class Monster:
             coppers.append(Money.Coin.Copper)
         self.money = coppers
 
-        # skeletons = 1
-        # zombies = 100
-        # ghouls = 1000
-
-    def kill(self):
+    async def kill(self, room, logger):
         self.is_alive = False
         self.dead_epoch = int(time.time())
 
         if self.death_cry != None:
-            pass
-
-    def resurrect(self):
-        self.is_alive = True
-        self.dead_epoch = None
-
-        # PRONOUNCE YOU'VE ARISEN!
-        if self.resurrect_cry != None:
-            pass
+            for player in room['players']:
+                await Utility.send_msg(self.death_cry, 'info', player.websocket, logger)

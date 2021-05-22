@@ -1,3 +1,4 @@
+from monster import Monster
 import sched, time
 import asyncio
 import websockets
@@ -11,7 +12,7 @@ from player import Player
 from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
 from world import World
-from operator import itemgetter
+from monsters import Monsters
 from rooms import Rooms
 
 class Mud:
@@ -105,7 +106,7 @@ class Mud:
         player.in_combat = False
 
         # state you died
-        await Utility.send_msg("You die... but awaken in the crypt.", 'event', websocket, logger)
+        await Utility.send_msg("You die... but awaken on a strange beach shore.", 'event', websocket, logger)
         
         # drop all items
         for item in player.inventory:
@@ -208,7 +209,7 @@ class Mud:
                         await Utility.send_msg("No monsters dealt you any damage!", 'info', websocket, logger)
 
                     # update hp
-                    player.hitpoints = player.hitpoints - damage
+                    player.hitpoints = player.hitpoints - total_damage
 
                     # no point in continuing if player is dead..
                     if player.hitpoints <= 0:
@@ -242,8 +243,12 @@ class Mud:
                             # (we should consider making then kinda random (2-5 minutes for example))
                             secs_since_death = current_epoch - monster.dead_epoch
                             if secs_since_death >= monster.respawn_rate_secs:
-                                # resurrect them..
-                                monster.resurrect()
+                                # remove old monster
+                                room['monsters'].remove(monster)
+                                
+                                # create new monster
+                                monsters = Monsters()
+                                room['monsters'].append(monsters.get_monster(monster.monster_type))
 
     # main loop when client connects
     async def main(self, websocket, path):

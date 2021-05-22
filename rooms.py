@@ -4,6 +4,7 @@ from muddirections import MudDirections
 
 class Rooms:
     dirs = MudDirections()
+    monsters = Monsters()
     rooms = [
         { 
             "id": 0,
@@ -18,7 +19,7 @@ class Rooms:
                 ],
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
-            "monsters": [Monsters.get_crab()],
+            "monsters": [monsters.get_crab()],
             "players": []          
         },
         { 
@@ -28,7 +29,7 @@ class Rooms:
             "exits": [ { "direction": dirs.east, "id": 0 } ],
             "items": [],
             "hidden_items": [Items.shovel],
-            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton(), Monsters.get_zombie(), Monsters.get_ghoul()],
+            "monsters": [monsters.get_skeleton(), monsters.get_skeleton(), monsters.get_zombie(), monsters.get_ghoul()],
             "players": []          
         },
         { 
@@ -40,7 +41,7 @@ class Rooms:
                     { "direction": dirs.northeast, "id": 6 } ],
             "items": [Items.shovel],
             "hidden_items": [],
-            "monsters": [Monsters.get_skeleton(), Monsters.get_skeleton()],
+            "monsters": [monsters.get_skeleton(), monsters.get_skeleton()],
             "players": []          
         },
         { 
@@ -53,7 +54,7 @@ class Rooms:
                     { "direction": dirs.north, "id": 6} ],
             "items": [],
             "hidden_items": [Items.lockpick],
-            "monsters": [Monsters.get_zombie_surfer()],
+            "monsters": [monsters.get_zombie_surfer()],
             "players": []          
         },
         { 
@@ -71,7 +72,7 @@ class Rooms:
         { 
             "id": 5,
             "name": "Beach Shore",
-            "description": "You awaken on a white sandy beach shore.  There's an odd tension in the air.",
+            "description": "You are on a white sandy beach shore.  Ocean surrounds you in all directions except for the North.  There's an odd tension in the air.",
             "exits": [ 
                     { "direction": dirs.north, "id": 0 }
                 ],
@@ -89,7 +90,7 @@ class Rooms:
                     { "direction": dirs.southwest, "id": 2 } ],
             "items": [],
             "hidden_items": [],
-            "monsters": [Monsters.get_thug()],
+            "monsters": [monsters.get_thug()],
             "players": []          
         }
     ]
