@@ -416,9 +416,6 @@ class Command:
             if monster.is_alive == True:
                 await Utility.send_msg(f"You cannot loot {current_monster.name}", 'info', websocket, logger)
             else:
-                # remove monster
-                room_monsters.remove(current_monster)
-
                 # take money
                 monster_name = current_monster.name.replace('(Dead) ', '')
                 if len(current_monster.money) > 0:
