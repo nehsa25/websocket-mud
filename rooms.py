@@ -72,7 +72,7 @@ class Rooms:
         { 
             "id": 5,
             "name": "Beach Shore",
-            "description": "You are on a white sandy beach shore.  Ocean surrounds you in all directions except for the North.  There's an odd tension in the air.",
+            "description": "You are on a white sandy beach shore.  Green ocean surrounds you in all directions except for the North.  There's an odd tension in the air.",
             "exits": [ 
                     { "direction": dirs.north, "id": 0 }
                 ],

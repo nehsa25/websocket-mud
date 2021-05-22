@@ -248,7 +248,8 @@ class Mud:
                                 
                                 # create new monster
                                 monsters = Monsters()
-                                room['monsters'].append(monsters.get_monster(monster.monster_type))
+                                new_monster = await monsters.get_monster(monster.monster_type, room, logger)
+                                room['monsters'].append(new_monster)
 
     # main loop when client connects
     async def main(self, websocket, path):

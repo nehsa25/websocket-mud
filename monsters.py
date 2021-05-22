@@ -12,25 +12,37 @@ class Monsters:
         THUG = 6
 
     # used for respawning monsters
-    def get_monster(self, wanted_monster):
+    async def get_monster(self, wanted_monster, room, logger):
         if wanted_monster == self.MONSTERS.CRAB:
-            return self.get_crab()
+            monster = self.get_crab()
+            await monster.announce_entrance(room, logger)
+            return monster
         elif wanted_monster == self.MONSTERS.SKELETON:
-            return self.get_skeleton()
+            monster = self.get_skeleton()
+            await monster.announce_entrance(room, logger)
+            return monster
         elif wanted_monster == self.MONSTERS.ZOMBIE:
-            return self.get_zombie()
+            monster = self.get_zombie()
+            await monster.announce_entrance(room, logger)
+            return monster
         elif wanted_monster == self.MONSTERS.ZOMBIE_SURFER:
-            return self.get_zombie_surfer()
+            monster = self.get_zombie_surfer()
+            await monster.announce_entrance(room, logger)
+            return monster
         elif wanted_monster == self.MONSTERS.GHOUL:
-            return self.get_ghoul()
+            monster = self.get_ghoul()
+            await monster.announce_entrance(room, logger)
+            return monster
         elif wanted_monster == self.MONSTERS.THUG:
-            return self.get_thug()
+            monster = self.get_thug()
+            await monster.announce_entrance(room, logger)
+            return monster
 
     def get_crab(self):
         monsters = ['', '', '', '', '', '', '', '', 'Angry', 'Mad']
         name = f"{random.choice(monsters)} Giant Crab"
-        death_cry = f"{name} scuttles one last time and dies.."
-        entrance_cry = "Wanders in.."
+        death_cry = f"{name} kicks one last time and dies.."
+        entrance_cry = f"{name} scuttles in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.CRAB,
@@ -46,7 +58,7 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', '', 'Nasty', 'Ravaged', 'Rotting']
         name = f"{random.choice(monsters)} Skeleton"
         death_cry = f"{name} falls over and dies.."
-        entrance_cry = "Wanders in.."
+        entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.CRAB,
@@ -62,7 +74,7 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', '', 'Rotting', 'Mad']
         name = f"{random.choice(monsters)} Zombie"
         death_cry = f"{name} falls over and dies.."
-        entrance_cry = "Wanders in.."
+        entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.CRAB,
@@ -78,7 +90,7 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', 'Rotting', 'Scarred', 'Dirty', 'Angry']
         name = f"{random.choice(monsters)} Zombie Surfer"
         death_cry = f"{name} says \"Narley\", then falls over and dies.."
-        entrance_cry = "Wanders in.."
+        entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.CRAB,
@@ -94,7 +106,7 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', '', 'Gluttonous', 'Scarred', 'Ragged']
         name = f"{random.choice(monsters)} Ghoul"
         death_cry = f"{name} falls over and dies.."
-        entrance_cry = "Wanders in.."
+        entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.GHOUL,
@@ -110,7 +122,7 @@ class Monsters:
         monsters = ['', '', '', '', '', '', '', '', 'Scarred', 'Dirty', 'Angry']
         name = f"{random.choice(monsters)} Thug"
         death_cry = f"{name} falls over and dies.."
-        entrance_cry = "Wanders in.."
+        entrance_cry = f"{name} saunders in.."
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.THUG,

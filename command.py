@@ -422,6 +422,9 @@ class Command:
                     player.money.extend(current_monster.money)
                     msg = f"You take {len(current_monster.money)} copper from {monster_name}."
                     await Utility.send_msg(msg, 'info', websocket, logger)
+
+                    # remove from monster
+                    current_monster.money = 0
                 else:
                     await Utility.send_msg(f"You found no coins on {monster_name}.", 'info', websocket, logger)
         return player, room, world

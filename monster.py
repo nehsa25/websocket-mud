@@ -40,6 +40,12 @@ class Monster:
             coppers.append(Money.Coin.Copper)
         self.money = coppers
 
+    # announce we're here!
+    async def announce_entrance(self, room, logger):        
+        if self.entrance_cry != None:
+            for player in room['players']:
+                await Utility.send_msg(self.entrance_cry, 'info', player.websocket, logger)
+
     async def kill(self, room, logger):
         self.is_alive = False
         self.dead_epoch = int(time.time())
