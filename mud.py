@@ -136,21 +136,21 @@ class Mud:
                 if monster.is_alive == True:
                     found_monsters = True
 
-                if monster.in_combat == None:
+                    if monster.in_combat == None:
 
-                    # determine who to attack
-                    player_to_attack = random.choice(self.room["players"])
-                    
-                    # set who monster is in combat with
-                    monster.in_combat = player_to_attack.name
+                        # determine who to attack
+                        player_to_attack = random.choice(self.room["players"])
+                        
+                        # set who monster is in combat with
+                        monster.in_combat = player_to_attack.name
 
-                    # cycle through all players
-                    for attack_player in self.room["players"]:
-                        if monster.in_combat == attack_player.name:
-                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
-                        else:
-                            await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', websocket, logger)
-                        monster.in_combat = True
+                        # cycle through all players
+                        for attack_player in self.room["players"]:
+                            if monster.in_combat == attack_player.name:
+                                await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
+                            else:
+                                await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', websocket, logger)
+                            monster.in_combat = True
 
             if found_monsters == True:
                 # wait before launching first attack
