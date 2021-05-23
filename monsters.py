@@ -1,6 +1,7 @@
 import random
 from enum import Enum
 from monster import Monster
+from log_utils import LogUtils, Level
 
 class Monsters:
     class MONSTERS(Enum):
@@ -13,30 +14,28 @@ class Monsters:
 
     # used for respawning monsters
     async def get_monster(self, wanted_monster, room, logger):
+        monster = None
         if wanted_monster == self.MONSTERS.CRAB:
             monster = self.get_crab()
             await monster.announce_entrance(room, logger)
-            return monster
         elif wanted_monster == self.MONSTERS.SKELETON:
             monster = self.get_skeleton()
             await monster.announce_entrance(room, logger)
-            return monster
         elif wanted_monster == self.MONSTERS.ZOMBIE:
             monster = self.get_zombie()
             await monster.announce_entrance(room, logger)
-            return monster
         elif wanted_monster == self.MONSTERS.ZOMBIE_SURFER:
             monster = self.get_zombie_surfer()
             await monster.announce_entrance(room, logger)
-            return monster
         elif wanted_monster == self.MONSTERS.GHOUL:
             monster = self.get_ghoul()
             await monster.announce_entrance(room, logger)
-            return monster
         elif wanted_monster == self.MONSTERS.THUG:
             monster = self.get_thug()
             await monster.announce_entrance(room, logger)
-            return monster
+            
+        LogUtils.debug(f"get_monster returning \"{monster.name}\"", logger)
+        return monster
 
     def get_crab(self):
         monsters = ['', '', '', '', '', '', '', '', 'Angry', 'Mad']
