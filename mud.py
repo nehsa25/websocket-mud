@@ -223,25 +223,20 @@ class Mud:
 
     # respawn mobs after a certain amount of time
     async def respawn_mobs(self):
-        # every 2 seconds, search through every room and reset monsters
         while True:
-            # sleep 2 seconds
-            LogUtils.debug("respawn_mobs sleeping 2 seconds...", logger)
+            # Allow other tasks to complete
             await asyncio.sleep(2)
 
             # look through each room 
             for room in Rooms.rooms:
-
                 # and if the room has monsters
                 if len(room['monsters']) > 0:
                     for monster in room['monsters']:
                         # check if they're dead
                         if monster.is_alive == False:
-                            LogUtils.debug(f"respawn_mobs found dead monster: \"{monster.name}\"", logger)
-
                             current_epoch = int(time.time())
 
-                            # if monster has been dead for more than 2 minutes, resurrect him 
+                            # if monster has been dead for more than monster.respawn_rate_secs, remove it and create new monster
                             # (we should consider making then kinda random (2-5 minutes for example))
                             secs_since_death = current_epoch - monster.dead_epoch
                             if secs_since_death >= monster.respawn_rate_secs:
@@ -252,10 +247,8 @@ class Mud:
                                 # create new monster
                                 monsters = Monsters()
                                 new_monster = await monsters.get_monster(monster.monster_type, room, logger)
-                                LogUtils.debug(f"Respawning \"{new_monster.name}\"", logger)
+                                LogUtils.info(f"Respawning \"{new_monster.name}\" in room {room['id']} ({room['name']})", logger)
                                 room['monsters'].append(new_monster)
-                            else:
-                                LogUtils.debug(f"\"{monster.name}\" hasn't been dead long enough to respawn yet", logger)
 
     # main loop when client connects
     async def main(self, websocket, path):

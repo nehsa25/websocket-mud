@@ -12,8 +12,8 @@ class Monster:
     money = []
     is_alive = True
     in_combat = None
-    num_attack_targets = 1
-    respawn_rate_secs = 60 # minute
+    num_attack_targets = None
+    respawn_rate_secs = None 
     dead_epoch = None
     death_cry = None
     entrance_cry = None
@@ -21,7 +21,7 @@ class Monster:
 
     def __init__(self, name, monster_type, hitpoints, damage_potential, 
                 experience, money_potential, death_cry, entrance_cry,
-                num_attack_targets = 1, respawn_rate_secs = 60):
+                num_attack_targets = 1, respawn_rate_secs = (30, 300)):
         self.name = name
         self.hitpoints = hitpoints
         self.damage = damage_potential
@@ -39,6 +39,9 @@ class Monster:
         for i in range(money):
             coppers.append(Money.Coin.Copper)
         self.money = coppers
+
+        # calculate respawn_rate
+        self.respawn_rate_secs = randint(respawn_rate_secs[0], respawn_rate_secs[1])
 
     # announce we're here!
     async def announce_entrance(self, room, logger):        
