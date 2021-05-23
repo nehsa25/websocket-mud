@@ -221,11 +221,12 @@ class Mud:
                 # pause before attacking again
                 attack_time = False
 
-    # resurrect mobs
+    # respawn mobs after a certain amount of time
     async def respawn_mobs(self):
         # every 2 seconds, search through every room and reset monsters
         while True:
             # sleep 2 seconds
+            LogUtils.debug("respawn_mobs sleeping 2 seconds...", logger)
             await asyncio.sleep(2)
 
             # look through each room 
@@ -234,9 +235,10 @@ class Mud:
                 # and if the room has monsters
                 if len(room['monsters']) > 0:
                     for monster in room['monsters']:
-
                         # check if they're dead
                         if monster.is_alive == False:
+                            LogUtils.debug(f"respawn_mobs found dead monster: \"{monster.name}\"", logger)
+
                             current_epoch = int(time.time())
 
                             # if monster has been dead for more than 2 minutes, resurrect him 
@@ -244,12 +246,16 @@ class Mud:
                             secs_since_death = current_epoch - monster.dead_epoch
                             if secs_since_death >= monster.respawn_rate_secs:
                                 # remove old monster
+                                LogUtils.debug(f"Removing \"{monster.name}\" from room", logger)
                                 room['monsters'].remove(monster)
                                 
                                 # create new monster
                                 monsters = Monsters()
                                 new_monster = await monsters.get_monster(monster.monster_type, room, logger)
+                                LogUtils.debug(f"Respawning \"{new_monster.name}\"", logger)
                                 room['monsters'].append(new_monster)
+                            else:
+                                LogUtils.debug(f"\"{monster.name}\" hasn't been dead long enough to respawn yet", logger)
 
     # main loop when client connects
     async def main(self, websocket, path):
