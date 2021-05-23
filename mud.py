@@ -41,7 +41,7 @@ class Mud:
 
     # calls at the beginning of the connection
     async def register(self, websocket):
-        hp = 50
+        hp = 10
         strength = 3 # 0 - 30
         agility = 3 # 0 - 30
         location = 0
@@ -91,14 +91,7 @@ class Mud:
 
     # shows color-coded health bar
     async def show_health(self, player, websocket):
-        color = 'red'
-        if player.hitpoints / player.max_hitpoints >= .75:
-            color = 'green'
-        elif player.hitpoints / player.max_hitpoints >= .25:
-            color = 'yellow'
-
-        health = f"Health: <span style=\"color: {color};\">{player.hitpoints}</span>"
-        await Utility.send_msg(health, 'health', websocket, logger)
+        await Utility.send_msg(f"{str(player.hitpoints)}/{str(player.max_hitpoints)}", 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, player, websocket):
@@ -113,15 +106,12 @@ class Mud:
               self.room["items"].append(item)
         player.inventory = []
 
-        # set player location to crypt
-        player.location = 5
+        # set player location to beach shore
+        await Command.move_room(5, player, self.world, websocket, logger)
 
         # set hits back to max / force health refresh
         player.hitpoints = player.max_hitpoints
         await self.show_health(player, websocket)
-
-        # force room refresh
-        return await Command.process_room(player.location, player, self.world, websocket, logger)
 
     # runs the combat
     async def start_mob_combat(self, player, websocket):

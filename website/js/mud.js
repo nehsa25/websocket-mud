@@ -92,7 +92,20 @@ function processCommand(data, msg) {
       break;
     case 'health': // check if there's an health event
       if (data.message != "") {
-        $('#health').html(data.message);
+
+        hitpoints = parseInt(data.message.split('/')[0]);
+        max_hitpoints = parseInt(data.message.split('/')[1]);
+        
+        if (hitpoints / max_hitpoints >= .75) {
+          color = 'green';
+        } else if (hitpoints / max_hitpoints >= .25) {
+          color = '#FF7034;'; // burnt orange
+        } else {
+          color = 'red';
+        }
+
+        var health_msg = "Health: <span style=\"color: " + color + ";\">" + hitpoints + "</span> / " + max_hitpoints;
+        $('#health').html(health_msg);
       }
       break;
     case 'room': // check if there's a room name
