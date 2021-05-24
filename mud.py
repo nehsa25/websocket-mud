@@ -5,6 +5,7 @@ import websockets
 import json
 import traceback
 import random
+import sys
 from random import randint
 from utility import Utility
 from command import Command
@@ -16,11 +17,9 @@ from monsters import Monsters
 from rooms import Rooms
 
 class Mud:
-    # create our WORLD object that'll contain things like breeze and rain events
-    world = World()
-    combat_wait_secs = 3.5
-    tasks = []
-    room = None
+    world = World() # create our WORLD object that'll contain things like breeze and rain events
+    COMBAT_WAIT_SECS = 3.5
+    CHECK_FOR_MONSTERS_SECS = 2
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -73,7 +72,7 @@ class Mud:
                     await Utility.send_msg(f"{player.name} joined the game!", 'event', world_player.websocket, logger)
 
             # show room
-            player, self.room, self.world = await Command.move_room(player.location, player, self.world, websocket, logger)
+            player, self.world = await self.world.move_room(player.location, player, self.world, websocket, logger)
         else:
             LogUtils.error(f"We shouldn't be here.. received request: {websocket_client['type']}", logger)
         return player
@@ -103,11 +102,11 @@ class Mud:
         
         # drop all items
         for item in player.inventory:
-              self.room["items"].append(item)
+              self.world.room["items"].append(item)
         player.inventory = []
 
         # set player location to beach shore
-        await Command.move_room(5, player, self.world, websocket, logger)
+        player, self.world = await self.world.move_room(5, player, self.world, websocket, logger)
 
         # set hits back to max / force health refresh
         player.hitpoints = player.max_hitpoints
@@ -117,46 +116,53 @@ class Mud:
     async def start_mob_combat(self, player, websocket):
         # we never leave this attack loop
         while True:
+            LogUtils.debug(f"{player.name}: start_mob_combat - Running loop", logger)
             # Allow other tasks to complete
             await asyncio.sleep(.1)
 
             found_monsters = False
 
+            # if there's no one in the room, pause to ensure we don't loop endlessly
+            if len(self.world.room["monsters"]) == 0:
+                await asyncio.sleep(self.CHECK_FOR_MONSTERS_SECS)
+
             # show the initial "prepares to attack you text"
             player_to_attack = None
-            for monster in self.room["monsters"]:
+            for monster in self.world.room["monsters"]:
                 if monster.is_alive == True:
                     found_monsters = True
+                    LogUtils.debug(f"{player.name}: start_mob_combat - found monster", logger)
 
                     if monster.in_combat == None:
+                        LogUtils.debug(f"{player.name}: start_mob_combat - monster is not on combat", logger)
 
                         # determine who to attack
-                        player_to_attack = random.choice(self.room["players"])
+                        player_to_attack = random.choice(self.world.room["players"])
                         
                         # set who monster is in combat with
                         monster.in_combat = player_to_attack.name
+                        LogUtils.debug(f"{player.name}: start_mob_combat - monster now attacking {monster.in_combat}", logger)
 
                         # cycle through all players
-                        for attack_player in self.room["players"]:
+                        for attack_player in self.world.room["players"]:
                             if monster.in_combat == attack_player.name:
                                 await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
                             else:
                                 await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', websocket, logger)
-                            monster.in_combat = True
 
             if found_monsters == True:
                 # wait before launching first attack
-                await asyncio.sleep(self.combat_wait_secs)
+                await asyncio.sleep(self.COMBAT_WAIT_SECS)
                 attack_time = True
 
                 # process attacks
                 total_damage = 0
                 monsters_damage = []
-                for monster in self.room["monsters"]:
+                for monster in self.world.room["monsters"]:
                     if monster.is_alive == True:
                         # while combat is running, wait x seconds between rounds    
                         if attack_time != True:                                        
-                            await asyncio.sleep(self.combat_wait_secs)
+                            await asyncio.sleep(self.COMBAT_WAIT_SECS)
 
                         # need to check here if combat is still going.. we may have killed everything or moved rooms
                         if monster.is_alive == True:
@@ -188,7 +194,7 @@ class Mud:
 
                 # if there are still monsters alive
                 monsters_alive = False
-                for monster in self.room["monsters"]:
+                for monster in self.world.room["monsters"]:
                     if monster.is_alive == True:
                         monsters_alive = True
                 if monsters_alive == True:
@@ -203,8 +209,7 @@ class Mud:
 
                     # no point in continuing if player is dead..
                     if player.hitpoints <= 0:
-                        player, self.room, self.world = await self.you_died(player, websocket)
-                        break
+                        await self.you_died(player, websocket)
 
                     await self.show_health(player, websocket)
 
@@ -246,11 +251,8 @@ class Mud:
         player = await self.register(websocket)
 
         try:
-            # schedule some events that'll do shit
-            self.world.breeze_task = asyncio.create_task(self.world.breeze(websocket, logger))
-            self.world.rain_task = asyncio.create_task(self.world.rain(websocket, logger))
-            self.world.eerie_task = asyncio.create_task(self.world.eerie_silence(websocket, logger))
-            self.world.thunder_task = asyncio.create_task(self.world.thunder(websocket, logger))
+            # setup world events
+            await self.world.setup_world_events(logger)
 
             # start our mob combat task
             asyncio.create_task(self.start_mob_combat(player, websocket))
@@ -271,7 +273,7 @@ class Mud:
                 if msg_obj["type"] == "cmd":
                     LogUtils.debug(f"Received: cmd", logger)
                     received_command = True
-                    player, self.room, self.world = await Command.run_command(msg_obj["cmd"], self.room, player, self.world, websocket, logger)
+                    player, self.world = await Command.run_command(msg_obj["cmd"], player, self.world, websocket, logger)
                 else:
                     LogUtils.error(f"Received unknown message: {message}", logger)
         except KeyboardInterrupt:
@@ -297,7 +299,7 @@ if __name__ == "__main__":
             port = '81'
 
         LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
-        
+
         # start websocket server
         LogUtils.info(f"Starting websocket server", logger)
         start_server = websockets.serve(m.main, host, port)

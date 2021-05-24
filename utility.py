@@ -7,3 +7,4 @@ class Utility:
         json_msg = { "type": message_type, 'message': msg}
         LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", logger)
         await websocket.send(json.dumps(json_msg))
+

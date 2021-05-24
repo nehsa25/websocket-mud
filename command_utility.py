@@ -1,7 +1,18 @@
 from utility import Utility
+from items import Items
+from item import Item
 
 class CommandUtility:
+    @staticmethod
+    def get_equiped_weapon(player, logger):
+        eq_item = Items.punch
+        for item in player.inventory:
+            if item.item_type == Item.ItemType.WEAPON and item.equiped == True:
+                eq_item = item
 
+        return eq_item
+
+    @staticmethod
     async def drop_item(wanted_item, player, room, websocket, logger):
         found_item = False
 
@@ -23,6 +34,7 @@ class CommandUtility:
             room['items'].append(item_obj)
         return found_item
 
+    @staticmethod
     async def drop_coin(wanted_item, player, room, websocket, logger):
         found_coin = False
 
