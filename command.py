@@ -311,7 +311,7 @@ class Command:
 
         if current_monster != None:
             for world_player in world.players:
-                if player.location == world_player.location:
+                if player.location == world_player.location:  # we should jsut get the room here and look for players in it
                     if player.name == world_player.name: 
                         await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
                     else:
@@ -340,7 +340,7 @@ class Command:
                     damage += dice * damage_multipler * player.strength
                 
                 for world_player in world.players:
-                    if player.location == world_player.location:
+                    if player.location == world_player.location:  # we should just get the room here and look for the players in it
                         response = ""
                         if player.name == world_player.name: 
                             if damage == 0:
