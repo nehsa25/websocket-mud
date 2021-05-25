@@ -114,116 +114,117 @@ class Mud:
         await self.show_health(player, websocket)
 
     # runs the combat
-    async def start_mob_combat(self, player, websocket):
+    async def start_mob_combat(self):
         # we never leave this attack loop
         while True:
-            LogUtils.debug(f"{player.name}: start_mob_combat - Running loop", logger)
+            for player in self.world.players:
+                LogUtils.debug(f"{player.name}: start_mob_combat - Running loop", logger)
+                player_to_attack = None
 
-            # Allow other tasks to complete
-            await asyncio.sleep(.1)
-
-            # get our room
-            room = await self.world.get_room(player.location, logger)
-
-            found_monsters = False
-
-            # if there's no one in the room, pause to ensure we don't loop endlessly
-            alive_monsters = [monster for monster in room['monsters'] if monster.is_alive == True]
-            if len(alive_monsters) == 0:
-                await asyncio.sleep(self.CHECK_FOR_MONSTERS_SECS)
-
-            # show the initial "prepares to attack you text"
-            player_to_attack = None
-            for monster in room["monsters"]:
-                if monster.is_alive == True:
-                    found_monsters = True
-                    LogUtils.debug(f"{player.name}: start_mob_combat - found monster", logger)
-
-                    if monster.in_combat == None:
-                        LogUtils.debug(f"{player.name}: start_mob_combat - monster is not on combat", logger)
-
-                        # determine who to attack
-                        player_to_attack = random.choice(room["players"])
-                        
-                        # set who monster is in combat with
-                        monster.in_combat = player_to_attack.name
-                        LogUtils.debug(f"{player.name}: start_mob_combat - monster now attacking {monster.in_combat}", logger)
-
-                        # cycle through all players
-                        for attack_player in room["players"]:
-                            if monster.in_combat == attack_player.name:
-                                await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
-                            else:
-                                await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', websocket, logger)
-
-            if found_monsters == True:
-                # wait before launching first attack
-                await asyncio.sleep(self.COMBAT_WAIT_SECS)
-                attack_time = True
+                # Allow other tasks to complete
+                await asyncio.sleep(.1)
 
                 # get our room
                 room = await self.world.get_room(player.location, logger)
 
-                # process attacks
-                total_damage = 0
-                monsters_damage = []
+                found_monsters = False
+
+                # if there's no one in the room, pause to ensure we don't loop endlessly
+                alive_monsters = [monster for monster in room['monsters'] if monster.is_alive == True]
+                if len(alive_monsters) == 0:
+                    await asyncio.sleep(self.CHECK_FOR_MONSTERS_SECS)
+
+                # show the initial "prepares to attack you text"
                 for monster in room["monsters"]:
                     if monster.is_alive == True:
-                        # while combat is running, wait x seconds between rounds    
-                        if attack_time != True:                                        
-                            await asyncio.sleep(self.COMBAT_WAIT_SECS)
+                        found_monsters = True
+                        LogUtils.debug(f"{player.name}: start_mob_combat - found monster", logger)
 
-                        # need to check here if combat is still going.. we may have killed everything or moved rooms
+                        if monster.in_combat == None:
+                            LogUtils.debug(f"{player.name}: start_mob_combat - monster is not on combat", logger)
+
+                            # determine who to attack
+                            player_to_attack = random.choice(room["players"])
+                            
+                            # set who monster is in combat with
+                            monster.in_combat = player_to_attack.name
+                            LogUtils.debug(f"{player.name}: start_mob_combat - monster now attacking {monster.in_combat}", logger)
+
+                            # cycle through all players
+                            for attack_player in room["players"]:
+                                if monster.in_combat == attack_player.name:
+                                    await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
+                                else:
+                                    await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', attack_player.websocket, logger)
+
+                if found_monsters == True:
+                    # wait before launching first attack
+                    await asyncio.sleep(self.COMBAT_WAIT_SECS)
+                    attack_time = True
+
+                    # get our room
+                    room = await self.world.get_room(player.location, logger)
+
+                    # process attacks
+                    total_damage = 0
+                    monsters_damage = []
+                    for monster in room["monsters"]:
                         if monster.is_alive == True:
-                            # calculate our damage
-                            obj = monster.damage.split('d')
-                            dice = int(obj[0])
-                            damage_potential = int(obj[1])
-                            damage_multipler = randint(0, damage_potential)
+                            # while combat is running, wait x seconds between rounds    
+                            if attack_time != True:                                        
+                                await asyncio.sleep(self.COMBAT_WAIT_SECS)
 
-                            # roll dice for a monster
-                            damage = dice * damage_multipler
-                            total_damage += damage
+                            # need to check here if combat is still going.. we may have killed everything or moved rooms
+                            if monster.is_alive == True:
+                                # calculate our damage
+                                obj = monster.damage.split('d')
+                                dice = int(obj[0])
+                                damage_potential = int(obj[1])
+                                damage_multipler = randint(0, damage_potential)
 
-                            # add to our monster damage list
-                            monster_damage = dict(name=monster.name, damage=damage)
-                            monsters_damage.append(monster_damage)
+                                # roll dice for a monster
+                                damage = dice * damage_multipler
+                                total_damage += damage
 
-                # sort based on damage
-                monsters_damage = sorted(monsters_damage, key=lambda k: k['damage'], reverse=True) 
+                                # add to our monster damage list
+                                monster_damage = dict(name=monster.name, damage=damage)
+                                monsters_damage.append(monster_damage)
 
-                # build our attack message
-                attack_msg = f"You were hit for {total_damage} damage!"
-                attack_msg += " ("
-                for monster_damage in monsters_damage:
-                    if monster_damage['damage'] > 0:
-                        attack_msg += f"{monster_damage['name']}: {monster_damage['damage']}, "
-                attack_msg = attack_msg[0:len(attack_msg)-2]
-                attack_msg += ")"
+                    # sort based on damage
+                    monsters_damage = sorted(monsters_damage, key=lambda k: k['damage'], reverse=True) 
 
-                # if there are still monsters alive
-                monsters_alive = False
-                for monster in room["monsters"]:
-                    if monster.is_alive == True:
-                        monsters_alive = True
-                if monsters_alive == True:
-                    # send our attack messages                
-                    if total_damage > 0:
-                        await Utility.send_msg(attack_msg, 'attack', websocket, logger)
-                    else:
-                        await Utility.send_msg("No monsters dealt you any damage!", 'info', websocket, logger)
+                    # build our attack message
+                    attack_msg = f"You were hit for {total_damage} damage!"
+                    attack_msg += " ("
+                    for monster_damage in monsters_damage:
+                        if monster_damage['damage'] > 0:
+                            attack_msg += f"{monster_damage['name']}: {monster_damage['damage']}, "
+                    attack_msg = attack_msg[0:len(attack_msg)-2]
+                    attack_msg += ")"
 
-                    # update hp
-                    player.hitpoints = player.hitpoints - total_damage
+                    # if there are still monsters alive
+                    monsters_alive = False
+                    for monster in room["monsters"]:
+                        if monster.is_alive == True:
+                            monsters_alive = True
+                    if monsters_alive == True and monster.in_combat == player.name:
+                        # send our attack messages                
+                        if total_damage > 0:
+                            await Utility.send_msg(attack_msg, 'attack', player.websocket, logger)
+                        else:
+                            await Utility.send_msg("No monsters dealt you any damage!", 'info', player.websocket, logger)
 
-                    # no point in continuing if player is dead..
-                    if player.hitpoints <= 0:
-                        await self.you_died(player, websocket)
+                        # update hp
+                        player.hitpoints = player.hitpoints - total_damage
 
-                    await self.show_health(player, websocket)
+                        # no point in continuing if player is dead..
+                        if player.hitpoints <= 0:
+                            await self.you_died(player, player.websocket)
 
-                # pause before attacking again
-                attack_time = False
+                        await self.show_health(player, player.websocket)
+
+                    # pause before attacking again
+                    attack_time = False
 
     # respawn mobs after a certain amount of time
     async def respawn_mobs(self):
@@ -264,7 +265,8 @@ class Mud:
             await self.world.setup_world_events(logger)
 
             # start our mob combat task
-            asyncio.create_task(self.start_mob_combat(player, websocket))
+            if self.world.mob_attack_task == None:
+                self.world.mob_attack_task = asyncio.create_task(self.start_mob_combat())
 
             # start our resurrection task
             asyncio.create_task(self.respawn_mobs())

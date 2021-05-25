@@ -12,6 +12,7 @@ class World:
     rain_task = None
     eerie_task = None
     thunder_task = None
+    mob_attack_task = None
 
     # schedule some events that'll do shit
     async def setup_world_events(self, logger):        
