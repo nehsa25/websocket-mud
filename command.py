@@ -310,8 +310,13 @@ class Command:
                     break
 
         if current_monster != None:
-            await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
-
+            for world_player in world.players:
+                if player.location == world_player.location:
+                    if player.name == world_player.name: 
+                        await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
+                    else:
+                        await Utility.send_msg(f"{player.name} begins to attack {current_monster.name}!", 'info', world_player.websocket, logger)
+                        
             # if you die and go to the crypt then your room id will change..
             while current_monster.hitpoints > 0 and player.location == room['id']:
                 # determine attack damage
@@ -333,15 +338,29 @@ class Command:
                     damage_potential = int(obj[1]) # 2
                     damage_multipler = randint(0, damage_potential)
                     damage += dice * damage_multipler * player.strength
-
-                if damage == 0:
-                    response = f"You swing wildly and miss!"
-                else:
-                    if num_swings == 1:
-                        response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
-                    else:
-                        response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
-                await Utility.send_msg(response, 'you_attack', websocket, logger)
+                
+                for world_player in world.players:
+                    if player.location == world_player.location:
+                        response = ""
+                        if player.name == world_player.name: 
+                            if damage == 0:
+                                response = f"You swing wildly and miss!"
+                            else:
+                                if num_swings == 1:
+                                    response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
+                                else:
+                                    response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
+                                await Utility.send_msg(response, 'you_attack', websocket, logger)
+                        else:
+                            if damage == 0:
+                                response = f"{player.name} swings wildly and misses!"
+                            else:
+                                if num_swings == 1:
+                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} with their {weapon.name.lower()} for {str(damage)} damage!"
+                                else:
+                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} {num_swings} times with their {weapon.name.lower()} for {str(damage)} damage!"
+                                await Utility.send_msg(response, 'you_attack', world_player.websocket, logger)
+                
 
                 # subtract from monsters health
                 current_monster.hitpoints = current_monster.hitpoints - damage
