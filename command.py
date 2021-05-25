@@ -478,11 +478,14 @@ class Command:
             player, world = await Command.process_loot(command, player, world, websocket, logger)
         elif command == ('who'):
             player, world = await Command.process_who(player, world, websocket, logger)
-        else: # you're going to say it to the room..
+        elif command.startswith('/say '):
+            msg = command.split(' ', 1)[1]
             for world_player in world.players:
                 if world_player.name == player.name:
-                    await Utility.send_msg(f"You say \"{command}\"", 'info', world_player.websocket, logger)
+                    await Utility.send_msg(f"You say \"{msg}\"", 'info', world_player.websocket, logger)
                 else:
-                    await Utility.send_msg(f"{player.name} says \"{command}\"", 'info', world_player.websocket, logger)
+                    await Utility.send_msg(f"{player.name} says \"{msg}\"", 'info', world_player.websocket, logger)
+        else: # you're going to say it to the room..
+            await Utility.send_msg(f"\"{command}\" is not a valid command.", 'info', websocket, logger)
 
         return player, world
