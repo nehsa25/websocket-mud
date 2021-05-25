@@ -315,7 +315,7 @@ class Command:
             # if you die and go to the crypt then your room id will change..
             while current_monster.hitpoints > 0 and player.location == room['id']:
                 # determine attack damage
-                weapon = Command.get_equiped_weapon(player, logger)
+                weapon = CommandUtility.get_equiped_weapon(player, logger)
                 attack_potential = weapon.damage_potential  
 
                 # for number of swings here 
