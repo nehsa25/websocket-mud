@@ -68,7 +68,7 @@ class World:
             LogUtils.debug(f"Will run eerie_silence event in {str(rand)} seconds...", logger)
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await Utility.send_msg("An eerie silence settles on the room..", 'info', world_player.websocket, logger)
+                await Utility.send_msg("An eerie silence settles on the room..", 'event', world_player.websocket, logger)
 
     # responsible for moving a player from one room to the next
     async def move_room(self, new_room_id, player, world, websocket, logger):
