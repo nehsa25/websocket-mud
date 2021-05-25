@@ -128,7 +128,8 @@ class Mud:
             found_monsters = False
 
             # if there's no one in the room, pause to ensure we don't loop endlessly
-            if len(room["monsters"]) == 0:
+            alive_monsters = [monster for monster in room['monsters'] if monster.is_alive == True]
+            if len(alive_monsters) == 0:
                 await asyncio.sleep(self.CHECK_FOR_MONSTERS_SECS)
 
             # show the initial "prepares to attack you text"
