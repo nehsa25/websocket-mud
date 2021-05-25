@@ -195,12 +195,12 @@ class Mud:
 
                     # build our attack message
                     attack_msg = f"You were hit for {total_damage} damage!"
-                    attack_msg += " ("
+                    attack_msg_extra = "("
                     for monster_damage in monsters_damage:
                         if monster_damage['damage'] > 0:
-                            attack_msg += f"{monster_damage['name']}: {monster_damage['damage']}, "
-                    attack_msg = attack_msg[0:len(attack_msg)-2]
-                    attack_msg += ")"
+                            attack_msg_extra += f"{monster_damage['name']}: {monster_damage['damage']}, "
+                    attack_msg_extra = attack_msg_extra[0:len(attack_msg_extra)-2]
+                    attack_msg_extra += ")"
 
                     # if there are still monsters alive
                     monsters_alive = False
@@ -208,12 +208,19 @@ class Mud:
                         if monster.is_alive == True:
                             monsters_alive = True
                     if monsters_alive == True and monster.in_combat == player.name:
-                        # send our attack messages                
-                        if total_damage > 0:
-                            await Utility.send_msg(attack_msg, 'attack', player.websocket, logger)
-                        else:
-                            await Utility.send_msg("No monsters dealt you any damage!", 'info', player.websocket, logger)
-
+                        # send our attack messages  
+                        for p in room['players']:
+                            if p.websocket == player.websocket:
+                                if total_damage > 0:
+                                    await Utility.send_msg(f"{attack_msg} {attack_msg_extra}", 'attack', p.websocket, logger)
+                                else:
+                                    await Utility.send_msg("No monster dealt you any damage!", 'info', p.websocket, logger)
+                            else: # alert others of the battle
+                                if total_damage > 0:
+                                    attack_msg = attack_msg.replace("You were", f"{player.name} was")
+                                    await Utility.send_msg(attack_msg, 'info', p.websocket, logger)
+                                else:
+                                    await Utility.send_msg(f"No monster dealt {p.name} any damage!", 'info', p.websocket, logger)
                         # update hp
                         player.hitpoints = player.hitpoints - total_damage
 
