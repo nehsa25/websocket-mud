@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 from random import randint
 from utility import Utility
 from log_utils import LogUtils, Level
@@ -13,6 +14,7 @@ class World:
     eerie_task = None
     thunder_task = None
     mob_attack_task = None
+    time_task = None
 
     # schedule some events that'll do shit
     async def setup_world_events(self, logger):        
@@ -27,6 +29,9 @@ class World:
 
         if self.thunder_task == None:
             self.thunder_task = asyncio.create_task(self.thunder(logger))
+
+        if self.time_task == None:
+            self.time_task = asyncio.create_task(self.get_system_time(logger))
 
     # It begins to rain..
     async def rain(self, logger):
@@ -90,6 +95,17 @@ class World:
 
         # show new room
         return await Command.process_room(new_room_id, player, world, websocket, logger)
+
+    # just return the current date/time
+    async def get_system_time(self, logger):
+        while True:
+            time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
+            msg = f"It is now {time}"
+            for world_player in self.players:
+                await Utility.send_msg(msg, 'info', world_player.websocket, logger)
+            
+            # sleep 10 minutes
+            await asyncio.sleep(60 * 10)
 
     # just returns a specific room in our list of rooms
     async def get_room(self, room_id, logger=None):
