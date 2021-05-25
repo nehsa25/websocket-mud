@@ -69,8 +69,9 @@ class Command:
 
     @staticmethod
     async def process_direction(wanted_direction, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         found_exit = False
-        for avail_exit in world.room["exits"]:
+        for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
                 # send message to any players in same room that you left
                 for world_player in world.players:
@@ -107,11 +108,12 @@ class Command:
 
     @staticmethod
     async def process_look_direction(command, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         wanted_direction = command.split(' ', 1)[1].lower()
         valid_direction = False
 
         # check if it's a valid direction in the room
-        for avail_exit in world.room["exits"]:
+        for avail_exit in room["exits"]:
             if wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower():
                 valid_direction = True
                 break
@@ -150,15 +152,16 @@ class Command:
 
     @staticmethod
     async def process_get(command, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         wanted_item = command.split(' ', 1)[1].lower()
         found_item = False
-        if world.room['items'] != []:
-            for item in world.room['items']:
+        if room['items'] != []:
+            for item in room['items']:
                 if wanted_item == item.name.lower():
                     found_item = True
                     await Utility.send_msg(f"You pick up {item.name}.", 'info', websocket, logger)
                     # remove from room
-                    world.room['items'].remove(item)
+                    room['items'].remove(item)
                     # add to our inventory
                     player.inventory.append(item)
                     break
@@ -190,18 +193,19 @@ class Command:
 
     @staticmethod
     async def process_search(player, world, websocket, logger):
+        room = await world.get_room(player.location)
         rand = random() 
         success = rand < (player.perception / 100)
         if success == True:
-            if len(world.room['hidden_items']) > 0:
-                for item in world.room['hidden_items']:
+            if len(room['hidden_items']) > 0:
+                for item in room['hidden_items']:
                     await Utility.send_msg("You found something!", 'info', websocket, logger)
 
                     # remove from "hidden items"
-                    world.room['hidden_items'].remove(item)
+                    room['hidden_items'].remove(item)
 
                     # add to items in room
-                    world.room['items'].append(item)
+                    room['items'].append(item)
             else:
                 await Utility.send_msg("After an exhaustive search, you find nothing.", 'info', websocket, logger)
         else:
@@ -222,6 +226,7 @@ class Command:
 
     @staticmethod
     async def process_hide_item(command, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         wanted_item = command.split(' ', 1)[1] 
         found_item = False
 
@@ -237,7 +242,7 @@ class Command:
             # remove from inventory
             player.inventory.remove(item_obj)
             await Utility.send_msg(f"You hid {item_obj.name}.", 'info', websocket, logger)
-            world.room['hidden_items'].append(item_obj)
+            room['hidden_items'].append(item_obj)
         else:
             await Utility.send_msg(f"You aren't carrying {wanted_item} to hide.", 'error', websocket, logger)
         return player, world
@@ -287,13 +292,16 @@ class Command:
 
     @staticmethod
     async def process_attack_mob(command, player, world, websocket, logger):
+        # get our room
+        room = await world.get_room(player.location)
+
         # att skeleton
         wanted_monster = command.split(' ', 1)[1].lower() # wanted_monster == skeleton
 
         # see if this monster is in the room.
         current_monster = None
-        room_monsters = world.room['monsters']
-        for monster in world.room['monsters']: # why don't we use room_monsters here?
+        room_monsters = room['monsters']
+        for monster in room['monsters']: # why don't we use room_monsters here?
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(' ')
             for name in monster_name_parts:
@@ -305,7 +313,7 @@ class Command:
             await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
 
             # if you die and go to the crypt then your room id will change..
-            while current_monster.hitpoints > 0 and player.location == world.room['id']:
+            while current_monster.hitpoints > 0 and player.location == room['id']:
                 # determine attack damage
                 weapon = Command.get_equiped_weapon(player, logger)
                 attack_potential = weapon.damage_potential  
@@ -343,7 +351,7 @@ class Command:
                     player.experience += current_monster.experience
 
                     # set monster as dead
-                    await current_monster.kill(world.room, logger)
+                    await current_monster.kill(room, logger)
 
                     msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
                     await Utility.send_msg(msg, 'event', websocket, logger)
@@ -358,16 +366,17 @@ class Command:
                     await asyncio.sleep(3)
         else:
             await Utility.send_msg(f"{wanted_monster} is not a valid attack target.", 'error', websocket, logger)
-        world.room['monsters'] = room_monsters
+        room['monsters'] = room_monsters
         return player, world
 
     @staticmethod
     async def process_loot(command, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         wanted_monster = command.split(' ', 1)[1] # loot skeleton
 
         # see if this monster is in the room.
         current_monster = None
-        for monster in world.room['monsters']:
+        for monster in room['monsters']:
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(' ')
             for name in monster_name_parts:

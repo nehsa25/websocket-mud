@@ -8,10 +8,6 @@ from command import Command
 class World:
     # players
     players = []
-
-    room = None # this is broken, only works for 1 player
-    rooms = [] # eventually "room" will need to be "rooms", a list of all rooms that have players in it
-
     breeze_task = None
     rain_task = None
     eerie_task = None
@@ -91,12 +87,11 @@ class World:
         new_room['players'].append(player)
         player.location = new_room["id"]
 
-        # this is wrong..
-        world.room = new_room
-
         # show new room
         return await Command.process_room(new_room_id, player, world, websocket, logger)
 
     # just returns a specific room in our list of rooms
-    async def get_room(self, room_id):
-        return [room for room in Rooms.rooms if room["id"] == room_id][0]
+    async def get_room(self, room_id, logger=None):
+        room = [room for room in Rooms.rooms if room["id"] == room_id][0]
+        LogUtils.debug(f"Returning room {room['name']}", logger)
+        return room
