@@ -162,6 +162,12 @@ class Command:
                     await Utility.send_msg(f"You pick up {item.name}.", 'info', websocket, logger)
                     # remove from room
                     room['items'].remove(item)
+
+                    # alert the rest of the room
+                    for player in room['players']:
+                        if websocket != player.websocket:
+                            await Utility.send_msg(f"{player.name} picks up {item.name}.", 'info', player.websocket, logger)
+
                     # add to our inventory
                     player.inventory.append(item)
                     break
