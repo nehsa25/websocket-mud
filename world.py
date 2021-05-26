@@ -100,9 +100,9 @@ class World:
     async def get_system_time(self, logger):
         while True:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
-            msg = f"It is now {time}"
+            msg = f"It is {time}"
             for world_player in self.players:
-                await Utility.send_msg(msg, 'info', world_player.websocket, logger)
+                await Utility.send_msg(msg, 'time', world_player.websocket, logger)
             
             # sleep 10 minutes
             await asyncio.sleep(60 * 10)

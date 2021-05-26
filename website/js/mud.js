@@ -64,33 +64,38 @@ function processCommand(data, msg) {
         msg += "<br><span style=\"color: yellow;\">" + data.message + "</span>";
       }
       break;
-    case 'info': // check if there's an info event      
+    case 'info':
       if (data.message != "") {
         msg += "<br><span style=\"color: darksalmon;\">" + data.message + "</span>";
       }
       break;
-      case 'command': // check if there's an info event      
+    case 'time':   
+      if (data.message != "") {
+        msg += "<br><span style=\"color: #cccccc; font-size: small\">[" + data.message + "]</span>";
+      }
+      break;
+    case 'command':   
       if (data.message != "") {
         msg += "<br><span style=\"color: #F9F5EC;\">" + data.message + "</span>";
       }
       break;
-    case 'you_attack': // check if there's an info event      
+    case 'you_attack': 
       if (data.message != "") {
         msg += "<br><span style=\"color: #98FB98;\">" + data.message + "</span>";
       }
       break;
-    case 'error': // check if there's an info event      
+    case 'error':     
       if (data.message != "") {
         msg += "<br><span style=\"color: red;\">" + data.message + "</span>";
       }
       break;
-    case 'attack': // check if there's an attack event
+    case 'attack':
       if (data.message != "") {
         attack_txt = data.message.split('! ')
         msg += "<br><span style=\"color: red;\">" + attack_txt[0] + "!</span><br><span style=\"font-size: 1rem; vertical-align: super; color: #cccccc;\">" + attack_txt[1] + "</span>";
       }
       break;
-    case 'health': // check if there's an health event
+    case 'health':
       if (data.message != "") {
 
         hitpoints = parseInt(data.message.split('/')[0]);
@@ -108,7 +113,7 @@ function processCommand(data, msg) {
         $('#health').html(health_msg);
       }
       break;
-    case 'room': // check if there's a room name
+    case 'room': 
       if (data.name != "") {
         msg += "<br><span style=\"color: green; text-weight: bold;\">" + data.name + "</span>";
       }
