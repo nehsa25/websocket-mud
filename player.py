@@ -8,7 +8,7 @@ class Player:
     agility = 0
     perception = 0
     experience = 0
-    in_combat = False
+    in_combat = None
     inventory = []
     money = []
     websocket = None

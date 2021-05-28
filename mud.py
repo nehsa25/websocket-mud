@@ -40,7 +40,7 @@ class Mud:
 
     # calls at the beginning of the connection
     async def register(self, websocket):
-        hp = 10
+        hp = 50
         strength = 3 # 0 - 30
         agility = 3 # 0 - 30
         location = 0
@@ -220,7 +220,7 @@ class Mud:
                                     attack_msg = attack_msg.replace("You were", f"{player.name} was")
                                     await Utility.send_msg(attack_msg, 'info', p.websocket, logger)
                                 else:
-                                    await Utility.send_msg(f"No monster dealt {p.name} any damage!", 'info', p.websocket, logger)
+                                    await Utility.send_msg(f"No monster dealt {player.name} any damage!", 'info', p.websocket, logger)
                         # update hp
                         player.hitpoints = player.hitpoints - total_damage
 

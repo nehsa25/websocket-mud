@@ -45,7 +45,7 @@ class Monsters:
         return Monster(
                         name=name.strip(),
                         monster_type=self.MONSTERS.CRAB,
-                        hitpoints=12,
+                        hitpoints=50,
                         damage_potential='1d4',
                         experience=150,
                         money_potential=(0,100),

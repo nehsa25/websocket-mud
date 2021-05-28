@@ -13,7 +13,8 @@ class CommandUtility:
         return eq_item
 
     @staticmethod
-    async def drop_item(wanted_item, player, room, websocket, logger):
+    async def drop_item(wanted_item, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         found_item = False
 
         # check if it's in our inventory
@@ -35,7 +36,8 @@ class CommandUtility:
         return found_item
 
     @staticmethod
-    async def drop_coin(wanted_item, player, room, websocket, logger):
+    async def drop_coin(wanted_item, player, world, websocket, logger):
+        room = await world.get_room(player.location)
         found_coin = False
 
         # check if it's money
@@ -53,3 +55,4 @@ class CommandUtility:
             # remove from player inventory
             player.inventory.remove(item_obj)
             await Utility.send_msg(f"You dropped {coin.Name}.", 'info', websocket, logger)
+        return found_coin
