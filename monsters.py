@@ -60,7 +60,7 @@ class Monsters:
         entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
-                        monster_type=self.MONSTERS.CRAB,
+                        monster_type=self.MONSTERS.SKELETON,
                         hitpoints=10,
                         damage_potential='1d4',
                         experience=100,
@@ -76,7 +76,7 @@ class Monsters:
         entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
-                        monster_type=self.MONSTERS.CRAB,
+                        monster_type=self.MONSTERS.ZOMBIE,
                         hitpoints=12,
                         damage_potential='1d4',
                         experience=150,
@@ -92,7 +92,7 @@ class Monsters:
         entrance_cry = f"{name} wanders in.."
         return Monster(
                         name=name.strip(),
-                        monster_type=self.MONSTERS.CRAB,
+                        monster_type=self.MONSTERS.ZOMBIE_SURFER,
                         hitpoints=15,
                         damage_potential='1d6',
                         experience=175,
