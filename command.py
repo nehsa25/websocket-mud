@@ -317,16 +317,18 @@ class Command:
 
         if current_monster != None:
             if player.in_combat == None:
-                for world_player in world.players:
-                    if player.location == world_player.location:  # we should jsut get the room here and look for players in it
-                        if player.name == world_player.name: 
-                            await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
-                            player.in_combat = current_monster
-                        else:
-                            await Utility.send_msg(f"{player.name} begins to attack {current_monster.name}!", 'info', world_player.websocket, logger)
-                            
+                for world_player in room['players']:
+                    if world_player.name == player.name: 
+                        await Utility.send_msg(f"You begin to attack {current_monster.name}!", 'info', websocket, logger)
+                        world_player.in_combat = current_monster
+                    else:
+                        await Utility.send_msg(f"{player.name} begins to attack {current_monster.name}!", 'info', world_player.websocket, logger)
+                        
                 # if you die and go to the crypt then your room id will change..
                 while current_monster.hitpoints > 0 and player.location == room['id']:
+                    # update our room
+                    room = await world.get_room(player.location)
+
                     # determine attack damage
                     weapon = CommandUtility.get_equiped_weapon(player, logger)
                     attack_potential = weapon.damage_potential  
@@ -347,48 +349,52 @@ class Command:
                         damage_multipler = randint(0, damage_potential)
                         damage += dice * damage_multipler * player.strength
                     
-                    for world_player in world.players:
-                        if player.location == world_player.location:  # we should just get the room here and look for the players in it
-                            response = ""
-                            if player.name == world_player.name: 
-                                if damage == 0:
-                                    response = f"You swing wildly and miss!"
-                                else:
-                                    if num_swings == 1:
-                                        response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
-                                    else:
-                                        response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
-                                    await Utility.send_msg(response, 'you_attack', websocket, logger)
+                    for world_player in room['players']:
+                        response = ""
+                        if player.name == world_player.name: 
+                            if damage == 0:
+                                response = f"You swing wildly and miss!"
                             else:
-                                if damage == 0:
-                                    response = f"{player.name} swings wildly and misses!"
+                                if num_swings == 1:
+                                    response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
                                 else:
-                                    if num_swings == 1:
-                                        response = f"{player.name} {weapon.plural_verb} {current_monster.name} with their {weapon.name.lower()} for {str(damage)} damage!"
-                                    else:
-                                        response = f"{player.name} {weapon.plural_verb} {current_monster.name} {num_swings} times with their {weapon.name.lower()} for {str(damage)} damage!"
-                                    await Utility.send_msg(response, 'you_attack', world_player.websocket, logger)
-                    
+                                    response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
+                                await Utility.send_msg(response, 'you_attack', websocket, logger)
+                        else:
+                            if damage == 0:
+                                response = f"{player.name} swings wildly and misses!"
+                            else:
+                                if num_swings == 1:
+                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} with their {weapon.name.lower()} for {str(damage)} damage!"
+                                else:
+                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} {num_swings} times with their {weapon.name.lower()} for {str(damage)} damage!"
+                                await Utility.send_msg(response, 'you_attack', world_player.websocket, logger)
+                
 
                     # subtract from monsters health
                     current_monster.hitpoints = current_monster.hitpoints - damage
 
                     if current_monster.hitpoints <= 0:
-                        # give experience
-                        player.experience += current_monster.experience
-
                         # set monster as dead
                         await current_monster.kill(room, logger)
-
-                        msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
-                        await Utility.send_msg(msg, 'event', websocket, logger)
-                        player.in_combat = None
 
                         # add (Dead) to monster 
                         current_monster.name = f"(Dead) {current_monster.name}"
 
-                        # show room
-                        await Command.process_room(player.location, player, world, websocket, logger)
+                        for world_player in room['players']:
+                            if world_player.in_combat == current_monster:
+                                # give experience
+                                world_player.experience += current_monster.experience
+
+                                # send defeat message
+                                msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
+                                await Utility.send_msg(msg, 'event', world_player.websocket, logger)
+                                
+                                # set combat back to none so we can fight someone else
+                                world_player.in_combat = None
+
+                                # show room
+                                await Command.process_room(player.location, player, world, world_player.websocket, logger)
 
                     else:
                         await asyncio.sleep(3)
