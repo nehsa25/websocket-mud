@@ -91,12 +91,13 @@ body {
   text-align: left;
   padding: 2em;
   overflow-wrap: break-word;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   position: relative;
   max-height: 70vh;
   width: 90%;
   margin: 0 auto;
   overflow: hidden;
+  font-family: monospace;
 }
 
 #users_connected {
@@ -120,7 +121,7 @@ body {
 }
 
 #health {
-  font-size: 3rem;
+  font-size: 2rem;
 }
 
 .sidebar {
