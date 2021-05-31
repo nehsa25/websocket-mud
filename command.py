@@ -307,7 +307,7 @@ class Command:
         # see if this monster is in the room.
         current_monster = None
         room_monsters = room['monsters']
-        for monster in room['monsters']: # why don't we use room_monsters here?
+        for monster in room_monsters: 
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(' ')
             for name in monster_name_parts:
@@ -467,7 +467,6 @@ class Command:
         # else: # it's a telepath
         #     pass
         return player, world 
-
 
     # main function that runs all the rest
     @staticmethod
