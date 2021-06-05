@@ -115,7 +115,7 @@ class Mud:
         await self.show_health(player, websocket)
 
     # responsible for the "prepares to attack you messages"
-    async def check_for_new_attacks(self):
+    async def check_for_new_attacks(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: Running...", logger)
 
@@ -140,8 +140,7 @@ class Mud:
                         monster.in_combat = random.choice(room["players"])
                     else:
                         LogUtils.debug(f"{method_name}: This is where we check if we should change combat to another player.  Such as when a player enters/leaves room or attacks monster.", logger)
-                        # there should be a 5% chance the monster will change targets regardless
-                    
+
                     # if the mob changed combat state, send message
                     if monster.in_combat != current_combat:
                         # cycle through all players
@@ -209,7 +208,7 @@ class Mud:
         return total_damage
 
     # Determines round damage for each player
-    async def apply_mob_round_damage(self):
+    async def apply_mob_round_damage(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: Running...", logger)
 
@@ -244,14 +243,14 @@ class Mud:
             LogUtils.debug(f"{method_name}: Running loop...", logger)
 
             # each monsters in room finds player to attack
-            await self.check_for_new_attacks()
+            await self.check_for_new_attacks(logger)
 
             # sleep delay between rounds
             LogUtils.debug(f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds", logger)
             await asyncio.sleep(self.COMBAT_WAIT_SECS)
 
             # calculcate round damanage
-            await self.apply_mob_round_damage()
+            await self.apply_mob_round_damage(logger)
 
     # respawn mobs after a certain amount of time
     async def respawn_mobs(self):
