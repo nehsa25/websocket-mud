@@ -125,7 +125,7 @@ function processCommand(data, msg) {
 
       // check for people
       if (data.people != "") {
-        msg += "<br><span style=\"color: #F9F5EC;\">People: </span><span style=\"color: antiquewhite;\">" + data.people + "</span>";
+        msg += "<br><span style=\"color: #F9F5EC;\">People: </span><span style=\"color: cornflowerblue;\">" + data.people + "</span>";
       }
 
       // check for monsters
