@@ -115,45 +115,37 @@ class Mud:
         await self.show_health(player, websocket)
 
     # responsible for the "prepares to attack you messages"
-    async def check_for_new_attacks(self, logger):
+    async def check_for_new_attacks(self, player, room, logger):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: Running...", logger)
 
-        # for each player
-        for player in self.world.players:
-            LogUtils.debug(f"{method_name}: On player {player.name}", logger)
+        # for each monster in room still alive
+        for monster in room['monsters']:
+            if monster.is_alive == True:
+                LogUtils.debug(f"{method_name}: Monster \"{monster.name}\" is alive", logger)
 
-            # get the room player is in            
-            room = await self.world.get_room(player.location, logger)
-            LogUtils.debug(f"{method_name}: Player \"{player.name}\" is in room \"{room['name']}\"", logger)
+                # choose a player to attack each round
+                current_combat = monster.in_combat
+                
+                if monster.in_combat == None: # if monster is not attacking anyone, just pick someone
+                    monster.in_combat = random.choice(room["players"])
+                    LogUtils.debug(f"{method_name}: \"{monster.name}\" is not attacking anyone.  Now attacking {monster.in_combat.name}", logger)
+                elif monster.players_seen != room['players']: # change combat if players enter/leave room
+                    prev_combat = monster.in_combat
+                    monster.in_combat = random.choice(room["players"])
+                    monster.players_seen = room['players'].copy()
+                    LogUtils.debug(f"{method_name}: The players changed in room \"{room['name']}\".  \"{monster.name}\" was attacking {prev_combat.name}, now attacking: {monster.in_combat.name}", logger)
+                else:
+                    pass
 
-            # for each monster in room still alive
-            for monster in room['monsters']:
-                if monster.is_alive == True:
-                    LogUtils.debug(f"{method_name}: Monster \"{monster.name}\" is alive", logger)
-
-                    # choose a player to attack each round
-                    current_combat = monster.in_combat
-                    
-                    if monster.in_combat == None: # if monster is not attacking anyone, just pick someone
-                        monster.in_combat = random.choice(room["players"])
-                        LogUtils.debug(f"{method_name}: \"{monster.name}\" is not attacking anyone.  Now attacking {monster.in_combat.name}", logger)
-                    elif monster.players_seen != room['players']: # change combat if players enter/leave room
-                        prev_combat = monster.in_combat
-                        monster.in_combat = random.choice(room["players"])
-                        monster.players_seen = room['players'].copy()
-                        LogUtils.debug(f"{method_name}: The players changed in room \"{room['name']}\".  \"{monster.name}\" was attacking {prev_combat.name}, now attacking: {monster.in_combat.name}", logger)
-                    else:
-                        pass
-
-                    # if the mob changed combat state, send message
-                    if monster.in_combat != current_combat:
-                        # cycle through all players
-                        for attack_player in room["players"]:
-                            if monster.in_combat.name == attack_player.name:
-                                await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', attack_player.websocket, logger)
-                            else:
-                                await Utility.send_msg(f"{monster.name} prepares to attack {attack_player.name}!", 'info', attack_player.websocket, logger)
+                # if the mob changed combat state, send message
+                if monster.in_combat != current_combat:
+                    # cycle through all players
+                    for p in room['players']:
+                        if p.websocket == player.websocket:
+                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', p.websocket, logger)
+                        else:
+                            await Utility.send_msg(f"{monster.name} prepares to attack {p.name}!", 'info', p.websocket, logger)
 
     # calculate the round damage and sends messages to players
     async def calculate_mob_damage(self, player, room, logger):
@@ -213,31 +205,23 @@ class Mud:
         return total_damage
 
     # Determines round damage for each player
-    async def apply_mob_round_damage(self, logger):
+    async def apply_mob_round_damage(self, player, room, logger):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: Running...", logger)
 
-        # for each player
-        for player in self.world.players:
-            LogUtils.debug(f"{method_name}: On player {player.name}", logger)
+        # determine damage
+        total_damage = await self.calculate_mob_damage(player, room, logger)
 
-            # get the room player is in
-            room = await self.world.get_room(player.location, logger)
-            LogUtils.debug(f"{method_name}: Player \"{player.name}\" is in room \"{room['name']}\"", logger)
+        # update hp
+        if total_damage > 0:
+            player.hitpoints = player.hitpoints - total_damage
 
-            # determine damage
-            total_damage = await self.calculate_mob_damage(player, room, logger)
+            # no point in continuing if player is dead..
+            if player.hitpoints <= 0:
+                await self.you_died(player, player.websocket)
 
-            # update hp
-            if total_damage > 0:
-                player.hitpoints = player.hitpoints - total_damage
-
-                # no point in continuing if player is dead..
-                if player.hitpoints <= 0:
-                    await self.you_died(player, player.websocket)
-
-                # Updating health bar
-                await self.show_health(player, player.websocket)
+            # Updating health bar
+            await self.show_health(player, player.websocket)
 
     # main loop for checking if monsters are attacking you
     async def mob_combat(self):
@@ -245,17 +229,26 @@ class Mud:
 
         # we never leave this attack loop
         while True:
-            LogUtils.debug(f"{method_name}: Running loop...", logger)
+            # for each player
+            for player in self.world.players:
+                LogUtils.debug(f"{method_name}: On player \"{player.name}\", Running loop...", logger)
 
-            # each monsters in room finds player to attack
-            await self.check_for_new_attacks(logger)
+                # get the room player is in            
+                room = await self.world.get_room(player.location, logger)
+                LogUtils.debug(f"{method_name}: Player \"{player.name}\" is in room \"{room['name']}\"", logger)
 
-            # sleep delay between rounds
-            LogUtils.debug(f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds", logger)
-            await asyncio.sleep(self.COMBAT_WAIT_SECS)
+                # each monsters in room finds player to attack
+                await self.check_for_new_attacks(player, room, logger)
 
-            # calculcate round damanage
-            await self.apply_mob_round_damage(logger)
+                # sleep delay between rounds
+                LogUtils.debug(f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds", logger)
+                await asyncio.sleep(self.COMBAT_WAIT_SECS)
+
+                # we need to get room again after we've slept         
+                room = await self.world.get_room(player.location, logger)
+
+                # calculcate round damanage
+                await self.apply_mob_round_damage(player, room, logger)
 
     # respawn mobs after a certain amount of time
     async def respawn_mobs(self):
