@@ -89,13 +89,12 @@ body {
   */
   outline: none;
   text-align: left;
-  padding: 2em;
+  padding-left: 1em;
+  padding-right: 1em;
   overflow-wrap: break-word;
   font-size: 1.25rem;
   position: relative;
-  max-height: 70vh;
-  width: 90%;
-  margin: 0 auto;
+  max-height: 85vh;
   overflow: hidden;
   font-family: monospace;
 }
@@ -117,7 +116,7 @@ body {
   -ms-border-radius: 10px;
   -moz-border-radius: 10px;
   border-radius: 10px;
-  padding: 1em;
+  padding: .5em;
 }
 
 #health {
