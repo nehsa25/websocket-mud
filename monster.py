@@ -12,6 +12,7 @@ class Monster:
     money = []
     is_alive = True
     in_combat = None
+    players_seen = None
     num_attack_targets = None
     respawn_rate_secs = None 
     dead_epoch = None

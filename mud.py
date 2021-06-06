@@ -134,12 +134,17 @@ class Mud:
 
                     # choose a player to attack each round
                     current_combat = monster.in_combat
-
-                    # if monster is not attacking anyone, just pick someone
-                    if monster.in_combat == None:
+                    
+                    if monster.in_combat == None: # if monster is not attacking anyone, just pick someone
                         monster.in_combat = random.choice(room["players"])
+                        LogUtils.debug(f"{method_name}: \"{monster.name}\" is not attacking anyone.  Now attacking {monster.in_combat.name}", logger)
+                    elif monster.players_seen != room['players']: # change combat if players enter/leave room
+                        prev_combat = monster.in_combat
+                        monster.in_combat = random.choice(room["players"])
+                        monster.players_seen = room['players'].copy()
+                        LogUtils.debug(f"{method_name}: The players changed in room \"{room['name']}\".  \"{monster.name}\" was attacking {prev_combat.name}, now attacking: {monster.in_combat.name}", logger)
                     else:
-                        LogUtils.debug(f"{method_name}: This is where we check if we should change combat to another player.  Such as when a player enters/leaves room or attacks monster.", logger)
+                        pass
 
                     # if the mob changed combat state, send message
                     if monster.in_combat != current_combat:
@@ -200,8 +205,8 @@ class Mud:
                         await Utility.send_msg("You were dealt no damage this round!", 'info', p.websocket, logger)
                 else: # alert others of the battle
                     if total_damage > 0:
-                        attack_msg = attack_msg.replace("You were", f"{player.name} was")
-                        await Utility.send_msg(attack_msg, 'info', p.websocket, logger)
+                        new_attack_msg = attack_msg.replace("You were", f"{player.name} was")
+                        await Utility.send_msg(new_attack_msg, 'info', p.websocket, logger)
                     else:
                         await Utility.send_msg(f"{player.name} was dealt no damage!", 'info', p.websocket, logger)
 
