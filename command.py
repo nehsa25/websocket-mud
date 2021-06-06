@@ -379,7 +379,7 @@ class Command:
                         await current_monster.kill(room, logger)
 
                         # add (Dead) to monster 
-                        current_monster.name = f"(Dead) {current_monster.name}"
+                        current_monster.name = f"{current_monster.name} (Dead)"
 
                         for world_player in room['players']:
                             if world_player.in_combat == current_monster:
