@@ -1,5 +1,4 @@
-from monster import Monster
-import sched, time
+import time
 import asyncio
 import websockets
 import json
@@ -91,7 +90,7 @@ class Mud:
 
     # shows color-coded health bar
     async def show_health(self, player, websocket):
-        await Utility.send_msg(f"{str(player.hitpoints)}/{str(player.max_hitpoints)}", 'health', websocket, logger)
+        await Utility.send_msg(f"{player.name},{str(player.hitpoints)}/{str(player.max_hitpoints)}", 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, player, websocket):
@@ -115,7 +114,7 @@ class Mud:
         await self.show_health(player, websocket)
 
     # responsible for the "prepares to attack you messages"
-    async def check_for_new_attacks(self, player, room, logger):
+    async def check_for_new_attacks(self, room, logger):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: Running...", logger)
 
@@ -135,17 +134,25 @@ class Mud:
                     monster.in_combat = random.choice(room["players"])
                     monster.players_seen = room['players'].copy()
                     LogUtils.debug(f"{method_name}: The players changed in room \"{room['name']}\".  \"{monster.name}\" was attacking {prev_combat.name}, now attacking: {monster.in_combat.name}", logger)
-                else:
-                    pass
+                else: 
+                    LogUtils.debug(f"{method_name}: Monster ({monster.name}) is in combat and nothing has changed in the room to switch combat...", logger)
 
                 # if the mob changed combat state, send message
                 if monster.in_combat != current_combat:
+                    LogUtils.debug(f"{method_name}: Monster is changing combat: {monster.name}", logger)
+
                     # cycle through all players
-                    for p in room['players']:
-                        if p.websocket == player.websocket:
-                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', p.websocket, logger)
-                        else:
-                            await Utility.send_msg(f"{monster.name} prepares to attack {p.name}!", 'info', p.websocket, logger)
+                    for p in room['players']: 
+                        if monster.in_combat == p:
+                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', p.websocket, logger)\
+
+                            for p2 in room['players']:                                
+                                if monster.in_combat != p2:
+                                    await Utility.send_msg(f"{monster.name} prepares to attack {p.name}!", 'info', p2.websocket, logger)
+                            
+                            # break out of loop
+                            LogUtils.debug(f"{method_name}: Breaking out of loop1", logger) 
+                            break
 
     # calculate the round damage and sends messages to players
     async def calculate_mob_damage(self, player, room, logger):
@@ -231,18 +238,21 @@ class Mud:
         while True:
             # for each player
             for player in self.world.players:
-                LogUtils.debug(f"{method_name}: On player \"{player.name}\", Running loop...", logger)
+                LogUtils.debug(f"{method_name}: On player \"{player.name}\", Running loop1...", logger)
 
                 # get the room player is in            
                 room = await self.world.get_room(player.location, logger)
                 LogUtils.debug(f"{method_name}: Player \"{player.name}\" is in room \"{room['name']}\"", logger)
 
                 # each monsters in room finds player to attack
-                await self.check_for_new_attacks(player, room, logger)
+                await self.check_for_new_attacks(room, logger)
 
-                # sleep delay between rounds
-                LogUtils.debug(f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds", logger)
-                await asyncio.sleep(self.COMBAT_WAIT_SECS)
+            # sleep delay between rounds
+            LogUtils.debug(f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds", logger)
+            await asyncio.sleep(self.COMBAT_WAIT_SECS)
+
+            for player in self.world.players:
+                LogUtils.debug(f"{method_name}: On player \"{player.name}\", Running loop2...", logger)
 
                 # we need to get room again after we've slept         
                 room = await self.world.get_room(player.location, logger)
