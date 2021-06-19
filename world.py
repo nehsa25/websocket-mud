@@ -83,9 +83,9 @@ class World:
         new_room = await self.get_room(new_room_id)
 
         if old_room != new_room:
-            # reset all monsters in previous room <-- hasn't been tested
             for monster in old_room["monsters"]:
-                monster.in_combat = None
+                if monster.in_combat == player:
+                    monster.in_combat = None
 
             # remove player from old room
             old_room['players'].remove(player)
