@@ -20,6 +20,7 @@ class Mud:
     world = World() # create our WORLD object that'll contain things like breeze and rain events
     COMBAT_WAIT_SECS = 3.5
     CHECK_FOR_MONSTERS_SECS = 2
+    DEATH_RESPAWN_ROOM = 5    
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -93,12 +94,12 @@ class Mud:
         await Utility.send_msg(f"{player.name},{str(player.hitpoints)}/{str(player.max_hitpoints)}", 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
-    async def you_died(self, player, websocket):
+    async def you_died(self, player, logger):
         # set combat to false
         player.in_combat = False
 
         # state you died
-        await Utility.send_msg("You die... but awaken on a strange beach shore.", 'event', websocket, logger)
+        await Utility.send_msg("You die... but awaken on a strange beach shore.", 'event', player.websocket, logger)
         
         # drop all items
         room = await self.world.get_room(player.location)
@@ -107,11 +108,17 @@ class Mud:
         player.inventory = []
 
         # set player location to beach shore
-        player, self.world = await self.world.move_room(5, player, self.world, websocket, logger)
+        player, self.world = await self.world.move_room(self.DEATH_RESPAWN_ROOM, player, self.world, player.websocket, logger)
+
+        # alert others in the room that new player has arrived
+        room = await self.world.get_room(self.DEATH_RESPAWN_ROOM, logger)
+        for p in room['players']:
+            if p != player:
+                await Utility.send_msg(f"A bright purple spark floods your vision.  When it clears, {player.name} is standing before you.  Naked.", 'event', p.websocket, logger)
 
         # set hits back to max / force health refresh
         player.hitpoints = player.max_hitpoints
-        await self.show_health(player, websocket)
+        await self.show_health(player, player.websocket)
 
     # responsible for the "prepares to attack you messages"
     async def check_for_new_attacks(self, room, logger):
@@ -225,7 +232,7 @@ class Mud:
 
             # no point in continuing if player is dead..
             if player.hitpoints <= 0:
-                await self.you_died(player, player.websocket)
+                await self.you_died(player, logger)
 
             # Updating health bar
             await self.show_health(player, player.websocket)
