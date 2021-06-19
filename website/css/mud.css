@@ -91,6 +91,7 @@ body {
   text-align: left;
   padding-left: 1em;
   padding-right: 1em;
+  padding-bottom: 1.5em;
   overflow-wrap: break-word;
   font-size: 1.25rem;
   position: relative;
@@ -119,8 +120,8 @@ body {
   padding: .5em;
 }
 
-#health {
-  font-size: 2rem;
+#player_name {
+  text-align: center;
 }
 
 .sidebar {

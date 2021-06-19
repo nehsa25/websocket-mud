@@ -97,8 +97,10 @@ function processCommand(data, msg) {
       break;
     case 'health':
       if (data.message != "") {
-
-        hitpoints = parseInt(data.message.split('/')[0]);
+        
+        value = data.message.split('/')[0];
+        name = value.split(',')[0];
+        hitpoints = parseInt(value.split(',')[1]);
         max_hitpoints = parseInt(data.message.split('/')[1]);
         
         if (hitpoints / max_hitpoints >= .75) {
@@ -109,6 +111,7 @@ function processCommand(data, msg) {
           color = 'red';
         }
 
+        $('#player_name').html(name);
         var health_msg = "Health: <span style=\"color: " + color + ";\">" + hitpoints + "</span> / " + max_hitpoints;
         $('#health').html(health_msg);
       }
