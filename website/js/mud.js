@@ -53,7 +53,7 @@ function processCommand(data, msg) {
   switch (data.type) {        
     case 'request_hostname':
       console.log("Inside request_hostname switch");
-      names = ['Ambrose', 'Crossen', 'Dunstan', 'Bink', 'Ivar', 'Beatrice', 'Subaru', 'Roswaal', 'Ashen', 'Sigrid', 'Renkath', 'Kelsek', 'Ash', 'Jay', 'Bob', 'Fred', 'Mike', 'James', 'Jones', 'Tim', 'Timmy', 'John', 'Jack', 'May', 'Sally', 'Candie', 'Jesse', 'Ethan']
+      var names = ['Ambrose', 'Crossen', 'Dunstan', 'Bink', 'Ivar', 'Beatrice', 'Subaru', 'Roswaal', 'Ashen', 'Sigrid', 'Renkath', 'Kelsek', 'Ash', 'Jay', 'Bob', 'Fred', 'Mike', 'James', 'Jones', 'Tim', 'Timmy', 'John', 'Jack', 'May', 'Sally', 'Candie', 'Jesse', 'Ethan']
       var name = names[Math.floor(Math.random() * names.length)];
       var resp = '{"type": "hostname_answer", "host": "' + name + '"}';
       console.log("Server is requesting our name, sending back: " + resp);      

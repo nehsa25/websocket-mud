@@ -40,7 +40,7 @@ class Mud:
             await player.websocket.send(json.dumps(json_msg))
 
     # calls at the beginning of the connection
-    async def register(self, websocket):
+    async def register(self, websocket, logger):
         hp = 50
         strength = 3 # 0 - 30
         agility = 3 # 0 - 30
@@ -61,6 +61,13 @@ class Mud:
         if websocket_client['type'] == 'hostname_answer':
             LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
             player.name = websocket_client['host']
+
+            # if the name is already taken, request another
+            matching_players = [p for p in self.world.players if p.name == player.name]
+            if matching_players != []:
+                LogUtils.debug(f"Name ({matching_players[0].name}) is already taken, requesting a different one..", logger)   
+                return await self.register(websocket, logger)
+
             player.websocket = websocket
             self.world.players.append(player)
             await self.notify_users()
@@ -305,7 +312,7 @@ class Mud:
     # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
-        player = await self.register(websocket)
+        player = await self.register(websocket, logger)
 
         try:
             # setup world events
