@@ -100,7 +100,13 @@ class Mud:
 
         # state you died
         await Utility.send_msg("You die... but awaken on a strange beach shore.", 'event', player.websocket, logger)
-        
+                
+        # alert others in the room where you died that you died..
+        room = await self.world.get_room(player.location, logger)
+        for p in room['players']:
+            if p != player:
+                await Utility.send_msg(f"{player.name} died.", 'event', p.websocket, logger)
+
         # drop all items
         room = await self.world.get_room(player.location)
         for item in player.inventory:
