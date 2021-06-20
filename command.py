@@ -378,9 +378,6 @@ class Command:
                         # set monster as dead
                         await current_monster.kill(room, logger)
 
-                        # add (Dead) to monster 
-                        current_monster.name = f"{current_monster.name} (Dead)"
-
                         for world_player in room['players']:
                             if world_player.in_combat == current_monster:
                                 # give experience
@@ -395,7 +392,9 @@ class Command:
 
                                 # show room
                                 await Command.process_room(player.location, player, world, world_player.websocket, logger)
-
+                        
+                        # add (Dead) to monster 
+                        current_monster.name = f"{current_monster.name} (Dead)"
                     else:
                         await asyncio.sleep(3)
             else:
