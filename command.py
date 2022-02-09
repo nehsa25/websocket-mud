@@ -69,6 +69,11 @@ class Command:
 
     @staticmethod
     async def process_direction(wanted_direction, player, world, websocket, logger):
+        # stop resting                            
+        if player.resting == True:
+            player.resting = False
+            await Utility.send_msg("You are no longer resting.", 'info', websocket, logger)
+            
         room = await world.get_room(player.location)
         found_exit = False
         for avail_exit in room["exits"]:
@@ -467,6 +472,26 @@ class Command:
         #     pass
         return player, world 
 
+    @staticmethod
+    async def process_rest(player, world, websocket, logger):
+        room = await world.get_room(player.location)
+        monsters_in_room = len(room['monsters'])
+        if player.in_combat == True or monsters_in_room > 0:
+            await Utility.send_msg("You cannot rest at this time.  You are in combat.", 'info', websocket, logger)
+        else:
+            # check if in combat
+
+            # if not...
+
+            # simple message staying you're starting to rest
+            await Utility.send_msg("You start to rest.", 'info', websocket, logger)
+
+            # set an attribute that we can use later
+            player.resting = True
+
+        # press enter (refresh the room)
+        return await Command.process_room(player.location, player, world, websocket, logger)
+
     # main function that runs all the rest
     @staticmethod
     async def run_command(command, player, world, websocket, logger):
@@ -516,6 +541,8 @@ class Command:
             player, world = await Command.process_who(player, world, websocket, logger)
         elif command.startswith('/'):
             player, world = await Command.process_comms(command, player, world, websocket, logger)
+        elif command == 'rest':
+            player, world = await Command.process_rest(player, world, websocket, logger)
         else: # you're going to say it to the room..
             await Utility.send_msg(f"\"{command}\" is not a valid command.", 'info', websocket, logger)
 

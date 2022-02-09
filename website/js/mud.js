@@ -97,12 +97,15 @@ function processCommand(data, msg) {
       break;
     case 'health':
       if (data.message != "") {
-        
-        value = data.message.split('/')[0];
-        name = value.split(',')[0];
-        hitpoints = parseInt(value.split(',')[1]);
-        max_hitpoints = parseInt(data.message.split('/')[1]);
-        
+        // f"{player.name}|{str(player.hitpoints)}/{str(player.max_hitpoints)}|R"
+        values = data.message.split('|');
+        num_items = values.length;
+        console.log("num items: " + num_items);
+        name = values[0]; // player.name
+        hitpoints = parseInt(values[1].split('/')[0]);
+        console.log("hitpoints: " + hitpoints);
+        max_hitpoints = parseInt(values[1].split('/')[1]);
+        console.log("max_hitpoints: " + max_hitpoints);
         if (hitpoints / max_hitpoints >= .75) {
           color = 'green';
         } else if (hitpoints / max_hitpoints >= .25) {
@@ -111,9 +114,26 @@ function processCommand(data, msg) {
           color = 'red';
         }
 
+        // statuses
+        if (num_items > 2) {
+          statuses = values[2];
+          if (statuses == 'REST') {
+            statuses = 'Resting'
+          }
+        } else {
+          statuses = ""; // no status effects present such as resting
+        }
+
+        // add the player name
         $('#player_name').html(name);
+
+        // add the health
         var health_msg = "Health: <span style=\"color: " + color + ";\">" + hitpoints + "</span> / " + max_hitpoints;
         $('#health').html(health_msg);
+
+        // add status effects
+        var status_msg = "Status: Resting";
+        $('#statuses').html(statuses);
       }
       break;
     case 'room': 

@@ -20,7 +20,8 @@ class Mud:
     world = World() # create our WORLD object that'll contain things like breeze and rain events
     COMBAT_WAIT_SECS = 3.5
     CHECK_FOR_MONSTERS_SECS = 2
-    DEATH_RESPAWN_ROOM = 5    
+    DEATH_RESPAWN_ROOM = 5   
+    REST_WAIT_SECS = 7 
 
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
@@ -98,7 +99,10 @@ class Mud:
 
     # shows color-coded health bar
     async def show_health(self, player, websocket):
-        await Utility.send_msg(f"{player.name},{str(player.hitpoints)}/{str(player.max_hitpoints)}", 'health', websocket, logger)
+        msg = f"{player.name}|{str(player.hitpoints)}/{str(player.max_hitpoints)}"
+        if player.resting:
+            msg += "|REST"
+        await Utility.send_msg(msg, 'health', websocket, logger)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, player, logger):
@@ -164,7 +168,12 @@ class Mud:
                     # cycle through all players
                     for p in room['players']: 
                         if monster.in_combat == p:
-                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', p.websocket, logger)\
+                            await Utility.send_msg(f"{monster.name} prepares to attack you!", 'info', p.websocket, logger)
+
+                            # stop resting                            
+                            if p.resting == True:
+                                p.resting = False
+                                await Utility.send_msg("You are no longer resting.", 'info', p.websocket, logger)
 
                             for p2 in room['players']:                                
                                 if monster.in_combat != p2:
@@ -206,20 +215,26 @@ class Mud:
         monsters_damage = sorted(monsters_damage, key=lambda k: k['damage'], reverse=True) 
 
         # build our attack message
-        attack_msg = f"You were hit for {total_damage} damage!"
-        attack_msg_extra = "("
-        for monster_damage in monsters_damage:
-            if monster_damage['damage'] > 0:
-                attack_msg_extra += f"{monster_damage['name']}: {monster_damage['damage']}, "
-        attack_msg_extra = attack_msg_extra[0:len(attack_msg_extra)-2]
-        attack_msg_extra += ")"
+        attack_msg = ""
+        print(f"\n\n\n{len(room['monsters'])}")
+        if len(room['monsters']) == 1:
+            attack_msg = f"{room['monsters'][0].name} hit you for {total_damage} damage!"
+        else:
+            attack_msg = f"You were hit for {total_damage} damage!"
+            attack_msg_extra = "("
+            for monster_damage in monsters_damage:
+                if monster_damage['damage'] > 0:
+                    attack_msg_extra += f"{monster_damage['name']}: {monster_damage['damage']}, "
+            attack_msg_extra = attack_msg_extra[0:len(attack_msg_extra)-2]
+            attack_msg_extra += ")"
+            attack_msg = f"{attack_msg} {attack_msg_extra}"
 
         # send our attack messages  
         if monsters_in_room == True:
             for p in room['players']:
                 if p.websocket == player.websocket:
                     if total_damage > 0:
-                        await Utility.send_msg(f"{attack_msg} {attack_msg_extra}", 'attack', p.websocket, logger)
+                        await Utility.send_msg(f"{attack_msg}", 'attack', p.websocket, logger)
                     else:
                         await Utility.send_msg("You were dealt no damage this round!", 'info', p.websocket, logger)
                 else: # alert others of the battle
@@ -309,6 +324,25 @@ class Mud:
                                 LogUtils.info(f"Respawning \"{new_monster.name}\" in room {room['id']} ({room['name']})", logger)
                                 room['monsters'].append(new_monster)
 
+    # increases hp when resting
+    async def check_for_resting(self, websocket, player):
+        while True:
+            # Check resting every 2 seconds
+            await asyncio.sleep(self.REST_WAIT_SECS)
+
+            if player.resting == True:
+                LogUtils.debug("Checking if resting...", logger)
+                if player.hitpoints < player.max_hitpoints:
+                    heal = randint(1,3)
+                    await Utility.send_msg(f"You recover {heal} hit point.", 'info', player.websocket, logger)
+                    player.hitpoints += 3
+                    if player.hitpoints > player.max_hitpoints:
+                        player.hitpoints = player.max_hitpoints
+                        player.resting = False
+                        await Utility.send_msg("You have fully recovered.", 'info', player.websocket, logger)
+                        
+                    await self.show_health(player, player.websocket)
+
     # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
@@ -324,8 +358,14 @@ class Mud:
             # start our resurrection task
             asyncio.create_task(self.respawn_mobs())
 
+            # start our resting task
+            asyncio.create_task(self.check_for_resting(websocket, player))
+
             # enter our player input loop
             while True:
+                # calculate rest
+
+
                 # send updated hp
                 await self.show_health(player, websocket)
 

@@ -8,6 +8,7 @@ class Player:
     agility = 0
     perception = 0
     experience = 0
+    resting = False
     in_combat = None
     inventory = []
     money = []
