@@ -334,9 +334,12 @@ class Mud:
                 LogUtils.debug("Checking if resting...", logger)
                 if player.hitpoints < player.max_hitpoints:
                     heal = randint(1,3)
-                    await Utility.send_msg(f"You recover {heal} hit point.", 'info', player.websocket, logger)
+                    if heal == 1:
+                        await Utility.send_msg(f"You recover {heal} hitpoint.", 'info', player.websocket, logger)
+                    else:
+                        await Utility.send_msg(f"You recover {heal} hitpoints.", 'info', player.websocket, logger)
                     player.hitpoints += 3
-                    if player.hitpoints > player.max_hitpoints:
+                    if player.hitpoints >= player.max_hitpoints:
                         player.hitpoints = player.max_hitpoints
                         player.resting = False
                         await Utility.send_msg("You have fully recovered.", 'info', player.websocket, logger)
