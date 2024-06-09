@@ -1,3 +1,4 @@
+import ssl
 import time
 import asyncio
 import websockets
@@ -393,23 +394,25 @@ class Mud:
 if __name__ == "__main__":
     try:
         # logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="d:\\src\\mud", logger_name='websockets')
-        logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="d:\\src\\websocket-mud")
+        logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="c:\\src\\websocket-mud")
         m = Mud()
 
         # start websocket
         host = SysArgs.read_sys_args("--host=")
         if host == None:
-            host = '0.0.0.0'
+            host = 'api.nehsa.net'
 
         port = SysArgs.read_sys_args("--port=")
         if port == None:
-            port = '81'
+            port = 60049
 
         LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
 
         # start websocket server
         LogUtils.info(f"Starting websocket server", logger)
-        start_server = websockets.serve(m.main, host, port)
+        ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        ssl_context.load_cert_chain("c:/src/websocket-mud/certificate.pem", "c:/src/websocket-mud/private.key")
+        start_server = websockets.serve(m.main, host, port, max_size=9000000, ssl=ssl_context)
 
         # start listening loop
         loop = asyncio.get_event_loop()

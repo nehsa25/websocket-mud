@@ -4,3 +4,6 @@ mud.log.1
 .vscode/settings.json
 mud.log.2
 mud.log.3
+certificate.pem
+ca_bundle.pem
+private.key
