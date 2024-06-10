@@ -400,7 +400,7 @@ if __name__ == "__main__":
         # start websocket
         host = SysArgs.read_sys_args("--host=")
         if host == None:
-            host = 'api.nehsa.net'
+            host = '192.168.68.68'
 
         port = SysArgs.read_sys_args("--port=")
         if port == None:
