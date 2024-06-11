@@ -19,7 +19,7 @@ class Rooms:
                 ],
             "items": [Items.helmet, Items.stick, Items.maul],
             "hidden_items": [],
-            "monsters": [monsters.get_crab(), monsters.get_zombie_surfer()],
+            "monsters": [monsters.get_crab(), monsters.get_zombie_surfer(), monsters.get_rat()],
             "players": []          
         },
         { 

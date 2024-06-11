@@ -11,6 +11,7 @@ class Monsters:
         ZOMBIE_SURFER = 4
         GHOUL = 5
         THUG = 6
+        RAT = 7
 
     # used for respawning monsters
     async def get_monster(self, wanted_monster, room, logger):
@@ -33,10 +34,29 @@ class Monsters:
         elif wanted_monster == self.MONSTERS.THUG:
             monster = self.get_thug()
             await monster.announce_entrance(room, logger)
+        elif wanted_monster == self.MONSTERS.RAT:
+            monster = self.get_rat()
+            await monster.announce_entrance(room, logger)
             
         LogUtils.debug(f"get_monster returning \"{monster.name}\"", logger)
         return monster
 
+    def get_rat(self):
+        monsters = ['', '', '', '', '', '', 'festering', 'Maddened', 'Angry', 'Filthy']
+        name = f"{random.choice(monsters)} Brown Rat"
+        death_cry = f"{name} spasms in agony, then is still."
+        entrance_cry = f"{name} scurries in.."
+        return Monster(
+                        name=name.strip(),
+                        monster_type=self.MONSTERS.CRAB,
+                        hitpoints=10,
+                        damage_potential='1d3',
+                        experience=40,
+                        money_potential=(0,0),
+                        death_cry=death_cry,
+                        entrance_cry=entrance_cry
+                    )
+        
     def get_crab(self):
         monsters = ['', '', '', '', '', '', '', '', 'Angry', 'Mad']
         name = f"{random.choice(monsters)} Giant Crab"

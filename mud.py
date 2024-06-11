@@ -105,6 +105,13 @@ class Mud:
             msg += "|REST"
         await Utility.send_msg(msg, 'health', websocket, logger)
 
+    # shows inventory
+    async def show_inventory(self, player, websocket):
+        items = []
+        for item in player.inventory:
+            items.append(item.name)
+        await Utility.send_msg(items, 'inv', websocket, logger)
+        
     # cancels all tasks and states you died if you die
     async def you_died(self, player, logger):
         # set combat to false
@@ -133,6 +140,7 @@ class Mud:
         for p in room['players']:
             if p != player:
                 await Utility.send_msg(f"A bright purple spark floods your vision.  When it clears, {player.name} is standing before you.  Naked.", 'event', p.websocket, logger)
+
 
         # set hits back to max / force health refresh
         player.hitpoints = player.max_hitpoints
@@ -367,7 +375,11 @@ class Mud:
 
             # enter our player input loop
             while True:
+                # set inventory for refresh
+                await self.show_inventory(player, player.websocket)                
+        
                 # calculate rest
+                # TODO
 
 
                 # send updated hp
