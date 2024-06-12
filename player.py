@@ -1,3 +1,6 @@
+from items import Items
+
+
 class Player:
     name = None
     level = 1
@@ -10,7 +13,7 @@ class Player:
     experience = 0
     resting = False
     in_combat = None
-    inventory = []
+    inventory = [Items.book, Items.cloth_pants]
     money = []
     websocket = None
 

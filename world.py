@@ -2,9 +2,9 @@ import asyncio
 import datetime
 import inspect
 from random import randint
+from rooms import Rooms
 from utility import Utility
 from log_utils import LogUtils, Level
-from rooms import Rooms
 from command import Command
 
 class World:
@@ -111,6 +111,9 @@ class World:
     # just returns a specific room in our list of rooms
     async def get_room(self, room_id, logger=None):
         method_name = inspect.currentframe().f_code.co_name
-        room = [room for room in Rooms.rooms if room["id"] == room_id][0]
+        rooms = Rooms().all_rooms
+        
+        
+        room = [room for room in rooms if room["id"] == room_id][0]
         LogUtils.debug(f"{method_name}: Returning room \"{room['name']}\"", logger)
         return room

@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Item:
     name = None
     damage_potential = None
@@ -8,6 +9,8 @@ class Item:
     verb = None
     plural_verb = None
     equiped = False
+    description = None
+    contents = None
 
     # item types
     class ItemType(Enum):
@@ -27,11 +30,22 @@ class Item:
         HEAVY_WEIGHT = 10
         SUPER_HEAVY_WEIGHT = 15
 
-    def __init__(self, name, item_type, damage_potential, weight_class, verb, plural_verb):
+    def __init__(
+        self,
+        name,
+        item_type,
+        damage_potential,
+        weight_class,
+        verb,
+        plural_verb,
+        description,
+        contents=None,
+    ):
         self.name = name
         self.damage_potential = damage_potential
         self.weight_class = weight_class
         self.item_type = item_type
         self.verb = verb
         self.plural_verb = plural_verb
-    
+        self.description = description
+        self.contents = contents

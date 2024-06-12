@@ -2,6 +2,7 @@ from utility import Utility
 from items import Items
 from item import Item
 
+
 class CommandUtility:
     @staticmethod
     def get_equiped_weapon(player, logger):
@@ -25,14 +26,16 @@ class CommandUtility:
                 found_item = True
                 break
 
-        if found_item == True:      
+        if found_item == True:
             # set eq'd to False
             item_obj.equiped = False
 
             # remove from inventory
             player.inventory.remove(item_obj)
-            await Utility.send_msg(f"You dropped {item_obj.name}.", 'info', websocket, logger)
-            room['items'].append(item_obj)
+            await Utility.send_msg(
+                f"You dropped {item_obj.name}.", "info", websocket, logger
+            )
+            room["items"].append(item_obj)
         return found_item
 
     @staticmethod
@@ -48,11 +51,13 @@ class CommandUtility:
                 found_coin = True
                 break
 
-        if found_coin == True:  
-            # add to room    
-            room['items'].append(item_obj)
+        if found_coin == True:
+            # add to room
+            room["items"].append(item_obj)
 
             # remove from player inventory
             player.inventory.remove(item_obj)
-            await Utility.send_msg(f"You dropped {coin.Name}.", 'info', websocket, logger)
+            await Utility.send_msg(
+                f"You dropped {coin.Name}.", "info", websocket, logger
+            )
         return found_coin
