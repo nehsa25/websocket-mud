@@ -8,6 +8,7 @@ import random
 import sys
 import inspect
 from random import randint
+from admin import Admin
 from mudevent import MudWelcomeEvent
 from utility import Utility
 from command import Command
@@ -31,100 +32,6 @@ class Mud:
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", logger)
         # exit stuff..
-
-    # used to update webpage on user count
-    async def notify_users(self):
-        print("inside notify_users")
-        json_msg = {"type": "get_clients", "value": len(self.world.players)}
-
-        print(f"Sending json to each connected client: {json.dumps(json_msg)}")
-        for player in self.world.players:
-            print(f"Sending updated client list to {player.name}")
-            await player.websocket.send(json.dumps(json_msg))
-
-    # calls at the beginning of the connection
-    async def register(self, websocket, logger, dupe=False):
-        hp = 50
-        strength = 3  # 0 - 30
-        agility = 3  # 0 - 30
-        location = 0
-        perception = 50
-        player = Player(hp, strength, agility, location, perception)
-
-        LogUtils.debug(f"A new client has connected, registering..", logger)
-        # get the client hostname
-        LogUtils.debug(f"Requesting client hostname..", logger)
-        if dupe:
-            await websocket.send('{"type": "dupe_username"}')            
-        else:
-            await websocket.send('{"type": "request_hostname"}')
-        LogUtils.debug(f"Awaiting client name response from client..", logger)
-        msg = await websocket.recv()
-        LogUtils.debug(f"Message received: {msg}", logger)
-        websocket_client = json.loads(msg)
-        ip = websocket.remote_address[0]
-        LogUtils.debug(
-            f"Request received from {ip}: {websocket_client['type']}", logger
-        )
-        if websocket_client["type"] == "hostname_answer":
-            LogUtils.debug(f"A guest ({ip}) on lab page has connected", logger)
-            player.name = websocket_client["host"]
-
-            # if the name is already taken, request another
-            matching_players = [p for p in self.world.players if p.name == player.name]
-            if matching_players != []:
-                LogUtils.debug(
-                    f"Name ({matching_players[0].name}) is already taken, requesting a different one..",
-                    logger,
-                )
-                return await self.register(websocket, logger, True)
-
-            player.websocket = websocket
-            self.world.players.append(player)
-            await self.notify_users()
-
-            # send msg to everyone
-            for world_player in self.world.players:
-                if world_player.name == player.name:
-                    await Utility.send_msg(
-                        f"Welcome {player.name}!", "welcome", websocket, logger
-                    )
-                else:
-                    await Utility.send_msg(
-                        f"{player.name} joined the game!",
-                        "event",
-                        world_player.websocket,
-                        logger,
-                    )
-
-            # show room
-            player, self.world = await self.world.move_room(
-                player.location, player, self.world, websocket, logger
-            )
-        else:
-            LogUtils.error(
-                f"We shouldn't be here.. received request: {websocket_client['type']}",
-                logger,
-            )
-        return player
-
-    # called when a client disconnects
-    async def unregister(self, websocket):
-        LogUtils.debug(f"Unregistering client..", logger)
-        current_player = [i for i in self.world.players if i.websocket == websocket][0]
-        self.world.players = [
-            i for i in self.world.players if not (i.websocket == websocket)
-        ]
-        await self.notify_users()
-
-        # let folks know someone left
-        for world_player in self.world.players:
-            await Utility.send_msg(
-                f"{current_player.name} left the game.",
-                "event",
-                world_player.websocket,
-                logger,
-            )
 
     # shows color-coded health bar
     async def show_health(self, player, websocket):
@@ -494,7 +401,7 @@ class Mud:
     # main loop when client connects
     async def main(self, websocket, path):
         # register client websockets - runs onces each time a new person starts
-        player = await self.register(websocket, logger)
+        player, self.world = await Admin.new_user(self.world, websocket, logger)
 
         try:
             # setup world events
@@ -524,12 +431,15 @@ class Mud:
                 LogUtils.info(f"Waiting for command...", logger)
                 message = await websocket.recv()
                 msg_obj = json.loads(message)
+                extra_data = None
 
                 if msg_obj["type"] == "cmd":
-                    LogUtils.debug(f"Received: cmd", logger)
-                    received_command = True
+                    LogUtils.debug(f"Received: " + json.dumps(msg_obj), logger)
+                    if msg_obj["extra"] != None:
+                        extra_data = msg_obj["extra"]
+                        
                     player, self.world = await Command.run_command(
-                        msg_obj["cmd"], player, self.world, websocket, logger
+                        msg_obj["cmd"], player, self.world, websocket, logger, extra_data
                     )
                 else:
                     LogUtils.error(f"Received unknown message: {message}", logger)
@@ -540,7 +450,7 @@ class Mud:
                 f"An error occurred!\nException:\n{traceback.format_exc()}", logger
             )
         finally:
-            await self.unregister(websocket)
+            await Admin.unregister(self.world, websocket, logger)
 
 
 if __name__ == "__main__":

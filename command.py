@@ -4,6 +4,7 @@ import json
 from random import random, randint
 
 # my stuff
+from admin import Admin
 from log_utils import LogUtils, Level
 from muddirections import MudDirections
 from utility import Utility
@@ -379,6 +380,24 @@ class Command:
         return player, world
 
     @staticmethod
+    async def process_system_command(command, extra, player, world, websocket, logger):
+        wanted_command = command.split(" ")
+        subcmd = None
+        value = None
+        if len(wanted_command) == 3:
+            subcmd = wanted_command[1]
+            value = wanted_command[2].capitalize()
+            
+        if subcmd == "name":
+            player.name = value
+            
+            # check if user already in system (they should be)
+            world = await Admin.unregister(world, websocket, logger, True)
+            world = await Admin.register(world, value, player, websocket, logger)      
+            await Utility.send_msg(f"{extra["name"]} is now known as {player.name}.", "changename", websocket, logger, player.name)
+        return player, world
+    
+    @staticmethod
     async def process_stat(player, world, websocket, logger):
         msg = f"Hello {player.name}<br>"
         msg += "**************************************************<br>"
@@ -660,7 +679,7 @@ class Command:
 
     # main function that runs all the rest
     @staticmethod
-    async def run_command(command, player, world, websocket, logger):
+    async def run_command(command, player, world, websocket, logger, extra = ""):
         LogUtils.debug(f'Command: "{command}"', logger)
         response = ""
         command = command.lower()
@@ -714,6 +733,10 @@ class Command:
         elif command.startswith("eq ") or command.startswith("equip "):  # eq
             player, world = await Command.process_equip_item(
                 command, player, world, websocket, logger
+            )
+        elif command.startswith("system "):  # a system command like changing username
+            player, world = await Command.process_system_command(
+                command, extra, player, world, websocket, logger
             )
         elif command == "stat":  # stat
             player, world = await Command.process_stat(player, world, websocket, logger)
