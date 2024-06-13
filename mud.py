@@ -43,7 +43,7 @@ class Mud:
             await player.websocket.send(json.dumps(json_msg))
 
     # calls at the beginning of the connection
-    async def register(self, websocket, logger):
+    async def register(self, websocket, logger, dupe=False):
         hp = 50
         strength = 3  # 0 - 30
         agility = 3  # 0 - 30
@@ -54,7 +54,10 @@ class Mud:
         LogUtils.debug(f"A new client has connected, registering..", logger)
         # get the client hostname
         LogUtils.debug(f"Requesting client hostname..", logger)
-        await websocket.send('{"type": "request_hostname"}')
+        if dupe:
+            await websocket.send('{"type": "dupe_username"}')            
+        else:
+            await websocket.send('{"type": "request_hostname"}')
         LogUtils.debug(f"Awaiting client name response from client..", logger)
         msg = await websocket.recv()
         LogUtils.debug(f"Message received: {msg}", logger)
@@ -74,7 +77,7 @@ class Mud:
                     f"Name ({matching_players[0].name}) is already taken, requesting a different one..",
                     logger,
                 )
-                return await self.register(websocket, logger)
+                return await self.register(websocket, logger, True)
 
             player.websocket = websocket
             self.world.players.append(player)

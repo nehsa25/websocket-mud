@@ -8,7 +8,7 @@ class Beach:
         {
             "id": 6,
             "name": "Beach",
-            "description": "Welcome to the world of Illisurom.  You are on a white-sand beach.  You see paths leading off in several directions.",
+            "description": "You are on a white-sand beach.  You see paths leading off in several directions.",
             "exits": [
                 {"direction": Room.dirs.west, "id": 1},
                 {"direction": Room.dirs.north, "id": 2},
