@@ -7,3 +7,5 @@ mud.log.3
 certificate.pem
 ca_bundle.pem
 private.key
+mudevent.py
+output.png

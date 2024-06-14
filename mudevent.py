@@ -25,6 +25,7 @@ class MudEvents:
         ATTACK = 14
         HEALTH = 15
         CLIENT_LIST = 16
+        MAP_EVENT = 17
     
     def get_event_type_id(event):
         return event.value
@@ -146,6 +147,16 @@ class CommandEvent:
     def __init__(self, message):
         self.type = MudEvents.get_event_type_id(MudEvents.Event.COMMAND)
         self.message = message
+
+    def to_json(self):
+        return jsonpickle.encode(self)
+
+class MapEvent:
+    type = None
+    map_name = ""
+    def __init__(self, map_name):
+        self.type = MudEvents.get_event_type_id(MudEvents.Event.MAP_EVENT)
+        self.map_name = map_name
 
     def to_json(self):
         return jsonpickle.encode(self)

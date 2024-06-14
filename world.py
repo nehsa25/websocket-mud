@@ -122,6 +122,10 @@ class World:
 
         # show new room
         player, world = await self.command.process_room(new_room_id, player, world)
+        
+        # generate new map
+        await player.generate_map(new_room_id)
+        
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 

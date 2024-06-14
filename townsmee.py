@@ -1,3 +1,4 @@
+import pydot
 from items import Items
 from log_utils import LogUtils
 from room import Room
@@ -34,6 +35,7 @@ class TownSmee:
     logger = None
     unitfactory = None
     rooms = None
+    name = "Town Smee"
 
     def __init__(self, logger):
         self.logger = logger
@@ -45,7 +47,7 @@ class TownSmee:
                 description="You are in a majestic inn.  The grandest building in town.  A three-storied building with a yellow roof.",
                 exits=[
                     {"direction": Room.dirs.east, "id": 1},
-                    {"direction": Room.dirs.up, "id": 2},
+                    {"direction": Room.dirs.up, "id": 3},
                 ],
                 environment=Room.Environments.TOWNSMEE,
             ),
@@ -88,8 +90,25 @@ class TownSmee:
                 hidden_items=[Items.helmet],
                 environment=Room.Environments.TOWNSMEE,
             ),
+            Room(
+                id=5,
+                name="Town Smee - Blacksmith",
+                description="You are in the blacksmith's shop.",
+                exits=[
+                    {"direction": Room.dirs.east, "id": 1},
+                ],
+                environment=Room.Environments.TOWNSMEE,
+            ),
+            Room(
+                id=6,
+                name="Town Smee - Blacksmith, back room",
+                description="You are in the blacksmith's back room.",
+                exits=[
+                    {"direction": Room.dirs.west, "id": 5},
+                ],
+                environment=Room.Environments.TOWNSMEE,
+            )
         ]
-
         self.unitfactory = TownSmeeUnitFactory(self.rooms, logger)
         
     # self.rooms = self.rooms
