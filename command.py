@@ -4,10 +4,13 @@ import asyncio
 import json
 from random import random, randint
 
+import jsonpickle
+
 # my stuff
 from admin import Admin
 from log_utils import LogUtils, Level
 from muddirections import MudDirections
+from mudevent import CommandEvent, RoomEvent
 from utility import Utility
 from command_utility import CommandUtility
 
@@ -59,18 +62,10 @@ class Command:
             people = people[0 : len(people) - 2]
 
         # formulate message to client
-        json_msg = {
-            "type": "room",
-            "name": new_room.name,
-            "description": description,
-            "items": items,
-            "exits": exits,
-            "monsters": monsters,
-            "people": people,
-        }
+        json_msg = RoomEvent(new_room.name, description, items, exits, monsters, people).to_json()
 
-        LogUtils.debug(f"Sending json: {json.dumps(json_msg)}", self.logger)
-        await player.websocket.send(json.dumps(json_msg))
+        LogUtils.debug(f"Sending json: {json_msg}", self.logger)
+        await self.utility.send_message_raw(json_msg, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 
@@ -343,7 +338,7 @@ class Command:
             player.name = request
             
             # check if user already in system (they should be)
-            world = await self.admin.unregister(world, player.websocket, True)
+            world = await self.admin.unregister(world, player, True)
             player, world = await self.admin.register(world, player)      
             await self.utility.send_msg(f"{extra["name"]} is now known as {player.name}.", "changename", player.websocket, player.name)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
@@ -587,8 +582,9 @@ class Command:
         response = ""
         command = command.lower()
 
-        # send back the command we received as info
-        await self.utility.send_msg(command, "command", player.websocket)
+        # send back the command we received as info - (this could just be printed client side and save the traffic cost)
+        command_event = CommandEvent(command).to_json()
+        await self.utility.send_message_raw(command_event, player.websocket)
 
         # if the player is dead, don't do anything..
         if player.hitpoints <= 0:

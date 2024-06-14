@@ -14,7 +14,7 @@ class Rooms:
     
     def __init__(self, logger) -> None:
         self.logger = logger
-        LogUtils.info("Initializing Rooms() class", self.logger)
+        LogUtils.debug("Initializing Rooms() class", self.logger)
         self.townsmee = TownSmee(self.logger)
         # self.all_rooms.extend(self.forest.rooms)
         # self.all_rooms.extend(self.breach.rooms)

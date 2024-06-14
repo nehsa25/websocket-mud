@@ -56,7 +56,7 @@ class Unit(UnitTypes):
 
     def __init__(self, logger):
         self.logger = logger
-        LogUtils.info("Initializing Unit() class", self.logger)
+        LogUtils.debug("Initializing Unit() class", self.logger)
 
     def generate_unit(
         self, title, name, hp, strength, agility, location, perception, description

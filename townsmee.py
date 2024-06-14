@@ -14,7 +14,7 @@ class TownSmeeUnitFactory:
 
     def __init__(self, rooms, logger):
         self.logger = logger
-        LogUtils.info("Initializing TownSmeeUnitFactory() class", self.logger)
+        LogUtils.debug("Initializing TownSmeeUnitFactory() class", self.logger)
         self.utility = Utility(self.logger)
         self.unit_factory = Unit(self.logger)
         sheriff = self.unit_factory.generate_unit(
@@ -37,7 +37,7 @@ class TownSmee:
 
     def __init__(self, logger):
         self.logger = logger
-        LogUtils.info("Initializing TownSmee() class", self.logger)        
+        LogUtils.debug("Initializing TownSmee() class", self.logger)        
         self.rooms = [
             Room(
                 id=0,

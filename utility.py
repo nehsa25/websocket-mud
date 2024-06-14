@@ -10,15 +10,22 @@ class Utility:
     
     def __init__(self, logger) -> None:
         self.logger = logger
-        LogUtils.info("Initializing Utility() class", self.logger)
+        LogUtils.debug("Initializing Utility() class", self.logger)
     
+    async def send_message_raw(self, msg, websocket):       
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter, {msg}", self.logger) 
+        LogUtils.debug(f"{method_name}: Sending json: {msg}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger) 
+        await websocket.send(str(msg))
+        
     async def send_msg(self, msg, message_type, websocket, extra=""):       
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger) 
-        json_msg = MudEvent(message_type, msg, extra)
-        LogUtils.debug(f"{method_name}: Sending json: {jsonpickle.encode(json_msg)}", self.logger)
+        json_msg = MudEvent(message_type, msg, extra).to_json()
+        LogUtils.debug(f"{method_name}: Sending json: {json_msg}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
-        await websocket.send(jsonpickle.encode(json_msg))
+        await websocket.send(json_msg)
 
     def generate_location(self, rooms):
         method_name = inspect.currentframe().f_code.co_name

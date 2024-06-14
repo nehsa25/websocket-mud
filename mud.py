@@ -10,6 +10,7 @@ import inspect
 from random import randint
 from admin import Admin
 from command import Command
+from mudevent import MudEvents
 from utility import Utility
 from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
@@ -35,7 +36,7 @@ class Mud:
         self.utility = Utility(logger)
         self.admin = Admin(logger)
         self.command = Command(logger)
-        LogUtils.info("Initializing Mud() class", logger)
+        LogUtils.debug("Initializing Mud() class", logger)
         self.world = (
             World(self.logger)
         )  # create our WORLD object that'll contain things like breeze and rain events
@@ -44,21 +45,6 @@ class Mud:
     async def exit_handler(self, signal, frame):
         LogUtils.info("An exit signal as been received.  Exiting!", self.logger)
         # exit stuff..
-
-    # shows color-coded health bar
-    async def show_health(self, player, websocket):
-        msg = f"{player.name}|{str(player.hitpoints)}/{str(player.max_hitpoints)}"
-        if player.resting:
-            msg += "|REST"
-        await self.utility.send_msg(msg, "health", websocket)
-
-    # shows inventory
-    async def show_inventory(self, player, websocket):
-        items = []
-        for item in player.inventory:
-            items.append(item.name)
-
-        await self.utility.send_msg(items, "inv", websocket)
 
     # cancels all tasks and states you died if you die
     async def you_died(self, player):
@@ -384,14 +370,12 @@ class Mud:
 
             # enter our player input loop
             while True:
-                # set inventory for refresh
-                await self.show_inventory(self.player, self.player.websocket)
-
-                # calculate rest
-                # TODO
-
-                # send updated hp
-                await self.show_health(self.player, websocket)
+                for player_item in self.world.players:
+                    # set inventory for refresh
+                    await player_item.show_inventory()
+                       
+                    # send updated hp
+                    await player_item.show_health()
 
                 # wait for a command to be sent
                 LogUtils.info(f"Waiting for command...", self.logger)
@@ -399,7 +383,7 @@ class Mud:
                 msg_obj = json.loads(message)
                 extra_data = None
 
-                if msg_obj["type"] == "cmd":
+                if msg_obj["type"] == MudEvents.get_event_type_id(MudEvents.Event.COMMAND):
                     LogUtils.debug(f"Received: " + json.dumps(msg_obj), self.logger)
                     if msg_obj["extra"] != None:
                         extra_data = msg_obj["extra"]
@@ -414,7 +398,7 @@ class Mud:
                 f"An error occurred!\nException:\n{traceback.format_exc()}", logger
             )
         finally:
-            await Admin.unregister(self.world, websocket, self.logger)
+            await self.admin.unregister(self.world, self.player, self.logger)
 
 
 if __name__ == "__main__":
@@ -423,7 +407,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
+            console_level=Level.INFO,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)
@@ -458,7 +442,7 @@ if __name__ == "__main__":
         loop.run_forever()
 
         # if we got here the loop was cancelled, just quit
-        LogUtils.info(f"Exiting...", self.logger)
+        LogUtils.info(f"Exiting...", logger)
         sys.exit()
     except KeyboardInterrupt:
         loop.stop()

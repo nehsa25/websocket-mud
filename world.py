@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import inspect
 from random import randint
+from mudevent import TimeEvent
 from rooms import Rooms
 from utility import Utility
 from log_utils import LogUtils, Level
@@ -24,7 +25,7 @@ class World:
     
     def __init__(self, logger):
         self.logger = logger
-        LogUtils.info("Initializing World() class", self.logger)
+        LogUtils.debug("Initializing World() class", self.logger)
         self.utility = Utility(self.logger)
         self.command = Command(self.logger)
         self.rooms = Rooms(self.logger)
@@ -130,9 +131,9 @@ class World:
         LogUtils.debug(f"{method_name}: enter", self.logger)   
         while True:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
-            msg = f"It is {time}"
             for world_player in self.players:
-                await self.utility.send_msg(msg, 'time', world_player.websocket)
+                time_event = TimeEvent(time).to_json()
+                await self.utility.send_message_raw(time_event, world_player.websocket)
             
             # sleep 10 minutes
             await asyncio.sleep(60 * 10)
