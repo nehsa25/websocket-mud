@@ -33,7 +33,7 @@ class Admin:
         matching_players = [p for p in world.players if p.name == player.name]
         if matching_players != []:
             LogUtils.debug(f"Name ({matching_players[0].name}) is already taken, requesting a different one..", self.logger,)
-            player, world = await self.new_user(world, True)
+            player, world = await self.new_user(world, player.websocket, True)
         
         world.players.append(player)
         await self.notify_users(world)
