@@ -182,13 +182,11 @@ class World:
         # graph_type="digraph",
         graph = pydot.Dot(
             player.name,
-            graph_type="graph",
+            graph_type="digraph",
             bgcolor="hotpink",
-            style="dotted",
             rankdir="LR",
             splines="ortho",
-            concentrate="true",
-            fontsize="64"
+            concentrate="true"
         )
         graph.set_node_defaults(
             shape="rectangle",
@@ -200,7 +198,7 @@ class World:
         graph.set_edge_defaults(
             color="black",
             style="solid",
-            dir="none",
+            dir="none",            
         )
         count = 0
         for room in rooms:
@@ -214,6 +212,7 @@ class World:
                 edge = pydot.Edge(
                     room_name,
                     exit_room.name,
+                    label=exit_direction,
                 )
                 graph.add_edge(edge)
 
