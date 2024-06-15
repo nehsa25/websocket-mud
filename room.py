@@ -3,12 +3,6 @@ from monsters import Monsters
 from muddirections import MudDirections
 
 class Room:
-    class Environments(Enum):
-        TOWNSMEE = 1,
-        BEACH = 2,
-        FOREST = 3,
-        JUNGLE = 4,
-        BREACH = 5
     dirs = MudDirections()
     monsters = Monsters()
     id: 0

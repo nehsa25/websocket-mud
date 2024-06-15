@@ -16,7 +16,6 @@ from log_utils import LogUtils, Level
 from sysargs_utils import SysArgs
 from world import World
 from monsters import Monsters
-from rooms import Rooms
 
 class Mud:
     logger = None
@@ -29,7 +28,6 @@ class Mud:
     CHECK_FOR_MONSTERS_SECS = 2
     DEATH_RESPAWN_ROOM = 5
     REST_WAIT_SECS = 7
-    worldName = "Illisurom"
     
     def __init__(self, logger) -> None:
         self.logger = logger
@@ -37,9 +35,7 @@ class Mud:
         self.admin = Admin(logger)
         self.command = Command(logger)
         LogUtils.debug("Initializing Mud() class", logger)
-        self.world = (
-            World(self.logger)
-        )  # create our WORLD object that'll contain things like breeze and rain events
+        self.world = (World(self.logger))  # create our WORLD object that'll contain things like breeze and rain events
         pass
 
     async def exit_handler(self, signal, frame):
@@ -55,13 +51,13 @@ class Mud:
         await self.utility.send_msg("You die... but awaken on a strange beach shore.", "event", player.websocket, self.logger)
 
         # alert others in the room where you died that you died..
-        room = await self.world.get_room(player.location)
+        room = await self.world.get_room(player.location_id)
         for p in room.players:
             if p != player:
                 await self.utility.send_msg(f"{player.name} died.", "event", p.websocket, self.logger)
 
         # drop all items
-        room = await self.world.get_room(player.location)
+        room = await self.world.get_room(player.location_id)
         for item in player.inventory:
             room.items.append(item)
         player.inventory = []
@@ -255,7 +251,7 @@ class Mud:
                 )
 
                 # get the room player is in
-                room = await self.world.get_room(player.location, self.logger)
+                room = await self.world.get_room(player.location_id, self.logger)
                 LogUtils.debug(
                     f"{method_name}: Player \"{player.name}\" is in room \"{room.name}\"",
                     logger,
@@ -277,7 +273,7 @@ class Mud:
                 )
 
                 # we need to get room again after we've slept
-                room = await self.world.get_room(player.location, self.logger)
+                room = await self.world.get_room(player.location_id, self.logger)
 
                 # calculcate round damanage
                 await self.apply_mob_round_damage(self.player, room)
@@ -292,7 +288,7 @@ class Mud:
             await asyncio.sleep(2)
 
             # look through each room
-            rooms = Rooms(self.logger).all_rooms
+            rooms = self.world.rooms.get_rooms()
             for room in rooms:
                 # and if the room has monsters
                 if len(room.monsters) > 0:
@@ -407,7 +403,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.INFO,
+            console_level=Level.DEBUG,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)

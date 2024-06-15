@@ -1,15 +1,21 @@
 import asyncio
 import datetime
+from enum import Enum
 import inspect
+import os
+import re
+import time
+import pydot
 from random import randint
-from mudevent import TimeEvent
+from environments import Environments
+from mudevent import MapEvent, TimeEvent
 from rooms import Rooms
 from utility import Utility
 from log_utils import LogUtils, Level
 from command import Command
 
-class World:
-    # players
+class World:   
+    world_name = "Illisurom"
     players = []
     breeze_task = None
     rain_task = None
@@ -22,14 +28,19 @@ class World:
     command = None
     rooms = None
     rooms_list = None
+    room_start = "Town Smee - "
     
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing World() class", self.logger)
-        self.utility = Utility(self.logger)
-        self.command = Command(self.logger)
-        self.rooms = Rooms(self.logger)
-        self.rooms_list = self.rooms.all_rooms
+        if self.utility is None:
+            self.utility = Utility(self.logger)
+            
+        if self.command is None:
+            self.command = Command(self.logger)
+            
+        if self.rooms is None:
+            self.rooms = Rooms(self.world_name, self.logger)
 
     # schedule some events that'll do shit
     async def setup_world_events(self):        
@@ -105,7 +116,7 @@ class World:
     async def move_room(self, new_room_id, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)   
-        old_room = await self.get_room(player.location)
+        old_room = await self.get_room(player.location_id)
         new_room = await self.get_room(new_room_id)
 
         if old_room != new_room:
@@ -118,13 +129,13 @@ class World:
 
         # add player to new room        
         new_room.players.append(player)
-        player.location = new_room.id
+        player.location_id = new_room.id
 
         # show new room
         player, world = await self.command.process_room(new_room_id, player, world)
         
         # generate new map
-        await player.generate_map(new_room_id)
+        await self.generate_map(player)
         
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
@@ -146,6 +157,86 @@ class World:
     async def get_room(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)         
-        room = [room for room in self.rooms_list if room.id == room_id][0]
+        room = [room for room in self.rooms.get_rooms() if room.id == room_id][0]
         LogUtils.debug(f"{method_name}: exit, returning room \"{room.name}\"", self.logger)
         return room
+
+    async def generate_map(self, player, environment = Environments.TOWNSMEE):
+        self.path = f"c:/src/mud_images"
+        image_name = f"{player.name}_map_{int(time.time())}".lower()
+        extension = ".svg"
+        full_path = f"{self.path}/{image_name}"
+        full_tmp_path = f"{self.path}/tmp/{image_name}"
+        
+        # felete file if it exists
+        if os.path.exists(image_name):
+            os.remove(image_name)
+
+        # get rooms
+        rooms = [a for a in self.rooms.get_rooms() if a.environment == environment]
+        
+        # find area
+        room = rooms[player.location_id]
+
+        # generate map
+        # graph_type="digraph",
+        graph = pydot.Dot(
+            player.name,
+            graph_type="graph",
+            bgcolor="hotpink",
+            style="dotted",
+            rankdir="LR",
+            splines="ortho",
+            concentrate="true",
+            fontsize="64"
+        )
+        graph.set_node_defaults(
+            shape="rectangle",
+            style="filled",
+            fillcolor="cornflowerblue",
+            fontcolor="whitesmoke",
+            fontname="monospace"
+        )
+        graph.set_edge_defaults(
+            color="black",
+            style="solid",
+            dir="none",
+        )
+        count = 0
+        for room in rooms:
+            count += 1
+            print(f"Processing room: {room.name}, {count} of {len(rooms)}")
+            room_name = room.name
+            room_exits = room.exits
+            for exit in room_exits:
+                exit_room = rooms[exit["id"]]
+                exit_direction = exit["direction"][0]
+                edge = pydot.Edge(
+                    room_name,
+                    exit_room.name,
+                )
+                graph.add_edge(edge)
+
+        output_graphviz_svg = graph.create_svg()
+        with open(full_path + extension, "w") as text_file:
+            text_file.write(output_graphviz_svg.decode("utf-8"))
+            
+        
+        with open(full_path + extension, "r") as text_file:
+            main = text_file.read()
+            main = re.sub('width=\"\d*pt\"', '', main)
+            main = re.sub('height=\"\d*pt\"', '', main)
+            
+            # mini-map
+            with open(f"{full_path}_mini{extension}", "w") as final_text_file:
+                final_text_file.write(main)    
+                
+            # map map
+            main = re.sub('viewbox=\".*\"', '', main)
+            with open(full_path + extension, "w") as final_text_file:
+                final_text_file.write(main)    
+                                                 
+        # send map event
+        map_event = MapEvent(image_name).to_json()
+        await self.utility.send_message_raw(map_event, player.websocket)
+        

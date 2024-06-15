@@ -94,7 +94,7 @@ class Admin:
                 player, world = await self.register(world, player)
 
                 # show room
-                player, world = await world.move_room(player.location, player, world)
+                player, world = await world.move_room(player.location_id, player, world)
             else:
                 LogUtils.error(
                     f"We shouldn't be here.. received request: {request['type']}",
@@ -108,7 +108,7 @@ class Admin:
         except ConnectionClosedOK:
             LogUtils.warn(f"{player.name} left.", self.logger)            
         except Exception as e:
-            LogUtils.error(f"new_user: {e}", self.logger, Level.ERROR)
+            LogUtils.error(f"new_user: {e}", self.logger)
         return player, world
 
     async def alert_world(self, world, message):
