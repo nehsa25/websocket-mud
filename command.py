@@ -151,9 +151,7 @@ class Command:
                 if world_player.location_id == player.location_id:
                     await self.utility.send_msg(f"You notice {player.name} look to the {avail_exit['direction'][1]}.", "info", world_player.websocket)
 
-            player, world = await self.process_room(
-                avail_exit["id"], player, world, player.websocket, self.logger
-            )
+            player, world = await self.process_room(avail_exit["id"], player, world)
         else:
             for direction in MudDirections.pretty_directions:
                 if (
