@@ -8,7 +8,7 @@ from utility import Utility
 
 
 # how much damage, how fast, ect
-class BaseStats(object):
+class BaseStats(Utility):
     hp = 50
     strength = 3  # 0 - 30
     agility = 3  # 0 - 30
@@ -25,25 +25,25 @@ class CombatTypes(Enum):
     magic = 2
 
 
-class UnitTypes:
+class UnitTypes(Utility):
     logger = None
     def __init__(self, logger) -> None:
         self.logger = logger
         LogUtils.info("Initializing UnitTypes() class", self.logger)
 
-    class NPC(BaseStats):
+    class NPC(BaseStats, Utility):
         logger = None
         def __init__(self, logger):
             self.logger = logger
             LogUtils.info("Initializing NPC() class", self.logger)
 
-    class Monster(BaseStats):
+    class Monster(BaseStats, Utility):
         logger = None
         def __init__(self, logger):
             LogUtils.info("Initializing Monster() class", self.logger)
 
 
-class Unit(UnitTypes):
+class Unit(UnitTypes, Utility):
     name = None
     description = None
     type = None

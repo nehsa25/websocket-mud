@@ -1,10 +1,7 @@
-from enum import Enum
-from monsters import Monsters
 from muddirections import MudDirections
 
 class Room:
     dirs = MudDirections()
-    monsters = Monsters()
     id: 0
     name = ""
     description = ""
@@ -27,4 +24,3 @@ class Room:
         self.players = players
         self.npcs = npcs
         self.environment = environment        
-        pass

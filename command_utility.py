@@ -1,21 +1,20 @@
-from utility import Utility
+import inspect
 from items import Items
 from item import Item
+from log_utils import LogUtils
 
 
 class CommandUtility:
-    @staticmethod
-    def get_equiped_weapon(player, logger):
-        eq_item = Items.punch
-        for item in player.inventory:
-            if item.item_type == Item.ItemType.WEAPON and item.equiped == True:
-                eq_item = item
+    logger = None
+    
+    def __init__(self, logger):
+        self.logger = logger
+        LogUtils.debug(f"Initializing CommandUtility() class", self.logger)
 
-        return eq_item
-
-    @staticmethod
-    async def drop_item(wanted_item, player, world, websocket, logger):
-        room = await world.get_room(player.location)
+    # returns player, world
+    async def drop_item(self, wanted_item, player, world, websocket):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)     
         found_item = False
 
         # check if it's in our inventory
@@ -32,15 +31,16 @@ class CommandUtility:
 
             # remove from inventory
             player.inventory.remove(item_obj)
-            await Utility.send_msg(
-                f"You dropped {item_obj.name}.", "info", websocket, logger
+            await self.world.self.world.utility.send_msg(
+                f"You dropped {item_obj.name}.", "info", websocket, self.logger
             )
-            room["items"].append(item_obj)
-        return found_item
+            world.rooms.rooms[player.location].append(item_obj)
+        return player, world
 
-    @staticmethod
-    async def drop_coin(wanted_item, player, world, websocket, logger):
-        room = await world.get_room(player.location)
+    # returns player, world
+    async def drop_coin(self, wanted_item, player, world, websocket):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)    
         found_coin = False
 
         # check if it's money
@@ -53,11 +53,14 @@ class CommandUtility:
 
         if found_coin == True:
             # add to room
-            room["items"].append(item_obj)
+            world.rooms.rooms[player.location].append(item_obj)
 
             # remove from player inventory
             player.inventory.remove(item_obj)
-            await Utility.send_msg(
-                f"You dropped {coin.Name}.", "info", websocket, logger
+            await self.send_msg(
+                f"You dropped {coin.Name}.", "info", websocket, self.logger
             )
-        return found_coin
+        else:
+            await self.send_msg(f"You can't drop {wanted_item}", "error", player.websocket)
+            
+        return player, world

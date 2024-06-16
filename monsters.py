@@ -1,10 +1,21 @@
+import asyncio
+import inspect
 import random
 from enum import Enum
+import time
 from monster import Monster
-from log_utils import LogUtils, Level
+from log_utils import LogUtils
+from utility import Utility
 
 
-class Monsters:
+class Monsters(Utility):
+    logger = None
+    mob_attack_task = None
+
+    def __init__(self, logger) -> None:
+        self.logger = logger
+        LogUtils.debug("Initializing Monsters() class", self.logger)
+
     class MONSTERS(Enum):
         CRAB = 1
         SKELETON = 2
@@ -15,32 +26,194 @@ class Monsters:
         RAT = 7
 
     # used for respawning monsters
-    async def get_monster(self, wanted_monster, room, logger):
+    async def get_monster(self, wanted_monster, room):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         monster = None
         if wanted_monster == self.MONSTERS.CRAB:
             monster = self.get_crab()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.SKELETON:
             monster = self.get_skeleton()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.ZOMBIE:
             monster = self.get_zombie()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.ZOMBIE_SURFER:
             monster = self.get_zombie_surfer()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.GHOUL:
             monster = self.get_ghoul()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.THUG:
             monster = self.get_thug()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
         elif wanted_monster == self.MONSTERS.RAT:
             monster = self.get_rat()
-            await monster.announce_entrance(room, logger)
+            await monster.announce_entrance(room, self.logger)
 
-        LogUtils.debug(f'get_monster returning "{monster.name}"', logger)
+        LogUtils.debug(f'get_monster returning "{monster.name}"', self.logger)
         return monster
+
+    # respawn mobs after a certain amount of time
+    async def respawn_mobs(self, rooms):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+
+        while True:
+            # Allow other tasks to complete
+            await asyncio.sleep(2)
+
+            # look through each room
+            for room in rooms:
+                # and if the room has monsters
+                if len(room.monsters) > 0:
+                    for monster in room.monsters:
+                        # check if they're dead
+                        if monster.is_alive == False:
+                            current_epoch = int(time.time())
+
+                            # if monster has been dead for more than monster.respawn_rate_secs, remove it and create new monster
+                            # (we should consider making then kinda random (2-5 minutes for example))
+                            secs_since_death = current_epoch - monster.dead_epoch
+                            if secs_since_death >= monster.respawn_rate_secs:
+                                # remove old monster
+                                LogUtils.debug(
+                                    f'Removing "{monster.name}" from room', self.logger
+                                )
+                                room.monsters.remove(monster)
+
+                                # create new monster
+                                new_monster = await self.world.monsters.get_monster(
+                                    monster.monster_type, room, self.logger
+                                )
+                                LogUtils.info(
+                                    f'Respawning "{new_monster.name}" in room {room.id} ({room.name})',
+                                    self.logger,
+                                )
+                                room.monsters.append(new_monster)
+
+    # calculate the round damage and sends messages to players
+    async def calculate_mob_damage(self, player, room):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        total_damage = 0
+        monsters_damage = []
+        monsters_in_room = False
+
+        # need to check here if combat is still going.. we may have killed everything or moved rooms
+        for monster in room.monsters:
+            # as we call this function by self.player, we need to only capture damage by player
+            if monster.is_alive == True and monster.in_combat == player:
+                monsters_in_room = True
+                LogUtils.debug(
+                    f'{method_name}: Monster "{monster.name}" is alive and is attacking {player.name}!',
+                    self.logger,
+                )
+
+                # calculate our damage
+                obj = monster.damage.split("d")
+                dice = int(obj[0])
+                damage_potential = int(obj[1])
+                damage_multipler = random.randint(0, damage_potential)
+
+                # roll dice for a monster
+                damage = dice * damage_multipler
+                total_damage += damage
+
+                # add to our monster damage list
+                monster_damage = dict(name=monster.name, damage=damage)
+                monsters_damage.append(monster_damage)
+
+        # sort based on damage
+        monsters_damage = sorted(
+            monsters_damage, key=lambda k: k["damage"], reverse=True
+        )
+
+        # build our attack message
+        attack_msg = ""
+        print(f"\n\n\n{len(room.monsters)}")
+        if len(room.monsters) == 1:
+            attack_msg = f"{room.monsters[0].name} hit you for {total_damage} damage!"
+        else:
+            attack_msg = f"You were hit for {total_damage} damage!"
+            attack_msg_extra = "("
+            for monster_damage in monsters_damage:
+                if monster_damage["damage"] > 0:
+                    attack_msg_extra += (
+                        f"{monster_damage['name']}: {monster_damage['damage']}, "
+                    )
+            attack_msg_extra = attack_msg_extra[0 : len(attack_msg_extra) - 2]
+            attack_msg_extra += ")"
+            attack_msg = f"{attack_msg} {attack_msg_extra}"
+
+        # send our attack messages
+        if monsters_in_room == True:
+            for p in room.players:
+                if p.websocket == player.websocket:
+                    if total_damage > 0:
+                        await self.send_msg(f"{attack_msg}", "attack", p.websocket)
+                    else:
+                        await self.send_msg(
+                            "You were dealt no damage this round!", "info", p.websocket
+                        )
+                else:  # alert others of the battle
+                    if total_damage > 0:
+                        new_attack_msg = attack_msg.replace(
+                            "You were", f"{player.name} was"
+                        )
+                        await self.send_msg(new_attack_msg, "info", p.websocket)
+                    else:
+                        await self.send_msg(
+                            f"{player.name} was dealt no damage!", "info", p.websocket
+                        )
+
+        LogUtils.debug(
+            f"{method_name}: exit, returning total_damage: {total_damage}", self.logger
+        )
+        return total_damage
+
+    # main loop for checking if monsters are attacking you
+    async def mob_combat(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        # we never leave this attack loop
+        while True:
+            # for each player
+            for player in self.world.players.players:
+                LogUtils.debug(
+                    f'{method_name}: On player "{player.name}", Running loop1...',
+                    self.logger,
+                )
+
+                # get the room player is in
+                room = await self.world.get_room(player.location_id, self.logger)
+                LogUtils.debug(
+                    f'{method_name}: Player "{player.name}" is in room "{room.name}"',
+                    self.logger,
+                )
+
+                # each monsters in room finds player to attack
+                await self.check_for_new_attacks(room)
+
+            # sleep delay between rounds
+            LogUtils.debug(
+                f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds",
+                self.logger,
+            )
+            await asyncio.sleep(self.COMBAT_WAIT_SECS)
+
+            for player in self.world.players.players:
+                LogUtils.debug(
+                    f'{method_name}: On player "{player.name}", Running loop2...',
+                    self.logger,
+                )
+
+                # we need to get room again after we've slept
+                room = await self.world.get_room(player.location_id, self.logger)
+
+                # calculcate round damanage
+                await self.apply_mob_round_damage(self.player, room)
 
     def get_rat(self):
         monsters = ["", "", "", "", "", "", "festering", "Maddened", "Angry", "Filthy"]
