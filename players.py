@@ -106,18 +106,15 @@ class Players(Utility):
                 await self.register(player, world)
 
                 # show room
-                player, world = await world.move_room(player.location_id, player, world)
+                player, world = await world.rooms.move_room(player.location_id, player, world)
             else:
-                LogUtils.error(
-                    f"We shouldn't be here.. received request: {request['type']}",
-                    self.logger,
-                )
+                raise Exception(f"Shananigans? received request: {request['type']}")
 
             LogUtils.debug(f"{method_name}: exit", self.logger)
         except ConnectionClosedOK:
-            LogUtils.warn(f"{player.name} left.", self.logger)
+            LogUtils.warn(f"ConnectionClosedOK ({player.name} left).", self.logger)
         except Exception as e:
-            LogUtils.error(f"new_user: {e}", self.logger)
+            raise Exception(f"An error occurred during new_user(): {e}")
 
     # called when a client disconnects
     async def unregister(self, player, world, change_name=False):

@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import inspect
 from random import randint
+import random
 from mudevent import MudEvents
 from players import Players
 from map import Map
@@ -91,7 +92,7 @@ class World(Utility):
                 f"A startling bang will occur in {str(rand)} seconds...", self.logger
             )
             await asyncio.sleep(rand)
-            bang_type = rand.choice(
+            bang_type = random.choice(
                 [
                     "sharp bang",
                     "dull thump",

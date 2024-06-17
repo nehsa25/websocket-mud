@@ -36,11 +36,12 @@ class TownSmee(Utility):
     rooms = None
     name = "Town Smee"
     world_name = ""
+    type = Environments.TOWNSMEE
 
     def __init__(self, world_name, logger):
         self.logger = logger
         LogUtils.debug("Initializing TownSmee() class", self.logger)       
-        self.world_name = world_name
+        self.world_name = world_name        
         self.rooms = [
             Room(
                 id=0,

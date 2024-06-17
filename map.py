@@ -44,10 +44,10 @@ class Map(Utility):
     async def santizie_svg_map_output(self, map_output, environment_name):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        area_identifier = self.rooms.get_area_identifier(environment_name)
+        area_identifier = await self.rooms.get_area_identifier(environment_name)
         map_output = re.sub('width="\d*pt"', "", map_output)
         map_output = re.sub('height="\d*pt"', "", map_output)
-        map_output = re.sub(area_identifier + "\s &#45;\s", "")
+        map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
         LogUtils.debug(f"{method_name}: exit, returning: {map_output}", self.logger)
         return map_output
 
@@ -92,7 +92,7 @@ class Map(Utility):
 
         # clean it up
         with open(full_path + extension, "r") as text_file:
-            main = self.santizie_svg_map_output(text_file.read())
+            main = await self.santizie_svg_map_output(text_file.read(), environment)
 
             # map
             with open(f"{full_path}{extension}", "w") as final_text_file:

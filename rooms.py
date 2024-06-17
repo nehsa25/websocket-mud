@@ -41,10 +41,15 @@ class Rooms(Utility):
     async def get_area_identifier(self, area):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        name = self.townsmee.name
-        LogUtils.debug(f"{method_name}: exit, returning: {name}", self.logger)
+        
+        result = ""
+        for env in self.envionments:
+            if area == env.type:
+                result = env.name
+        LogUtils.debug(f"{method_name}: exit, returning: {result}", self.logger)
+        return result
 
-    # responsible for moving a player from one room to the next
+    # returns player, world, responsible for moving a player from one room to the next
     async def move_room(self, new_room_id, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -67,11 +72,12 @@ class Rooms(Utility):
         player, world = await self.process_room(new_room_id, player, world)
 
         # generate new map
-        await self.generate_map(player, world)
+        await world.map.generate_map(player, world)
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world
 
+    # returns player, world
     async def process_room(self, new_room_id, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -117,7 +123,7 @@ class Rooms(Utility):
         LogUtils.debug(f"Sending json: {json_msg}", self.logger)
         await self.send_message(json_msg, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return player
+        return player, world
 
     # just returns a specific room in our list of rooms
     async def get_room(self, room_id):
