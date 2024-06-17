@@ -41,17 +41,11 @@ class Players(Utility):
         await self.update_website_users_online(world)
 
         # send msg to everyone
-        for player in self.players:
-            if player.name == player.name:
-                welcome_message = MudEvents.WelcomeEvent(
-                    f"Welcome {player.name}!"
-                )
-                await self.utility.send_message(welcome_message, player.websocket)
+        for p in self.players:
+            if p.name == player.name:
+                await self.utility.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket)
             else:
-                welcome_message = MudEvents.WelcomeEvent(
-                    f"{player.name} joined the game!"
-                )
-                await self.utility.send_message(welcome_message, player.websocket)
+                await self.utility.send_message(MudEvents.InfoEvent(f"{player.name} joined the game!"), p.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
         return player, world
