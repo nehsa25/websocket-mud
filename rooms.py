@@ -97,7 +97,7 @@ class Rooms(Utility):
     async def process_room(self, new_room_id, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        new_room = await self.get_room(new_room_id)
+        new_room = self.rooms[new_room_id]
 
         # get the description
         description = new_room.description

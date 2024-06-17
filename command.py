@@ -35,14 +35,16 @@ class Command(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)   
 
         will_travel = False
+        new_room_id = None
         for avail_exit in world.rooms.rooms[player.location_id].exits:
             if (wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower()):
                 will_travel = True
+                new_room_id = avail_exit["id"]
                 break
             
         if will_travel:
-            player.location_id = avail_exit["id"]
-            player, world = await world.rooms.move_room(player.location_id, player, world)
+            # update you
+            await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'][1].lower()}."), player.websocket)
             
             # Update users you've left
             for p in world.players.players:
@@ -51,9 +53,9 @@ class Command(Utility):
                 if p.location_id == player.location_id:
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'][1].lower()}."), p.websocket)
 
-            # update you
-            await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'][1].lower()}."), player.websocket)
-            
+            # update location
+            player, world = await world.rooms.move_room(new_room_id, player, world)
+
             # render new room
             await world.rooms.process_room(player.location_id, player, world)
             
