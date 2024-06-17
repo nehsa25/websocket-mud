@@ -32,47 +32,54 @@ class Command(Utility):
     # returns player, world
     async def process_direction(self, wanted_direction, player, world):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)    
-        # stop resting
-        if player.resting == True:
-            player.resting = False
-            await self.send_msg("You are no longer resting.", "info", player.websocket)
+        LogUtils.debug(f"{method_name}: enter", self.logger)   
 
-        found_exit = False
+        will_travel = False
         for avail_exit in world.rooms.rooms[player.location_id].exits:
             if (wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower()):
-                # send message to any players in same room that you left
-                for p in world.players.players:
-                    if player.name == p.name:
-                        continue
-                    if p.location_id == player.location_id:
-                        await self.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.","info",p.websocket)
-
-                await self.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", "info", player.websocket, self.logger)
-                player.in_combat = None
-
-                # send message to any players in same room that you're here
-                for p in world.players.players:
-                    if player.name == p.name:
-                        continue
-                    if p.location_id == player.location_id:
-                        opp_direction = None
-                        for opp_dir in MudDirections.opp_directions:
-                            if avail_exit["direction"] == opp_dir[0]:
-                                opp_direction = opp_dir[1]
-                            if avail_exit["direction"] == opp_dir[1]:
-                                opp_direction = opp_dir[0]
-                        await self.send_msg(f"{player.name} arrives from the {opp_direction[1].lower()}.","info",p.websocket)
-
-                found_exit = True
+                will_travel = True
                 break
-        if found_exit == False:
-            for direction in MudDirections.pretty_directions:
-                if (
-                    wanted_direction.lower() == direction[0].lower()
-                    or wanted_direction.lower() == direction[1].lower()
-                ):
-                    await self.send_msg(f"You cannot go {direction[1]}.", "error", player.websocket)
+            
+        if will_travel:
+            player.location_id = avail_exit["id"]
+            player, world = await world.rooms.move_room(player.location_id, player, world)
+            
+            # Update users you've left
+            for p in world.players.players:
+                if player.name == p.name:
+                    continue
+                if p.location_id == player.location_id:
+                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'][1].lower()}."), p.websocket)
+
+            # update you
+            await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'][1].lower()}."), player.websocket)
+            
+            # render new room
+            await world.rooms.process_room(player.location_id, player, world)
+            
+            # your combat will end but the monster/other players shouldn't
+            if player.in_combat:
+                await player.break_combat()
+            
+            # stop resting
+            if player.resting:
+                player.stop_resting()
+
+            # send message to any players in same room that you're arriving at
+            for p in world.players.players:
+                if player.name == p.name:
+                    continue
+                if p.location_id == player.location_id:
+                    opp_direction = None
+                    for opp_dir in MudDirections.opp_directions:
+                        if avail_exit["direction"] == opp_dir[0]:
+                            opp_direction = opp_dir[1]
+                        if avail_exit["direction"] == opp_dir[1]:
+                            opp_direction = opp_dir[0]
+                    await self.send_message(MudEvents.InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}."), p.websocket)
+        else:
+            await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
+            self.alert_room(world, f"{player.name} attempted to go {wanted_direction} but ran into a wall!")
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 
@@ -135,6 +142,7 @@ class Command(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1].lower()
         found_item = False
+        room = world.rooms.rooms[player.location_id]
         if world.rooms.rooms[player.location_id].items != []:
             for item in room.items:
                 if wanted_item == item.name.lower():
@@ -177,8 +185,8 @@ class Command(Utility):
                 msg += f"{money} copper<br>"
             else:
                 msg += f"You have no money.<br>"
+            await self.send_message(MudEvents.InventoryEvent(msg), player.websocket)
 
-            await self.send_msg(msg, "info", player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # doesn't return anything, just sends messages
@@ -190,7 +198,7 @@ class Command(Utility):
         if success == True:
             if len(world.rooms.rooms[player.location_id].hidden_items) > 0:
                 for item in world.rooms.rooms[player.location_id].hidden_items:
-                    await self.send_msg("You found something!", "info", player.websocket)
+                    await self.send_message(MudEvents.InfoEvent(f"You found {item.name}!"), player.websocket)
 
                     # remove from "hidden items"
                     world.rooms.rooms[player.location_id].hidden_items.remove(item)
@@ -198,9 +206,10 @@ class Command(Utility):
                     # add to items in room
                     world.rooms.rooms[player.location_id].items.append(item)
             else:
-                await self.send_msg("After an exhaustive search, you find nothing.","info", player.websocket)
+                await self.send_message(MudEvents.InfoEvent("After an exhaustive search, you find nothing and give up."), player.websocket)
         else:
-            await self.send_msg("You search around but notice nothing.", "info", player.websocket)
+            await self.send_message(MudEvents.InfoEvent("You search around but notice nothing."), player.websocket)
+
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
@@ -231,10 +240,10 @@ class Command(Utility):
         if found_item == True:
             # remove from inventory
             player.inventory.remove(item_obj)
-            await self.send_msg(f"You hid {item_obj.name}.", "info", player.websocket)
+            await self.send_message(MudEvents.InfoEvent(f"You hid {item_obj.name}."), player.websocket)
             world.rooms.rooms[player.location_id].hidden_items.append(item_obj)
         else:
-            await self.send_msg(f"You aren't carrying {wanted_item} to hide.","error",player.websocket)
+            await self.send_message(MudEvents.ErrorEvent(f"You aren't carrying {wanted_item} to hide."), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
@@ -247,7 +256,7 @@ class Command(Utility):
         # check if the item is in our inventory
         for item in player.inventory:
             if item.name.lower() == wanted_item.lower():
-                await self.send_msg(f"You equip {item.name}.", "info", player.websocket)
+                await self.send_message(MudEvents.InfoEvent(f"You equip {item.name}."), player.websocket)
                 item.equiped = True
                 found_item = True
                 found_item = item
@@ -257,7 +266,7 @@ class Command(Utility):
             if (
                 found_item.item_type == item.item_type and item.equiped == True
             ) and found_item.name != item.name:
-                await self.send_msg(f"You unequip {item.name}.", "info", player.websocket)
+                await self.send_message(f"You unequip {item.name}.", "info", player.websocket)
                 item.equiped = False
         if found_item == None:
             await self.send_msg(f"You cannot equip {wanted_item}.", "error", player.websocket)
@@ -514,8 +523,7 @@ class Command(Utility):
         command = command.lower()
 
         # send back the command we received as info - (this could just be printed client side and save the traffic cost)
-        command_event = MudEvents.CommandEvent(command).to_json()
-        await self.send_message(command_event, player.websocket)
+        await self.send_message(MudEvents.CommandEvent(command), player.websocket)
 
         # if the player is dead, don't do anything..
         if player.hitpoints <= 0:

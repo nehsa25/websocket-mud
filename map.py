@@ -1,5 +1,6 @@
 import asyncio
 import base64
+from enum import Enum
 import inspect
 import os
 import re
@@ -12,25 +13,50 @@ from utility import Utility
 import os
 
 class Map(Utility):
+    class ImageSize(Enum):
+        MINI = 0
+        SMALL = 1
+        LARGE = 2
+        
     logger = None
-    rooms = None
-    graph = None
-
-    def __init__(self, rooms, logger) -> None:
+    def __init__(self, logger) -> None:
         LogUtils.debug("Initializing Map() class", logger)
         self.logger = logger
-        self.rooms = rooms
+
+    def start_async(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
+        start_server = self.generate_map(room, image_name, player, world, environment)
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(start_server)
+
+    async def sanitize_svg_output(self, map_output, environment_name, world, ImageSize=ImageSize.LARGE):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        area_identifier = world.rooms.get_area_identifier(environment_name)
+        if ImageSize == ImageSize.MINI:
+            map_output = re.sub('width="\d*pt"', 'width="200pt"', map_output)
+            map_output = re.sub('height="\d*pt"', '', map_output)   
+        elif ImageSize == ImageSize.SMALL:
+            map_output = re.sub('width="\d*pt"', 'width="800pt"', map_output)
+            map_output = re.sub('height="\d*pt"', '', map_output)
+        else:
+            map_output = re.sub('width="\d*pt"', 'width="1200pt"', map_output)
+            map_output = re.sub('height="\d*pt"', '', map_output)            
+        map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
+        map_output = re.sub('&#45;\d*', "", map_output)
+        LogUtils.debug(f"{method_name}: exit, returning: {map_output}", self.logger)
+        return map_output
+
+    async def generate_map(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
         self.graph = pydot.Dot(
             "mud_map",
             graph_type="digraph",
             bgcolor="#999",
-            rankdir="LR",
             splines="ortho",
             concentrate="true",
         )
 
         self.graph.set_node_defaults(
-            shape="rectangle",
+            shape="record",
             style="filled",
             fillcolor="cornflowerblue",
             fontcolor="whitesmoke",
@@ -43,22 +69,6 @@ class Map(Utility):
             dir="both",
         )
     
-    def start_async(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
-        start_server = self.generate_map(room, image_name, player, world, environment)
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(start_server)
-
-    async def sanitize_svg_output(self, map_output, environment_name):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        area_identifier = self.rooms.get_area_identifier(environment_name)
-        map_output = re.sub('width="\d*pt"', 'width="3000pt"', map_output)
-        map_output = re.sub('height="\d*pt"', '', map_output)
-        map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
-        LogUtils.debug(f"{method_name}: exit, returning: {map_output}", self.logger)
-        return map_output
-
-    async def generate_map(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
         self.path = f"c:/src/mud_images"
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
@@ -82,17 +92,17 @@ class Map(Utility):
             active_node = False
             if room.id == player.location_id:
                 active_node = True
-                node = pydot.Node(room_name, fillcolor = "red")
+                node = pydot.Node(room_name, fillcolor = "springgreen", fontcolor="black")
                 self.graph.add_node(node)
             
             for exit in room_exits:
                 exit_room = rooms[exit["id"]]
-                exit_direction = exit["direction"][1]
-                edge = pydot.Edge(room_name, exit_room.name)
+                exit_direction = exit["direction"][0]
+                edge = pydot.Edge(room_name, exit_room.name, label=exit_direction)
                 if active_node:
                     edge = pydot.Edge(room_name, 
                                       exit_room.name,
-                                      label=exit_direction,
+                                      label=exit["direction"][1],
                                       fillcolor = "red")
                 self.graph.add_edge(edge)
 
@@ -104,12 +114,24 @@ class Map(Utility):
 
         # clean it up
         with open(full_path + extension, "r") as text_file:
-            main = await self.sanitize_svg_output(text_file.read(), environment)
+            contents = text_file.read()
+            
 
+            # mini-map
+            with open(f"{full_path}_mini{extension}", "w") as final_text_file:
+                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.MINI)
+                final_text_file.write(main)
+                
+            # small
+            with open(f"{full_path}_small{extension}", "w") as final_text_file:
+                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.SMALL)
+                final_text_file.write(main)
+                                      
             # map
             with open(f"{full_path}{extension}", "w") as final_text_file:
-                final_text_file.write(main)
+                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.LARGE)
+                final_text_file.write(main)              
 
         # send map event
-        map_event = MudEvents.MapEvent(image_name).to_json()
+        map_event = MudEvents.MapEvent(image_name)
         await self.send_message(map_event, player.websocket)

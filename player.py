@@ -63,7 +63,7 @@ class Player(Utility):
         msg = f"{self.name}|{str(self.hitpoints)}/{str(self.max_hitpoints)}"
         if self.resting:
             msg += "|REST"
-        health_event = MudEvents.HealthEvent(msg).to_json()
+        health_event = MudEvents.HealthEvent(msg)
         await self.utility.send_message(health_event, self.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
@@ -134,6 +134,23 @@ class Player(Utility):
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
+    # break combat
+    async def break_combat(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        self.in_combat = None        
+        self.alert_room(self.world, f"{self.name} stops fighting.")        
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        
+    # stops resting
+    async def stops_resting(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        self.resting = False
+        await self.send_message(MudEvents.InfoEvent("You are no longer resting."))  
+        self.alert_room(self.world, f"{self.name} stirs and stops resting.")        
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        
     # shows inventory
     async def show_inventory(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -141,7 +158,7 @@ class Player(Utility):
         items = []
         for item in self.inventory:
             items.append(item.name)
-        inv_event = MudEvents.InventoryEvent(items).to_json()
+        inv_event = MudEvents.InventoryEvent(items)
         await self.utility.send_message(inv_event, self.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 

@@ -37,6 +37,7 @@ class MudEvents:
             CLIENT_LIST = 16
             MAP_EVENT = 17
             ROOM_IMAGE = 18
+            DIRECTION = 19
 
         @staticmethod
         def get_event_type_id(event):
@@ -214,6 +215,39 @@ class MudEvents:
                 MudEvents.EventUtility.EventTypes.ROOM_IMAGE
             )
             self.image_name = image_name
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class DirectionEvent:
+        type = None
+        image_name = ""
+        def __init__(self, message):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.DIRECTION
+            )
+            self.message = message
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class InfoEvent:
+        type = None
+        image_name = ""
+        def __init__(self, message):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.INFO
+            )
+            self.message = message
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class ErrorEvent:
+        type = None
+        image_name = ""
+        def __init__(self, message):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.ERROR
+            )
+            self.message = message
         def to_json(self):
             return jsonpickle.encode(self)
 

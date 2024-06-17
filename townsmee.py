@@ -46,26 +46,23 @@ class TownSmee(Utility):
         self.rooms = [
             Room(
                 id=0,
-                name=f"{self.name} - Inn",
-                description= "You find yourself within a majestic inn.  The smell of food and wine permeates the air.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books.",
+                name=f"{self.name} - Town Square",
+                description="You are in the town square.  A large open cobblestone area with a fountain is in the center.",
                 exits=[
-                    {"direction": Room.dirs.south, "id": 22},
-                    {"direction": Room.dirs.up, "id": 3},
+                    {"direction": Room.dirs.west, "id": 9},  # moon road
+                    {"direction": Room.dirs.east, "id": 10},  # moon road
+                    {"direction": Room.dirs.south, "id": 12},  
+                    {"direction": Room.dirs.north, "id": 11},  # sun road
                 ],
                 environment=Environments.TOWNSMEE,
             ),
             Room(
                 id=1,
-                name=f"{self.name} - Town Square",
-                description="You are in the town square.  A large open cobblestone area with a fountain is in the center.",
+                name=f"{self.name} - Inn",
+                description= "You find yourself within a majestic inn.  The smell of food and wine permeates the air.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 22},  # moon road
-                    {"direction": Room.dirs.east, "id": 19},  # moon road
-                    {
-                        "direction": Room.dirs.south,
-                        "id": 7,
-                    },  # market - needs to be changed to sun road
-                    {"direction": Room.dirs.north, "id": 8},  # sun road
+                    {"direction": Room.dirs.south, "id": 9},
+                    {"direction": Room.dirs.up, "id": 3},
                 ],
                 environment=Environments.TOWNSMEE,
             ),
@@ -83,8 +80,8 @@ class TownSmee(Utility):
                 name=f"{self.name} - Inn, second floor",
                 description="You are on the second floor of the inn.  Rooms line the hallway.",
                 exits=[
-                    {"direction": Room.dirs.up, "id": 4},  # inn, third floor
-                    {"direction": Room.dirs.down, "id": 0},  # inn, first floor
+                    {"direction": Room.dirs.up, "id": 4}, # inn, third floor
+                    {"direction": Room.dirs.down, "id": 1},  # inn, first floor
                 ],
                 environment=Environments.TOWNSMEE,
             ),
@@ -103,7 +100,7 @@ class TownSmee(Utility):
                 name=f"{self.name} - Blacksmith",
                 description="You are in the blacksmith's shop.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 9},  # town square
+                    {"direction": Room.dirs.west, "id": 8},  # town square
                     {"direction": Room.dirs.east, "id": 6},  # back room
                 ],
                 environment=Environments.TOWNSMEE,
@@ -122,167 +119,56 @@ class TownSmee(Utility):
                 name=f"{self.name} - Market",
                 description="You are in the farmers market.",
                 exits=[
-                    {"direction": Room.dirs.north, "id": 1},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=8,
-                name=f"{self.name} - Sun Road-8",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 1},  # town square
-                    {"direction": Room.dirs.north, "id": 9},  # sun road north
-                    {"direction": Room.dirs.east, "id": 18},  # armoury
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=9,
-                name=f"{self.name} - Sun Road-9",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 8},  # sun road south
-                    {"direction": Room.dirs.east, "id": 5},  # blacksmith
                     {"direction": Room.dirs.north, "id": 10},
                 ],
                 environment=Environments.TOWNSMEE,
             ),
             Room(
-                id=10,
-                name=f"{self.name} - Sun Road-10",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
+                id=8,
+                name=f"{self.name} - Armoury",
+                description="You are in the town armoury.",
                 exits=[
-                    {"direction": Room.dirs.south, "id": 9},
-                    {"direction": Room.dirs.north, "id": 11},
+                    {"direction": Room.dirs.north, "id": 9},  # moon road
+                ],
+                environment=Environments.TOWNSMEE,
+            ),
+            Room(
+                id=9,
+                name=f"{self.name} - Moon Road (West)---1",
+                description=f"You are on one of the main thoroughfare of {self.world_name} running East and West directions.  The street is broad, allowing for two wagons to pass each other.",
+                exits=[
+                    {"direction": Room.dirs.north, "id": 1},  # inn
+                    {"direction": Room.dirs.south, "id": 8},  # armoury
+                    {"direction": Room.dirs.east, "id": 0},  # town square
+                ],
+                environment=Environments.TOWNSMEE,
+            ),
+            Room(
+                id=10,
+                name=f"{self.name} - Moon Road (East)---1",
+                description=f"You are on one of the main thoroughfare of {self.world_name} running East and West directions.  The street is broad, allowing for two wagons to pass each other.",
+                exits=[
+                    {"direction": Room.dirs.west, "id": 0}, # town square
+                    {"direction": Room.dirs.south, "id": 7} # market
                 ],
                 environment=Environments.TOWNSMEE,
             ),
             Room(
                 id=11,
-                name=f"{self.name} - Sun Road-11",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
+                name=f"{self.name} - Sun Road (North)---1",
+                description=f"You are on the main thoroughfare of {self.world_name} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.south, "id": 10},
-                    {"direction": Room.dirs.north, "id": 12},
-                    {"direction": Room.dirs.west, "id": 2},  # sheriff's office
+                    {"direction": Room.dirs.south, "id": 0} # town square
                 ],
                 environment=Environments.TOWNSMEE,
             ),
             Room(
                 id=12,
-                name=f"{self.name} - Sun Road-12",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
+                name=f"{self.name} - Sun Road (South)---1",
+                description=f"You are on the main thoroughfare of {self.world_name} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.south, "id": 11},
-                    {"direction": Room.dirs.north, "id": 13},
+                    {"direction": Room.dirs.north, "id": 0} # town square
                 ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=13,
-                name=f"{self.name} - Sun Road-13",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 12},
-                    {"direction": Room.dirs.north, "id": 14},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=14,
-                name=f"{self.name} - Sun Road-14",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 13},
-                    {"direction": Room.dirs.north, "id": 15},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=15,
-                name=f"{self.name} - Sun Road-15",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 14},
-                    {"direction": Room.dirs.north, "id": 16},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=16,
-                name=f"{self.name} - Sun Road-16",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 15},
-                    {"direction": Room.dirs.north, "id": 17},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=17,
-                name=f"{self.name} - Sun Road-17",
-                description=f"You are on the main thoroughfare of {self.world_name} running north and south directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.south, "id": 16},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=18,
-                name=f"{self.name} - Armoury",
-                description="You are in the town armoury.",
-                exits=[
-                    {"direction": Room.dirs.west, "id": 8},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=19,
-                name=f"{self.name} - Moon Road-19",
-                description=f"You are on the main thoroughfare of {self.world_name} running east and west directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.east, "id": 1},
-                    {"direction": Room.dirs.west, "id": 20},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=20,
-                name=f"{self.name} - Moon Road-20",
-                description=f"You are on the main thoroughfare of {self.world_name} running east and west directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.east, "id": 19},
-                    {"direction": Room.dirs.west, "id": 21},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=21,
-                name=f"{self.name} - Moon Road-21",
-                description=f"You are on the main thoroughfare of {self.world_name} running east and west directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.east, "id": 20},
-                    {"direction": Room.dirs.west, "id": 22},
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=22,
-                name=f"{self.name} - Moon Road-22",
-                description=f"You are on the main thoroughfare of {self.world_name} running east and west directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[
-                    {"direction": Room.dirs.east, "id": 21},
-                    {"direction": Room.dirs.west, "id": 23},
-                    {"direction": Room.dirs.north, "id": 0},  # inn
-                ],
-                environment=Environments.TOWNSMEE,
-            ),
-            Room(
-                id=23,
-                name=f"{self.name} - Moon Road-23",
-                description=f"You are on the main thoroughfare of {self.world_name} running east and west directions.  The street is broad, allowing for two wagons to pass each other.",
-                exits=[{"direction": Room.dirs.east, "id": 22}],
                 environment=Environments.TOWNSMEE,
             ),
         ]

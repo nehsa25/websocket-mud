@@ -42,7 +42,7 @@ class World(Utility):
             self.rooms = Rooms(self.world_name, self.logger)
 
         if self.map is None:
-            self.map = Map(self.rooms, self.logger)
+            self.map = Map(self.logger)
             
         if self.ai_images is None:
             self.ai_images = AIImages(self.logger)
@@ -194,7 +194,7 @@ class World(Utility):
         while True:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
             for world_player in self.players.players:
-                time_event = MudEvents.TimeEvent(time).to_json()
+                time_event = MudEvents.TimeEvent(time)
                 await self.send_message(time_event, world_player.websocket)
 
             # sleep 10 minutes

@@ -134,7 +134,7 @@ class Rooms(Utility):
         # formulate message to client
         json_msg = MudEvents.RoomEvent(
             new_room.name, description, items, exits, monsters, people
-        ).to_json()
+        )
 
         LogUtils.debug(f"Sending json: {json_msg}", self.logger)
         await self.send_message(json_msg, player.websocket)

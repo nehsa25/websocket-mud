@@ -19,7 +19,7 @@ class Players(Utility):
     async def update_website_users_online(self, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        get_client_event = world.players.GetClientEvent(len(self.players)).to_json()
+        get_client_event = world.players.GetClientEvent(len(self.players))
         for player in self.players:
             await self.utility.send_message(get_client_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
@@ -45,12 +45,12 @@ class Players(Utility):
             if player.name == player.name:
                 welcome_message = MudEvents.WelcomeEvent(
                     f"Welcome {player.name}!"
-                ).to_json()
+                )
                 await self.utility.send_message(welcome_message, player.websocket)
             else:
                 welcome_message = MudEvents.WelcomeEvent(
                     f"{player.name} joined the game!"
-                ).to_json()
+                )
                 await self.utility.send_message(welcome_message, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
@@ -73,11 +73,11 @@ class Players(Utility):
             LogUtils.info(f"Requesting username", self.logger)
             if dupe:
                 await self.utility.send_message(
-                    MudEvents.DuplicateNameEvent().to_json(), websocket
+                    MudEvents.DuplicateNameEvent(), websocket
                 )
             else:
                 await self.utility.send_message(
-                    MudEvents.UsernameRequestEvent().to_json(), websocket
+                    MudEvents.UsernameRequestEvent(), websocket
                 )
             LogUtils.info(f"Awaiting client name response from client..", self.logger)
             msg = await websocket.recv()

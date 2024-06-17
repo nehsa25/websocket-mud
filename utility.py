@@ -12,15 +12,23 @@ class Utility(MudEvents):
         self.logger = logger
         LogUtils.debug("Initializing Utility() class", self.logger)
 
+    async def alert_room(self, world, message):
+        LogUtils.debug(f"alert_room: enter, message: {message}", self.logger)
+        for p in world.players.players:
+            if self.location_id == p.location_id:
+                await self.send_message(MudEvents.InfoEvent(message), p.websocket)
+        LogUtils.debug(f"alert_room: exit", self.logger)    
+        
     async def alert_world(self, world, message):
         LogUtils.debug(f"alert_world: enter, message: {message}", self.logger)
         for player in world.players.players:
             await self.utility.send_msg(message, "announcement", player.websocket)
         LogUtils.debug(f"alert_world: exit", self.logger)
 
-    async def send_message(self, msg, websocket):
+    async def send_message(self, event_object, websocket):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter, {msg}", self.logger)
+        msg = event_object.to_json()        
+        LogUtils.debug(f"{method_name}: enter, {msg}", self.logger)        
         LogUtils.debug(f"{method_name}: Sending json: {msg}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         await websocket.send(str(msg))
@@ -28,7 +36,7 @@ class Utility(MudEvents):
     async def send_msg(self, msg, message_type, websocket, extra=""):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        json_msg = self.EventEvent(message_type, msg, extra).to_json()
+        json_msg = self.EventEvent(message_type, msg, extra)
         LogUtils.debug(f"{method_name}: Sending json: {json_msg}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         await websocket.send(json_msg)
