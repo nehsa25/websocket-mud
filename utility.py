@@ -68,3 +68,10 @@ class Utility(MudEvents):
         LogUtils.debug(f"{method_name}: exit, returing: {name}", self.logger)
 
         return name
+
+    def sanitize_filename(self, filename):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        new_filename = "".join(i for i in filename if i.isalnum())
+        LogUtils.debug(f"{method_name}: exit, returning: {new_filename}", self.logger)
+        return new_filename

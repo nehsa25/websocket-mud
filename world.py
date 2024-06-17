@@ -3,6 +3,7 @@ import datetime
 import inspect
 from random import randint
 import random
+from aiimages import AIImages
 from mudevent import MudEvents
 from players import Players
 from map import Map
@@ -11,9 +12,6 @@ from rooms import Rooms
 from utility import Utility
 from log_utils import LogUtils
 from command import Command
-
-from utility import Utility
-
 
 class World(Utility):
     world_name = "Illisurom"
@@ -31,6 +29,7 @@ class World(Utility):
     players = None
     monsters = None
     bang_task = None
+    ai_images = None
 
     def __init__(self, logger):
         self.logger = logger
@@ -44,7 +43,10 @@ class World(Utility):
 
         if self.map is None:
             self.map = Map(self.rooms, self.logger)
-
+            
+        if self.ai_images is None:
+            self.ai_images = AIImages(self.logger)
+            
         if self.players is None:
             self.players = Players(self.logger)
 

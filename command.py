@@ -39,30 +39,30 @@ class Command(Utility):
             await self.send_msg("You are no longer resting.", "info", player.websocket)
 
         found_exit = False
-        for avail_exit in world.rooms.rooms[player.location].exits:
+        for avail_exit in world.rooms.rooms[player.location_id].exits:
             if (wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower()):
                 # send message to any players in same room that you left
-                for world_player in world.players:
-                    if player.name == world_player.name:
+                for p in world.players.players:
+                    if player.name == p.name:
                         continue
-                    if world_player.location_id == player.location_id:
-                        await self.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.","info",world_player.websocket)
+                    if p.location_id == player.location_id:
+                        await self.send_msg(f"{player.name} travels {avail_exit['direction'][1].lower()}.","info",p.websocket)
 
                 await self.send_msg(f"You travel {avail_exit['direction'][1].lower()}.", "info", player.websocket, self.logger)
                 player.in_combat = None
 
                 # send message to any players in same room that you're here
-                for world_player in world.players:
-                    if player.name == world_player.name:
+                for p in world.players.players:
+                    if player.name == p.name:
                         continue
-                    if world_player.location_id == player.location_id:
+                    if p.location_id == player.location_id:
                         opp_direction = None
                         for opp_dir in MudDirections.opp_directions:
                             if avail_exit["direction"] == opp_dir[0]:
                                 opp_direction = opp_dir[1]
                             if avail_exit["direction"] == opp_dir[1]:
                                 opp_direction = opp_dir[0]
-                        await self.send_msg(f"{player.name} arrives from the {opp_direction[1].lower()}.","info",world_player.websocket)
+                        await self.send_msg(f"{player.name} arrives from the {opp_direction[1].lower()}.","info",p.websocket)
 
                 found_exit = True
                 break
@@ -84,7 +84,7 @@ class Command(Utility):
         valid_direction = False
 
         # check if it's a valid direction in the room
-        for avail_exit in world.rooms.rooms[player.location].exits:
+        for avail_exit in world.rooms.rooms[player.location_id].exits:
             if (
                 wanted_direction == avail_exit["direction"][0].lower()
                 or wanted_direction == avail_exit["direction"][1].lower()
@@ -96,11 +96,11 @@ class Command(Utility):
             await self.send_msg(f"You look to the {avail_exit['direction'][1]}","info", player.websocket)
 
             # send message to any players in same room
-            for world_player in world.players:
-                if player.name == world_player.name:
+            for p in world.players.players:
+                if player.name == p.name:
                     continue
-                if world_player.location_id == player.location_id:
-                    await self.send_msg(f"You notice {player.name} look to the {avail_exit['direction'][1]}.", "info", world_player.websocket)
+                if p.location_id == player.location_id:
+                    await self.send_msg(f"You notice {player.name} look to the {avail_exit['direction'][1]}.", "info", p.websocket)
 
             player, world = await self.process_room(avail_exit["id"], player, world)
         else:
@@ -119,11 +119,11 @@ class Command(Utility):
         await self.send_msg("You look around the room.", "info", player.websocket)
 
         # send message to any players in same room that you left
-        for world_player in world.players:
-            if player.name == world_player.name:
+        for p in world.players.players:
+            if player.name == p.name:
                 continue
-            if world_player.location_id == player.location_id:
-                await self.send_msg(f"You notice {player.name} looking around the room.","info",world_player.websocket)
+            if p.location_id == player.location_id:
+                await self.send_msg(f"You notice {player.name} looking around the room.","info",p.websocket)
         player, world = await self.process_room(
             player.location_id, player, world, player.websocket, self.logger
         )
@@ -135,7 +135,7 @@ class Command(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1].lower()
         found_item = False
-        if world.rooms.rooms[player.location].items != []:
+        if world.rooms.rooms[player.location_id].items != []:
             for item in room.items:
                 if wanted_item == item.name.lower():
                     found_item = True
@@ -188,15 +188,15 @@ class Command(Utility):
         rand = random()
         success = rand < (player.perception / 100)
         if success == True:
-            if len(world.rooms.rooms[player.location].hidden_items) > 0:
-                for item in world.rooms.rooms[player.location].hidden_items:
+            if len(world.rooms.rooms[player.location_id].hidden_items) > 0:
+                for item in world.rooms.rooms[player.location_id].hidden_items:
                     await self.send_msg("You found something!", "info", player.websocket)
 
                     # remove from "hidden items"
-                    world.rooms.rooms[player.location].hidden_items.remove(item)
+                    world.rooms.rooms[player.location_id].hidden_items.remove(item)
 
                     # add to items in room
-                    world.rooms.rooms[player.location].items.append(item)
+                    world.rooms.rooms[player.location_id].items.append(item)
             else:
                 await self.send_msg("After an exhaustive search, you find nothing.","info", player.websocket)
         else:
@@ -232,7 +232,7 @@ class Command(Utility):
             # remove from inventory
             player.inventory.remove(item_obj)
             await self.send_msg(f"You hid {item_obj.name}.", "info", player.websocket)
-            world.rooms.rooms[player.location].hidden_items.append(item_obj)
+            world.rooms.rooms[player.location_id].hidden_items.append(item_obj)
         else:
             await self.send_msg(f"You aren't carrying {wanted_item} to hide.","error",player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
@@ -329,15 +329,15 @@ class Command(Utility):
 
         if current_monster != None:
             if player.in_combat == None:
-                for world_player in world.rooms.rooms[player.location].players:
-                    if world_player.name == player.name:
+                for p in world.rooms.rooms[player.location_id].players:
+                    if p.name == player.name:
                         await self.send_msg(f"You begin to attack {current_monster.name}!", "info", player.websocket)
-                        world_player.in_combat = current_monster
+                        p.in_combat = current_monster
                     else:
-                        await self.send_msg(f"{player.name} begins to attack {current_monster.name}!", "info", world_player.websocket)
+                        await self.send_msg(f"{player.name} begins to attack {current_monster.name}!", "info", p.websocket)
 
                 # if you die and go to the crypt then your room id will change..
-                while current_monster.hitpoints > 0 and player.location_id == world.rooms.rooms[player.location].id:
+                while current_monster.hitpoints > 0 and player.location_id == world.rooms.rooms[player.location_id].id:
                     # determine attack damage
                     weapon = self.utility.get_equiped_weapon(player, self.logger)
                     attack_potential = weapon.damage_potential
@@ -360,9 +360,9 @@ class Command(Utility):
                         damage_multipler = randint(0, damage_potential)
                         damage += dice * damage_multipler * player.strength
 
-                    for world_player in world.rooms.rooms[player.location].players:
+                    for p in world.rooms.rooms[player.location_id].players:
                         response = ""
-                        if player.name == world_player.name:
+                        if player.name == p.name:
                             if damage == 0:
                                 response = f"You swing wildly and miss!"
                             else:
@@ -379,26 +379,26 @@ class Command(Utility):
                                     response = f"{player.name} {weapon.plural_verb} {current_monster.name} with their {weapon.name.lower()} for {str(damage)} damage!"
                                 else:
                                     response = f"{player.name} {weapon.plural_verb} {current_monster.name} {num_swings} times with their {weapon.name.lower()} for {str(damage)} damage!"
-                                await self.send_msg(response,"you_attack",world_player.websocket)
+                                await self.send_msg(response,"you_attack",p.websocket)
 
                     # subtract from monsters health
                     current_monster.hitpoints = current_monster.hitpoints - damage
 
                     if current_monster.hitpoints <= 0:
                         # set monster as dead
-                        await current_monster.kill(world.rooms.rooms[player.location], self.logger)
+                        await current_monster.kill(world.rooms.rooms[player.location_id], self.logger)
 
-                        for world_player in world.rooms.rooms[player.location].players:
-                            if world_player.in_combat == current_monster:
+                        for p in world.rooms.rooms[player.location_id].players:
+                            if p.in_combat == current_monster:
                                 # give experience
-                                world_player.experience += current_monster.experience
+                                p.experience += current_monster.experience
 
                                 # send defeat message
                                 msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
-                                await self.send_msg(msg, "event", world_player.websocket)
+                                await self.send_msg(msg, "event", p.websocket)
 
                                 # set combat back to none so we can fight someone else
-                                world_player.in_combat = None
+                                p.in_combat = None
 
                                 # show room
                                 player, world = await self.process_room(player.location_id, player, world)
@@ -411,7 +411,7 @@ class Command(Utility):
                 await self.send_msg(f"You cannot attack {current_monster.name}.  You are already in combat with {player.in_combat.name}.", "error", player.websocket)
         else:
             await self.send_msg(f"{wanted_monster} is not a valid attack target.","error", player.websocket)
-        world.rooms.rooms[player.location].monsters = room_monsters
+        world.rooms.rooms[player.location_id].monsters = room_monsters
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
@@ -422,7 +422,7 @@ class Command(Utility):
 
         # see if this monster is in the room.
         current_monster = None
-        for monster in world.rooms.rooms[player.location].monsters:
+        for monster in world.rooms.rooms[player.location_id].monsters:
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(" ")
             for name in monster_name_parts:
@@ -444,7 +444,7 @@ class Command(Utility):
                     await self.send_msg(msg, "info", player.websocket)
 
                     # alert the rest of the room
-                    for room_player in world.rooms.rooms[player.location].players:
+                    for room_player in world.rooms.rooms[player.location_id].players:
                         if room_player.websocket != player.websocket:
                             await self.send_msg(f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}.","info",player.websocket)
 
@@ -459,7 +459,7 @@ class Command(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         players = ""
-        for player in world.players:
+        for player in world.players.players:
             players += f"{player.name}<br>"
 
         await self.send_msg(f"Players Online:<br>{players}", "info", player.websocket)
@@ -471,11 +471,11 @@ class Command(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         if command.startswith("/say "):
             msg = command.split(" ", 1)[1]
-            for world_player in world.players:
-                if world_player.name == player.name:
-                    await self.send_msg(f'You say "{msg}"', "info", world_player.websocket)
+            for p in world.players.players:
+                if p.name == player.name:
+                    await self.send_msg(f'You say "{msg}"', "info", p.websocket)
                 else:
-                    await self.send_msg(f'{player.name} says "{msg}"', "info",world_player.websocket)
+                    await self.send_msg(f'{player.name} says "{msg}"', "info",p.websocket)
         # elif command.startswith('/yell '): # can be heard from ajoining rooms
         #     pass
         # else: # it's a telepath
@@ -486,7 +486,7 @@ class Command(Utility):
     async def process_rest(self, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
-        monsters_in_room = len(world.rooms.rooms[player.location].monsters)
+        monsters_in_room = len(world.rooms.rooms[player.location_id].monsters)
         if player.in_combat == True or monsters_in_room > 0:
             await self.send_msg("You cannot rest at this time. You are in combat.", "info", player.websocket)
         else:

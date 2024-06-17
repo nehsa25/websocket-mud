@@ -1,4 +1,7 @@
 import inspect
+from threading import Thread
+import time
+from aiimages import AIImages
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -38,7 +41,8 @@ class Rooms(Utility):
 
         LogUtils.info(f"{self.world_name}  has {len(self.rooms)} rooms", self.logger)
 
-    async def get_area_identifier(self, area):
+    # returns the name of the area based on the type
+    def get_area_identifier(self, area):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
@@ -71,9 +75,21 @@ class Rooms(Utility):
         # show new room
         player, world = await self.process_room(new_room_id, player, world)
 
-        # generate new map
-        await world.map.generate_map(player, world)
+        # name for images
+        map_image_name = self.sanitize_filename(f"{player.name}_map_{int(time.time())}".lower()) # renkath_map_1718628698
+        room_image_name = f"{self.sanitize_filename(new_room.name)}.png"
+        
+        # generate new map (in a new task so we don't block the player)
+        map_thread = Thread(target = world.map.start_async, args = (new_room, map_image_name, player, world))
+        map_thread.start()
 
+        # generate a new room image (in a new task so we don't block the player)
+        # room_image_thread = Thread(target = world.ai_images.start_async, args = (room_image_name, new_room.description, player))
+        # room_image_thread.start()
+        
+        # map_thread.join()
+        # room_image_thread.join()
+        
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world
 
