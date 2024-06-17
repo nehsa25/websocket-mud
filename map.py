@@ -21,7 +21,7 @@ class Map(Utility):
         self.graph = pydot.Dot(
             "mud_map",
             graph_type="digraph",
-            bgcolor="hotpink",
+            bgcolor="#999",
             rankdir="LR",
             splines="ortho",
             concentrate="true",
@@ -38,7 +38,7 @@ class Map(Utility):
         self.graph.set_edge_defaults(
             color="black",
             style="solid",
-            dir="none",
+            dir="both",
         )
 
     async def santizie_svg_map_output(self, map_output, environment_name):
