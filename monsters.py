@@ -5,6 +5,7 @@ from enum import Enum
 import time
 from monster import Monster
 from log_utils import LogUtils
+from mudevent import MudEvents
 from utility import Utility
 
 
@@ -152,21 +153,17 @@ class Monsters(Utility):
             for p in room.players:
                 if p.websocket == player.websocket:
                     if total_damage > 0:
-                        await self.send_msg(f"{attack_msg}", "attack", p.websocket)
+                        await self.send_message(MudEvents.AttackEvent(attack_msg), p.websocket)
                     else:
-                        await self.send_msg(
-                            "You were dealt no damage this round!", "info", p.websocket
-                        )
+                        await self.send_message(MudEvents.InfoEvent("You were dealt no damage this round!"), p.websocket)
+
                 else:  # alert others of the battle
                     if total_damage > 0:
-                        new_attack_msg = attack_msg.replace(
+                        await self.send_message(MudEvents.InfoEvent(attack_msg.replace(
                             "You were", f"{player.name} was"
-                        )
-                        await self.send_msg(new_attack_msg, "info", p.websocket)
+                        )), p.websocket)
                     else:
-                        await self.send_msg(
-                            f"{player.name} was dealt no damage!", "info", p.websocket
-                        )
+                        await self.send_message(MudEvents.InfoEvent(f"{player.name} was dealt no damage!"), p.websocket)
 
         LogUtils.debug(
             f"{method_name}: exit, returning total_damage: {total_damage}", self.logger

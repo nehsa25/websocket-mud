@@ -73,7 +73,7 @@ class Rooms(Utility):
         player.location_id = new_room.id
 
         # show new room
-        player, world = await self.process_room(new_room_id, player, world)
+        player, world = await self.process_room(player, world)
 
         # name for images
         map_image_name = self.sanitize_filename(f"{player.name}_map_{int(time.time())}".lower()) # renkath_map_1718628698
@@ -94,10 +94,15 @@ class Rooms(Utility):
         return player, world
 
     # returns player, world
-    async def process_room(self, new_room_id, player, world):
+    async def process_room(self, player, world, look_location_id = None):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        new_room = self.rooms[new_room_id]
+        
+        
+        if look_location_id is None:
+            new_room = self.rooms[player.location_id]
+        else:
+            new_room = self.rooms[look_location_id]
 
         # get the description
         description = new_room.description
@@ -126,7 +131,7 @@ class Rooms(Utility):
         for p in world.players.players:
             if player.name == p.name:
                 continue
-            if p.location_id == new_room_id:
+            if p.location_id == player.location_id:
                 people += p.name + ", "
         if people != "":
             people = people[0 : len(people) - 2]

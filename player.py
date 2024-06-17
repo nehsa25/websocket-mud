@@ -63,8 +63,7 @@ class Player(Utility):
         msg = f"{self.name}|{str(self.hitpoints)}/{str(self.max_hitpoints)}"
         if self.resting:
             msg += "|REST"
-        health_event = MudEvents.HealthEvent(msg)
-        await self.utility.send_message(health_event, self.websocket)
+        await self.utility.send_message(MudEvents.HealthEvent(msg), self.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # cancels all tasks and states you died if you die
@@ -73,20 +72,13 @@ class Player(Utility):
         self.in_combat = False
 
         # state you died
-        await self.send_msg(
-            "You die... but awaken on a strange beach shore.",
-            "event",
-            self.websocket,
-            self.logger,
-        )
+        await self.send_message(MudEvents.InfoEvent("You died."))
 
         # alert others in the room where you died that you died..
         room = await self.world.get_room(self.location_id)
         for p in room.players:
             if p != self:
-                await self.send_msg(
-                    f"{self.name} died.", "event", p.websocket, self.logger
-                )
+                await self.send_message(MudEvents.InfoEvent(f"{self.name} died."), p.websocket)
 
         # drop all items
         room = await self.world.get_room(self.location_id)
@@ -103,11 +95,7 @@ class Player(Utility):
         room = await self.world.get_room(self.DEATH_RESPAWN_ROOM, self.logger)
         for p in room.players:
             if p != self:
-                await self.send_msg(
-                    f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.",
-                    "event",
-                    p.websocket,
-                )
+                await self.send_message(MudEvents.InfoEvent(f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked."), p.websocket)
 
         # set hits back to max / force health refresh
         self.hitpoints = self.max_hitpoints
@@ -176,21 +164,15 @@ class Player(Utility):
                 if self.hitpoints < self.max_hitpoints:
                     heal = randint(1, 3)
                     if heal == 1:
-                        await self.send_msg(
-                            f"You recover {heal} hitpoint.", "info", self.websocket
-                        )
+                        await self.send_message(MudEvents.InfoEvent(f"You recover {heal} hitpoint."))
                     else:
-                        await self.send_msg(
-                            f"You recover {heal} hitpoints.", "info", self.websocket
-                        )
+                        await self.send_message(MudEvents.InfoEvent(f"You recover {heal} hitpoints."))
                     self.hitpoints += 3
                     if self.hitpoints >= self.max_hitpoints:
                         self.hitpoints = self.max_hitpoints
                         self.resting = False
-                        await self.send_msg(
-                            "You have fully recovered.", "info", self.websocket
-                        )
-
+                        await self.send_message(MudEvents.InfoEvent("You have fully recovered."))
+                        await self.alert_room(self.world, f"{self.name} appears to have fully recovered.")
                     await self.show_health()
 
     # responsible for the "prepares to attack you messages"
@@ -241,26 +223,16 @@ class Player(Utility):
                     # cycle through all players
                     for p in room.players:
                         if monster.in_combat == p:
-                            await self.send_msg(
-                                f"{monster.name} prepares to attack you!",
-                                "info",
-                                p.websocket,
-                            )
-
+                            await self.send_message(MudEvents.AttackEvent(f"{monster.name} positions to attack you."), p.websocket)
+                            
                             # stop resting
                             if p.resting == True:
                                 p.resting = False
-                                await self.send_msg(
-                                    "You are no longer resting.", "info", p.websocket
-                                )
+                                await self.send_message(MudEvents.InfoEvent("You are no longer resting."), p.websocket)
 
                             for p2 in room.players:
                                 if monster.in_combat != p2:
-                                    await self.send_msg(
-                                        f"{monster.name} prepares to attack {p.name}!",
-                                        "info",
-                                        p2.websocket,
-                                    )
+                                    await self.send_message(MudEvents.InfoEvent(f"{monster.name} prepares to attack {p.name}!"), p2.websocket)
 
                             # break out of loop
                             LogUtils.debug(

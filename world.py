@@ -104,11 +104,7 @@ class World(Utility):
                 ]
             )
             for world_player in self.players:
-                await self.send_msg(
-                    f"A {bang_type} can be heard off in the distance..",
-                    "event",
-                    world_player.websocket,
-                )
+                await self.send_message(MudEvents.EnvironmentEvent(bang_type), world_player.websocket)
 
     # It begins to rain..
     async def rain(self):
@@ -121,9 +117,7 @@ class World(Utility):
             )
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await self.send_msg(
-                    "It begins to rain..", "event", world_player.websocket
-                )
+                await self.send_message(MudEvents.EnvironmentEvent("It begins to rain.."), world_player.websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
@@ -132,11 +126,7 @@ class World(Utility):
             )
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await self.send_msg(
-                    "The rain pitter-patters to a stop and the sun begins to shine through the clouds..",
-                    "event",
-                    world_player.websocket,
-                )
+                await self.send_message(MudEvents.EnvironmentEvent("The rain pitter-patters to a stop and the sun begins to shine through the clouds.."), world_player.websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -149,11 +139,7 @@ class World(Utility):
             )
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await self.send_msg(
-                    "You hear thunder off in the distance..",
-                    "event",
-                    world_player.websocket,
-                )
+                await self.send_message(MudEvents.EnvironmentEvent("You hear thunder off in the distance.."), world_player.websocket)
 
     # A gentle breeze blows by you..
     async def breeze(self):
@@ -166,9 +152,7 @@ class World(Utility):
             )
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await self.send_msg(
-                    "A gentle breeze blows by you..", "event", world_player.websocket
-                )
+                await self.send_message(MudEvents.EnvironmentEvent("A gentle breeze blows by you.."), world_player.websocket)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -181,11 +165,7 @@ class World(Utility):
             )
             await asyncio.sleep(rand)
             for world_player in self.players:
-                await self.send_msg(
-                    "An eerie silence settles on the room..",
-                    "event",
-                    world_player.websocket,
-                )
+                await self.send_message(MudEvents.EnvironmentEvent("An eerie silence settles on the room.."), world_player.websocket)
 
     # just return the current date/time
     async def get_system_time(self):
@@ -194,8 +174,7 @@ class World(Utility):
         while True:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
             for world_player in self.players.players:
-                time_event = MudEvents.TimeEvent(time)
-                await self.send_message(time_event, world_player.websocket)
+                await self.send_message(MudEvents.TimeEvent(time), world_player.websocket)
 
             # sleep 10 minutes
             await asyncio.sleep(60 * 10)

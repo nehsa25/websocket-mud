@@ -45,7 +45,7 @@ class Players(Utility):
             if p.name == player.name:
                 await self.utility.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket)
             else:
-                await self.utility.send_message(MudEvents.InfoEvent(f"{player.name} joined the game!"), p.websocket)
+                await self.utility.send_message(MudEvents.AnnouncementEvent(f"{player.name} joined the game!"), p.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
         return player, world

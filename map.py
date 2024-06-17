@@ -43,7 +43,7 @@ class Map(Utility):
             map_output = re.sub('height="\d*pt"', '', map_output)            
         map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
         map_output = re.sub('&#45;\d*', "", map_output)
-        LogUtils.debug(f"{method_name}: exit, returning: {map_output}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
 
     async def generate_map(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
@@ -84,7 +84,6 @@ class Map(Utility):
         count = 0
         for room in rooms:
             count += 1
-            print(f"Processing room: {room.name}, {count} of {len(rooms)}")
             room_name = room.name
             room_exits = room.exits
             

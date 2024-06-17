@@ -1,10 +1,10 @@
 import time
 from random import randint
 from money import Money
+from mudevent import MudEvents
 from utility import Utility
 
-
-class Monster:
+class Monster(Utility):
     name = ""
     hitpoints = 0
     damage = None
@@ -59,9 +59,7 @@ class Monster:
     async def announce_entrance(self, room, logger):
         if self.entrance_cry != None:
             for player in room["players"]:
-                await Utility.send_msg(
-                    self.entrance_cry, "info", player.websocket, logger
-                )
+                await self.send_message(MudEvents.InfoEvent(self.entrance_cry), player.websocket)
 
     async def kill(self, room, logger):
         self.is_alive = False
@@ -69,4 +67,5 @@ class Monster:
 
         if self.death_cry != None:
             for player in room["players"]:
-                await Utility.send_msg(self.death_cry, "info", player.websocket, logger)
+                await self.send_message(MudEvents.InfoEvent(self.death_cry), player.websocket)
+                
