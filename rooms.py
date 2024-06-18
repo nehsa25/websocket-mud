@@ -84,8 +84,8 @@ class Rooms(Utility):
         map_thread.start()
 
         # generate a new room image (in a new task so we don't block the player)
-        # room_image_thread = Thread(target = world.ai_images.start_async, args = (room_image_name, new_room.description, player))
-        # room_image_thread.start()
+        room_image_thread = Thread(target = world.ai_images.start_async, args = (room_image_name, new_room.description, player))
+        room_image_thread.start()
         
         # map_thread.join()
         # room_image_thread.join()

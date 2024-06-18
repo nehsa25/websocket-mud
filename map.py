@@ -114,7 +114,6 @@ class Map(Utility):
         # clean it up
         with open(full_path + extension, "r") as text_file:
             contents = text_file.read()
-            
 
             # mini-map
             with open(f"{full_path}_mini{extension}", "w") as final_text_file:

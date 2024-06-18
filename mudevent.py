@@ -211,12 +211,12 @@ class MudEvents:
 
     class RoomImageEvent:
         type = None
-        image_name = ""
+        room_image_name = ""
         def __init__(self, image_name):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.ROOM_IMAGE
             )
-            self.image_name = image_name
+            self.room_image_name = image_name
         def to_json(self):
             return jsonpickle.encode(self)
 

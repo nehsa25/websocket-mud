@@ -59,7 +59,7 @@ class TownSmee(Utility):
             Room(
                 id=1,
                 name=f"{self.name} - Inn",
-                description= "You find yourself within a majestic inn.  The smell of food and wine permeates the air.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books.",
+                description= "You find yourself within a majestic inn.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books and a prized map of the town and surrounding area stands on display but it is sealed behind glass to prevent touching.",
                 exits=[
                     {"direction": Room.dirs.south, "id": 9},
                     {"direction": Room.dirs.up, "id": 3},
@@ -69,7 +69,7 @@ class TownSmee(Utility):
             Room(
                 id=2,
                 name=f"{self.name} - Sheriff's Office",
-                description="You are in the sheriff's office.  ",
+                description="You are in the sheriff's office.  A locked cell is in the corner of the room.  Currently, it is empty.",
                 exits=[
                     {"direction": Room.dirs.east, "id": 11},  # sun road
                 ],
@@ -78,7 +78,7 @@ class TownSmee(Utility):
             Room(
                 id=3,
                 name=f"{self.name} - Inn, second floor",
-                description="You are on the second floor of the inn.  Rooms line the hallway.",
+                description="You are on the second floor of the inn. Rooms line the hallway.",
                 exits=[
                     {"direction": Room.dirs.up, "id": 4}, # inn, third floor
                     {"direction": Room.dirs.down, "id": 1},  # inn, first floor
@@ -88,7 +88,7 @@ class TownSmee(Utility):
             Room(
                 id=4,
                 name=f"{self.name} - Inn, third floor",
-                description="You are on the third floor of the inn.  Rooms line the hallway.",
+                description="You are on the third floor of the inn.  Rooms line the hallway. A beautiful vase with daisies sit on a table in broad view.",
                 exits=[
                     {"direction": Room.dirs.down, "id": 3},  # inn, second floor
                 ],
@@ -98,9 +98,9 @@ class TownSmee(Utility):
             Room(
                 id=5,
                 name=f"{self.name} - Blacksmith",
-                description="You are in the blacksmith's shop.",
+                description="You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 8},  # town square
+                    {"direction": Room.dirs.west, "id": 12},  # sun road
                     {"direction": Room.dirs.east, "id": 6},  # back room
                 ],
                 environment=Environments.TOWNSMEE,
@@ -108,7 +108,7 @@ class TownSmee(Utility):
             Room(
                 id=6,
                 name=f"{self.name} - Blacksmith, back room",
-                description="You are in the blacksmith's back room.",
+                description="You are in the blacksmith's back room.  A hot forge still burns smoldering coals.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 5},
                 ],
@@ -117,7 +117,7 @@ class TownSmee(Utility):
             Room(
                 id=7,
                 name=f"{self.name} - Market",
-                description="You are in the farmers market.",
+                description="You are in the farmers market.  Loud vendors yell out their wares.  The market is bustling with activity.  Children and dogs are seen everywhere with bright smiles.",
                 exits=[
                     {"direction": Room.dirs.north, "id": 10},
                 ],
@@ -167,7 +167,8 @@ class TownSmee(Utility):
                 name=f"{self.name} - Sun Road (South)---1",
                 description=f"You are on the main thoroughfare of {self.world_name} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.north, "id": 0} # town square
+                    {"direction": Room.dirs.north, "id": 0}, # town square
+                    {"direction": Room.dirs.east, "id": 5} # blacksmith
                 ],
                 environment=Environments.TOWNSMEE,
             ),

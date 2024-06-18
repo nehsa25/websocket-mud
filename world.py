@@ -30,6 +30,7 @@ class World(Utility):
     monsters = None
     bang_task = None
     ai_images = None
+    eyeswatching = None
 
     def __init__(self, logger):
         self.logger = logger
@@ -72,6 +73,9 @@ class World(Utility):
         if self.time_task is None:
             self.time_task = asyncio.create_task(self.get_system_time())
 
+        if self.eyeswatching is None:
+            self.eyeswatching = asyncio.create_task(self.being_observed())
+
         if self.bang_task is None:
             self.time_task = asyncio.create_task(self.bang())
 
@@ -103,8 +107,8 @@ class World(Utility):
                     "thunderous boom",
                 ]
             )
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent(bang_type), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent(bang_type), p.websocket)
 
     # It begins to rain..
     async def rain(self):
@@ -116,8 +120,8 @@ class World(Utility):
                 f"Will run rain1 event in {str(rand)} seconds...", self.logger
             )
             await asyncio.sleep(rand)
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent("It begins to rain.."), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent("It begins to rain.."), p.websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
@@ -125,8 +129,9 @@ class World(Utility):
                 f"Will run rain2 event in {str(rand)} seconds...", self.logger
             )
             await asyncio.sleep(rand)
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent("The rain pitter-patters to a stop and the sun begins to shine through the clouds.."), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(
+                    MudEvents.EnvironmentEvent("The rain pitter-patters to a stop and the sun begins to shine through the clouds.."), p.websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -138,8 +143,8 @@ class World(Utility):
                 f"Will run thunder event in {str(rand)} seconds...", self.logger
             )
             await asyncio.sleep(rand)
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent("You hear thunder off in the distance.."), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent("You hear thunder off in the distance.."), p.websocket)
 
     # A gentle breeze blows by you..
     async def breeze(self):
@@ -151,8 +156,8 @@ class World(Utility):
                 f"Will run breeze event in {str(rand)} seconds...", self.logger
             )
             await asyncio.sleep(rand)
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent("A gentle breeze blows by you.."), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent("A gentle breeze blows by you."), p.websocket)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -163,18 +168,31 @@ class World(Utility):
             LogUtils.debug(
                 f"Will run eerie_silence event in {str(rand)} seconds...", self.logger
             )
-            await asyncio.sleep(rand)
-            for world_player in self.players:
-                await self.send_message(MudEvents.EnvironmentEvent("An eerie silence settles on the room.."), world_player.websocket)
-
+            await asyncio.sleep(rand)            
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent("An eerie silence engulfs the area."), p.websocket)
+                
+    # Eyes are watching you..
+    async def being_observed(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        while True:
+            rand = randint(2000, 9000 * 2)
+            LogUtils.debug(
+                f"You are being watched event will run in {str(rand)} seconds...", self.logger
+            )
+            await asyncio.sleep(rand)            
+            for p in self.players.players:
+                await self.send_message(MudEvents.EnvironmentEvent("You are being observed. You glance around and behind you but cannot determine from where."), p.websocket)
+                
     # just return the current date/time
     async def get_system_time(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         while True:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
-            for world_player in self.players.players:
-                await self.send_message(MudEvents.TimeEvent(time), world_player.websocket)
+            for p in self.players.players:
+                await self.send_message(MudEvents.TimeEvent(time), p.websocket)
 
             # sleep 10 minutes
             await asyncio.sleep(60 * 10)
