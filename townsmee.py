@@ -10,6 +10,7 @@ from utility import Utility
 class TownSmeeUnitFactory:
     utility = None
     sheriff = None
+    inn_keeper = None
     unit_factory = None
     units = []
     logger = None
@@ -28,8 +29,22 @@ class TownSmeeUnitFactory:
             location=self.utility.generate_location(rooms),
             description="The sheriff of Town Smee.  The sheriff is a slender, man with a mustache.  He has a menacing cudgel at his waist.",
             perception=250,
-        )
+        ) 
+
+        inn_keeper = self.unit_factory.generate_unit(
+            title= ""
+            name= "Jared the Inn-keeper",
+            hp=250,
+            strength=10,
+            agility=30,
+            location=self.utility.generate_location(rooms),
+            description="""A slightly obese man with short blonde hair and a sickly pale face. He is dressed in the usual inn keeper garb. 
+            A lime green button up shirt, old grey breeches with red patches, and a grease stained apron. Jared is well beloved by the residents 
+            town Smee due to his charming stories and friendly additude.""",
+            perception=250,
+        ) 
         self.units.append(sheriff)
+
 
 
 class TownSmee(Utility):
