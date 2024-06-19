@@ -86,7 +86,7 @@ class Rooms(Utility):
         self.running_map_threads.append(asyncio.create_task(world.map.generate_map(new_room, map_image_name, player, world)))
 
         # generate a new room image (in a new task so we don't block the player)
-        self.running_image_threads.append(asyncio.create_task(world.ai_images.generate_room_image(room_image_name, new_room.description, player, world)))
+        self.running_image_threads.append(asyncio.create_task(world.ai_images.generate_room_image(room_image_name, new_room.description, new_room.inside, player, world)))
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world

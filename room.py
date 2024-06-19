@@ -21,7 +21,6 @@ class Room:
         self.description = description
         self.exits = exits
         self.items = items
-        self.inside = inside
         self.hidden_items = hidden_items
         self.monsters = monsters
         self.players = players

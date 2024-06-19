@@ -166,7 +166,7 @@ class World(Utility):
         LogUtils.debug("Initializing World() class", self.logger)
 
         if self.weather is None:
-            self.weather = World.Weather(World.Weather.WeatherTypes.THUNDER, World.Weather.WeatherStrength.HEAVY, self.logger)
+            self.weather = World.Weather(World.Weather.WeatherTypes.OVERCAST, World.Weather.WeatherStrength.HEAVY, self.logger)
             self.weather.set_weather_descriptions()
             
         if self.command is None:
@@ -261,9 +261,16 @@ class World(Utility):
                     "thunderous boom",
                 ]
             )
-            msg = f"a you a {bang_type}...."
+            distance = random.choice(
+                [
+                    "off in the distance.",
+                    "behind you.",
+                    "to your left.",
+                ]
+            )
+            msg = f"You hear a {bang_type} {distance}...."
             for p in self.players.players:
-                await self.send_message(MudEvents.EnvironmentEvent(bang_type), p.websocket)
+                await self.send_message(MudEvents.EnvironmentEvent(msg), p.websocket)
 
     # Setup weather event
     async def get_weather(self):

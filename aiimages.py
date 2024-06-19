@@ -25,12 +25,13 @@ class AIImages(Utility):
         LogUtils.debug("Initializing AIImages() class", logger)
         self.logger = logger
 
-    async def generate_room_image(self, room_image_name, room_description, player, world):
+    async def generate_room_image(self, room_image_name, room_description, inside, player, world):
         image_name = ""
         
         # update rooms description with weather
-        room_description = world.weather.add_weather_description(room_description)
-        
+        if not inside:
+            room_description = world.weather.add_weather_description(room_description)
+            
         # get already generated rooms
         with open("ai_rooms.txt", "r") as text_file:
             contents = text_file.readlines()            
