@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 from threading import Thread
 import time
@@ -21,7 +22,9 @@ class Rooms(Utility):
     envionments = []
     world_name = ""
     rooms = []
-
+    running_image_threads = []
+    running_map_threads = []
+    
     def __init__(self, world_name, logger) -> None:
         self.logger = logger
         LogUtils.debug("Initializing Rooms() class", self.logger)
@@ -77,19 +80,14 @@ class Rooms(Utility):
 
         # name for images
         map_image_name = self.sanitize_filename(f"{player.name}_map_{int(time.time())}".lower()) # renkath_map_1718628698
-        room_image_name = f"{self.sanitize_filename(new_room.name)}.png"
+        room_image_name = self.sanitize_filename(f"{new_room.name}_room_{int(time.time())}".lower()) + ".png" # townsquare_room_1718628698
         
         # generate new map (in a new task so we don't block the player)
-        map_thread = Thread(target = world.map.start_async, args = (new_room, map_image_name, player, world))
-        map_thread.start()
+        self.running_map_threads.append(asyncio.create_task(world.map.generate_map(new_room, map_image_name, player, world)))
 
         # generate a new room image (in a new task so we don't block the player)
-        room_image_thread = Thread(target = world.ai_images.start_async, args = (room_image_name, new_room.description, player))
-        room_image_thread.start()
-        
-        # map_thread.join()
-        # room_image_thread.join()
-        
+        self.running_image_threads.append(asyncio.create_task(world.ai_images.generate_room_image(room_image_name, new_room.description, player, world)))
+
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world
 
@@ -105,7 +103,11 @@ class Rooms(Utility):
             new_room = self.rooms[look_location_id]
 
         # get the description
-        description = new_room.description
+        
+        if new_room.inside:
+            description = new_room.description
+        else:
+            description = world.weather.add_weather_description(new_room.description)
 
         # show items
         items = ""

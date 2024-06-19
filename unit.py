@@ -50,7 +50,6 @@ class Unit(UnitTypes, Utility):
     hp = None
     strength = None
     agility = None
-    location = None
     perception = None
     logger = None
 
@@ -59,7 +58,7 @@ class Unit(UnitTypes, Utility):
         LogUtils.debug("Initializing Unit() class", self.logger)
 
     def generate_unit(
-        self, title, name, hp, strength, agility, location, perception, description
+        self, title, name, hp, strength, agility, perception, description
     ):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -68,7 +67,6 @@ class Unit(UnitTypes, Utility):
         self.hp = hp
         self.strength = strength
         self.agility = agility
-        self.location = location
         self.perception = perception
         self.description = description
         LogUtils.debug(f"{method_name}: exit", self.logger)

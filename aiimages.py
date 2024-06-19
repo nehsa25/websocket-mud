@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import os
 import requests
 import websockets
 from log_utils import LogUtils
@@ -24,13 +25,12 @@ class AIImages(Utility):
         LogUtils.debug("Initializing AIImages() class", logger)
         self.logger = logger
 
-    def start_async(self, room_image_name, room_description, player):
-        start_server = self.generate_room_image(room_image_name, room_description, player)
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(start_server)
-        
-    async def generate_room_image(self, room_image_name, room_description, player):
+    async def generate_room_image(self, room_image_name, room_description, player, world):
         image_name = ""
+        
+        # update rooms description with weather
+        room_description = world.weather.add_weather_description(room_description)
+        
         # get already generated rooms
         with open("ai_rooms.txt", "r") as text_file:
             contents = text_file.readlines()            
@@ -62,22 +62,24 @@ class AIImages(Utility):
                             "text": room_description
                         }
                     ],
-                    "cfg_scale": 25,
+                    "cfg_scale": 35,
                     "height": 512,
                     "width": 512,
                     "samples": 1,
                     "steps": 30,
-                    "style_present": "pixel-art"
+                    "style_present": "gothic"
                     },
                 )
             
             if response.status_code != 200:
                 raise Exception("Non-200 response: " + str(response.text))
 
-            data = response.json()
-
-            self.path = f"c:/src/mud_images"
-            full_path = f"{self.path}/{room_image_name}"
+            data = response.json()         
+            self.path = f"c:/src/mud_images/rooms"
+            full_path = f"{self.path}/{room_image_name}"            
+            if os.path.exists(full_path):
+                os.remove(full_path)
+                
             for i, image in enumerate(data["artifacts"]):
                 with open(full_path, "wb") as f:
                     f.write(base64.b64decode(image["base64"]))

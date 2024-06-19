@@ -233,7 +233,6 @@ class MudEvents:
 
     class AttackEvent:
         type = None
-        image_name = ""
         def __init__(self, message):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.ATTACK

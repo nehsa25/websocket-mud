@@ -1,5 +1,9 @@
+import inspect
+import random
 import time
 from random import randint
+from combat import Combat
+from log_utils import LogUtils
 from money import Money
 from mudevent import MudEvents
 from utility import Utility
@@ -20,7 +24,9 @@ class Monster(Utility):
     death_cry = None
     entrance_cry = None
     monster_type = None
-
+    pronoun = "it"
+    logger = None
+    combat = None
     def __init__(
         self,
         name,
@@ -31,6 +37,7 @@ class Monster(Utility):
         money_potential,
         death_cry,
         entrance_cry,
+        logger,
         num_attack_targets=1,
         respawn_rate_secs=(30, 300),
     ):
@@ -44,6 +51,8 @@ class Monster(Utility):
         self.death_cry = death_cry
         self.entrance_cry = entrance_cry
         self.monster_type = monster_type
+        self.logger = logger
+        self.combat = Combat(logger)
 
         # calculate money
         money = randint(money_potential[0], money_potential[1])
@@ -56,10 +65,13 @@ class Monster(Utility):
         self.respawn_rate_secs = randint(respawn_rate_secs[0], respawn_rate_secs[1])
 
     # announce we're here!
-    async def announce_entrance(self, room, logger):
+    async def announce_entrance(self, room):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         if self.entrance_cry != None:
             for player in room["players"]:
                 await self.send_message(MudEvents.InfoEvent(self.entrance_cry), player.websocket)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def kill(self, room, logger):
         self.is_alive = False

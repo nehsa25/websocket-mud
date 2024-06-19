@@ -119,9 +119,9 @@ class Players(Utility):
 
         # let folks know someone left
         if change_name:
-            await self.utility.alert_world(f"{player.name} is changing their name..", player, world)
+            await self.utility.alert_world(f"{player.name} is changing their name..", world, player=player)
         else:
-            await self.utility.alert_world(f"{player.name} left the game.", player, world)
+            await self.utility.alert_world(f"{player.name} left the game.", world, player=player)
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
         LogUtils.debug(f"register: exit", self.logger)

@@ -23,11 +23,6 @@ class Map(Utility):
         LogUtils.debug("Initializing Map() class", logger)
         self.logger = logger
 
-    def start_async(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
-        start_server = self.generate_map(room, image_name, player, world, environment)
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(start_server)
-
     async def sanitize_svg_output(self, map_output, environment_name, world, ImageSize=ImageSize.LARGE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)

@@ -286,9 +286,9 @@ class Command(Utility):
             player.name = request
             
             # check if user already in system (they should be)
-            world = await self.world.players.unregister(world, player, True)
-            player, world = await self.world.players.register(world, player)  
-            await self.send_message(MudEvents.InfoEvent(f"Your name is now {player.name}."), player.websocket)    
+            world = await world.players.unregister(player, world, change_name=True)
+            player, world = await world.players.register(player, world)  
+            await self.send_message(MudEvents.InfoEvent(f"You are now known as {player.name}"), player.websocket)    
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
     

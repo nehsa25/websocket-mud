@@ -4,6 +4,7 @@ class Room:
     dirs = MudDirections()
     id: 0
     name = ""
+    inside = False
     description = ""
     exits = [ ],
     items = [],
@@ -13,12 +14,14 @@ class Room:
     npcs = [],
     environment = None
     
-    def __init__(self, id, name, description, exits, environment, items=[], hidden_items=[], monsters=[], players=[], npcs=[]) -> None:
+    def __init__(self, id, name, inside, description, exits, environment, items=[], hidden_items=[], monsters=[], players=[], npcs=[]) -> None:
         self.id = id
         self.name = name
+        self.inside = inside
         self.description = description
         self.exits = exits
         self.items = items
+        self.inside = inside
         self.hidden_items = hidden_items
         self.monsters = monsters
         self.players = players

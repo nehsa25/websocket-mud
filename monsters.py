@@ -95,12 +95,13 @@ class Monsters(Utility):
                                 room.monsters.append(new_monster)
 
     # calculate the round damage and sends messages to players
-    async def calculate_mob_damage(self, player, room):
+    async def calculate_mob_damage(self, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         total_damage = 0
         monsters_damage = []
         monsters_in_room = False
+        room = world.rooms.rooms[player.location_id]
 
         # need to check here if combat is still going.. we may have killed everything or moved rooms
         for monster in room.monsters:
@@ -170,47 +171,29 @@ class Monsters(Utility):
         )
         return total_damage
 
-    # main loop for checking if monsters are attacking you
-    async def mob_combat(self):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        # we never leave this attack loop
-        while True:
-            # for each player
-            for player in self.world.players.players:
-                LogUtils.debug(
-                    f'{method_name}: On player "{player.name}", Running loop1...',
-                    self.logger,
-                )
+    # # main loop for checking if monsters are attacking you
+    # async def mob_combat(self):
+    #     method_name = inspect.currentframe().f_code.co_name
+    #     LogUtils.debug(f"{method_name}: enter", self.logger)
 
-                # get the room player is in
-                room = await self.world.get_room(player.location_id, self.logger)
-                LogUtils.debug(
-                    f'{method_name}: Player "{player.name}" is in room "{room.name}"',
-                    self.logger,
-                )
+    #     # sleep delay between rounds
+    #     LogUtils.debug(
+    #         f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds",
+    #         self.logger,
+    #     )
+    #     await asyncio.sleep(self.COMBAT_WAIT_SECS)
 
-                # each monsters in room finds player to attack
-                await self.check_for_new_attacks(room)
+    #     for player in self.world.players.players:
+    #         LogUtils.debug(
+    #             f'{method_name}: On player "{player.name}", Running loop2...',
+    #             self.logger,
+    #         )
 
-            # sleep delay between rounds
-            LogUtils.debug(
-                f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds",
-                self.logger,
-            )
-            await asyncio.sleep(self.COMBAT_WAIT_SECS)
+    #         # we need to get room again after we've slept
+    #         room = await self.world.get_room(player.location_id, self.logger)
 
-            for player in self.world.players.players:
-                LogUtils.debug(
-                    f'{method_name}: On player "{player.name}", Running loop2...',
-                    self.logger,
-                )
-
-                # we need to get room again after we've slept
-                room = await self.world.get_room(player.location_id, self.logger)
-
-                # calculcate round damanage
-                await self.apply_mob_round_damage(self.player, room)
+    #         # calculcate round damanage
+    #         await self.apply_mob_round_damage(self.player, room)
 
     def get_rat(self):
         monsters = ["", "", "", "", "", "", "festering", "Maddened", "Angry", "Filthy"]
@@ -224,6 +207,7 @@ class Monsters(Utility):
             damage_potential="1d3",
             experience=40,
             money_potential=(0, 0),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -240,6 +224,7 @@ class Monsters(Utility):
             damage_potential="1d4",
             experience=150,
             money_potential=(0, 100),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -268,6 +253,7 @@ class Monsters(Utility):
             damage_potential="1d4",
             experience=100,
             money_potential=(0, 10),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -284,6 +270,7 @@ class Monsters(Utility):
             damage_potential="1d4",
             experience=150,
             money_potential=(0, 100),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -312,6 +299,7 @@ class Monsters(Utility):
             damage_potential="1d6",
             experience=175,
             money_potential=(0, 1000),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -328,6 +316,7 @@ class Monsters(Utility):
             damage_potential="1d6",
             experience=175,
             money_potential=(0, 1000),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )
@@ -344,6 +333,7 @@ class Monsters(Utility):
             damage_potential="1d6",
             experience=175,
             money_potential=(0, 1000),
+            logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
         )

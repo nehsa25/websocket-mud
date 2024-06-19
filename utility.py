@@ -12,19 +12,22 @@ class Utility(MudEvents):
         self.logger = logger
         LogUtils.debug("Initializing Utility() class", self.logger)
 
-    async def alert_room(self, world, message):
+    async def alert_room(self, world, message, exclude_player=False, player = None, event_type=MudEvents.InfoEvent):
         LogUtils.debug(f"alert_room: enter, message: {message}", self.logger)
         for p in world.players.players:
             if self.location_id == p.location_id:
-                await self.send_message(MudEvents.InfoEvent(message), p.websocket)
-        LogUtils.debug(f"alert_room: exit", self.logger)    
+                if exclude_player and player is not None:
+                    if p.name != player.name:
+                        await self.send_message(event_type(message), p.websocket)
+                else:
+                    await self.send_message(event_type(message), p.websocket)
         
-    async def alert_world(self, message, player, world, exclude_player=True):
+    async def alert_world(self, message, world, exclude_player=True, player = None, event_type=MudEvents.InfoEvent):
         LogUtils.debug(f"alert_world: enter, message: {message}", self.logger)
         for p in world.players.players:
-            if exclude_player:
+            if exclude_player and player is not None:
                 if p.name != player.name:
-                    await self.send_message(MudEvents.InfoEvent(message), p.websocket)
+                    await self.send_message(event_type(message), p.websocket)
             else:
                 await self.send_message(MudEvents.InfoEvent(message), p.websocket)
                 
