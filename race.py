@@ -21,6 +21,7 @@ class SpecialAttributes:
         stealth=False,
         superNaturalStealth=False,
         slow=False,
+        alignment=False
     ):
         self.NightVision = nightVision
         self.HeightenedSmell = heightenedSmell
@@ -30,6 +31,7 @@ class SpecialAttributes:
         self.Stealth = stealth
         self.SuperNaturalStealth = superNaturalStealth
         self.Slow = slow
+        self.alignments = alignment
 
 
 class Race:

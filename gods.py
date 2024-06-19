@@ -11,7 +11,9 @@ class Gods:
         devoption_levels = [
             "high magic resistance",
             "can use high-tech items",
-            "can \"think\" their way past locked doors/barriers"         
+            "can \"think\" their way past locked doors/barriers"
+            "unique questline"
+            "dislikes nature (bonus for killing player/npc alined with nature)"
         ]
         def __init__(self, logger):
             self.logger = logger
@@ -25,7 +27,8 @@ class Gods:
         devoption_levels = [
             "better prices",
             "better drops",
-            "better lockpicking"            
+            "better lockpicking"
+            "unique questline"          
         ]
         def __init__(self, logger):
             self.logger = logger
@@ -39,7 +42,9 @@ class Gods:
             "can track animals",
             "animals will not attack you",
             "can create ents",
-            "better animal drops"            
+            "better animal drops"
+            "unique questline"
+            "dislikes technolegy(bonus for killing player/npc alined with technolegy)"            
         ]
         def __init__(self, logger):
             self.logger = logger
