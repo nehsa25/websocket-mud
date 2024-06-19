@@ -38,9 +38,7 @@ class TownSmeeUnitFactory:
             strength=10,
             agility=30,
             location=self.utility.generate_location(rooms),
-            description="""A slightly obese man with short blonde hair and a sickly pale face. He is dressed in the usual inn keeper garb. 
-            A lime green button up shirt, old grey breeches with red patches, and a grease stained apron. Jared is well beloved by the residents 
-            town Smee due to his charming stories and friendly additude.""",
+            description="""A slightly obese man with short blonde hair and a sickly pale face. Jared is well beloved by the residents of town Smee, for his charming stories and friendly demeaner. Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron.  Jared smiles at you welcomely when you look at him.""",
             perception=250,
         ) 
         self.units.append(sheriff)
