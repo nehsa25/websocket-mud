@@ -107,6 +107,7 @@ class World(Utility):
                     "thunderous boom",
                 ]
             )
+            msg = f"a you a {bang_type}...."
             for p in self.players.players:
                 await self.send_message(MudEvents.EnvironmentEvent(bang_type), p.websocket)
 

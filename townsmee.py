@@ -1,6 +1,7 @@
 from environments import Environments
 from items import Items
 from log_utils import LogUtils
+from monsters import Monsters
 from room import Room
 from unit import Unit
 from utility import Utility
@@ -32,6 +33,7 @@ class TownSmeeUnitFactory:
 
 
 class TownSmee(Utility):
+    monsters = None
     logger = None
     unitfactory = None
     rooms = None
@@ -43,6 +45,7 @@ class TownSmee(Utility):
         self.logger = logger
         LogUtils.debug("Initializing TownSmee() class", self.logger)
         self.world_name = world_name
+        self.monsters = Monsters(self.logger)
         self.rooms = [
             Room(
                 id=0,
@@ -53,6 +56,13 @@ class TownSmee(Utility):
                     {"direction": Room.dirs.east, "id": 10},  # moon road
                     {"direction": Room.dirs.south, "id": 12},  
                     {"direction": Room.dirs.north, "id": 11},  # sun road
+                ],
+                items=[Items.helmet, Items.stick, Items.maul],
+                monsters=[
+                    self.monsters.get_skeleton(),
+                    self.monsters.get_skeleton(),
+                    self.monsters.get_zombie(),
+                    self.monsters.get_ghoul()
                 ],
                 environment=Environments.TOWNSMEE,
             ),

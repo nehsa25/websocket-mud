@@ -20,7 +20,6 @@ class Command(Utility):
         if self.command_utility is None:
             self.command_utility = CommandUtility(logger)
 
-
     # returns nothing, just sends messages
     async def process_help(self, player):
         method_name = inspect.currentframe().f_code.co_name
@@ -133,9 +132,7 @@ class Command(Utility):
                 continue
             if p.location_id == player.location_id:
                 await self.send_message(MudEvents.InfoEvent(f"{player.name} looks around the room."), p.websocket)
-        player, world = await self.process_room(
-            player.location_id, player, world, player.websocket, self.logger
-        )
+        player, world = await world.rooms.process_room(player, world)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
@@ -352,12 +349,11 @@ class Command(Utility):
                 # if you die and go to the crypt then your room id will change..
                 while current_monster.hitpoints > 0 and player.location_id == world.rooms.rooms[player.location_id].id:
                     # determine attack damage
-                    weapon = self.utility.get_equiped_weapon(player, self.logger)
-                    attack_potential = weapon.damage_potential
+                    attack_potential = player.weapon.damage_potential
 
                     # for number of swings here
                     num_swings = 1
-                    num_swings += int(player.agility / weapon.weight_class.value)
+                    num_swings += int(player.agility / player.weapon.weight_class.value)
 
                     LogUtils.debug(f"We're going to swing {num_swings} times!", self.logger)
 
@@ -380,18 +376,18 @@ class Command(Utility):
                                 response = f"You swing wildly and miss!"
                             else:
                                 if num_swings == 1:
-                                    response = f"You {weapon.verb} {current_monster.name} with your {weapon.name.lower()} for {str(damage)} damage!"
+                                    response = f"You {player.weapon.verb} {current_monster.name} with your {player.weapon.name.lower()} for {str(damage)} damage!"
                                 else:
-                                    response = f"You {weapon.verb} {current_monster.name} {num_swings} times with your {weapon.name.lower()} for {str(damage)} damage!"
+                                    response = f"You {player.weapon.verb} {current_monster.name} {num_swings} times with your {player.weapon.name.lower()} for {str(damage)} damage!"
                                 await self.send_message(MudEvents.InfoEvent(response), p.websocket)
                         else:
                             if damage == 0:
                                 response = f"{player.name} swings wildly and misses!"
                             else:
                                 if num_swings == 1:
-                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} with their {weapon.name.lower()} for {str(damage)} damage!"
+                                    response = f"{player.name} {player.weapon.plural_verb} {current_monster.name} with their {player.weapon.name.lower()} for {str(damage)} damage!"
                                 else:
-                                    response = f"{player.name} {weapon.plural_verb} {current_monster.name} {num_swings} times with their {weapon.name.lower()} for {str(damage)} damage!"
+                                    response = f"{player.name} {player.weapon.plural_verb} {current_monster.name} {num_swings} times with their {player.weapon.name.lower()} for {str(damage)} damage!"
                                 await self.send_message(MudEvents.InfoEvent(response), p.websocket)
 
                     # subtract from monsters health

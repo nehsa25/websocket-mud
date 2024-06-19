@@ -6,3 +6,4 @@ TownSmeeSunRoadSouth1.png!!!You are on the main thoroughfare of Illisurom runnin
 TownSmeeBlacksmith.png!!!You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.
 TownSmeeBlacksmithbackroom.png!!!You are in the blacksmith's back room.  A hot forge still burns smoldering coals.
 TownSmeeMarket.png!!!You are in the farmers market.  Loud vendors yell out their wares.  The market is bustling with activity.  Children and dogs are seen everywhere with bright smiles.
+TownSmeeArmoury.png!!!You are in the town armoury.

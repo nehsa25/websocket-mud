@@ -21,8 +21,9 @@ class Player(Utility):
     experience = 0
     resting = False
     in_combat = None
+    weapon = Items.club
     ip = None
-    inventory = [Items.book, Items.cloth_pants]
+    inventory = [Items.club, Items.book, Items.cloth_pants]
     money = []
     websocket = None
     rest_task = None # A resting task that check if this user is resting every 2 seconds
@@ -55,6 +56,9 @@ class Player(Utility):
         self.websocket = websocket
         if self.rest_task is None:
             self.rest_task = asyncio.create_task(self.check_for_resting())
+            
+        # if self.mob_attack_task is None:
+        #     self.mob_attack_task = asyncio.create_task(self.check_for_new_attacks())
 
     # shows color-coded health bar
     async def show_health(self):
@@ -176,7 +180,7 @@ class Player(Utility):
                     await self.show_health()
 
     # responsible for the "prepares to attack you messages"
-    async def check_for_new_attacks(self, room):
+    async def check_for_new_attacks(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         # for each monster in room still alive
