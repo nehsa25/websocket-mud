@@ -40,6 +40,7 @@ class MudEvents:
             DIRECTION = 19
             ANNOUCEMENT = 20
             ENVIRONMENT = 21
+            REST = 22
 
         @staticmethod
         def get_event_type_id(event):
@@ -159,15 +160,31 @@ class MudEvents:
         def to_json(self):
             return jsonpickle.encode(self)
 
+    class RestEvent:
+        type = None
+        message = ""
+        is_resting = False
+
+        def __init__(self, message):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.REST
+            )
+            self.message = message
+
+        def to_json(self):
+            return jsonpickle.encode(self)
+
     class HealthEvent:
         type = None
         message = ""
+        is_resting = None
 
-        def __init__(self, message):
+        def __init__(self, message, is_resting = False):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.HEALTH
             )
             self.message = message
+            self.is_resting = is_resting
 
         def to_json(self):
             return jsonpickle.encode(self)

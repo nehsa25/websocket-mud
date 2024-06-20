@@ -94,35 +94,12 @@ class Monsters(Utility):
                                 )
                                 room.monsters.append(new_monster)
 
-    # # main loop for checking if monsters are attacking you
-    # async def mob_combat(self):
-    #     method_name = inspect.currentframe().f_code.co_name
-    #     LogUtils.debug(f"{method_name}: enter", self.logger)
-
-    #     # sleep delay between rounds
-    #     LogUtils.debug(
-    #         f"{method_name}: Sleeping {str(self.COMBAT_WAIT_SECS)} seconds",
-    #         self.logger,
-    #     )
-    #     await asyncio.sleep(self.COMBAT_WAIT_SECS)
-
-    #     for player in self.world.players.players:
-    #         LogUtils.debug(
-    #             f'{method_name}: On player "{player.name}", Running loop2...',
-    #             self.logger,
-    #         )
-
-    #         # we need to get room again after we've slept
-    #         room = await self.world.get_room(player.location_id, self.logger)
-
-    #         # calculcate round damanage
-    #         await self.apply_mob_round_damage(self.player, room)
-
     def get_rat(self):
         monsters = ["", "", "", "", "", "", "festering", "Maddened", "Angry", "Filthy"]
         name = f"{random.choice(monsters)} Brown Rat"
         death_cry = f"{name} spasms in agony, then is still."
         entrance_cry = f"{name} scurries in.."
+        victory_cry="The rat chitters in delight."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.CRAB,
@@ -133,6 +110,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry,
         )
 
     def get_crab(self):
@@ -140,6 +118,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Giant Crab"
         death_cry = f"{name} kicks one last time and dies.."
         entrance_cry = f"{name} scuttles in.."
+        victory_cry="The crab chitters in delight."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.CRAB,
@@ -150,6 +129,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )
 
     def get_skeleton(self):
@@ -169,6 +149,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Skeleton"
         death_cry = f"{name} falls over and dies.."
         entrance_cry = f"{name} wanders in.."
+        victory_cry="The skeleton gives an elegent bow."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.SKELETON,
@@ -179,6 +160,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )
 
     def get_zombie(self):
@@ -186,6 +168,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Zombie"
         death_cry = f"{name} falls over and dies.."
         entrance_cry = f"{name} wanders in.."
+        victory_cry="The smiles sadly."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.ZOMBIE,
@@ -196,6 +179,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )
 
     def get_zombie_surfer(self):
@@ -215,6 +199,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Zombie Surfer"
         death_cry = f'{name} says "Narley", then falls over and dies..'
         entrance_cry = f"{name} wanders in.."
+        victory_cry="The zombie surfer stares at the corpse in confusion."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.ZOMBIE_SURFER,
@@ -225,6 +210,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )
 
     def get_ghoul(self):
@@ -232,6 +218,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Ghoul"
         death_cry = f"{name} falls over and dies.."
         entrance_cry = f"{name} wanders in.."
+        victory_cry="The ghoul makes no emotion."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.GHOUL,
@@ -242,6 +229,7 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )
 
     def get_thug(self):
@@ -249,6 +237,7 @@ class Monsters(Utility):
         name = f"{random.choice(monsters)} Thug"
         death_cry = f"{name} falls over and dies.."
         entrance_cry = f"{name} saunders in.."
+        victory_cry=f"{name} mutters &quot;this better have been worth it&quot;."
         return Monster(
             name=name.strip(),
             monster_type=self.MONSTERS.THUG,
@@ -259,4 +248,5 @@ class Monsters(Utility):
             logger=self.logger,
             death_cry=death_cry,
             entrance_cry=entrance_cry,
+            victory_cry=victory_cry
         )

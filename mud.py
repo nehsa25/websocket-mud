@@ -56,10 +56,10 @@ class Mud(Utility):
                 
                 for p in self.world.players.players:
                     # set inventory for refresh
-                    await p.show_inventory()
+                    await p.send_inventory()
 
                     # send updated hp
-                    await p.show_health()
+                    await p.send_health()
                     
                 # wait for a command to be sent
                 LogUtils.info(f"Waiting for command...", self.logger)
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
+            console_level=Level.INFO,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)

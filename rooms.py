@@ -56,24 +56,39 @@ class Rooms(Utility):
         LogUtils.debug(f"{method_name}: exit, returning: {result}", self.logger)
         return result
 
+    async def update_room(self, room, world):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)     
+        for r in world.rooms:
+            if r.id == room.id:
+                r = room
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return world.rooms
+    
     # returns player, world, responsible for moving a player from one room to the next
     async def move_room(self, new_room_id, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        old_room = await world.rooms.get_room(player.location_id)
+        
+         # add player to new room
         new_room = await world.rooms.get_room(new_room_id)
-
-        if old_room != new_room:
-            for monster in old_room.monsters:
-                if monster.in_combat == player:
-                    monster.in_combat = None
-
-            # remove player from old room
-            old_room.players.remove(player)
-
-        # add player to new room
         new_room.players.append(player)
-        player.location_id = new_room.id
+
+        # if the player has a previous room, update it        
+        if player.room is not None:
+            old_room = await world.rooms.get_room(player.room.id)
+
+            if old_room != new_room:
+                for monster in old_room.monsters:
+                    if monster.in_combat == player:
+                        monster.in_combat = None
+
+                # remove player from old room
+                old_room.players.remove(player)
+        
+        # update to new room
+        player.previous_room = player.room
+        player.room = new_room
 
         # show new room
         player, world = await self.process_room(player, world)
@@ -98,7 +113,7 @@ class Rooms(Utility):
         
         
         if look_location_id is None:
-            new_room = self.rooms[player.location_id]
+            new_room = self.rooms[player.room.id]
         else:
             new_room = self.rooms[look_location_id]
 
@@ -133,7 +148,7 @@ class Rooms(Utility):
         for p in world.players.players:
             if player.name == p.name:
                 continue
-            if p.location_id == player.location_id:
+            if p.location_id == player.room.id:
                 people += p.name + ", "
         if people != "":
             people = people[0 : len(people) - 2]

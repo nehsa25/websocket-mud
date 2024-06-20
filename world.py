@@ -5,7 +5,7 @@ import inspect
 from random import randint
 import random
 from aiimages import AIImages
-from combat import Combat
+from battles import Battles
 from mudevent import MudEvents
 from players import Players
 from map import Map
@@ -156,7 +156,7 @@ class World(Utility):
     thunder_event = None
     time_event = None
     bang_event = None
-    combat = None
+    battles = None
     dayornight_event = None
     admin_stats_event = None
     get_weather_season_event = None
@@ -188,8 +188,8 @@ class World(Utility):
         if self.monsters is None:
             self.monsters = Monsters(self.logger)
 
-        if self.combat is None:
-            self.combat = Combat(self.logger)
+        if self.battles is None:
+            self.battles = Battles(self.logger)
 
     # schedule some events that'll do shit
     async def setup_world_events(self):
@@ -403,11 +403,12 @@ class World(Utility):
     async def check_for_combat(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
+        battle = None
         while not self.shutdown:
             await asyncio.sleep(2)
-            new_battle, self = await self.combat.run_combat_round(self.players, self.rooms, world=self)
-            if new_battle is not None:
-                self.combat.battles.battles.append(new_battle)
+            battle, room, self = await self.battles.run_combat_round(battle, self.players, world=self)
+            if battle.state == battle.BattleState.COMPLETED:
+                self.battles = await battle.stop_battle(room, battle, self)
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
