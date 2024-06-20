@@ -65,7 +65,7 @@ class TownSmee(Utility):
                 id=0,
                 name=f"{self.name} - Town Square",
                 inside=False,
-                description="You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a realistic menacing polar bear with its arms raised at you.  Water jets from the bears mouth in a small arc.  There's a festive feeling to the area and people and wagons bustle in all directions.",
+                description="You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc.  There's a festive feeling to the area and people and wagons bustle in all directions.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 9},  # moon road
                     {"direction": Room.dirs.east, "id": 10},  # moon road

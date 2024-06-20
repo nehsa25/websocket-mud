@@ -24,6 +24,12 @@ class AIImages(Utility):
     def __init__(self, logger) -> None:
         LogUtils.debug("Initializing AIImages() class", logger)
         self.logger = logger
+        
+    async def create_seed(self):
+        seed = 0
+        for letter in enumerate("ethandrakestone"):
+            seed += ord(letter[1])
+        return seed
 
     async def generate_room_image(self, room_image_name, room_description, inside, player, world):
         image_name = ""
@@ -42,48 +48,38 @@ class AIImages(Utility):
                     break
         
         # only generate a room if one isn't already generated
+        seed = await self.create_seed()
         if image_name == "":
             engine_id = "stable-diffusion-v1-6"
-            api_host = 'https://api.stability.ai'
+            api_host = f"https://api.stability.ai",
             api_key = "sk-aIIMUE6NJeYvXfmJ83d8T6Rqueur7hOjT07hskStmrnB7khw"
 
             if api_key is None:
                 raise Exception("Missing Stability API key.")
-
+            headers={
+                    "authorization": f"Bearer {api_key}",
+                    "accept": "image/*"
+                }
             response = requests.post(
-                f"{api_host}/v1/generation/{engine_id}/text-to-image",
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Authorization": f"Bearer {api_key}"
-                },
-                json={
-                    "text_prompts": [
-                        {
-                            "text": room_description
-                        }
-                    ],
-                    "cfg_scale": 35,
-                    "height": 512,
-                    "width": 512,
-                    "samples": 1,
-                    "steps": 30,
-                    "style_present": "gothic"
-                    },
-                )
-            
+                f"https://api.stability.ai/v2beta/stable-image/generate/ultra",
+                headers=headers,
+                files={"none": ''},
+                data={
+                    "prompt":  "pixelated " + room_description,
+                    "seed": seed
+                }
+            )
+        
             if response.status_code != 200:
                 raise Exception("Non-200 response: " + str(response.text))
-
-            data = response.json()         
+       
             self.path = f"c:/src/mud_images/rooms"
             full_path = f"{self.path}/{room_image_name}"            
             if os.path.exists(full_path):
                 os.remove(full_path)
                 
-            for i, image in enumerate(data["artifacts"]):
-                with open(full_path, "wb") as f:
-                    f.write(base64.b64decode(image["base64"]))
+            with open(full_path, "wb") as f:
+                f.write(response.content)
 
             # save the room image to the file 
             with open("ai_rooms.txt", "a") as text_file:

@@ -156,6 +156,7 @@ class World(Utility):
     thunder_event = None
     time_event = None
     bang_event = None
+    combat = None
     dayornight_event = None
     admin_stats_event = None
     get_weather_season_event = None
@@ -166,7 +167,7 @@ class World(Utility):
         LogUtils.debug("Initializing World() class", self.logger)
 
         if self.weather is None:
-            self.weather = World.Weather(World.Weather.WeatherTypes.OVERCAST, World.Weather.WeatherStrength.HEAVY, self.logger)
+            self.weather = World.Weather(World.Weather.WeatherTypes.FOG, World.Weather.WeatherStrength.MEDIUM, self.logger)
             self.weather.set_weather_descriptions()
             
         if self.command is None:
@@ -186,6 +187,9 @@ class World(Utility):
 
         if self.monsters is None:
             self.monsters = Monsters(self.logger)
+
+        if self.combat is None:
+            self.combat = Combat(self.logger)
 
     # schedule some events that'll do shit
     async def setup_world_events(self):
@@ -401,7 +405,10 @@ class World(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         while not self.shutdown:
             await asyncio.sleep(2)
-            self.combats_in_progress = await Combat.run_combat_round(self, self.combats_in_progress, self)
+            new_battle, self = await self.combat.run_combat_round(self.players, self.rooms, world=self)
+            if new_battle is not None:
+                self.combat.battles.battles.append(new_battle)
+
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # sets day or night

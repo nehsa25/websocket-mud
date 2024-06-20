@@ -60,7 +60,7 @@ class Command(Utility):
             
             # your combat will end but the monster/other players shouldn't
             if player.in_combat:
-                await player.break_combat()
+                await player.break_combat(world.rooms.rooms, self.logger)
             
             # stop resting
             if player.resting:
@@ -80,7 +80,7 @@ class Command(Utility):
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}."), p.websocket)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
-            self.alert_room(world, f"{player.name} attempted to go {wanted_direction} but ran into a wall!")
+            self.alert_room(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", world.rooms.rooms[new_room_id])
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 

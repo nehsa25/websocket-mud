@@ -1,95 +1,173 @@
+from enum import Enum
 import inspect
 import random
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
 
-
-class Combat:
-    logger = None
-    rounds = []
+class BattleState(Enum):
+    STARTING = 1
+    INPROGRESS = 2
+    COMPLETED = 3
     
+class Battle(Utility):
+    rounds = []
+    state = None    
+    def __init__(self, logger):
+        self.logger = logger
+        LogUtils.debug(f"Initializing Battle() class", self.logger) 
+        self.state = BattleState.STARTING
+
+class Battles(Utility):
+    battles = []
+    logger = None
+    def __init__(self, logger):
+        self.logger = logger
+        LogUtils.debug(f"Initializing Battles() class", self.logger)
+ 
+class CombatRound(Utility):
+    monsters = []
+    room = None
+    damage_taken = 0
+    damage_dealt = 0
+        
+class Combat(Utility):
+    logger = None
+    battles = None
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug(f"Initializing Combat() class", self.logger)
-
-
-    class CombatRound(Utility):
-        in_combat = None
-        room = None
-        player_attacked = None
-
-        def __init__(self, in_combat, room, player_attacked, logger):
-            self.logger = logger
-            self.in_combat = in_combat
-            self.room = room
-            self.player_attacked = player_attacked
-            
-            LogUtils.debug(f"Initializing PreviousRound() class", self.logger)
+        
+        if self.battles is None:
+            self.battles = Battles(self.logger)
 
     # every two seconds this method is called
     # it will check to see if the monster is still in combat
-    async def run_combat_round(self, combats_in_progress, world):
+    async def run_combat_round(self, players, rooms, battle=None, world=None):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)  
-        for player in world.players.players:
-            room = await world.rooms.get_room(player.location_id)
-            for monster in room.monsters:
-                if monster.is_alive == True:
-                    LogUtils.debug(f'{method_name}: Monster "{monster.name}" is alive', self.logger)
-                else:
-                    LogUtils.debug(f'{method_name}: Monster "{monster.name}" is dead.  Skipping.', self.logger)
-                    continue
-                         
-                # new combat
-                if monster.in_combat == None: 
-                    combats_in_progress.append(await self.start_fight(player, world))
-                else:
-                    # choose whether to keep fighting same person or switch
-                    previous_round = monster.rounds[len(monster.rounds)-1]
-                    if len(previous_round.room.players) == len(room.players):
-                        monster.in_combat = previous_round.player_attacked
-                    else:
-                        monster.in_combat = random.choice(room.players)
-                        LogUtils.debug(f"{method_name}: Monster ({monster.name}) is in combat and has switched to attacking {monster.in_combat.name}", self.logger)
-                    
-                    if monster.in_combat == monster.previous_combat:
-                        monster.in_combat = random.choice(room.players)
-                        if monster.in_combat == monster.previous_combat:
-                            LogUtils.debug(
-                                f"{method_name}: Monster ({monster.name}) is in combat and nothing has changed in the room to switch combat...",
-                                self.logger,
-                            )                                
-                            await world.monsters.calculate_mob_damage(player, self)                                
-                        else:
-                            LogUtils.debug(
-                                f"{method_name}: Monster ({monster.name}) is in combat and has switched to attacking {monster.in_combat.name}",
-                                self.logger,
-                            )
-
-                monster.previous_combat = monster.in_combat
-                self.CombatRound
-                
-                if monster.in_combat != None:
-                    self.monsters_fighting.append(monster)
-        LogUtils.debug(f"{method_name}: exit", self.logger)            
-        return combats_in_progress
-
-                                    
-    async def start_fight(self, player_being_attacked, world):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)        
-        room = world.rooms[player_being_attacked.location_id]
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         
+        if battle is None:
+            battle = Battle(self.logger)   
+            LogUtils.debug(
+                f"{method_name}: A new battle has started", self.logger
+            )
+            
         # if monster is not attacking anyone, pick someone
-        self.in_combat = random.choice(room.players)
-        LogUtils.debug(f'{method_name}: "{self.name}" is not attacking anyone.  Now attacking {self.in_combat.name}', self.logger)   
-        await self.alert_room(f"{self.name} stirs.", self, event_type=MudEvents.InfoEvent)                         
-        if self.in_combat == player_being_attacked:
-            await self.alert_room(f"{self.name} prepares to attack you!", self, event_type=MudEvents.AttackEvent, exclude_player=True, player=player_being_attacked)
+        for p in players.players:
+            room = rooms.rooms[p.location_id]
+            if battle.rounds == []:  
+                round = CombatRound(self.logger)             
+                for monster in room.monsters:
+                    if monster.is_alive == True:
+                        LogUtils.debug(f'{method_name}: Monster "{monster.name}" is alive', self.logger)
+                    else:
+                        LogUtils.debug(f'{method_name}: Monster "{monster.name}" is dead.  Skipping.', self.logger)
+                        continue
+                    
+                    monster.in_combat = random.choice(room.players)
+                    LogUtils.debug(f'{method_name}: "{monster.name}" is not attacking anyone.  Now attacking {monster.in_combat.name}', self.logger)   
+                    await self.alert_room(f"{monster.name} stirs.", room, event_type=MudEvents.InfoEvent)                      
+                    if monster.in_combat == p:
+                        await self.send_message(MudEvents.AttackEvent(f"{monster.name} prepares to attack you!"), p.websocket)
+                    else:
+                        await self.alert_room(f"{monster.name} prepares to attack {monster.in_combat.name}.", room, event_type=MudEvents.InfoEvent, exclude_player=True, player=p)
+            else: 
+                LogUtils.debug(f"A round has now passed with combat engaged, FIGHT!", self.logger)
+                battle.state = BattleState.INPROGRESS
+                round = CombatRound(self.logger)
+                round = await self.calculate_monster_damage(round, p, room)                                
+
+            # no point in continuing if player is dead..
+            p.hitpoints -= round.damage_dealt
+            if p.hitpoints <= 0:
+                p, world = await p.you_died(world)
+                
+            # Updating health bar
+            await p.show_health()
+
+        battle.rounds.append(round)
+        LogUtils.debug(f"{method_name}: exit", self.logger)            
+        return battle, world
+
+    # calculate the round damage and sends messages to players
+    async def calculate_monster_damage(self, round, player, room):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        total_damage = 0
+        monsters_damage = []
+        monsters_in_room = False
+       
+        # need to check here if combat is still going.. we may have killed everything or moved rooms
+        for monster in room.monsters:
+            monster.in_combat = random.choice(room.players)
+            LogUtils.debug(f"{method_name}: ({monster.name}) is is_alive: {monster.is_alive} and in_combat:{monster.in_combat} and is attacking {monster.in_combat.name}", self.logger)
+            
+            # as we call this function by self.player, we need to only capture damage by player
+            if monster.is_alive == True and monster.in_combat == player:
+                monsters_in_room = True
+                LogUtils.debug(
+                    f'{method_name}: Monster "{monster.name}" is alive and is attacking {player.name}!',
+                    self.logger,
+                )
+
+                # calculate our damage
+                obj = monster.damage.split("d")
+                dice = int(obj[0])
+                damage_potential = int(obj[1])
+                damage_multipler = random.randint(0, damage_potential)
+
+                # roll dice for a monster
+                damage = dice * damage_multipler
+                total_damage += damage
+                
+                round.monsters.append(monster)
+                round.damage_dealt += damage
+
+                # add to our monster damage list
+                monster_damage = dict(name=monster.name, damage=damage)
+                monsters_damage.append(monster_damage)
+
+        # sort based on damage
+        monsters_damage = sorted(
+            monsters_damage, key=lambda k: k["damage"], reverse=True
+        )
+
+        # build our attack message
+        attack_msg = ""
+        LogUtils.debug(f"{method_name}: Building our attack message. (total_damage: {total_damage}, monsters_damage: {monsters_damage})", self.logger)
+        if len(room.monsters) == 1:
+            attack_msg = f"{room.monsters[0].name} hit you for {total_damage} damage!"
         else:
-            await self.alert_room(f"{self.name} prepares to attack {self.in_combat.name}.", self, event_type=MudEvents.InfoEvent, exclude_player=True, player=player_being_attacked)
-        round = self.CombatRound(self, room, player_attacked = player_being_attacked)
-        LogUtils.debug(f"{method_name}: exit, monster_round: {round}", self.logger)
+            attack_msg = f"You have been wounded for {total_damage} damage!"
+            attack_msg_extra = " ("
+            for monster_damage in monsters_damage:
+                if monster_damage["damage"] > 0:
+                    attack_msg_extra += (
+                        f"{monster_damage['name']}: {monster_damage['damage']}, "
+                    )
+            attack_msg_extra = attack_msg_extra[0 : len(attack_msg_extra) - 2]
+            attack_msg_extra += ")"
+            attack_msg = f"{attack_msg} {attack_msg_extra}"
+
+        # send our attack messages
+        if monsters_in_room == True:
+            for p in room.players:
+                if p.websocket == player.websocket:
+                    if total_damage > 0:
+                        await self.send_message(MudEvents.AttackEvent(attack_msg), p.websocket)
+                    else:
+                        await self.send_message(MudEvents.InfoEvent("You were dealt no damage this round!"), p.websocket)
+
+                else:  # alert others of the battle
+                    if total_damage > 0:
+                        await self.send_message(MudEvents.InfoEvent(attack_msg.replace(
+                            "You were", f"{player.name} was"
+                        )), p.websocket)
+                    else:
+                        await self.send_message(MudEvents.InfoEvent(f"{player.name} was dealt no damage!"), p.websocket)
+
+        LogUtils.debug(
+            f"{method_name}: exit, returning round: {round}", self.logger
+        )
         return round
-        

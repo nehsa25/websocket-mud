@@ -5,6 +5,7 @@ import random
 from items import Items
 from log_utils import LogUtils
 from mudevent import MudEvents
+from rooms import Rooms
 from utility import Utility
 
 class Player(Utility):
@@ -28,6 +29,7 @@ class Player(Utility):
     websocket = None
     rest_task = None # A resting task that check if this user is resting every 2 seconds
     mob_attack_task = None
+    DEATH_RESPAWN_ROOM = 6
 
     def __init__(
         self,
@@ -43,8 +45,6 @@ class Player(Utility):
     ):
         self.logger = logger
         LogUtils.debug(f"Initializing Player() class", self.logger)
-        if self.utility is None:
-            self.utility = Utility(logger)
         self.name = name
         self.hitpoints = hp
         self.max_hitpoints = hp
@@ -54,8 +54,10 @@ class Player(Utility):
         self.location_id = location_id
         self.ip = ip
         self.websocket = websocket
+        
+        rooms = Rooms("Illisurom", self.logger)
         if self.rest_task is None:
-            self.rest_task = asyncio.create_task(self.check_for_resting())
+            self.rest_task = asyncio.create_task(self.check_for_resting(rooms))
             
         # if self.mob_attack_task is None:
         #     self.mob_attack_task = asyncio.create_task(self.check_for_new_attacks())
@@ -67,80 +69,55 @@ class Player(Utility):
         msg = f"{self.name}|{str(self.hitpoints)}/{str(self.max_hitpoints)}"
         if self.resting:
             msg += "|REST"
-        await self.utility.send_message(MudEvents.HealthEvent(msg), self.websocket)
+        await self.send_message(MudEvents.HealthEvent(msg), self.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # cancels all tasks and states you died if you die
-    async def you_died(self):
+    async def you_died(self, world):
         # set combat to false
         self.in_combat = False
 
         # state you died
-        await self.send_message(MudEvents.InfoEvent("You died."))
+        await self.send_message(MudEvents.InfoEvent("You died."), self.websocket)
 
         # alert others in the room where you died that you died..
-        room = await self.world.get_room(self.location_id)
-        for p in room.players:
-            if p != self:
-                await self.send_message(MudEvents.InfoEvent(f"{self.name} died."), p.websocket)
+        room = await world.rooms.get_room(self.location_id)
+        await self.alert_room(f"{self.name} died.", room, True, self)
 
         # drop all items
-        room = await self.world.get_room(self.location_id)
         for item in self.inventory:
             room.items.append(item)
         self.inventory = []
 
         # set player location to beach shore
-        self.player, self.world = await self.world.move_room(
-            self.DEATH_RESPAWN_ROOM, self.player, self.world
+        player, world = await world.rooms.move_room(
+            self.DEATH_RESPAWN_ROOM, self, world
         )
 
         # alert others in the room that new player has arrived
-        room = await self.world.get_room(self.DEATH_RESPAWN_ROOM, self.logger)
-        for p in room.players:
-            if p != self:
-                await self.send_message(MudEvents.InfoEvent(f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked."), p.websocket)
+        await self.alert_room(f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.", room, True, self)
 
         # set hits back to max / force health refresh
         self.hitpoints = self.max_hitpoints
         await self.show_health()
-
-    # Determines round damage for each player
-    async def apply_mob_round_damage(self, room):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-
-        # determine damage
-        total_damage = await self.calculate_mob_damage(self.player, room)
-
-        # update hp
-        if total_damage > 0:
-            self.hitpoints = self.hitpoints - total_damage
-
-            # no point in continuing if player is dead..
-            if self.hitpoints <= 0:
-                await self.you_died()
-
-            # Updating health bar
-            await self.show_health()
-
-        LogUtils.debug(f"{method_name}: exit", self.logger)
+        
+        return player, world
 
     # break combat
-    async def break_combat(self):
+    async def break_combat(self, rooms):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.in_combat = None        
-        self.alert_room(self.world, f"{self.name} stops fighting.")        
+        self.alert_room(f"{self.name} stops fighting.", rooms[self.location_id])        
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
     # stops resting
-    async def stops_resting(self):
+    async def stops_resting(self, rooms):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.resting = False
         await self.send_message(MudEvents.InfoEvent("You are no longer resting."))  
-        self.alert_room(self.world, f"{self.name} stirs and stops resting.")        
+        self.alert_room(f"{self.name} stirs and stops resting.", rooms[self.location_id])        
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
     # shows inventory
@@ -150,12 +127,11 @@ class Player(Utility):
         items = []
         for item in self.inventory:
             items.append(item.name)
-        inv_event = MudEvents.InventoryEvent(items)
-        await self.utility.send_message(inv_event, self.websocket)
+        await self.send_message(MudEvents.InventoryEvent(items), self.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # increases hp when resting
-    async def check_for_resting(self):
+    async def check_for_resting(self, rooms):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, checking if {self.name} is resting..", self.logger)
 
@@ -176,5 +152,5 @@ class Player(Utility):
                         self.hitpoints = self.max_hitpoints
                         self.resting = False
                         await self.send_message(MudEvents.InfoEvent("You have fully recovered."))
-                        await self.alert_room(self.world, f"{self.name} appears to have fully recovered.")
+                        await self.alert_room(f"{self.name} appears to have fully recovered.", rooms[self.location_id])
                     await self.show_health()
