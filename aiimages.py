@@ -1,8 +1,5 @@
-import asyncio
-import base64
 import os
 import requests
-import websockets
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility

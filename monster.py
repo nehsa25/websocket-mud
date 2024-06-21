@@ -1,4 +1,6 @@
+import asyncio
 import inspect
+import random
 import time
 from random import randint
 from log_utils import LogUtils
@@ -6,7 +8,14 @@ from money import Money
 from mudevent import MudEvents
 from utility import Utility
 
+
 class Monster(Utility):
+    class Alignment:
+        GOOD = 1  # attacks evil players only
+        NEUTRAL = 2  # only attacks if attacked
+        EVIL = 3  # attacks good players only
+        CHOATIC = 4  # attacks all players
+
     name = ""
     hitpoints = 0
     damage = None
@@ -22,8 +31,14 @@ class Monster(Utility):
     death_cry = None
     entrance_cry = None
     monster_type = None
+    alignment = None
+    wander = True
+    wander_speed = 1 # 1 room / minute
     pronoun = "it"
     logger = None
+    monster_wander_event = None
+    last_exit = None
+    
     def __init__(
         self,
         name,
@@ -36,6 +51,7 @@ class Monster(Utility):
         entrance_cry,
         victory_cry,
         logger,
+        alignment=Alignment.CHOATIC,
         num_attack_targets=1,
         respawn_rate_secs=(30, 300),
     ):
@@ -51,6 +67,7 @@ class Monster(Utility):
         self.monster_type = monster_type
         self.victory_cry = victory_cry
         self.logger = logger
+        self.alignment = alignment
 
         # calculate money
         money = randint(money_potential[0], money_potential[1])
@@ -61,14 +78,16 @@ class Monster(Utility):
 
         # calculate respawn_rate
         self.respawn_rate_secs = randint(respawn_rate_secs[0], respawn_rate_secs[1])
-
+            
     # announce we're here!
     async def announce_entrance(self, room):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         if self.entrance_cry != None:
             for player in room["players"]:
-                await self.send_message(MudEvents.InfoEvent(self.entrance_cry), player.websocket)
+                await self.send_message(
+                    MudEvents.InfoEvent(self.entrance_cry), player.websocket
+                )
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def stop_combat(self, player):
@@ -76,14 +95,18 @@ class Monster(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         await self.alert_room(self.victory_cry, player.room, True, player)
         self.in_combat = None
-        await self.alert_room(f"{self.name} breaks off combat.", player.room, True, player)
+        await self.alert_room(
+            f"{self.name} breaks off combat.", player.room, True, player
+        )
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        
+
     async def break_combat(self, room):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.in_combat = None
-        await self.alert_room(f"{self.name} breaks off combat.", room, event_type=MudEvents.InfoEvent)
+        await self.alert_room(
+            f"{self.name} breaks off combat.", room, event_type=MudEvents.InfoEvent
+        )
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def kill(self, room, logger):
@@ -92,5 +115,6 @@ class Monster(Utility):
 
         if self.death_cry != None:
             for player in room["players"]:
-                await self.send_message(MudEvents.InfoEvent(self.death_cry), player.websocket)
-                
+                await self.send_message(
+                    MudEvents.InfoEvent(self.death_cry), player.websocket
+                )

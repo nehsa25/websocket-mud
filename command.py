@@ -62,8 +62,9 @@ class Command(Utility):
             if player.in_combat:
                 await player.break_combat(world.rooms.rooms, self.logger)
             
-            # stop resting        
-            await player.set_rest(False)
+            # stop resting    
+            if player.is_resting:    
+                await player.set_rest(False)
 
             # send message to any players in same room that you're arriving at
             for p in world.players.players:

@@ -260,7 +260,7 @@ class MudEvents:
 
     class InfoEvent:
         type = None
-        image_name = ""
+        message = ""
         def __init__(self, message):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.INFO

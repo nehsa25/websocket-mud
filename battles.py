@@ -3,32 +3,37 @@ from enum import Enum
 import inspect
 import random
 from log_utils import LogUtils
+from monster import Monster
 from mudevent import MudEvents
 from utility import Utility
 
 
     
 class Battle(Utility):
-    
     class BattleState(Enum):
+        CHECKING = 0
         STARTING = 1
         INPROGRESS = 2
         COMPLETED = 3
-        
+        NONSTART = 4
+
+    logger = None
+    room = None
     rounds = []
-    state = None    
+    state = None
+
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug(f"Initializing Battle() class", self.logger) 
-        self.state = Battle.BattleState.STARTING
+        self.state = Battle.BattleState.CHECKING
         
-    async def stop_battle(self, room, battle, world):
+    async def stop_battle(self, battle, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        await self.alert_room("The battle has ended!", room)
-        self.rooms = world.rooms.update_room(room, self)
+        await self.alert_room("The battle has ended!", battle.room)
+        self.rooms = world.rooms.update_room(battle.room, self)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return world.battles.append(battle)
+        return world.battles.battles.append(battle)
  
 class CombatRound(Utility):
     logger = None
@@ -54,6 +59,14 @@ class Battles(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
+        if len(players.players) == 0:
+            LogUtils.info(f"{method_name}: No players in world, stopping all battles", self.logger)
+            if battle is not None and battle.state == Battle.BattleState.CHECKING:
+                battle.state = Battle.BattleState.NONSTART
+            else:
+                battle.state = Battle.BattleState.COMPLETED
+            return battle, world
+        
         if battle is None:
             battle = Battle(self.logger)   
             LogUtils.info(
@@ -62,29 +75,33 @@ class Battles(Utility):
             
         # if monster is not attacking anyone, pick someone
         for p in players.players:
-            battle_room = p.room
-            if battle.rounds == []:  
-                round = CombatRound(self.logger)             
-                for monster in battle_room.monsters:
+            round = CombatRound(self.logger)  
+            if battle.room is None:
+                f"{method_name}: Room: {p.room.name}", self.logger
+                battle.room = p.room
+                
+            battle.room = p.room
+            if battle.rounds == []:                            
+                for monster in battle.room.monsters:
                     if monster.is_alive == True:
                         LogUtils.debug(f'{method_name}: Monster "{monster.name}" is alive', self.logger)
                     else:
                         LogUtils.debug(f'{method_name}: Monster "{monster.name}" is dead.  Skipping.', self.logger)
                         continue
                     
-                    monster.in_combat = random.choice(battle_room.players)
-                    LogUtils.debug(f'{method_name}: "{monster.name}" is not attacking anyone.  Now attacking {monster.in_combat.name}', self.logger)   
-                    await self.alert_room(f"{monster.name} stirs.", battle_room, event_type=MudEvents.InfoEvent)                      
-                    if monster.in_combat == p:
-                        await self.send_message(MudEvents.AttackEvent(f"{monster.name} prepares to attack you!"), p.websocket)
-                    else:
-                        await self.alert_room(f"{monster.name} prepares to attack {monster.in_combat.name}.", battle_room, event_type=MudEvents.InfoEvent, exclude_player=True, player=p)
+                    if monster.alignment != Monster.Alignment.NEUTRAL:
+                        monster.in_combat = random.choice(battle.room.players)
+                        LogUtils.debug(f'{method_name}: "{monster.name}" is not attacking anyone.  Now attacking {monster.in_combat.name}', self.logger)   
+                        await self.alert_room(f"{monster.name} stirs.", battle.room, event_type=MudEvents.InfoEvent)                      
+                        if monster.in_combat == p:
+                            await self.send_message(MudEvents.AttackEvent(f"{monster.name} prepares to attack you!"), p.websocket)
+                        else:
+                            await self.alert_room(f"{monster.name} prepares to attack {monster.in_combat.name}.", battle.room, event_type=MudEvents.InfoEvent, exclude_player=True, player=p)
             else: 
                 if battle.state != Battle.BattleState.INPROGRESS:
                     LogUtils.info(f"A round has now passed with combat engaged for: {p.name}, FIGHT!", self.logger)
                     battle.state = Battle.BattleState.INPROGRESS
-                round = CombatRound(self.logger)
-                round = await self.calculate_monster_damage(round, p, battle_room)                                
+                round = await self.calculate_monster_damage(round, p, battle.room)                                
 
             # no point in continuing if player is dead..
             p.hitpoints -= round.damage_dealt
@@ -95,16 +112,19 @@ class Battles(Utility):
                 for monster in p.previous_room.monsters:
                     await monster.stop_combat(p)
 
-                battle_room.players.remove(p)
-                if battle_room.players == []:
-                    battle.state = Battle.BattleState.COMPLETED
+                battle.room.players.remove(p)
+                if battle.room.players == []:
+                    if battle.state == Battle.BattleState.CHECKING:
+                        battle.state = Battle.BattleState.NONSTART
+                    else:
+                        battle.state = Battle.BattleState.COMPLETED
                 
             # Updating health bar
             await p.send_health()
 
         battle.rounds.append(round)
         LogUtils.debug(f"{method_name}: exit", self.logger)            
-        return battle, battle_room, world
+        return battle, world
 
     # calculate the round damage and sends messages to players
     async def calculate_monster_damage(self, round, player, room):

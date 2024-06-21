@@ -71,9 +71,9 @@ class Player(Utility):
         else:
             if self.is_resting:
                 self.is_resting = False
-                await self.send_message(MudEvents.RestEvent("You are no longer resting.", is_resting=False))  
+                await self.send_message(MudEvents.RestEvent("You are no longer resting.", is_resting=False), self.websocket)  
             else:
-                await self.send_message(MudEvents.InfoEvent("You were not resting to begin with.", is_resting=False))  
+                await self.send_message(MudEvents.InfoEvent("You were not resting to begin with."), self.websocket)  
         
     # shows color-coded health bar
     async def send_health(self):
@@ -106,7 +106,7 @@ class Player(Utility):
         )
 
         # alert others in the room that new player has arrived
-        await self.alert_room(f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.", self.room, True, self)
+        await self.alert_room(f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.", player.room, True, self)
 
         # set hits back to max / force health refresh
         self.hitpoints = self.max_hitpoints

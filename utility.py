@@ -13,10 +13,12 @@ class Utility(MudEvents):
         LogUtils.debug("Initializing Utility() class", self.logger)
 
     async def alert_room(self, message, room, exclude_player=False, player = None, event_type=MudEvents.InfoEvent):
-        LogUtils.debug(f"alert_room: enter, message: {message}", self.logger)
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter, message: {message}", self.logger)
         for p in room.players:
             if exclude_player and player is not None:
                 if p.name != player.name:
+                    LogUtils.info(f"{method_name}: alerting {p.name} of \"{message}\"", self.logger)
                     await self.send_message(event_type(message), p.websocket)
             else:
                 await self.send_message(event_type(message), p.websocket)

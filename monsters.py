@@ -56,6 +56,11 @@ class Monsters(Utility):
         LogUtils.debug(f'get_monster returning "{monster.name}"', self.logger)
         return monster
 
+    # async def wander(self):
+    #     exit_option = random.choice(self.room.exits)
+    #     while self.last_exit == exit_option or len(self.room.exits) == 1:
+    #         exit_option = random.choice(self.room.exits)
+
     # respawn mobs after a certain amount of time
     async def respawn_mobs(self, rooms):
         method_name = inspect.currentframe().f_code.co_name

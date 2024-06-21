@@ -148,7 +148,7 @@ class Rooms(Utility):
         for p in world.players.players:
             if player.name == p.name:
                 continue
-            if p.location_id == player.room.id:
+            if p.room.id == player.room.id:
                 people += p.name + ", "
         if people != "":
             people = people[0 : len(people) - 2]
