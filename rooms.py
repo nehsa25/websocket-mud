@@ -59,7 +59,7 @@ class Rooms(Utility):
     async def update_room(self, room, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)     
-        for r in world.rooms:
+        for r in world.rooms.rooms:
             if r.id == room.id:
                 r = room
         LogUtils.debug(f"{method_name}: exit", self.logger)

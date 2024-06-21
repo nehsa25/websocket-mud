@@ -455,8 +455,9 @@ class World(Utility):
                 LogUtils.info(f"{method_name}: Checking: check_for_combat", self.logger)
                 LogUtils.debug(f"{method_name}: FIX THIS:  THIS IS CERTAINLY NOT RIGHT IF MULTIPLE BATTLES ARE OCCURING.", self.logger)
                 battle, self = await self.battles.run_combat_round(battle, self.players, world=self)
-                if battle.state == battle.BattleState.COMPLETED:
-                    self.battles.battles = await battle.stop_battle(battle, self)
+                if battle is not None and battle.state == battle.BattleState.COMPLETED:
+                    self.battles.battles.append(await battle.stop_battle(battle, self))
+                    battle.state = battle.BattleState.RECORDED
             except:
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 

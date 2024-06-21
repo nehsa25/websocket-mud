@@ -6,8 +6,6 @@ from log_utils import LogUtils
 from monster import Monster
 from mudevent import MudEvents
 from utility import Utility
-
-
     
 class Battle(Utility):
     class BattleState(Enum):
@@ -16,6 +14,7 @@ class Battle(Utility):
         INPROGRESS = 2
         COMPLETED = 3
         NONSTART = 4
+        RECORDED = 5
 
     logger = None
     room = None
@@ -31,9 +30,9 @@ class Battle(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         await self.alert_room("The battle has ended!", battle.room)
-        self.rooms = world.rooms.update_room(battle.room, self)
+        self.rooms = await world.rooms.update_room(battle.room, world)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return world.battles.battles.append(battle)
+        return battle
  
 class CombatRound(Utility):
     logger = None
@@ -77,11 +76,9 @@ class Battles(Utility):
         for p in players.players:
             round = CombatRound(self.logger)  
             if battle.room is None:
-                f"{method_name}: Room: {p.room.name}", self.logger
+                LogUtils.info(f"{method_name}: Setting battle room: {p.room.name}", self.logger)
                 battle.room = p.room
-                
-            battle.room = p.room
-            if battle.rounds == []:                            
+            if battle.state  == Battle.BattleState.CHECKING:                      
                 for monster in battle.room.monsters:
                     if monster.is_alive == True:
                         LogUtils.debug(f'{method_name}: Monster "{monster.name}" is alive', self.logger)
@@ -97,11 +94,23 @@ class Battles(Utility):
                             await self.send_message(MudEvents.AttackEvent(f"{monster.name} prepares to attack you!"), p.websocket)
                         else:
                             await self.alert_room(f"{monster.name} prepares to attack {monster.in_combat.name}.", battle.room, event_type=MudEvents.InfoEvent, exclude_player=True, player=p)
-            else: 
-                if battle.state != Battle.BattleState.INPROGRESS:
-                    LogUtils.info(f"A round has now passed with combat engaged for: {p.name}, FIGHT!", self.logger)
-                    battle.state = Battle.BattleState.INPROGRESS
-                round = await self.calculate_monster_damage(round, p, battle.room)                                
+                battle.state = Battle.BattleState.STARTING
+            elif battle.state == Battle.BattleState.STARTING:
+                LogUtils.info(f"A round has now passed with combat engaged for: {p.name}, FIGHT!", self.logger)
+                battle.state = Battle.BattleState.INPROGRESS
+            elif battle.state == Battle.BattleState.INPROGRESS:
+                round = await self.calculate_monster_damage(round, p, battle.room)    
+            elif battle.state == Battle.BattleState.COMPLETED:
+                LogUtils.info(f"{method_name}: The battle has ended!", self.logger)
+            elif battle.state == Battle.BattleState.RECORDED:
+                LogUtils.info(f"{method_name}: The battle has been recorded in history!", self.logger)
+                battle = None
+            elif p.room.monsters == []:
+                LogUtils.info(f"{method_name}: No monsters in room, stopping all battles", self.logger)
+                if battle.state != Battle.BattleState.COMPLETED:
+                    battle.state = Battle.BattleState.COMPLETED 
+            else:
+                LogUtils.error(f"{method_name}: WHY ARE WE HERE?", self.logger)
 
             # no point in continuing if player is dead..
             p.hitpoints -= round.damage_dealt
@@ -122,7 +131,9 @@ class Battles(Utility):
             # Updating health bar
             await p.send_health()
 
-        battle.rounds.append(round)
+        if battle is not None:
+            battle.rounds.append(round)
+            
         LogUtils.debug(f"{method_name}: exit", self.logger)            
         return battle, world
 
