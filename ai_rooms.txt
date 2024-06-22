@@ -1,5 +1,7 @@
 townsmeesunroadsouth1room1718852229.png!!!You are on the main thoroughfare of Illisurom running North and South directions.  The street is broad, allowing for two wagons to pass each other. Fog has settled in.
 townsmeetownsquareroom1718852337.png!!!You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc.  There's a festive feeling to the area and people and wagons bustle in all directions. Fog has settled in.
 townsmeeblacksmithroom1718852363.png!!!You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.
-townsmeeblacksmithbackroomroom1718852381.png!!!You are in the blacksmith's back room.  A hot forge still burns smoldering coals.
+townsmeeblacksmithbackroomroom1719094948.png!!!You are in the blacksmith's back Room.  A hot forge still burns smoldering coals.
 townsmeemoonroadwest1room1718852403.png!!!You are on one of the main thoroughfare of Illisurom running East and West directions.  The street is broad, allowing for two wagons to pass each other. Fog has settled in.
+townsmeesunroadsouth1room1718852229.png!!!You are on the main thoroughfare of Illisurom running North and South directions.  The street is broad, allowing for two wagons to pass each other. Fog has settled in.
+TownSmeeSunRoadNorth1.png!!!You are on the main thoroughfare of Illisurom running North and South directions.  The street is broad, allowing for two wagons to pass each other. Fog has settled in.

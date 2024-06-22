@@ -29,24 +29,29 @@ class AIImages(Utility):
         return seed
 
     async def generate_room_image(self, room_image_name, room_description, inside, player, world):
-        image_name = ""
+        image_name = ""        
+        room_description = room_description.strip()
         
         # update rooms description with weather
         if not inside:
-            room_description = world.weather.add_weather_description(room_description)
+            room_description = world.world_events.weather.add_weather_description(room_description)
             
         # get already generated rooms
         with open("ai_rooms.txt", "r") as text_file:
             contents = text_file.readlines()            
             for line in contents:
                 item = GeneratedFileType(line, self.logger)
-                if item.description.strip() == room_description.strip():
+                if item.description.strip() == room_description:
                     image_name = item.file_name
                     break
         
         # only generate a room if one isn't already generated
-        seed = await self.create_seed()
         if image_name == "":
+            LogUtils.info("Cannot find room image for description:", self.logger)
+            LogUtils.info("----", self.logger)
+            LogUtils.info(room_description, self.logger)
+            LogUtils.info("----", self.logger)
+            seed = await self.create_seed()
             engine_id = "stable-diffusion-v1-6"
             api_host = f"https://api.stability.ai",
             api_key = "sk-aIIMUE6NJeYvXfmJ83d8T6Rqueur7hOjT07hskStmrnB7khw"
