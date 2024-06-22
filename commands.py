@@ -3,13 +3,74 @@ import asyncio
 from random import random, randint
 
 # my stuff
-from command_utility import CommandUtility
 from log_utils import LogUtils
-from muddirections import MudDirections
 from mudevent import MudEvents
+from room import MudDirections
 from utility import Utility
 
-class Command(Utility):
+class Commands(Utility):
+
+    class CommandUtility:
+        logger = None
+        
+        def __init__(self, logger):
+            self.logger = logger
+            LogUtils.debug(f"Initializing CommandUtility() class", self.logger)
+
+        # returns player, world
+        async def drop_item(self, wanted_item, player, world, websocket):
+            method_name = inspect.currentframe().f_code.co_name
+            LogUtils.debug(f"{method_name}: enter", self.logger)     
+            found_item = False
+
+            # check if it's in our inventory
+            item_obj = None
+            for item_in_inv in player.inventory:
+                if wanted_item.lower() == item_in_inv.name.lower():
+                    item_obj = item_in_inv
+                    found_item = True
+                    break
+
+            if found_item == True:
+                # set eq'd to False
+                item_obj.equiped = False
+
+                # remove from inventory
+                player.inventory.remove(item_obj)
+                await self.world.self.world.utility.send_msg(
+                    f"You dropped {item_obj.name}.", "info", websocket, self.logger
+                )
+                world.rooms.rooms[player.location].append(item_obj)
+            return player, world
+
+        # returns player, world
+        async def drop_coin(self, wanted_item, player, world, websocket):
+            method_name = inspect.currentframe().f_code.co_name
+            LogUtils.debug(f"{method_name}: enter", self.logger)    
+            found_coin = False
+
+            # check if it's money
+            item_obj = None
+            for coin in player.money:
+                if wanted_item.lower() == coin.name.lower():
+                    item_obj = coin
+                    found_coin = True
+                    break
+
+            if found_coin == True:
+                # add to room
+                world.rooms.rooms[player.location].append(item_obj)
+
+                # remove from player inventory
+                player.inventory.remove(item_obj)
+                await self.send_msg(
+                    f"You dropped {coin.Name}.", "info", websocket, self.logger
+                )
+            else:
+                await self.send_msg(f"You can't drop {wanted_item}", "error", player.websocket)
+                
+            return player, world
+
     logger = None
     command_utility = None
 
@@ -18,7 +79,7 @@ class Command(Utility):
         LogUtils.debug(f"Initializing Command() class", self.logger)
 
         if self.command_utility is None:
-            self.command_utility = CommandUtility(logger)
+            self.command_utility = Commands.CommandUtility(logger)
 
     # returns nothing, just sends messages
     async def process_help(self, player):
@@ -56,7 +117,7 @@ class Command(Utility):
             player, world = await world.rooms.move_room(new_room_id, player, world)
 
             # render new room
-            await world.rooms.process_room(player, world, look_location_id=new_room_id)
+            await player.room.process_room(player, world, look_location_id=new_room_id)
             
             # your combat will end but the monster/other players shouldn't
             if player.in_combat:
@@ -110,7 +171,7 @@ class Command(Utility):
                 if p.location_id == player.room.id:                    
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} looks to the {wanted_direction}."), p.websocket)
 
-            player, world = await world.rooms.process_room(player, world, look_location_id=avail_exit["id"])
+            player, world = await player.room.process_room(player, world, look_location_id=avail_exit["id"])
         else:
             for direction in MudDirections.pretty_directions:
                 if (
@@ -132,7 +193,7 @@ class Command(Utility):
                 continue
             if p.location_id == player.room.id:
                 await self.send_message(MudEvents.InfoEvent(f"{player.name} looks around the room."), p.websocket)
-        player, world = await world.rooms.process_room(player, world)
+        player, world = await player.room.process_room(player, world)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
@@ -393,7 +454,7 @@ class Command(Utility):
                                 p.in_combat = None
 
                                 # show room
-                                player, world = await world.rooms.process_room(player, world)
+                                player, world = await player.room.process_room(player, world)
 
                         # add (Dead) to monster
                         current_monster.name = f"{current_monster.name} (Dead)"
@@ -494,7 +555,7 @@ class Command(Utility):
             player.resting = True
 
         # press enter (refresh the room)
-        player, world = await world.rooms.process_room(player, world)
+        player, world = await player.room.process_room(player, world)
         
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return  player, world
@@ -515,7 +576,7 @@ class Command(Utility):
 
         # process each command
         if command == "":
-            player = await world.rooms.process_room(player, world)
+            player = await player.room.process_room(player, world)
         elif command == "help":  # display help
             player = await self.process_help(player)
         elif command in MudDirections.directions:  # process direction

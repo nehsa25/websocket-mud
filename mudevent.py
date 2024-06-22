@@ -98,12 +98,14 @@ class MudEvents:
             return jsonpickle.encode(self)
 
     class UsernameRequestEvent:
+        world_name = ""
         type = None
 
-        def __init__(self):
+        def __init__(self, world_name):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.USERNAME_REQUEST
             )
+            self.world_name = world_name
 
         def to_json(self):
             return jsonpickle.encode(self)

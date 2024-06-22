@@ -12,8 +12,7 @@ class Players(Utility):
 
     def __init__(self, logger) -> None:
         self.logger = logger
-        LogUtils.debug("Initializing Admin() class", self.logger)
-        self.utility = Utility(logger)
+        LogUtils.debug("Initializing Players() class", self.logger)
 
     # used to update webpage on user count
     async def update_website_users_online(self, world):
@@ -21,7 +20,7 @@ class Players(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         get_client_event = world.players.GetClientEvent(len(self.players))
         for player in self.players:
-            await self.utility.send_message(get_client_event, player.websocket)
+            await self.send_message(get_client_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def register(self, player, world):
@@ -43,9 +42,9 @@ class Players(Utility):
         # send msg to everyone
         for p in self.players:
             if p.name == player.name:
-                await self.utility.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket)
+                await self.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket)
             else:
-                await self.utility.send_message(MudEvents.AnnouncementEvent(f"{player.name} joined the game!"), p.websocket)
+                await self.send_message(MudEvents.AnnouncementEvent(f"{player.name} joined the game!"), p.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         
         return player, world
@@ -66,12 +65,12 @@ class Players(Utility):
             # get the client hostname
             LogUtils.info(f"Requesting username", self.logger)
             if dupe:
-                await self.utility.send_message(
+                await self.send_message(
                     MudEvents.DuplicateNameEvent(), websocket
                 )
             else:
-                await self.utility.send_message(
-                    MudEvents.UsernameRequestEvent(), websocket
+                await self.send_message(
+                    MudEvents.UsernameRequestEvent(world.world_name), websocket
                 )
             LogUtils.info(f"Awaiting client name response from client..", self.logger)
             msg = await websocket.recv()
@@ -100,7 +99,7 @@ class Players(Utility):
                 await self.register(player, world)
 
                 # show room
-                player, world = await world.rooms.move_room(player.location_id, player, world)
+                player, world = await world.environments.move_room(player.location_id, player, world)
             else:
                 raise Exception(f"Shananigans? received request: {request['type']}")
 
@@ -119,9 +118,9 @@ class Players(Utility):
 
         # let folks know someone left
         if change_name:
-            await self.utility.alert_world(f"{player.name} is changing their name..", world, player=player)
+            await world.alert_world(f"{player.name} is changing their name..", world, player=player)
         else:
-            await self.utility.alert_world(f"{player.name} left the game.", world, player=player)
+            await world.alert_world(f"{player.name} left the game.", world, player=player)
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
         LogUtils.debug(f"register: exit", self.logger)

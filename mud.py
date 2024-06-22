@@ -23,16 +23,15 @@ class Mud(Utility):
     REST_WAIT_SECS = 7
 
     def __init__(self, logger) -> None:
+        method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug("Initializing Mud() class", logger)
-        self.world = World(
-            self.logger
-        )  # create our WORLD object that'll contain things like breeze and rain events
+        LogUtils.debug(f"{method_name}: Initializing Mud() class", logger)
+        self.world = World(Utility.Share.WORLD_NAME, self.logger)
 
     async def exit_handler(self, signal, frame):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        LogUtils.info("An exit signal as been received.  Exiting!", self.logger)
+        LogUtils.info(f"{method_name}: An exit signal as been received.  Exiting!", self.logger)
         # exit stuff..
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
@@ -46,9 +45,6 @@ class Mud(Utility):
 
         player = None
         try:
-            # setup world events
-            await self.world.setup_world_events()
-
             # enter our player input loop
             while True:
                 # get current user
@@ -74,7 +70,7 @@ class Mud(Utility):
                     if msg_obj["extra"] != None:
                         extra_data = msg_obj["extra"]
 
-                    await self.world.command.run_command(
+                    await self.world.commands.run_command(
                         msg_obj["cmd"], player, self.world, extra_data
                     )
                 else:
@@ -130,6 +126,11 @@ if __name__ == "__main__":
         loop = asyncio.get_event_loop()
         loop.run_until_complete(start_server)
         loop.run_forever()
+        
+        # start worldevent loop
+        event_loop = asyncio.get_event_loop()
+        event_loop.run_until_complete(m.world.world_events.setup_world_events())
+        event_loop.run_forever()
 
         # if we got here the loop was cancelled, just quit
         LogUtils.info(f"Exiting...", logger)

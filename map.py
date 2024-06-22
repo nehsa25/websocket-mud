@@ -1,12 +1,8 @@
-import asyncio
-import base64
 from enum import Enum
 import inspect
 import os
 import re
 import pydot
-import requests
-from environments import Environments
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -20,7 +16,8 @@ class Map(Utility):
         
     logger = None
     def __init__(self, logger) -> None:
-        LogUtils.debug("Initializing Map() class", logger)
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: Initializing Map() class", logger)
         self.logger = logger
 
     async def sanitize_svg_output(self, map_output, environment_name, world, ImageSize=ImageSize.LARGE):
@@ -41,7 +38,9 @@ class Map(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
 
-    async def generate_map(self, room, image_name, player, world, environment=Environments.TOWNSMEE):
+    async def generate_map(self, room, image_name, player, world, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         self.graph = pydot.Dot(
             "mud_map",
             graph_type="digraph",
@@ -128,3 +127,4 @@ class Map(Utility):
         # send map event
         map_event = MudEvents.MapEvent(image_name)
         await self.send_message(map_event, player.websocket)
+        LogUtils.debug(f"{method_name}: exit", self.logger)

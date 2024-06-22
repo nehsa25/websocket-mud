@@ -1,11 +1,10 @@
 import asyncio
 import inspect
 from random import randint
-import random
 from items import Items
 from log_utils import LogUtils
+from money import Money
 from mudevent import MudEvents
-from rooms import Rooms
 from utility import Utility
 
 class Player(Utility):
@@ -25,7 +24,7 @@ class Player(Utility):
     weapon = Items.club
     ip = None
     inventory = [Items.club, Items.book, Items.cloth_pants]
-    money = []
+    money = None
     websocket = None
     rest_task = None # A resting task that check if this user is resting every 2 seconds
     mob_attack_task = None
@@ -45,8 +44,9 @@ class Player(Utility):
         websocket,
         logger,
     ):
+        method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"Initializing Player() class", self.logger)
+        LogUtils.debug(f"{method_name}: Initializing Player() class", self.logger)
         self.name = name
         self.hitpoints = hp
         self.max_hitpoints = hp
@@ -55,16 +55,19 @@ class Player(Utility):
         self.perception = perception
         self.location_id = location_id
         self.ip = ip
+        self.money = Money()
+        self.money.copper = 1000001
         self.websocket = websocket        
-        rooms = Rooms("Illisurom", self.logger)
         
         if self.rest_task is None:
-            self.rest_task = asyncio.create_task(self.check_for_resting(rooms))
+            self.rest_task = asyncio.create_task(self.check_for_resting())
             
         # if self.mob_attack_task is None:
         #     self.mob_attack_task = asyncio.create_task(self.check_for_new_attacks())
 
     async def set_rest(self, rest: bool):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         if rest:
             self.send_message(MudEvents.RestEvent("You start resting.", is_resting=True), self.websocket)
             self.is_resting = True
@@ -74,6 +77,7 @@ class Player(Utility):
                 await self.send_message(MudEvents.RestEvent("You are no longer resting.", is_resting=False), self.websocket)  
             else:
                 await self.send_message(MudEvents.InfoEvent("You were not resting to begin with."), self.websocket)  
+        LogUtils.debug(f"{method_name}: exit", self.logger)
         
     # shows color-coded health bar
     async def send_health(self):
@@ -85,6 +89,8 @@ class Player(Utility):
 
     # cancels all tasks and states you died if you die
     async def you_died(self, world):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         
         # Your done boy.  Done.
         self.in_combat = False        
@@ -112,6 +118,7 @@ class Player(Utility):
         self.hitpoints = self.max_hitpoints
         await self.send_health()
         
+        LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world
 
     # break combat
@@ -124,6 +131,8 @@ class Player(Utility):
 
     # shows inventory
     async def send_inventory(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         if self.inventory == [] and self.money == []:
             await self.send_message(MudEvents.InventoryEvent("You have nothing in your inventory."), self.websocket)
         else:
@@ -135,16 +144,17 @@ class Player(Utility):
                     msg += f"* {item.name}<br>"
 
             # get money
-            money = len(self.money)
+            money = self.money.coppers
             if money > 0:
                 msg += f"{money} copper<br>"
             else:
                 msg += f"You have no money.<br>"
                 
             await self.send_message(MudEvents.InventoryEvent(msg), self.websocket)
-
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        
     # increases hp when resting
-    async def check_for_resting(self, rooms):
+    async def check_for_resting(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, checking if {self.name} is resting..", self.logger)
 
@@ -165,5 +175,5 @@ class Player(Utility):
                         self.hitpoints = self.max_hitpoints
                         self.set_rest(False)
                         await self.send_message(MudEvents.InfoEvent("You have fully recovered."))
-                        await self.alert_room(f"{self.name} appears to have fully recovered.", rooms[self.location_id])
+                        await self.room.alert_room(f"{self.name} appears to have fully recovered.", exclude_player=True, player=self)
                     await self.send_health()
