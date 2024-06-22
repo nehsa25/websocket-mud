@@ -114,7 +114,7 @@ class Commands(Utility):
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'][1].lower()}."), p.websocket)
 
             # update location
-            player, world = await world.rooms.move_room(new_room_id, player, world)
+            player, world = await world.environments.move_room(new_room_id, player, world)
 
             # render new room
             await player.room.process_room(player, world, look_location_id=new_room_id)
