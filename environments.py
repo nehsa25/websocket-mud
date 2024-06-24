@@ -44,8 +44,8 @@ class Environments(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
         result = ""
-        for env in self.envionments:
-            if area == env.type:
+        for env in Utility.Share.EnvironmentTypes:
+            if area == env.name:
                 result = env.name
         LogUtils.debug(f"{method_name}: exit, returning: {result}", self.logger)
         return result

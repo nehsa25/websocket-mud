@@ -8,6 +8,7 @@ from money import Money
 from mudevent import MudEvents
 from utility import Utility
 
+
 class Monster(Utility):
     class Alignment:
         GOOD = 1  # attacks evil players only
@@ -47,7 +48,8 @@ class Monster(Utility):
                                 if secs_since_death >= monster.respawn_rate_secs:
                                     # remove old monster
                                     LogUtils.debug(
-                                        f'Removing "{monster.name}" from room', self.logger
+                                        f'Removing "{monster.name}" from room',
+                                        self.logger,
                                     )
                                     room.monsters.remove(monster)
 
@@ -60,9 +62,9 @@ class Monster(Utility):
                                         self.logger,
                                     )
                                     room.monsters.append(new_monster)
- 
+
     events = None
-    adjective_chance = .2 # the change that the monster will have an adjective like "rotting" or "nasty"
+    adjective_chance = 0.2  # the change that the monster will have an adjective like "rotting" or "nasty"
     name = ""
     hitpoints = 0
     damage = None
@@ -79,17 +81,17 @@ class Monster(Utility):
     monster_type = None
     alignment = None
     wander = True
-    wander_speed = 1 # 1 room / minute
+    wander_speed = 1  # 1 room / minute
     pronoun = "it"
     logger = None
     monster_wander_event = None
-    last_exit = None    
+    last_exit = None
     respawn_rate_secs = 60 * 5
-    
-    def __init__( self, logger):
+
+    def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Monster() class", self.logger)
-        
+
         if self.events is None:
             self.events = Monster.Events(self.logger)
 
@@ -138,6 +140,7 @@ class Monster(Utility):
                     MudEvents.InfoEvent(self.death_cry), player.websocket
                 )
 
+
 class Monsters(Monster):
 
     class undead_factory(Monster):
@@ -146,72 +149,83 @@ class Monsters(Monster):
         font = "comic sans ms"
         font_size = 36
         log_utils = None
-        
+
         def __init__(self, logger):
             self.logger = logger
             LogUtils.debug("Initializing undead_factory() class", self.logger)
-            self.logger = logger           
+            self.logger = logger
 
         class Skeleton(Monster):
             logger = None
-            possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting" ]
-            
+            possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
+
             def __init__(self, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Skeleton() class", logger)
-                self.name = "Skeleton"  
+                self.name = "Skeleton"
                 if random.random() < self.adjective_chance:
-                    self.name = f"{random.choice(self.possible_adjectives)} Skeleton"                              
+                    self.name = f"{random.choice(self.possible_adjectives)} Skeleton"
                 self.death_cry = f"{self.name} falls over and dies.."
                 self.entrance_cry = f"{self.name} wanders in.."
-                self.victory_cry="The skeleton gives an elegent bow."
-                self.hitpoints=10
-                self.damage_potential="1d4"
-                self.experience=100
+                self.victory_cry = "The skeleton gives an elegent bow."
+                self.hitpoints = 10
+                self.damage_potential = "1d4"
+                self.experience = 100
                 self.money.coppers = randint(0, 10)
 
         class Zombie(Monster):
             possible_adjectives = ["Decrepit", "Rotting", "Mad"]
+
             def __init__(self, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Zombie() class", logger)
                 self.name = f"Zombie"
                 if random.random() < self.adjective_chance:
-                    self.name = f"{random.choice(self.possible_adjectives)} Zombie"                              
+                    self.name = f"{random.choice(self.possible_adjectives)} Zombie"
                 self.death_cry = f"{self.name} falls over and dies.."
                 self.entrance_cry = f"{self.name} wanders in.."
-                self.victory_cry="The smiles sadly."
-                self.hitpoints=12
-                self.damage_potential="1d4"
-                self.experience=150
+                self.victory_cry = "The smiles sadly."
+                self.hitpoints = 12
+                self.damage_potential = "1d4"
+                self.experience = 150
                 for i in range(randint(0, 25)):
                     self.money.coppers.append(Money.Coin.Copper)
-                
+
         class ZombieSurfer(Monster):
-            adjective_chance = .8
-            possible_adjectives = ["Wasted",
-            "Doddering",
-            "Rotting",
-            "Scarred",
-            "Dirty",
-            "Angry"]
+            adjective_chance = 0.8
+            possible_adjectives = [
+                "Wasted",
+                "Doddering",
+                "Rotting",
+                "Scarred",
+                "Dirty",
+                "Angry",
+            ]
+
             def __init__(self, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing ZombieSurfer() class", logger)
                 self.name = f"Zombie Surfer"
                 if random.random() < self.adjective_chance:
-                    self.name = f"{random.choice(self.possible_adjectives)} Zombie Surfer"
-                self.death_cry = f'{self.name} says "Narley", then falls over and dies..'
+                    self.name = (
+                        f"{random.choice(self.possible_adjectives)} Zombie Surfer"
+                    )
+                self.death_cry = (
+                    f'{self.name} says "Narley", then falls over and dies..'
+                )
                 self.entrance_cry = f"{self.name} wanders in.."
-                self.victory_cry="The zombie surfer stares at the corpse in confusion."
-                self.hitpoints=15
-                self.damage_potential="1d6"
-                self.experience=175
+                self.victory_cry = (
+                    "The zombie surfer stares at the corpse in confusion."
+                )
+                self.hitpoints = 15
+                self.damage_potential = "1d6"
+                self.experience = 175
                 for i in range(randint(0, 25)):
                     self.money.coppers.append(Money.Coin.Copper)
-                
+
         class Ghoul(Monster):
             possible_adjectives = ["Gluttonous", "Scarred", "Ragged"]
+
             def __init__(self, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Ghoul() class", logger)
@@ -220,33 +234,34 @@ class Monsters(Monster):
                     self.name = f"{random.choice(self.possible_adjectives)} Ghoul"
                 self.death_cry = f"{self.name} falls over and dies.."
                 self.entrance_cry = f"{self.name} wanders in.."
-                self.victory_cry="The ghoul makes no emotion."
-                self.hitpoints=15
-                self.damage_potential="1d6"
-                self.experience=175
+                self.victory_cry = "The ghoul makes no emotion."
+                self.hitpoints = 15
+                self.damage_potential = "1d6"
+                self.experience = 175
                 for i in range(randint(0, 30)):
                     self.money.coppers.append(Money.Coin.Copper)
-                
-        class Shade(Monster):    
-            alignment = Monster.Alignment.NEUTRAL    
+
+        class Shade(Monster):
+            alignment = Monster.Alignment.NEUTRAL
             possible_adjectives = ["Ethereal", "Dark", "Menacing"]
+
             def __init__(self, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Shade() class", logger)
                 self.name = "Shade"
                 if random.random() < self.adjective_chance:
-                    self.name = f"{random.choice(self.possible_adjectives)} Share"                              
+                    self.name = f"{random.choice(self.possible_adjectives)} Share"
                 self.death_cry = f"{self.name} sighs in relief and fades away.."
                 self.entrance_cry = f"{self.name} floats in.."
-                self.victory_cry="The shade frowns slightly."
-                self.hitpoints=45
-                self.damage_potential="1d10"
-                self.experience=575
+                self.victory_cry = "The shade frowns slightly."
+                self.hitpoints = 45
+                self.damage_potential = "1d10"
+                self.experience = 575
                 for i in range(randint(0, 50)):
                     self.money.coppers.append(Money.Coin.Copper)
-        
+
     logger = None
-    
+
     undead = None
 
     def __init__(self, logger) -> None:
@@ -254,5 +269,3 @@ class Monsters(Monster):
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Monsters() class", self.logger)
         self.undead = self.undead_factory(self.logger)
-
-      

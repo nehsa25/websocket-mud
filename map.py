@@ -23,7 +23,7 @@ class Map(Utility):
     async def sanitize_svg_output(self, map_output, environment_name, world, ImageSize=ImageSize.LARGE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        area_identifier = world.rooms.get_area_identifier(environment_name)
+        area_identifier = world.environments.get_area_identifier(environment_name)
         if ImageSize == ImageSize.MINI:
             map_output = re.sub('width="\d*pt"', 'width="200pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)   
@@ -72,7 +72,7 @@ class Map(Utility):
             os.remove(image_name)
 
         # get rooms
-        rooms = [a for a in world.rooms.rooms if a.environment == environment]
+        rooms = [a for a in world.environments.all_rooms if a.environment == environment]
  
         # generate map
         count = 0

@@ -141,7 +141,7 @@ class Commands(Utility):
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}."), p.websocket)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
-            await self.alert_room(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", player.room, True, player)
+            await player.room.alert_room(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", exclude_player=True, player=player)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 
@@ -153,7 +153,7 @@ class Commands(Utility):
         valid_direction = False
 
         # check if it's a valid direction in the room
-        for avail_exit in world.rooms.rooms[player.room.id].exits:
+        for avail_exit in world.environments.all_rooms[player.room.id].exits:
             if (
                 wanted_direction == avail_exit["direction"][0].lower()
                 or wanted_direction == avail_exit["direction"][1].lower()
@@ -169,7 +169,7 @@ class Commands(Utility):
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:                    
-                    await self.send_message(MudEvents.InfoEvent(f"{player.name} looks to the {wanted_direction}."), p.websocket)
+                    await self.send_message(MudEvents.InfoEvent(f"You notice {player.name} looking to the {wanted_direction}."), p.websocket)
 
             player, world = await player.room.process_room(player, world, look_location_id=avail_exit["id"])
         else:

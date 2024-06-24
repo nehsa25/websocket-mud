@@ -193,13 +193,13 @@ class MudEvents:
 
     class InventoryEvent:
         type = None
-        message = ""
+        inventory = None
 
-        def __init__(self, message):
+        def __init__(self, inventory):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.INVENTORY
             )
-            self.message = message
+            self.inventory = inventory
 
         def to_json(self):
             return jsonpickle.encode(self)

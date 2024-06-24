@@ -1,10 +1,14 @@
 import inspect
 import json
 from websockets import ConnectionClosedOK
+from inventory import Inventory
+from items import Items
 from log_utils import LogUtils
+from money import Money
 from mudevent import MudEvents
 from player import Player
 from utility import Utility
+
 
 class Players(Utility):
     logger = None
@@ -42,11 +46,16 @@ class Players(Utility):
         # send msg to everyone
         for p in self.players:
             if p.name == player.name:
-                await self.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket)
+                await self.send_message(
+                    MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket
+                )
             else:
-                await self.send_message(MudEvents.AnnouncementEvent(f"{player.name} joined the game!"), p.websocket)
+                await self.send_message(
+                    MudEvents.AnnouncementEvent(f"{player.name} joined the game!"),
+                    p.websocket,
+                )
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        
+
         return player, world
 
     # calls at the beginning of the connection.  websocket connection here is the real connection
@@ -65,9 +74,7 @@ class Players(Utility):
             # get the client hostname
             LogUtils.info(f"Requesting username", self.logger)
             if dupe:
-                await self.send_message(
-                    MudEvents.DuplicateNameEvent(), websocket
-                )
+                await self.send_message(MudEvents.DuplicateNameEvent(), websocket)
             else:
                 await self.send_message(
                     MudEvents.UsernameRequestEvent(world.world_name), websocket
@@ -81,16 +88,20 @@ class Players(Utility):
             agility = 3  # 0 - 30
             location = 0
             perception = 50
+            inventory = Inventory(
+                items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
+            )
             player = Player(
-                request["username"],
-                hp,
-                strength,
-                agility,
-                location,
-                perception,
-                ip,
-                websocket,
-                self.logger,
+                name=request["username"],
+                hp=hp,
+                strength=strength,
+                agility=agility,
+                location_id=location,
+                perception=perception,
+                inventory=inventory,
+                ip=ip,
+                websocket=websocket,
+                logger=self.logger,
             )
 
             if request["type"] == MudEvents.EventUtility.get_event_type_id(
@@ -99,7 +110,9 @@ class Players(Utility):
                 await self.register(player, world)
 
                 # show room
-                player, world = await world.environments.move_room(player.location_id, player, world)
+                player, world = await world.environments.move_room(
+                    player.location_id, player, world
+                )
             else:
                 raise Exception(f"Shananigans? received request: {request['type']}")
 
@@ -118,9 +131,13 @@ class Players(Utility):
 
         # let folks know someone left
         if change_name:
-            await world.alert_world(f"{player.name} is changing their name..", world, player=player)
+            await world.alert_world(
+                f"{player.name} is changing their name..", world, player=player
+            )
         else:
-            await world.alert_world(f"{player.name} left the game.", world, player=player)
+            await world.alert_world(
+                f"{player.name} left the game.", world, player=player
+            )
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
         LogUtils.debug(f"register: exit", self.logger)

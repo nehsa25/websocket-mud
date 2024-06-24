@@ -208,6 +208,6 @@ class TownSmee(Room):
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             )
         ]
-
+        pass
     # self.rooms = self.rooms
     # self.units = self.units

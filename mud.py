@@ -75,6 +75,8 @@ class Mud(Utility):
                     )
                 else:
                     LogUtils.error(f"Received unknown message: {message}", self.logger)
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"Someone left..", logger)
         except KeyboardInterrupt:
             loop.stop()
         except:
