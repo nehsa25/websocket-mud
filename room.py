@@ -105,7 +105,7 @@ class Room(Utility):
         self.logger = logger
         LogUtils.debug(f"Initializing RoomFactory() class", self.logger)
 
-    async def alert_room(
+    async def alert(
         self, message, exclude_player=False, player=None, event_type=MudEvents.InfoEvent
     ):
         method_name = inspect.currentframe().f_code.co_name

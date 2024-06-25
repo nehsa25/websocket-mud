@@ -41,6 +41,7 @@ class MudEvents:
             ANNOUCEMENT = 20
             ENVIRONMENT = 21
             REST = 22
+            HELP = 23
 
         @staticmethod
         def get_event_type_id(event):
@@ -191,6 +192,19 @@ class MudEvents:
         def to_json(self):
             return jsonpickle.encode(self)
 
+    class HelpEvent:
+        type = None
+        help_commands = []
+
+        def __init__(self, help_commands):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.HELP
+            )
+            self.help_commands = help_commands
+
+        def to_json(self):
+            return jsonpickle.encode(self)
+        
     class InventoryEvent:
         type = None
         inventory = None

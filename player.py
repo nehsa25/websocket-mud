@@ -60,7 +60,6 @@ class Player(Utility):
         self.inventory = inventory
         self.location_id = location_id
         self.ip = ip
-        self.inventory = inventory
         self.websocket = websocket
 
         if self.rest_task is None:
@@ -114,7 +113,7 @@ class Player(Utility):
         await self.send_message(MudEvents.InfoEvent("You died."), self.websocket)
 
         # alert others in the room where you died that you died..
-        await self.alert_room(f"{self.name} died.", self.room, True, self)
+        await self.room.alert(f"{self.name} died.", self.room, True, self)
 
         # drop all items
         for item in self.inventory:
@@ -127,7 +126,7 @@ class Player(Utility):
         )
 
         # alert others in the room that new player has arrived
-        await self.alert_room(
+        await self.room.alert(
             f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.",
             player.room,
             True,
@@ -146,7 +145,7 @@ class Player(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.in_combat = None
-        self.alert_room(f"{self.name} stops fighting.", rooms[self.location_id])
+        self.room.alert(f"{self.name} stops fighting.", rooms[self.location_id])
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # shows inventory
@@ -189,7 +188,7 @@ class Player(Utility):
                         await self.send_message(
                             MudEvents.InfoEvent("You have fully recovered.")
                         )
-                        await self.room.alert_room(
+                        await self.room.alert(
                             f"{self.name} appears to have fully recovered.",
                             exclude_player=True,
                             player=self,

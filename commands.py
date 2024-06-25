@@ -25,7 +25,7 @@ class Commands(Utility):
 
             # check if it's in our inventory
             item_obj = None
-            for item_in_inv in player.inventory:
+            for item_in_inv in player.inventory.items:
                 if wanted_item.lower() == item_in_inv.name.lower():
                     item_obj = item_in_inv
                     found_item = True
@@ -36,7 +36,7 @@ class Commands(Utility):
                 item_obj.equiped = False
 
                 # remove from inventory
-                player.inventory.remove(item_obj)
+                player.inventory.items.remove(item_obj)
                 await self.world.self.world.utility.send_msg(
                     f"You dropped {item_obj.name}.", "info", websocket, self.logger
                 )
@@ -62,7 +62,7 @@ class Commands(Utility):
                 world.rooms.rooms[player.location].append(item_obj)
 
                 # remove from player inventory
-                player.inventory.remove(item_obj)
+                player.inventory.items.remove(item_obj)
                 await self.send_msg(
                     f"You dropped {coin.Name}.", "info", websocket, self.logger
                 )
@@ -70,7 +70,14 @@ class Commands(Utility):
                 await self.send_msg(f"You can't drop {wanted_item}", "error", player.websocket)
                 
             return player, world
-
+    class CommandHelp:
+        command = ""
+        definition = ""
+        
+        def __init__(self, command, definition):
+            self.command = command
+            self.definition = definition
+        
     logger = None
     command_utility = None
 
@@ -85,8 +92,25 @@ class Commands(Utility):
     async def process_help(self, player):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
-        help_msg = "look, get, inventory, drop, search, hide, stash, equip"
-        await self.send_message(MudEvents.HelpEvent(help_msg), player.websocket)
+        commands = []
+        commands.append(Commands.CommandHelp("look[l]", "Look around the room"))
+        commands.append(Commands.CommandHelp("get[g]", "Pick up an item"))
+        commands.append(Commands.CommandHelp("inventory[inv]", "List your inventory"))
+        commands.append(Commands.CommandHelp("drop", "Drop an item"))
+        commands.append(Commands.CommandHelp("search[sea]", "Search the room for hidden items"))
+        commands.append(Commands.CommandHelp("north[n]", "Move a direction (North[n], South[s], Northwest[nw], Down[d], ect)"))
+        commands.append(Commands.CommandHelp("experience[exp]", "Display your experience"))
+        commands.append(Commands.CommandHelp("hide", "Hide an item in the room"))
+        commands.append(Commands.CommandHelp("stash", "Stash an item in your inventory"))
+        commands.append(Commands.CommandHelp("statistics[stat]", "Display your character statistics"))
+        commands.append(Commands.CommandHelp("equip", "Equip an item"))
+        commands.append(Commands.CommandHelp("attack", "Attack a monster"))
+        commands.append(Commands.CommandHelp("loot", "Loot a monster"))
+        commands.append(Commands.CommandHelp("who", "List players online"))
+        commands.append(Commands.CommandHelp("rest", "Rest to regain health"))
+        commands.append(Commands.CommandHelp("say", "Speak to the room"))
+        commands.append(Commands.CommandHelp("system name &lt;NEW NAME&gt;", "Change your name"))
+        await self.send_message(MudEvents.HelpEvent(commands), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
@@ -141,7 +165,7 @@ class Commands(Utility):
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}."), p.websocket)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
-            await player.room.alert_room(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", exclude_player=True, player=player)
+            await player.room.alert(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", exclude_player=True, player=player)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player, world
 
@@ -202,24 +226,21 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1].lower()
         found_item = False
-        room = world.rooms.rooms[player.room.id]
-        if world.rooms.rooms[player.room.id].items != []:
-            for item in room.items:
-                if wanted_item == item.name.lower():
-                    found_item = True
-                    await self.send_message(MudEvents.InfoEvent(f"You pick up {item.name}."), player.websocket)
-                    
-                    # remove from room
-                    room.items.remove(item)
 
-                    # alert the rest of the room
-                    for room_player in room.players:
-                        if room_player.websocket != player.websocket:
-                            await self.send_message(MudEvents.InfoEvent(f"{player.name} picks up {item.name}."), room_player.websocket)
+        for item in player.room.items:
+            if wanted_item == item.name.lower():
+                found_item = True
+                await self.send_message(MudEvents.InfoEvent(f"You pick up {item.name}."), player.websocket)
+                
+                # remove from room
+                player.room.items.remove(item)
 
-                    # add to our inventory
-                    player.inventory.append(item)
-                    break
+                # alert the rest of the room
+                await player.room.alert(f"{player.name} picks up {item.name}.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
+
+                # add to our inventory
+                player.inventory.items.append(item)
+                break
         if found_item == False:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot find {wanted_item}."), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
@@ -274,7 +295,7 @@ class Commands(Utility):
 
         # check if it's in our inventory
         item_obj = None
-        for item_in_inv in player.inventory:
+        for item_in_inv in player.items.inventory:
             if wanted_item.lower() == item_in_inv.name.lower():
                 item_obj = item_in_inv
                 found_item = True
@@ -282,7 +303,7 @@ class Commands(Utility):
 
         if found_item == True:
             # remove from inventory
-            player.inventory.remove(item_obj)
+            player.inventory.items.remove(item_obj)
             await self.send_message(MudEvents.InfoEvent(f"You hid {item_obj.name}."), player.websocket)
             world.rooms.rooms[player.room.id].hidden_items.append(item_obj)
         else:
@@ -297,7 +318,7 @@ class Commands(Utility):
         found_item = None
 
         # check if the item is in our inventory
-        for item in player.inventory:
+        for item in player.inventory.items:
             if item.name.lower() == wanted_item.lower():
                 await self.send_message(MudEvents.InfoEvent(f"You equip {item.name}."), player.websocket)
                 item.equiped = True
@@ -305,7 +326,7 @@ class Commands(Utility):
                 found_item = item
 
         # if you eq'd an item, deselect any previous items
-        for item in player.inventory:
+        for item in player.inventory.items:
             if (
                 found_item.item_type == item.item_type and item.equiped == True
             ) and found_item.name != item.name:
@@ -540,7 +561,7 @@ class Commands(Utility):
     async def process_rest(self, player, world):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
-        monsters_in_room = len(world.rooms.rooms[player.room.id].monsters)
+        monsters_in_room = len(player.room.monsters)
         if player.in_combat == True or monsters_in_room > 0:
             await self.send_message(MudEvents.ErrorEvent("You cannot rest at this time.  You are in combat."), player.websocket)
         else:
