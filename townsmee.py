@@ -66,7 +66,7 @@ class TownSmee(Room):
                 id=0,
                 name=f"{self.name} - Town Square",
                 inside=False,
-                description="You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc.  There's a festive feeling to the area and people and wagons bustle in all directions.",
+                description="You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc.  There's a festive feeling to the area and people and wagons move with purpose in all directions.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 9},  # moon road
                     {"direction": Room.dirs.east, "id": 10},  # moon road
@@ -74,7 +74,7 @@ class TownSmee(Room):
                     {"direction": Room.dirs.north, "id": 11},  # sun road
                 ],
                 items=[Items.helmet, Items.stick, Items.maul],
-                monsters=[self.monsters.undead_factory.Skeleton(self.logger)],
+                monsters=[self.monsters.undead.get_monster(monster_type=Monsters.Monsters.SKELETON, room_id=0)],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE
             ),
             self.room_factory.add_room(

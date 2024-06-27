@@ -230,7 +230,7 @@ class Commands(Utility):
         for item in player.room.items:
             if wanted_item == item.name.lower():
                 found_item = True
-                await self.send_message(MudEvents.InfoEvent(f"You pick up {item.name}."), player.websocket)
+                await self.send_message(Mud56.InfoEvent(f"You pick up {item.name}."), player.websocket)
                 
                 # remove from room
                 player.room.items.remove(item)

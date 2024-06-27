@@ -1,4 +1,5 @@
 import asyncio
+from enum import Enum
 import inspect
 import random
 import time
@@ -8,6 +9,30 @@ from money import Money
 from mudevent import MudEvents
 from utility import Utility
 
+class MonsterStats(Utility):
+    name = ""
+    hitpoints = 0
+    damage = None
+    experience = 0
+    money = Money()
+    is_alive = True
+    in_combat = None
+    players_seen = None
+    num_attack_targets = None
+    respawn_rate_secs = None
+    dead_epoch = None
+    death_cry = None
+    entrance_cry = None
+    victory_cry = None
+    monster_type = None
+    alignment = None
+    wander = True
+    wander_speed = 1  # 1 room / minute
+    pronoun = "it"
+    logger = None
+    monster_wander_event = None
+    last_exit = None
+    respawn_rate_secs = 60 * 5
 
 class Monster(Utility):
     class Alignment:
@@ -15,56 +40,6 @@ class Monster(Utility):
         NEUTRAL = 2  # only attacks if attacked
         EVIL = 3  # attacks good players only
         CHOATIC = 4  # attacks all players
-
-    class Events:
-        logger = None
-        respawn_event = None
-
-        def __init__(self, logger):
-            self.logger = logger
-            LogUtils.debug("Initializing Monster.Events() class", self.logger)
-
-        # respawn mobs after a certain amount of time
-        async def respawn(self, rooms):
-            method_name = inspect.currentframe().f_code.co_name
-            LogUtils.debug(f"{method_name}: enter", self.logger)
-
-            while True:
-                # Allow other tasks to complete
-                await asyncio.sleep(2)
-
-                # look through each room
-                for room in rooms:
-                    # and if the room has monsters
-                    if len(room.monsters) > 0:
-                        for monster in room.monsters:
-                            # check if they're dead
-                            if monster.is_alive == False:
-                                current_epoch = int(time.time())
-
-                                # if monster has been dead for more than monster.respawn_rate_secs, remove it and create new monster
-                                # (we should consider making then kinda random (2-5 minutes for example))
-                                secs_since_death = current_epoch - monster.dead_epoch
-                                if secs_since_death >= monster.respawn_rate_secs:
-                                    # remove old monster
-                                    LogUtils.debug(
-                                        f'Removing "{monster.name}" from room',
-                                        self.logger,
-                                    )
-                                    room.monsters.remove(monster)
-
-                                    # create new monster
-                                    new_monster = await self.world.monsters.get_monster(
-                                        monster.monster_type, room, self.logger
-                                    )
-                                    LogUtils.info(
-                                        f'Respawning "{new_monster.name}" in room {room.id} ({room.name})',
-                                        self.logger,
-                                    )
-                                    room.monsters.append(new_monster)
-
-    events = None
-    adjective_chance = 0.2  # the change that the monster will have an adjective like "rotting" or "nasty"
     name = ""
     hitpoints = 0
     damage = None
@@ -87,19 +62,62 @@ class Monster(Utility):
     monster_wander_event = None
     last_exit = None
     respawn_rate_secs = 60 * 5
-
-    def __init__(self, logger):
+    respawn_event = None  
+    check_combat_event = None
+    wander_event = None
+    last_exit = None
+    wander_loop = None
+    respawn_loop = None
+    check_combat_loop = None    
+        
+    def __init__(self, 
+                 monster_name, 
+                 room_id, 
+                 hitpoints, 
+                 damage, 
+                 experience, 
+                 money, death_cry, entrance_cry, victory_cry, monster_type, alignment, is_wanderer, wander_speed, pronoun, logger):
+        
+        method_name = inspect.currentframe().f_code.co_name
+        self.logger = logger        
+        
+        LogUtils.debug(f"{method_name}: Initializing Monster() class", self.logger)        
+        self.hitpoints = hitpoints
+        self.damage = damage
+        self.experience = experience
+        self.money = money
+        self.death_cry = death_cry
+        self.entrance_cry = entrance_cry
+        self.victory_cry = victory_cry
+        self.monster_type = monster_type
+        self.alignment = alignment
+        self.is_wanderer = is_wanderer
+        self.wander_speed = wander_speed
+        self.pronoun = pronoun
         self.logger = logger
-        LogUtils.debug("Initializing Monster() class", self.logger)
+        self.name = monster_name
+        self.is_alive = True
+        self.in_combat = None
+        self.players_seen = []           
+     
+        main_loop = asyncio.get_event_loop()
+        main_loop.create_task(self.main_loop())
+        
+        LogUtils.info(f"[Monster] {monster_name} enters in room {room_id}", self.logger)
+    
+    async def main_loop(self):
+        # start monster loops
+        while self.is_alive:
+            await asyncio.sleep(1)
+            respawn_loop = asyncio.get_event_loop()
+            respawn_loop.create_task(self.respawn())
+            
+            check_combat_loop = asyncio.get_event_loop()
+            check_combat_loop.create_task(self.check_for_combat())
 
-        if self.events is None:
-            self.events = Monster.Events(self.logger)
-
-    # async def wander(self):
-    #     exit_option = random.choice(self.room.exits)
-    #     while self.last_exit == exit_option or len(self.room.exits) == 1:
-    #         exit_option = random.choice(self.room.exits)
-
+            wander_loop = asyncio.get_event_loop()
+            wander_loop.create_task(self.wander())
+            
     # announce we're here!
     async def announce_entrance(self, room):
         method_name = inspect.currentframe().f_code.co_name
@@ -140,10 +158,58 @@ class Monster(Utility):
                     MudEvents.InfoEvent(self.death_cry), player.websocket
                 )
 
+    async def check_for_combat(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.info(f"{method_name}: {self.name} checking for combat", self.logger)
+            
+    # respawn mobs after a certain amount of time
+    async def respawn(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.info(f"{method_name}: {self.name} checking for respawn", self.logger)
+            
+            # # look through each room
+            # for room in rooms:
+            #     # and if the room has monsters
+            #     if len(room.monsters) > 0:
+            #         for monster in room.monsters:
+            #             # check if they're dead
+            #             if monster.is_alive == False:
+            #                 current_epoch = int(time.time())
 
-class Monsters(Monster):
+            #                 # if monster has been dead for more than monster.respawn_rate_secs, remove it and create new monster
+            #                 # (we should consider making then kinda random (2-5 minutes for example))
+            #                 secs_since_death = current_epoch - monster.dead_epoch
+            #                 if secs_since_death >= monster.respawn_rate_secs:
+            #                     # remove old monster
+            #                     LogUtils.debug(
+            #                         f'Removing "{monster.name}" from room',
+            #                         self.logger,
+            #                     )
+            #                     room.monsters.remove(monster)
 
-    class undead_factory(Monster):
+            #                     # create new monster
+            #                     new_monster = await self.world.monsters.get_monster(
+            #                         monster.monster_type, room, self.logger
+            #                     )
+            #                     LogUtils.info(
+            #                         f'Respawning "{new_monster.name}" in room {room.id} ({room.name})',
+            #                         self.logger,
+            #                     )
+            #                     room.monsters.append(new_monster)
+
+    async def wander(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.info(f"{method_name}: {self.name} checking for respawn", self.logger)
+
+class Monsters(Utility):
+    class Monsters(Enum):
+        SKELETON = 1
+        ZOMBIE = 2
+        ZOMBIE_SURFER = 3
+        GHOUL = 4
+        SHADE = 5
+
+    class UndeadFactory:
         name = ""
         description = "Undead creatures that have been reanimated by dark magic. They are often found in graveyards and other places of death."
         font = "comic sans ms"
@@ -154,29 +220,56 @@ class Monsters(Monster):
             self.logger = logger
             LogUtils.debug("Initializing undead_factory() class", self.logger)
             self.logger = logger
+            
+        def get_monster(self, monster_type, room_id):
+            method_name = inspect.currentframe().f_code.co_name
+            LogUtils.debug(f"{method_name}: enter", self.logger)
+            monster = None
+            if monster_type == Monsters.Monsters.SKELETON:
+                monster = self.Skeleton(room_id, self.logger)
+            elif monster_type == Monsters.Monsters.ZOMBIE:
+                monster = self.Zombie(room_id, self.logger)
+            elif monster_type == Monsters.Monsters.ZOMBIE_SURFER:
+                monster = self.ZombieSurfer(room_id, self.logger)
+            elif monster_type == Monsters.Monsters.GHOUL:
+                monster = self.Ghoul(room_id, self.logger)
+            elif monster_type == Monsters.Monsters.SHADE:
+                monster = self.Shade(room_id, self.logger)
+            LogUtils.debug(f"{method_name}: exit", self.logger)
+            return monster
 
-        class Skeleton(Monster):
+        class Skeleton(MonsterStats):
             logger = None
             possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
-
-            def __init__(self, logger):
+            adjective_chance = 70
+            instance = None
+            
+            def __init__(self, room_id, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Skeleton() class", logger)
                 self.name = "Skeleton"
-                if random.random() < self.adjective_chance:
+                if random.randint(1,100) < self.adjective_chance:
                     self.name = f"{random.choice(self.possible_adjectives)} Skeleton"
                 self.death_cry = f"{self.name} falls over and dies.."
                 self.entrance_cry = f"{self.name} wanders in.."
-                self.victory_cry = "The skeleton gives an elegent bow."
+                self.victory_cry = "The skeleton gives an elegent bow before losing interest."
                 self.hitpoints = 10
                 self.damage_potential = "1d4"
                 self.experience = 100
-                self.money.coppers = randint(0, 10)
+                self.money= Money(randint(0, 10))
+                
+                # create new monster
+                self.instance = Monster(self.name, room_id, self.hitpoints, 
+                                      self.damage_potential, self.experience, self.money, 
+                                      self.death_cry, self.entrance_cry, self.victory_cry, 
+                                      Monsters.Monsters.SKELETON, Monster.Alignment.NEUTRAL, 
+                                      True, 1, "it", self.logger)
 
-        class Zombie(Monster):
+
+        class Zombie:
             possible_adjectives = ["Decrepit", "Rotting", "Mad"]
 
-            def __init__(self, logger):
+            def __init__(self, room_id, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Zombie() class", logger)
                 self.name = f"Zombie"
@@ -188,10 +281,9 @@ class Monsters(Monster):
                 self.hitpoints = 12
                 self.damage_potential = "1d4"
                 self.experience = 150
-                for i in range(randint(0, 25)):
-                    self.money.coppers.append(Money.Coin.Copper)
+                self.money= Money(randint(0, 45)) 
 
-        class ZombieSurfer(Monster):
+        class ZombieSurfer:
             adjective_chance = 0.8
             possible_adjectives = [
                 "Wasted",
@@ -202,7 +294,7 @@ class Monsters(Monster):
                 "Angry",
             ]
 
-            def __init__(self, logger):
+            def __init__(self, room_id, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing ZombieSurfer() class", logger)
                 self.name = f"Zombie Surfer"
@@ -220,13 +312,12 @@ class Monsters(Monster):
                 self.hitpoints = 15
                 self.damage_potential = "1d6"
                 self.experience = 175
-                for i in range(randint(0, 25)):
-                    self.money.coppers.append(Money.Coin.Copper)
+                self.money= Money(randint(0, 50))
 
-        class Ghoul(Monster):
+        class Ghoul:
             possible_adjectives = ["Gluttonous", "Scarred", "Ragged"]
 
-            def __init__(self, logger):
+            def __init__(self, room_id, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Ghoul() class", logger)
                 self.name = f"Ghoul"
@@ -238,14 +329,13 @@ class Monsters(Monster):
                 self.hitpoints = 15
                 self.damage_potential = "1d6"
                 self.experience = 175
-                for i in range(randint(0, 30)):
-                    self.money.coppers.append(Money.Coin.Copper)
+                self.money= Money(randint(0, 75))
 
-        class Shade(Monster):
+        class Shade:
             alignment = Monster.Alignment.NEUTRAL
             possible_adjectives = ["Ethereal", "Dark", "Menacing"]
 
-            def __init__(self, logger):
+            def __init__(self, room_id, logger):
                 self.logger = logger
                 LogUtils.debug("Initializing Shade() class", logger)
                 self.name = "Shade"
@@ -257,8 +347,7 @@ class Monsters(Monster):
                 self.hitpoints = 45
                 self.damage_potential = "1d10"
                 self.experience = 575
-                for i in range(randint(0, 50)):
-                    self.money.coppers.append(Money.Coin.Copper)
+                self.money= Money(randint(0, 100))
 
     logger = None
 
@@ -268,4 +357,4 @@ class Monsters(Monster):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Monsters() class", self.logger)
-        self.undead = self.undead_factory(self.logger)
+        self.undead = self.UndeadFactory(self.logger)
