@@ -230,7 +230,7 @@ class Commands(Utility):
         for item in player.room.items:
             if wanted_item == item.name.lower():
                 found_item = True
-                await self.send_message(Mud56.InfoEvent(f"You pick up {item.name}."), player.websocket)
+                await self.send_message(MudEvents.InfoEvent(f"You pick up {item.name}."), player.websocket)
                 
                 # remove from room
                 player.room.items.remove(item)
@@ -563,14 +563,11 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         monsters_in_room = len(player.room.monsters)
         if player.in_combat == True or monsters_in_room > 0:
-            await self.send_message(MudEvents.ErrorEvent("You cannot rest at this time.  You are in combat."), player.websocket)
+            player.resting = False
+            await self.send_message(MudEvents.RestEvent("You cannot rest at this time.  You are in combat.", rest_error=True, is_resting=False), player.websocket)
         else:
-            # check if in combat
-
-            # if not...
-
-            # simple message staying you're starting to rest
-            await self.send_message(MudEvents.InfoEvent("You settle to rest."), player.websocket)
+            # message staying you're starting to rest
+            await self.send_message(MudEvents.RestEvent("You settle to rest.", rest_error=False, is_resting=True), player.websocket)
 
             # set an attribute that we can use later
             player.resting = True
