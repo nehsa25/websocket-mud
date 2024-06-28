@@ -71,21 +71,27 @@ class AIImages(Utility):
                     "seed": seed
                 }
             )
-        
-            if response.status_code != 200:
-                raise Exception("Non-200 response: " + str(response.text))
-       
-            self.path = f"c:/src/mud_images/rooms"
-            full_path = f"{self.path}/{room_image_name}"            
-            if os.path.exists(full_path):
-                os.remove(full_path)
-                
-            with open(full_path, "wb") as f:
-                f.write(response.content)
+            
+            if response.status_code == 200:
+                self.path = f"c:/src/mud_images/rooms"
+                full_path = f"{self.path}/{room_image_name}"            
+                if os.path.exists(full_path):
+                    os.remove(full_path)
+                    
+                with open(full_path, "wb") as f:
+                    f.write(response.content)
 
-            # save the room image to the file 
-            with open("ai_rooms.txt", "a") as text_file:
-                text_file.write(room_image_name + "!!!" + room_description + "\n")
+                # save the room image to the file 
+                with open("ai_rooms.txt", "a") as text_file:
+                    text_file.write(room_image_name + "!!!" + room_description + "\n")
+            else:
+                room_image_name = "noimage.jpg"
+                if response.status_code == 402:
+                    LogUtils.warn("Stability API rate limit reached.", self.logger)
+                else:
+                    LogUtils.error(f"Non-200 response: {str(response.text)}", self.logger)
+       
+
         else:
             room_image_name = image_name
             

@@ -93,7 +93,7 @@ class TownSmee(Room):
                 id=2,
                 name=f"{self.name} - Sheriff's Office",
                 inside=True,
-                description="You are in the sheriff's office.  A locked cell is in the corner of the Room.  Currently, it is empty.",
+                description="You are in the sheriff's office.  A locked cell is in the corner of the Room.  Currently, it is empty.  A young bestraught woman is pleading and gusticulating to someone behind a small window.",
                 exits=[
                     {"direction": Room.dirs.east, "id": 11},  # sun road
                 ],
@@ -198,15 +198,91 @@ class TownSmee(Room):
             ),
             self.room_factory.add_room(
                 id=12,
-                name=f"{self.name} - Sun Road (South)---1",
+                name=f"{self.name} - Sun Road (South)---2",
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
                     {"direction": Room.dirs.north, "id": 0}, # town square
-                    {"direction": Room.dirs.east, "id": 5} # blacksmith
+                    {"direction": Room.dirs.south, "id": 13} # blacksmith
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
-            )
+            ),
+            self.room_factory.add_room(
+                id=13,
+                name=f"{self.name} - Sun Road (South)---2",
+                inside=False,
+                description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
+                exits=[
+                    {"direction": Room.dirs.north, "id": 12}, # town square
+                    {"direction": Room.dirs.south, "id": 14} # blacksmith
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),            
+            self.room_factory.add_room(
+                id=14,
+                name=f"{self.name} - Sun Road (South)---2",
+                inside=False,
+                description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
+                exits=[
+                    {"direction": Room.dirs.north, "id": 13},
+                    {"direction": Room.dirs.south, "id": 15} 
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
+            self.room_factory.add_room(
+                id=15,
+                name=f"{self.name} - Sun Road (South)---1",
+                inside=False,
+                description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
+                exits=[
+                    {"direction": Room.dirs.north, "id": 14},
+                    {"direction": Room.dirs.east, "id": 16} 
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
+            self.room_factory.add_room(
+                id=16,
+                name=f"{self.name} - Gallows Road (East)---1",
+                inside=False,
+                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together.  Trash litters each wall and there's a sweet rot almost to the eye.",
+                exits=[
+                    {"direction": Room.dirs.west, "id": 15},
+                    {"direction": Room.dirs.east, "id": 17}
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
+            self.room_factory.add_room(
+                id=17,
+                name=f"{self.name} - Gallows Road (East)---2",
+                inside=False,
+                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together.  Trash litters each wall and there's a sweet rot almost to the eye.",
+                exits=[
+                    {"direction": Room.dirs.west, "id": 16},
+                    {"direction": Room.dirs.east, "id": 18}
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
+            self.room_factory.add_room(
+                id=18,
+                name=f"{self.name} - The Gallows",
+                inside=False,
+                description=f"The road widens into a large gathering area.  Sets of gallow line the road.  A sign reads 'Next service in 3 days'.  Admission is free but donations are accepted.",
+                exits=[
+                    {"direction": Room.dirs.west, "id": 17},
+                    {"direction": Room.dirs.south, "id": 19}
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
+            self.room_factory.add_room(
+                id=19,
+                name=f"{self.name} - The Lower Quarter",
+                inside=False,
+                description=f"A gate with two guards stands before you. Each guard casually leans against halberds taller than they are.  The gate is open and the guards are pleasantly chatting with each other whilst a long line of weary towns folk await admission into the city.  A sign reads “1 copper entrance free. No exceptions.”",
+                exits=[
+                    {"direction": Room.dirs.north, "id": 18}
+                ],
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),            
         ]
         pass
     # self.rooms = self.rooms
