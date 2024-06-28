@@ -244,7 +244,7 @@ class TownSmee(Room):
                 id=16,
                 name=f"{self.name} - Gallows Road (East)---1",
                 inside=False,
-                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together.  Trash litters each wall and there's a sweet rot almost to the eye.",
+                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 15},
                     {"direction": Room.dirs.east, "id": 17}
@@ -255,7 +255,7 @@ class TownSmee(Room):
                 id=17,
                 name=f"{self.name} - Gallows Road (East)---2",
                 inside=False,
-                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together.  Trash litters each wall and there's a sweet rot almost to the eye.",
+                description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 16},
                     {"direction": Room.dirs.east, "id": 18}
