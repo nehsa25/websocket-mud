@@ -786,6 +786,13 @@ class WorldState(Utility):
             exits += available_exit["direction"][1] + ", "
         exits = exits[0 : len(exits) - 2]
 
+        # show npcs
+        npcs = ""
+        for npc in new_room.npcs:
+            npcs += npc.name + ", "
+        npcs = npcs[0 : len(npcs) - 2]
+        LogUtils.info(f"npcs in room: {npcs}", self.logger)
+
         # show monsters
         monsters = ""
         for monster in new_room.monsters:
@@ -805,7 +812,7 @@ class WorldState(Utility):
 
         # formulate message to client
         json_msg = MudEvents.RoomEvent(
-            new_room.name, description, items, exits, monsters, people
+            new_room.name, description, items, exits, monsters, people, npcs
         )
 
         LogUtils.debug(f"Sending json: {json_msg}", self.logger)

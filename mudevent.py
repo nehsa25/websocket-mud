@@ -72,8 +72,9 @@ class MudEvents:
         exits = []
         monsters = []
         people = []
+        npcs = []
 
-        def __init__(self, name, description, items, exits, monsters, people) -> None:
+        def __init__(self, name, description, items, exits, monsters, people,npcs) -> None:
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.ROOM
             )
@@ -83,6 +84,7 @@ class MudEvents:
             self.exits = exits
             self.monsters = monsters
             self.people = people
+            self.npcs = npcs
 
         def to_json(self):
             return jsonpickle.encode(self)

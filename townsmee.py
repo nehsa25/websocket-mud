@@ -1,3 +1,4 @@
+from copy import deepcopy
 import inspect
 import random
 from items import Items
@@ -16,35 +17,37 @@ class TownSmeeUnitFactory:
     units = []
     logger = None
 
-    def __init__(self, rooms, logger):
+    def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger)
+        LogUtils.debug(
+            f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger
+        )
         self.utility = Utility(self.logger)
         self.unit_factory = Unit(self.logger)
-        
+
         # NPC characters of the town of Smee
-        sheriff = self.unit_factory.generate_unit(
+        self.sheriff = deepcopy(self.unit_factory.generate_unit(
             title="Sheriff",
             name=self.utility.generate_name(),
             hp=250,
             strength=10,
             agility=30,
-            description="The sheriff of Town Smee.  The sheriff is a slender, man with a mustache.  He has a menacing cudgel at his waist.",
-            perception=250
-        )
-        self.units.append(sheriff)
-        
-        inn_keeper = self.unit_factory.generate_unit(
-            title= "",
-            name= "Jared the Inn-keeper",
+            description="The sheriff of Town Smee. The sheriff is a slender, man with a mustache. The sheriff is wearing an unsightly but practical bear cloak across his shoulders to stave off the rain. He has a menacing cudgel at his waist and smiles showing oddly white teeth when he notices you look at it.",
+            perception=250,
+        ))
+        self.units.append(self.sheriff)
+
+        self.inn_keeper = deepcopy(self.unit_factory.generate_unit(
+            title="",
+            name="Jared the Inn-keeper",
             hp=250,
             strength=10,
             agility=30,
             description="""A slightly obese man with short blonde hair and a sickly pale face. Jared is well beloved by the residents of town Smee, for his charming stories and friendly demeaner. Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron.  Jared smiles at you welcomely when you look at him.""",
-            perception=250
-        )        
-        self.units.append(inn_keeper)
+            perception=250,
+        ))
+        self.units.append(self.inn_keeper)
 
 class TownSmee(Room):
     monsters = None
@@ -57,11 +60,11 @@ class TownSmee(Room):
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
-        self.logger = logger        
+        self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing TownSmee() class", self.logger)
         self.monster_saturation = 0.1
         self.room_factory = RoomFactory(self.logger)
-        self.units = TownSmeeUnitFactory(self.rooms, logger)
+        self.units = TownSmeeUnitFactory(logger)
         self.rooms = [
             self.room_factory.add_room(
                 id=0,
@@ -69,27 +72,27 @@ class TownSmee(Room):
                 inside=False,
                 description="You are in the town square of the Town of Smee.  It's a large open cobblestone area with a bronze water fountain.  The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc.  There's a festive feeling to the area and people and wagons move with purpose in all directions.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 9},  # moon road
-                    {"direction": Room.dirs.east, "id": 10},  # moon road
-                    {"direction": Room.dirs.south, "id": 12},  
-                    {"direction": Room.dirs.north, "id": 11},  # sun road
+                    {"direction": Room.dirs.west, "id": 9},  # moon road w
+                    {"direction": Room.dirs.east, "id": 10},  # moon road e
+                    {"direction": Room.dirs.north, "id": 11},  # sun road n
+                    {"direction": Room.dirs.south, "id": 12},  # sun road s
                 ],
                 items=[Items.helmet, Items.stick, Items.maul],
                 monsters=[],
-                environment=Utility.Share.EnvironmentTypes.TOWNSMEE
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
             self.room_factory.add_room(
                 id=1,
                 name=f"{self.name} - Inn",
                 inside=True,
-                description= "You find yourself within a majestic inn.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books and a prized map of the town and surrounding area stands on display but it is sealed behind glass to prevent touching.",
+                description="You find yourself within a majestic inn.  A worn, well-kept fireplace burned softly in the corner.  There's a shelf with a small assortment of books and a prized map of the town and surrounding area stands on display but it is sealed behind glass to prevent touching.",
                 exits=[
                     {"direction": Room.dirs.south, "id": 9},
                     {"direction": Room.dirs.up, "id": 3},
                 ],
                 npcs=[self.units.inn_keeper],
-                environment=Utility.Share.EnvironmentTypes.TOWNSMEE
-            ),            
+                environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+            ),
             self.room_factory.add_room(
                 id=2,
                 name=f"{self.name} - Sheriff's Office",
@@ -107,7 +110,7 @@ class TownSmee(Room):
                 inside=True,
                 description="You are on the second floor of the inn. Rooms line the hallway.",
                 exits=[
-                    {"direction": Room.dirs.up, "id": 4}, # inn, third floor
+                    {"direction": Room.dirs.up, "id": 4},  # inn, third floor
                     {"direction": Room.dirs.down, "id": 1},  # inn, first floor
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
@@ -153,7 +156,7 @@ class TownSmee(Room):
                     {"direction": Room.dirs.north, "id": 10},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
-            ),            
+            ),
             self.room_factory.add_room(
                 id=8,
                 name=f"{self.name} - Armoury",
@@ -163,7 +166,7 @@ class TownSmee(Room):
                     {"direction": Room.dirs.north, "id": 9},  # moon road
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
-            ),            
+            ),
             self.room_factory.add_room(
                 id=9,
                 name=f"{self.name} - Moon Road (West)---1",
@@ -182,8 +185,8 @@ class TownSmee(Room):
                 inside=False,
                 description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 0}, # town square
-                    {"direction": Room.dirs.south, "id": 7} # market
+                    {"direction": Room.dirs.west, "id": 0},  # town square
+                    {"direction": Room.dirs.south, "id": 7},  # market
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -193,18 +196,19 @@ class TownSmee(Room):
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.south, "id": 0} # town square
+                    {"direction": Room.dirs.west, "id": 2},  # sheriff's office
+                    {"direction": Room.dirs.south, "id": 0},  # town square
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
             self.room_factory.add_room(
                 id=12,
-                name=f"{self.name} - Sun Road (South)---2",
+                name=f"{self.name} - Sun Road (South)---1",
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.north, "id": 0}, # town square
-                    {"direction": Room.dirs.south, "id": 13} # blacksmith
+                    {"direction": Room.dirs.north, "id": 0},  # town square
+                    {"direction": Room.dirs.south, "id": 13},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -214,11 +218,11 @@ class TownSmee(Room):
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
-                    {"direction": Room.dirs.north, "id": 12}, # town square
-                    {"direction": Room.dirs.south, "id": 14} # blacksmith
+                    {"direction": Room.dirs.north, "id": 12},  # town square
+                    {"direction": Room.dirs.south, "id": 14},  # blacksmith
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
-            ),            
+            ),
             self.room_factory.add_room(
                 id=14,
                 name=f"{self.name} - Sun Road (South)---2",
@@ -226,7 +230,7 @@ class TownSmee(Room):
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
                     {"direction": Room.dirs.north, "id": 13},
-                    {"direction": Room.dirs.south, "id": 15} 
+                    {"direction": Room.dirs.south, "id": 15},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -237,7 +241,7 @@ class TownSmee(Room):
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
                     {"direction": Room.dirs.north, "id": 14},
-                    {"direction": Room.dirs.east, "id": 16} 
+                    {"direction": Room.dirs.east, "id": 16},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -248,7 +252,7 @@ class TownSmee(Room):
                 description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 15},
-                    {"direction": Room.dirs.east, "id": 17}
+                    {"direction": Room.dirs.east, "id": 17},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -259,7 +263,7 @@ class TownSmee(Room):
                 description=f"The road is more an alley than main thoroughfare.  The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 16},
-                    {"direction": Room.dirs.east, "id": 18}
+                    {"direction": Room.dirs.east, "id": 18},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -270,7 +274,7 @@ class TownSmee(Room):
                 description=f"The road widens into a large gathering area.  Sets of gallow line the road.  A sign reads 'Next service in 3 days'.  Admission is free but donations are accepted.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 17},
-                    {"direction": Room.dirs.south, "id": 19}
+                    {"direction": Room.dirs.south, "id": 19},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
@@ -279,12 +283,11 @@ class TownSmee(Room):
                 name=f"{self.name} - The Lower Quarter",
                 inside=False,
                 description=f"A gate with two guards stands before you. Each guard casually leans against halberds taller than they are.  The gate is open and the guards are pleasantly chatting with each other whilst a long line of weary towns folk await admission into the city.  A sign reads “1 copper entrance free. No exceptions.”",
-                exits=[
-                    {"direction": Room.dirs.north, "id": 18}
-                ],
+                exits=[{"direction": Room.dirs.north, "id": 18}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
-            ),            
+            ),
         ]
         pass
+
     # self.rooms = self.rooms
     # self.units = self.units

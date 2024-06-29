@@ -37,7 +37,7 @@ class Mud(Utility):
         
         # session state
         self.world_state = WorldState(self.world.environments.all_rooms, self.logger)
-        
+
         # populate monsters
         self.world_state.all_room_definitions = self.world.environments.populate_monsters(self.world)
         self.monsters = [room for room in self.world_state.all_room_definitions]
