@@ -114,7 +114,7 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
-    async def process_direction(self, wanted_direction, player, world):
+    async def process_direction(self, wanted_direction, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)   
 
@@ -135,24 +135,24 @@ class Commands(Utility):
             await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'][1].lower()}."), player.websocket)
             
             # Update users you've left
-            for p in world.players.players:
+            for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'][1].lower()}."), p.websocket)
 
             # update location
-            player, world = await world.environments.move_room(new_room_id, player, world)
+            world_state = await world_state.move_room_player(new_room_id, player)
 
             # render new room
-            await player.room.process_room(player, world, look_location_id=new_room_id)
+            await world_state.show_room(player, look_location_id=new_room_id)
             
             # your combat will end but the monster/other players shouldn't
             if player.in_combat:
-                await player.break_combat(world.rooms.rooms, self.logger)
+                await player.break_combat(world_state.rooms.rooms, self.logger)
             
             # send message to any players in same room that you're arriving at
-            for p in world.players.players:
+            for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:
@@ -167,17 +167,18 @@ class Commands(Utility):
             await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
             await player.room.alert(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", exclude_player=True, player=player)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
-        return player, world
+        return player, world_state
 
     # doesn't return anything, just sends messages
-    async def process_look_direction(self, command, player, world):
+    async def process_look_direction(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_direction = command.split(" ", 1)[1].lower()
         valid_direction = False
+        room = await world_state.get_room(player.room.id)
 
         # check if it's a valid direction in the room
-        for avail_exit in world.environments.all_rooms[player.room.id].exits:
+        for avail_exit in room.exits:
             if (
                 wanted_direction == avail_exit["direction"][0].lower()
                 or wanted_direction == avail_exit["direction"][1].lower()
@@ -189,13 +190,13 @@ class Commands(Utility):
             await self.send_message(MudEvents.InfoEvent(f"You look to the {wanted_direction}."), player.websocket)
             
             # send message to any players in same room
-            for p in world.players.players:
+            for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:                    
                     await self.send_message(MudEvents.InfoEvent(f"You notice {player.name} looking to the {wanted_direction}."), p.websocket)
 
-            player, world = await player.room.process_room(player, world, look_location_id=avail_exit["id"])
+            await world_state.show_room(player, look_location_id=avail_exit["id"])
         else:
             for direction in MudDirections.pretty_directions:
                 if (
@@ -206,22 +207,22 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # doesn't return anything, just sends messages
-    async def process_look(self, player, world):
+    async def process_look(self, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)   
         await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
 
         # send message to any players in same room that you left
-        for p in world.players.players:
+        for p in world_state.players.players:
             if player.name == p.name:
                 continue
             if p.location_id == player.room.id:
                 await self.send_message(MudEvents.InfoEvent(f"{player.name} looks around the room."), p.websocket)
-        player, world = await player.room.process_room(player, world)
+        await world_state.show_room(player)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
-    async def process_get(self, command, player, world):
+    async def process_get(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1].lower()
@@ -244,7 +245,7 @@ class Commands(Utility):
         if found_item == False:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot find {wanted_item}."), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
-        return player, world
+        return player, world_state
 
     # doesn't return anything, just sends messages
     async def process_inventory(self, player):
@@ -254,21 +255,21 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # doesn't return anything, just sends messages
-    async def process_search(self, player, world):
+    async def process_search(self, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         rand = random()
         success = rand < (player.perception / 100)
         if success == True:
-            if len(world.rooms.rooms[player.room.id].hidden_items) > 0:
-                for item in world.rooms.rooms[player.room.id].hidden_items:
+            if len(world_state.rooms.rooms[player.room.id].hidden_items) > 0:
+                for item in world_state.rooms.rooms[player.room.id].hidden_items:
                     await self.send_message(MudEvents.InfoEvent(f"You found {item.name}!"), player.websocket)
 
                     # remove from "hidden items"
-                    world.rooms.rooms[player.room.id].hidden_items.remove(item)
+                    world_state.rooms.rooms[player.room.id].hidden_items.remove(item)
 
                     # add to items in room
-                    world.rooms.rooms[player.room.id].items.append(item)
+                    world_state.rooms.rooms[player.room.id].items.append(item)
             else:
                 await self.send_message(MudEvents.InfoEvent("After an exhaustive search, you find nothing and give up."), player.websocket)
         else:
@@ -277,17 +278,17 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
-    async def process_drop(self, command, player, world):
+    async def process_drop(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1]
-        player, world = await self.command_utility.drop_item(
-            wanted_item, player, world
+        player, world_state = await self.command_utility.drop_item(
+            wanted_item, player, world_state
         )
         LogUtils.debug(f"{method_name}: exit", self.logger) 
-        return player, world
+        return player, world_state
 
-    async def process_hide_item(self, command, player, world):
+    async def process_hide_item(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_item = command.split(" ", 1)[1]
@@ -305,7 +306,7 @@ class Commands(Utility):
             # remove from inventory
             player.inventory.items.remove(item_obj)
             await self.send_message(MudEvents.InfoEvent(f"You hid {item_obj.name}."), player.websocket)
-            world.rooms.rooms[player.room.id].hidden_items.append(item_obj)
+            world_state.rooms.rooms[player.room.id].hidden_items.append(item_obj)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"You aren't carrying {wanted_item} to hide."), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
@@ -337,7 +338,7 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
-    async def process_system_command(self, command, extra, player, world):
+    async def process_system_command(self, command, extra, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_command = command.split(" ")
@@ -351,8 +352,8 @@ class Commands(Utility):
             player.name = request
             
             # check if user already in system (they should be)
-            world = await world.players.unregister(player, world, change_name=True)
-            player, world = await world.players.register(player, world)  
+            world_state = await world_state.players.unregister(player, world_state, change_name=True)
+            player, world_state = await world_state.players.register(player, world_state)  
             await self.send_message(MudEvents.InfoEvent(f"You are now known as {player.name}"), player.websocket)    
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
@@ -382,11 +383,11 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
-    async def process_attack_mob(self, command, player, world):        
+    async def process_attack_mob(self, command, player, world_state):        
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
-        room = world.rooms.rooms[player.room.id]
+        room = world_state.rooms.rooms[player.room.id]
 
         # att skeleton
         wanted_monster = command.split(" ", 1)[1].lower()  # wanted_monster == skeleton
@@ -404,7 +405,7 @@ class Commands(Utility):
 
         if current_monster != None:
             if player.in_combat == None:
-                for p in world.rooms.rooms[player.room.id].players:
+                for p in world_state.rooms.rooms[player.room.id].players:
                     if p.name == player.name:
                         await self.send_message(MudEvents.InfoEvent(f"You begin to attack {current_monster.name}!"), p.websocket)
                         p.in_combat = current_monster
@@ -412,7 +413,7 @@ class Commands(Utility):
                         await self.send_message(MudEvents.InfoEvent(f"{player.name} begins to attack {current_monster.name}!"), p.websocket)
 
                 # if you die and go to the crypt then your room id will change..
-                while current_monster.hitpoints > 0 and player.room.id == world.rooms.rooms[player.room.id].id:
+                while current_monster.hitpoints > 0 and player.room.id == world_state.rooms.rooms[player.room.id].id:
                     # determine attack damage
                     attack_potential = player.weapon.damage_potential
 
@@ -434,7 +435,7 @@ class Commands(Utility):
                         damage_multipler = randint(0, damage_potential)
                         damage += dice * damage_multipler * player.strength
 
-                    for p in world.rooms.rooms[player.room.id].players:
+                    for p in world_state.rooms.rooms[player.room.id].players:
                         response = ""
                         if player.name == p.name:
                             if damage == 0:
@@ -460,9 +461,9 @@ class Commands(Utility):
 
                     if current_monster.hitpoints <= 0:
                         # set monster as dead
-                        await current_monster.kill(world.rooms.rooms[player.room.id], self.logger)
+                        await current_monster.kill(world_state.rooms.rooms[player.room.id], self.logger)
 
-                        for p in world.rooms.rooms[player.room.id].players:
+                        for p in world_state.rooms.rooms[player.room.id].players:
                             if p.in_combat == current_monster:
                                 # give experience
                                 p.experience += current_monster.experience
@@ -475,7 +476,7 @@ class Commands(Utility):
                                 p.in_combat = None
 
                                 # show room
-                                player, world = await player.room.process_room(player, world)
+                                await world_state.show_room(player)
 
                         # add (Dead) to monster
                         current_monster.name = f"{current_monster.name} (Dead)"
@@ -485,18 +486,18 @@ class Commands(Utility):
                 await self.send_message(MudEvents.ErrorEvent(f"You cannot attack {current_monster.name}.  You are already in combat with {player.in_combat.name}."), player.websocket)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"{wanted_monster} is not a valid attack target."), player.websocket)
-        world.rooms.rooms[player.room.id].monsters = room_monsters
+        world_state.rooms.rooms[player.room.id].monsters = room_monsters
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
-    async def process_loot(self, command, player, world):
+    async def process_loot(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         wanted_monster = command.split(" ", 1)[1]  # loot skeleton
 
         # see if this monster is in the room.
         current_monster = None
-        for monster in world.rooms.rooms[player.room.id].monsters:
+        for monster in world_state.rooms.rooms[player.room.id].monsters:
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(" ")
             for name in monster_name_parts:
@@ -518,7 +519,7 @@ class Commands(Utility):
                     await self.send_message(MudEvents.InfoEvent(msg), player.websocket)
 
                     # alert the rest of the room
-                    for room_player in world.rooms.rooms[player.room.id].players:
+                    for room_player in world_state.rooms.rooms[player.room.id].players:
                         if room_player.websocket != player.websocket:
                             await self.send_message(MudEvents.InfoEvent(f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."), room_player.websocket)
 
@@ -529,23 +530,23 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
-    async def process_who(self, player, world):
+    async def process_who(self, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         players = ""
-        for player in world.players.players:
+        for player in world_state.players.players:
             players += f"{player.name}<br>"
 
         await self.send_message(MudEvents.AnnouncementEvent(f"Players Online:<br>{players}"), player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
         return player
 
-    async def process_comms(self, command, player, world):
+    async def process_comms(self, command, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         if command.startswith("/say "):
             msg = command.split(" ", 1)[1]
-            for p in world.players.players:
+            for p in world_state.players.players:
                 if p.name == player.name:
                     await self.send_message(MudEvents.CommandEvent(f'You say "{msg}"'), p.websocket)
                 else:
@@ -558,7 +559,7 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit") 
         return player
 
-    async def process_rest(self, player, world):
+    async def process_rest(self, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         monsters_in_room = len(player.room.monsters)
@@ -573,13 +574,13 @@ class Commands(Utility):
             player.is_resting = True
 
         # press enter (refresh the room)
-        player, world = await player.room.process_room(player, world)
+        await world_state.show_room(player)
         
         LogUtils.debug(f"{method_name}: exit", self.logger) 
-        return  player, world
+        return  player, world_state
     
     # main function that runs all the rest
-    async def run_command(self, command, player, world, extra = ""):
+    async def run_command(self, command, player, world_state, extra = ""):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
         LogUtils.debug(f'Command: "{command}"', self.logger)
@@ -594,45 +595,45 @@ class Commands(Utility):
 
         # process each command
         if command == "":
-            player = await player.room.process_room(player, world)
+            await world_state.show_room(player)
         elif command == "help":  # display help
             player = await self.process_help(player)
         elif command in MudDirections.directions:  # process direction
-            player = await self.process_direction(command, player, world)
+            player = await self.process_direction(command, player, world_state)
         elif command == "l" or command == "look":  # look
-            player = await self.process_look(player, world)
+            player = await self.process_look(player, world_state)
         elif command.startswith("l ") or command.startswith("look "):  # look <direction>
-            player = await self.process_look_direction(command, player, world)
+            player = await self.process_look_direction(command, player, world_state)
         elif command.startswith("g ") or command.startswith("get "):  # get
-            player = await self.process_get(command, player, world)
+            player = await self.process_get(command, player, world_state)
         elif command == "i" or command == "inv" or command == "inventory":  # inv
             player = await self.process_inventory(player)
         elif command == "sea" or command == "search":  # search
-            player = await self.process_search(player, world)
+            player = await self.process_search(player, world_state)
         elif command.startswith("dr ") or command.startswith("drop "):  # drop
             player = await self.process_drop(command, player)
         elif command.startswith("hide ") or command.startswith("stash "):  # hide
-            player = await self.process_hide_item(command, player, world)
+            player = await self.process_hide_item(command, player, world_state)
         elif command.startswith("eq ") or command.startswith("equip "):  # eq
             player = await self.process_equip_item(command, player)
         elif command.startswith("system "):  # a system command like changing username
-            player = await self.process_system_command(command, extra, player, world)
+            player = await self.process_system_command(command, extra, player, world_state)
         elif command == "stat":  # stat
             player = await self.process_stat(player)
         elif (command.startswith("a ")  or command.startswith("att ") or command.startswith("attack ")):  # attack
             asyncio.create_task(
-                self.process_attack_mob(command, player, world)
+                self.process_attack_mob(command, player, world_state)
             )
         elif command == ("exp") or command == ("experience"):  # experience
             player = await self.process_exp(player)
         elif command.startswith("loot "):  # loot corpse
-            player = await self.process_loot(command, player, world)
+            player = await self.process_loot(command, player, world_state)
         elif command == ("who"):
-            player = await self.process_who(player, world)
+            player = await self.process_who(player, world_state)
         elif command.startswith("/"):
-            player = await self.process_comms(command, player, world)
+            player = await self.process_comms(command, player, world_state)
         elif command == "rest":
-             player, world = await self.process_rest(player, world)
+             player, world_state = await self.process_rest(player, world_state)
         else:  # you're going to say it to the room..
             await self.send_message(MudEvents.ErrorEvent(f'"{command}" is not a valid command.'), player.websocket)
 

@@ -10,10 +10,13 @@ from mudevent import MudEvents
 from sysargs_utils import SysArgs
 from utility import Utility
 from world import World
+from world_state import WorldState
+
 
 class Mud(Utility):
     logger = None
     world = None
+    world_state = None
     admin = None
     command = None
     utility = None
@@ -21,17 +24,32 @@ class Mud(Utility):
     CHECK_FOR_MONSTERS_SECS = 2
     DEATH_RESPAWN_ROOM = 5
     REST_WAIT_SECS = 7
+    monsters = []
+    total_monsters = 0
 
     def __init__(self, logger) -> None:
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Mud() class", logger)
-        self.world = World(Utility.Share.WORLD_NAME, self.logger)
+        
+        
+        self.world = World(self.logger)
+        
+        # session state
+        self.world_state = WorldState(self.world.environments.all_rooms, self.logger)
+        
+        # populate monsters
+        self.world_state.all_room_definitions = self.world.environments.populate_monsters(self.world)
+        self.monsters = [room for room in self.world_state.all_room_definitions]
+        self.total_monsters = len(self.monsters)
+        LogUtils.info(f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}", self.logger)
 
     async def exit_handler(self, signal, frame):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        LogUtils.info(f"{method_name}: An exit signal as been received.  Exiting!", self.logger)
+        LogUtils.info(
+            f"{method_name}: An exit signal as been received.  Exiting!", self.logger
+        )
         # exit stuff..
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
@@ -41,22 +59,26 @@ class Mud(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # register client websockets - runs onces each time a new person starts
-        await self.world.players.new_user(self.world, websocket)
+        self.world_state = await self.world_state.players.new_user(self.world_state, websocket)
 
         player = None
         try:
             # enter our player input loop
             while True:
                 # get current user
-                player = await self.world.players.get_player(websocket)
-                
-                for p in self.world.players.players:
+                player = await self.world_state.players.get_player(websocket)
+
+                for p in self.world_state.players.players:
                     # set inventory for refresh
                     await p.send_inventory()
 
                     # send updated hp
                     await p.send_health()
+
+                for m in self.world_state.monsters.monsters:
+                    asyncio.gather(await m.respawn(self.world_state), await m.check_for_combat(self.world_state), await m.wander(self.world_state))
                     
+
                 # wait for a command to be sent
                 LogUtils.info(f"Waiting for command...", self.logger)
                 message = await websocket.recv()
@@ -71,12 +93,12 @@ class Mud(Utility):
                         extra_data = msg_obj["extra"]
 
                     await self.world.commands.run_command(
-                        msg_obj["cmd"], player, self.world, extra_data
+                        msg_obj["cmd"], player, self.world_state, extra_data
                     )
                 else:
                     LogUtils.error(f"Received unknown message: {message}", self.logger)
         except websockets.ConnectionClosedOK:
-            LogUtils.warn(f"Someone left..", logger)
+            LogUtils.warn(f"Someone left. We're going to move on.", logger)
         except KeyboardInterrupt:
             loop.stop()
         except:
@@ -85,17 +107,18 @@ class Mud(Utility):
             )
         finally:
             if player is not None:
-                await self.world.players.unregister(player, self.world, False)
+                await self.world_state.players.unregister(player, self.world_state, False)
 
         LogUtils.debug(f"{method_name}: Done Done.", self.logger)
-        
+
+
 if __name__ == "__main__":
     try:
         # logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="d:\\src\\mud", logger_name='websockets')
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
+            console_level=Level.INFO,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)
@@ -128,7 +151,7 @@ if __name__ == "__main__":
         loop = asyncio.get_event_loop()
         loop.run_until_complete(start_server)
         loop.run_forever()
-        
+
         # start worldevent loop
         event_loop = asyncio.get_event_loop()
         event_loop.run_until_complete(m.world.world_events.setup_world_events())

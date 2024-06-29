@@ -55,7 +55,7 @@ class Utility(MudEvents):
             WINTER = 4
            
     logger = None
-    rooms = None
+    # rooms = None <-- need this?
 
     def __init__(self, logger) -> None:
         self.logger = logger

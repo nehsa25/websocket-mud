@@ -1,4 +1,5 @@
 import inspect
+import random
 from items import Items
 from log_utils import LogUtils
 from monsters import Monsters
@@ -58,8 +59,8 @@ class TownSmee(Room):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger        
         LogUtils.debug(f"{method_name}: Initializing TownSmee() class", self.logger)
+        self.monster_saturation = 0.1
         self.room_factory = RoomFactory(self.logger)
-        self.monsters = Monsters(self.logger)
         self.units = TownSmeeUnitFactory(self.rooms, logger)
         self.rooms = [
             self.room_factory.add_room(
@@ -74,7 +75,7 @@ class TownSmee(Room):
                     {"direction": Room.dirs.north, "id": 11},  # sun road
                 ],
                 items=[Items.helmet, Items.stick, Items.maul],
-                monsters=[self.monsters.undead.get_monster(monster_type=Monsters.Monsters.SKELETON, room_id=0)],
+                monsters=[],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE
             ),
             self.room_factory.add_room(

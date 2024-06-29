@@ -10,6 +10,7 @@ class SpecialAttributes:
     Stealth = False
     SuperNaturalStealth = False
     Slow = False
+    telepathic = False # ability to use /telepath among other things.  Items will grant telepathy as well.
 
     def SetAttributes(
         self,
@@ -21,7 +22,8 @@ class SpecialAttributes:
         stealth=False,
         superNaturalStealth=False,
         slow=False,
-        alignment=False
+        alignment=False,
+        telepathic=False,
     ):
         self.NightVision = nightVision
         self.HeightenedSmell = heightenedSmell
@@ -32,6 +34,7 @@ class SpecialAttributes:
         self.SuperNaturalStealth = superNaturalStealth
         self.Slow = slow
         self.alignments = alignment
+        self.telepathic = telepathic
 
 
 class Race:
@@ -76,6 +79,15 @@ class Races:
         agility=0,
         perception=0,
         specialattributes=attributes.SetAttributes(),
+    ),
+    earea = Race(
+        "Earea",
+        "A hive-mind race of small otherworldly creatures.  They are telepathic and can communicate with each other over great distances.",
+        hp=0,
+        strength=0,
+        agility=0,
+        perception=0,
+        specialattributes=attributes.SetAttributes(stealth=True, telepathic=True),
     )
     halforc = Race(
         "Half-Orc",

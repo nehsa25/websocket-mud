@@ -28,13 +28,13 @@ class AIImages(Utility):
             seed += ord(letter[1])
         return seed
 
-    async def generate_room_image(self, room_image_name, room_description, inside, player, world):
+    async def generate_room_image(self, room_image_name, room_description, inside, player, world_state):
         image_name = ""        
         room_description = room_description.strip()
         
         # update rooms description with weather
         if not inside:
-            room_description = world.world_events.weather.add_weather_description(room_description)
+            room_description = world_state.world_events.weather.add_weather_description(room_description)
             
         # get already generated rooms
         with open("ai_rooms.txt", "r") as text_file:

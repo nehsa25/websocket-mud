@@ -20,10 +20,10 @@ class Map(Utility):
         LogUtils.debug(f"{method_name}: Initializing Map() class", logger)
         self.logger = logger
 
-    async def sanitize_svg_output(self, map_output, environment_name, world, ImageSize=ImageSize.LARGE):
+    async def sanitize_svg_output(self, map_output, area_identifier, ImageSize=ImageSize.LARGE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        area_identifier = world.environments.get_area_identifier(environment_name)
+
         if ImageSize == ImageSize.MINI:
             map_output = re.sub('width="\d*pt"', 'width="200pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)   
@@ -38,7 +38,7 @@ class Map(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
 
-    async def generate_map(self, room, image_name, player, world, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
+    async def generate_map(self, room, image_name, player, rooms, area_identifier, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.graph = pydot.Dot(
@@ -72,7 +72,7 @@ class Map(Utility):
             os.remove(image_name)
 
         # get rooms
-        rooms = [a for a in world.environments.all_rooms if a.environment == environment]
+        rooms = [a for a in rooms if a.environment == environment]
  
         # generate map
         count = 0
@@ -107,21 +107,22 @@ class Map(Utility):
 
         # clean it up
         with open(full_path + extension, "r") as text_file:
+           
             contents = text_file.read()
 
             # mini-map
             with open(f"{full_path}_mini{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.MINI)
+                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.MINI)
                 final_text_file.write(main)
                 
             # small
             with open(f"{full_path}_small{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.SMALL)
+                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.SMALL)
                 final_text_file.write(main)
                                       
             # map
             with open(f"{full_path}{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, environment, world, Map.ImageSize.LARGE)
+                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.LARGE)
                 final_text_file.write(main)              
 
         # send map event

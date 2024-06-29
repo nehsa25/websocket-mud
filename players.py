@@ -19,15 +19,15 @@ class Players(Utility):
         LogUtils.debug("Initializing Players() class", self.logger)
 
     # used to update webpage on user count
-    async def update_website_users_online(self, world):
+    async def update_website_users_online(self, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        get_client_event = world.players.GetClientEvent(len(self.players))
+        get_client_event = world_state.players.GetClientEvent(len(self.players))
         for player in self.players:
             await self.send_message(get_client_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
-    async def register(self, player, world):
+    async def register(self, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, player: {player.name}", self.logger)
 
@@ -38,10 +38,10 @@ class Players(Utility):
                 f"Name ({matching_players[0].name}) is already taken, requesting a different one..",
                 self.logger,
             )
-            await self.new_user(world, player.websocket, dupe=True)
+            await self.new_user(world_state, player.websocket, dupe=True)
 
         self.players.append(player)
-        await self.update_website_users_online(world)
+        await self.update_website_users_online(world_state)
 
         # send msg to everyone
         for p in self.players:
@@ -56,10 +56,10 @@ class Players(Utility):
                 )
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
-        return player, world
+        return player, world_state
 
     # calls at the beginning of the connection.  websocket connection here is the real connection
-    async def new_user(self, world, websocket, dupe=False):
+    async def new_user(self, world_state, websocket, dupe=False):
         try:
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(
@@ -77,7 +77,7 @@ class Players(Utility):
                 await self.send_message(MudEvents.DuplicateNameEvent(), websocket)
             else:
                 await self.send_message(
-                    MudEvents.UsernameRequestEvent(world.world_name), websocket
+                    MudEvents.UsernameRequestEvent(Utility.Share.WORLD_NAME), websocket
                 )
             LogUtils.info(f"Awaiting client name response from client..", self.logger)
             msg = await websocket.recv()
@@ -107,36 +107,35 @@ class Players(Utility):
             if request["type"] == MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.USERNAME_ANSWER
             ):
-                await self.register(player, world)
+                await self.register(player, world_state)
 
-                # show room
-                player, world = await world.environments.move_room(
-                    player.location_id, player, world
-                )
+                # moe player to initial room
+                world_state = await world_state.move_room_player(player.location_id, player)
             else:
                 raise Exception(f"Shananigans? received request: {request['type']}")
 
             LogUtils.debug(f"{method_name}: exit", self.logger)
+            return world_state
         except ConnectionClosedOK:
             LogUtils.warn(f"ConnectionClosedOK ({player.name} left).", self.logger)
         except Exception as e:
             raise Exception(f"An error occurred during new_user(): {e}")
 
     # called when a client disconnects
-    async def unregister(self, player, world, change_name=False):
+    async def unregister(self, player, world_state, change_name=False):
         LogUtils.debug(f"unregister: enter, player: {player.name}", self.logger)
         LogUtils.debug(f"self.players count: {len(self.players)}", self.logger)
         self.players = [i for i in self.players if not i.websocket == player.websocket]
-        await self.update_website_users_online(world)
+        await self.update_website_users_online(world_state)
 
         # let folks know someone left
         if change_name:
-            await world.alert_world(
-                f"{player.name} is changing their name..", world, player=player
+            await world_state.alert_world(
+                f"{player.name} is changing their name..", player=player
             )
         else:
-            await world.alert_world(
-                f"{player.name} left the game.", world, player=player
+            await world_state.alert_world(
+                f"{player.name} left the game.", player=player
             )
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
