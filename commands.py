@@ -5,7 +5,6 @@ from random import random, randint
 # my stuff
 from log_utils import LogUtils
 from mudevent import MudEvents
-from room import MudDirections
 from utility import Utility
 
 class Commands(Utility):
@@ -157,7 +156,7 @@ class Commands(Utility):
                     continue
                 if p.location_id == player.room.id:
                     opp_direction = None
-                    for opp_dir in MudDirections.opp_directions:
+                    for opp_dir in self.Share.MudDirections.opp_directions:
                         if avail_exit["direction"] == opp_dir[0]:
                             opp_direction = opp_dir[1]
                         if avail_exit["direction"] == opp_dir[1]:
@@ -170,13 +169,12 @@ class Commands(Utility):
         return player, world_state
 
     # doesn't return anything, just sends messages
-    async def process_look_direction(self, command, player, world_state):
+    async def process_look_direction(self, wanted_direction, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)    
-        wanted_direction = command.split(" ", 1)[1].lower()
         valid_direction = False
         room = await world_state.get_room(player.room.id)
-
+        
         # check if it's a valid direction in the room
         for avail_exit in room.exits:
             if (
@@ -187,7 +185,7 @@ class Commands(Utility):
                 break
 
         if valid_direction == True:
-            await self.send_message(MudEvents.InfoEvent(f"You look to the {wanted_direction}."), player.websocket)
+            await self.send_message(MudEvents.InfoEvent(f"You look to the {Utility.Share.MudDirections.get_friendly_name(wanted_direction)}."), player.websocket)
             
             # send message to any players in same room
             for p in world_state.players.players:
@@ -198,7 +196,7 @@ class Commands(Utility):
 
             await world_state.show_room(player, look_location_id=avail_exit["id"])
         else:
-            for direction in MudDirections.pretty_directions:
+            for direction in self.Share.MudDirections.pretty_directions:
                 if (
                     wanted_direction.lower() == direction[0].lower()
                     or wanted_direction.lower() == direction[1].lower()
@@ -207,13 +205,33 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # doesn't return anything, just sends messages
-    async def process_look(self, player, world_state):
+    async def process_look(self, wanted_direction, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)   
-        await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
+        LogUtils.debug(f"{method_name}: enter, direction: {wanted_direction}", self.logger)   
+        if len(wanted_direction.split(" ", 1)) > 1:
+            wanted_direction = wanted_direction.split(" ", 1)[1].lower()
+        
+        # do we just want to look around the room?
+        if wanted_direction == "l" or wanted_direction == "look":
+            await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
+            await world_state.show_room(player)
+            
+            # send message to any players in same room that you're being suspicious
+            await player.room.alert(f"You notice {player.name} gazing around the room.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
 
-        # send message to any players in same room that you're being suspicious
-        await player.room.alert(f"You notice {player.name} gazing around the room.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
+        # are we looking in a direction?
+        elif self.is_valid_look_direction(wanted_direction):
+            await self.process_look_direction(wanted_direction, player, world_state)
+        # are we looking at a player?
+        elif wanted_direction == player.name.lower():
+            msg = await player.get_player_description()
+            await self.send_message(
+                MudEvents.RestEvent(msg, is_resting=False),
+                player.websocket,
+            )
+        else:            
+            await self.send_message(MudEvents.ErrorEvent(f"{wanted_direction} is not a valid direction to look."), player.websocket)
+        
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
@@ -593,12 +611,12 @@ class Commands(Utility):
             await world_state.show_room(player)
         elif command == "help":  # display help
             player = await self.process_help(player)
-        elif command in MudDirections.directions:  # process direction
+        elif command in self.Share.MudDirections.directions:  # process direction
             player = await self.process_direction(command, player, world_state)
-        elif command == "l" or command == "look":  # look
-            player = await self.process_look(player, world_state)
-        elif command.startswith("l ") or command.startswith("look "):  # look <direction>
-            player = await self.process_look_direction(command, player, world_state)
+        
+        # a look command - could be at the room, a person, a monster, an item
+        elif command == "l" or command == "look" or command.startswith("l ") or command.startswith("look "):
+            player = await self.process_look(command, player, world_state)
         elif command.startswith("g ") or command.startswith("get "):  # get
             player = await self.process_get(command, player, world_state)
         elif command == "i" or command == "inv" or command == "inventory":  # inv

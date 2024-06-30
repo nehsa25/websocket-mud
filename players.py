@@ -1,5 +1,7 @@
 import inspect
 import json
+from random import randint
+import random
 from websockets import ConnectionClosedOK
 from inventory import Inventory
 from items import Items
@@ -83,21 +85,36 @@ class Players(Utility):
             msg = await websocket.recv()
             LogUtils.info(f"Message received: {msg}", self.logger)
             request = json.loads(msg)
-            hp = 50
-            strength = 3  # 0 - 30
-            agility = 3  # 0 - 30
-            location = 0
-            perception = 50
+            player_race = random.choice(list(Utility.Share.Races)).name
+            player_class = random.choice(list(Utility.Share.Classes)).name
+            player_intelligence = randint(1, 50)
+            player_hp = randint(1, 50)
+            player_strength = randint(1, 50)
+            player_agility = randint(1, 50)
+            player_location = randint(1, 10)
+            player_perception = randint(1, 50)
+            player_faith = randint(1, 50)
+            player_determination = randint(1, 50)
+            age = randint(1, 75)
+            pronoun = random.choice(["he", "she", "it"])
+            
             inventory = Inventory(
                 items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
             )
             player = Player(
                 name=request["username"],
-                hp=hp,
-                strength=strength,
-                agility=agility,
-                location_id=location,
-                perception=perception,
+                race=player_race,
+                pronoun=pronoun,
+                age=age,
+                player_class=player_class,
+                intelligence=player_intelligence,
+                hp=player_hp,
+                strength=player_strength,
+                agility=player_agility,
+                location_id=player_location,
+                perception=player_perception,
+                determination=player_determination,
+                faith=player_faith,
                 inventory=inventory,
                 ip=ip,
                 websocket=websocket,

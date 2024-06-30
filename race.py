@@ -59,17 +59,6 @@ class Race:
 
 
 class Races:
-    class RacesEnum(Enum):
-        HUMAN = 0,    
-        HALFORC = 1
-        KOBOLD = 2,
-        GOBLIN = 3,
-        HALFLING = 4,
-        HALFOGRE = 5,
-        FAE = 6,
-        SNAKEPERSON = 7,
-        ARGUNA = 8
-
     attributes = SpecialAttributes()
     human = Race(
         "Human",

@@ -14,13 +14,20 @@ class Player(Utility):
     utility = None
     name = None
     level = 1
+    faith = 0
+    age = 0
+    intelligence = 0
     hitpoints = 0
     max_hitpoints = 0
     location_id = 0
+    pronoun = ""
     strength = 0
     agility = 0
     perception = 0
+    determination = 0
     experience = 0
+    race = ""
+    player_class = ""
     is_resting = False
     in_combat = None
     weapon = Items.club
@@ -39,11 +46,18 @@ class Player(Utility):
         self,
         name,
         hp,
+        intelligence,
+        faith,
+        pronoun,
+        race,
+        determination,
+        player_class,
         strength,
         agility,
         location_id,
         perception,
         inventory,
+        age,
         ip,
         websocket,
         logger,
@@ -59,14 +73,197 @@ class Player(Utility):
         self.perception = perception
         self.inventory = inventory
         self.location_id = location_id
+        self.faith = faith
+        self.intelligence = intelligence
+        self.pronoun = pronoun
+        self.race = race
+        self.age = age
+        self.player_class = player_class
         self.ip = ip
         self.websocket = websocket
-
+        self.determination = determination
         if self.rest_task is None:
             self.rest_task = asyncio.create_task(self.check_for_resting())
 
         # if self.mob_attack_task is None:
         #     self.mob_attack_task = asyncio.create_task(self.check_for_new_attacks())
+
+
+    async def get_player_hitpoint_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        hitpoint_status = ""
+        if self.hitpoints < 10:
+            hitpoint_status = "frail"
+        elif self.hitpoints > 10 and self.hitpoints <= 20:
+            hitpoint_status = "weak"
+        elif self.hitpoints > 20 and self.hitpoints <= 30:
+            hitpoint_status = "average"
+        elif self.hitpoints > 30 and self.hitpoints <= 40:
+            hitpoint_status = "robust"
+        elif self.hitpoints > 40 and self.hitpoints <= 50:
+            hitpoint_status = "robust"
+        elif self.hitpoints > 50:
+            hitpoint_status = "robust, healthy"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return hitpoint_status
+
+    async def get_player_intelligence_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        intelligence = ""
+        if self.intelligence < 10:
+            intelligence = "dimwitted"
+        elif self.intelligence > 10 and self.intelligence <= 20:
+            intelligence = "slow"
+        elif self.intelligence > 20 and self.intelligence <= 30:
+            intelligence = "average"
+        elif self.intelligence > 30 and self.intelligence <= 40:
+            intelligence = "smart"
+        elif self.intelligence > 40 and self.intelligence <= 50:
+            intelligence = "intelligent"
+        elif self.intelligence > 50:
+            intelligence = "genius"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return intelligence
+
+    async def get_player_strength_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        physique = ""
+        if self.strength < 10:
+            physique = "punily"
+        elif self.strength > 10 and self.strength <= 20:
+            physique = "average"
+        elif self.strength > 20 and self.strength <= 30:
+            physique = "stout"
+        elif self.strength > 30 and self.strength <= 40:
+            physique = "solid"
+        elif self.strength > 40 and self.strength <= 50:
+            physique = "strong"
+        elif self.strength > 50:
+            physique = "godlike"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return physique
+
+    async def get_player_health_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        health_status = ""
+        hp_percent = self.max_hitpoints / self.hitpoints
+        if self.hitpoints == self.max_hitpoints:
+            health_status = "healthy"
+        elif hp_percent > .2 and hp_percent <= .5:
+            health_status = "severely wounded"
+        elif hp_percent > .5 and hp_percent <= .8:
+            health_status = "wounded"
+        elif hp_percent >= .8:
+            health_status = "slightly hurt"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return health_status
+
+    async def get_player_agility_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        agility = ""
+        if self.agility < 10:
+            agility = "sluggish"
+        elif self.agility > 10 and self.agility <= 20:
+            agility = "slow"
+        elif self.agility > 20 and self.agility <= 30:
+            agility = "poorly coordinated"
+        elif self.agility > 30 and self.agility <= 40:
+            agility = "average"
+        elif self.agility > 40 and self.agility <= 50:
+            agility = "quick"
+        elif self.agility > 50:
+            agility = "lightning fast"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return agility
+
+    async def get_player_determination_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        determination = ""
+        if self.determination < 10:
+            determination = "easily intimidated"
+        elif self.determination > 10 and self.determination <= 20:
+            determination = "nieve"
+        elif self.determination > 20 and self.determination <= 30:
+            determination = "focused"
+        elif self.determination > 30 and self.determination <= 40:
+            determination = "hyper focused"
+        elif self.determination > 40 and self.determination <= 50:
+            determination = "hyper focused"
+        elif self.determination > 50:
+            determination = "hyper focused"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return determination
+
+    async def get_player_perception_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        perception = ""
+        if self.perception < 10:
+            perception = "oblivious to their surroundings."
+        elif self.perception > 10 and self.perception <= 20:
+            perception = "moderately aware of their surroundings"
+        elif self.perception > 20 and self.perception <= 30:
+            perception = "actively aware of their surroundings"
+        elif self.perception > 30 and self.perception <= 40:
+            perception = "keenly aware of everything around them"
+        elif self.perception > 40 and self.perception <= 50:
+            perception = "hyper aware"
+        elif self.perception > 50:
+            perception = "vigilantly aware of everything around them"
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return perception
+
+    async def get_sex(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        sex = ""
+        if self.pronoun == "he":
+            sex = "male"
+        elif self.pronoun == "she":
+            sex = "female"
+        elif self.pronoun == "it":
+            sex = "it"            
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return sex
+
+    async def get_age(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        age = ""
+        if self.age <= 20:
+            age = "young"
+        elif self.age > 20 and self.age <= 50:
+            age = "middle aged"
+        elif self.age > 50:
+            age = "old"
+        return age
+
+    async def get_player_description(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        age = await self.get_age()
+        sex = await self.get_sex()
+        hitpoint_status = await self.get_player_hitpoint_description()
+        intelligence = await self.get_player_intelligence_description()
+        physique = await self.get_player_strength_description()
+        health_status = await self.get_player_health_description()
+        agility = await self.get_player_agility_description()
+        perception = await self.get_player_perception_description()
+        determination = await self.get_player_determination_description()
+        is_resting = "idly resting" if self.is_resting else "not resting"            
+        return f"""
+    
+    {self.name} is a level {self.level}, {age} {sex} {self.race.lower()} {self.player_class.lower()} of {hitpoint_status} appearance. 
+    
+    {self.pronoun.capitalize()} has a {physique} body build and moves with {agility} agility.  {self.name} appears {perception}, {intelligence}, and {determination}. 
+    
+    {self.name} appears to be {health_status} and is {is_resting}."""
 
     async def set_rest(self, rest: bool):
         method_name = inspect.currentframe().f_code.co_name
