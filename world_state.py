@@ -789,7 +789,10 @@ class WorldState(Utility):
         # show npcs
         npcs = ""
         for npc in new_room.npcs:
-            npcs += npc.name + ", "
+            new_npc = npc.name
+            if npc.title is not None and npc.title != "":
+                new_npc = f"{npc.title} {npc.name}"
+            npcs += new_npc + ", "
         npcs = npcs[0 : len(npcs) - 2]
         LogUtils.info(f"npcs in room: {npcs}", self.logger)
 
