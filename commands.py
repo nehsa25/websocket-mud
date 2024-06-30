@@ -212,13 +212,8 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)   
         await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
 
-        # send message to any players in same room that you left
-        for p in world_state.players.players:
-            if player.name == p.name:
-                continue
-            if p.location_id == player.room.id:
-                await self.send_message(MudEvents.InfoEvent(f"{player.name} looks around the room."), p.websocket)
-        await world_state.show_room(player)
+        # send message to any players in same room that you're being suspicious
+        await player.room.alert(f"You notice {player.name} gazing around the room.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
         LogUtils.debug(f"{method_name}: exit", self.logger) 
 
     # returns player, world
