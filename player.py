@@ -259,7 +259,7 @@ class Player(Utility):
         is_resting = "idly resting" if self.is_resting else "not resting"            
         return f"""
     
-    {self.name} is a level {self.level}, {age} {sex} {self.race.lower()} {self.player_class.lower()} of {hitpoint_status} appearance. 
+    {self.name} is a level {self.level}, {age} {sex} {self.race.name.capitalize()} {self.player_class.lower()} of {hitpoint_status} appearance. 
     
     {self.pronoun.capitalize()} has a {physique} body build and moves with {agility} agility.  {self.name} appears {perception}, {intelligence}, and {determination}. 
     

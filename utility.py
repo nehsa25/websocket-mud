@@ -18,16 +18,17 @@ class Utility(MudEvents):
             GRAVEYARD = 6
             
         class Races(Enum):
-            HUMAN = "A human",    
-            HALFORC = "A half-orc",
-            KOBOLD = "A kobold race. Don't take them for granted!",
-            GOBLIN = "A vicious goblin",
-            HALFLING = "A small, quick halfling",
-            HALFOGRE = "A half-ogre",
-            ELF = "An elf",
-            FAE = "A citizen of the fae realm",
-            SNAKEPERSON = "A snake person",
-            ARGUNA = "A metalic, slow bememoth"
+            HUMAN = 0,
+            KOBOLD = 1,
+            GOBLIN = 2,
+            HALFLING = 3,
+            HALFOGRE = 4,
+            ORC = 5,
+            ELF = 6,
+            FAE = 7,
+            NYRRISS = 8,
+            ARGUNA = 9,
+            EAREA = 10
             
         class Classes(Enum):
             WARRIOR = "You hit things with weapons.",

@@ -1,5 +1,15 @@
 from enum import Enum
-
+from Orc import Orc
+from arguna import Arguna
+from earea import Earea
+from elf import Elf
+from fae import Fae
+from halfling import Halfing
+from human import Human
+from kobold import Kobold
+from log_utils import LogUtils
+from nyrriss import Nyrriss
+from races.goblin import Goblin
 
 class SpecialAttributes:
     NightVision = False
@@ -36,19 +46,27 @@ class SpecialAttributes:
         self.alignments = alignment
         self.telepathic = telepathic
 
-
 class Race:
-    name = None
-    description = None
-    hp = 50
-    strength = 10
-    agility = 10
-    perception = 100
+    logger = None
     specialattributes = []
+    goblin = None
+    kobold = None
+    orc = None
+    human = None
+    halfling = None
+    elf = None
+    fae = None
+    nyrriss = None
+    arguna = None
+    earea = None    
 
     def __init__(
-        self, name, description, hp, strength, agility, perception, specialattributes
+        self, name, description, hp, strength, agility, perception, specialattributes, logger
     ):
+        self.logger = logger
+        self.logger = logger
+        LogUtils.debug("Initializing Races() class", self.logger)
+
         self.name = name
         self.description = description
         self.hp += hp
@@ -56,7 +74,17 @@ class Race:
         self.agility += agility
         self.perception += perception
         self.specialattributes = specialattributes
-
+        
+        self.gobin = Goblin(self.logger)
+        self.arguna = Arguna(self.logger)
+        self.earea = Earea(self.logger)
+        self.elf = Elf(self.logger)
+        self.fae = Fae(self.logger)
+        self.halfling = Halfing(self.logger)
+        self.human = Human(self.logger)
+        self.kobold = Kobold(self.logger)
+        self.nyrriss = Nyrriss(self.logger)
+        self.orc = Orc(self.logger)
 
 class Races:
     attributes = SpecialAttributes()
@@ -134,7 +162,7 @@ class Races:
             senseAware=True, magicResistance=True, stealth=True
         ),
     )
-    snakeperson = Race(
+    nyrriss = Race(
         "Nyrriss",
         "A snake person of the world of Illisurom.",
         hp=0,

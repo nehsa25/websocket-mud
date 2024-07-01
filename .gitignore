@@ -9,3 +9,4 @@ ca_bundle.pem
 private.key
 mudevent.py
 output.png
+races/__pycache__/*

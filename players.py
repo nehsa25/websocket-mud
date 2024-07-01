@@ -3,14 +3,23 @@ import json
 from random import randint
 import random
 from websockets import ConnectionClosedOK
+from races.orc import Orc
+from races.arguna import Arguna
+from races.earea import Earea
+from races.elf import Elf
+from races.fae import Fae
+from races.halfling import Halfing
+from races.halfogre import HalfOgre
+from races.human import Human
 from inventory import Inventory
 from items import Items
+from races.kobold import Kobold
 from log_utils import LogUtils
 from money import Money
 from mudevent import MudEvents
+from races.nyrriss import Nyrriss
 from player import Player
 from utility import Utility
-
 
 class Players(Utility):
     logger = None
@@ -97,7 +106,28 @@ class Players(Utility):
             player_determination = randint(1, 50)
             age = randint(1, 75)
             pronoun = random.choice(["he", "she", "it"])
-            
+
+            if player_race == "ARGUNA":
+                player_race = Arguna(self.logger)
+            elif player_race == "EAREA":
+                player_race = Earea(self.logger)
+            elif player_race == "HALFLING":
+                player_race = Halfing(self.logger)
+            elif player_race == "HUMAN":
+                player_race = Human(self.logger)
+            elif player_race == "NYRISS":
+                player_race = Nyrriss(self.logger)
+            elif player_race == "ORC":
+                player_race = Orc(self.logger)
+            elif player_race == "KOBOLD":
+                player_race == Kobold(self.logger)
+            elif player_race == "ELF":
+                player_race == Elf(self.logger)
+            elif player_race == "FAE":
+                player_race == Fae(self.logger)
+            elif player_race == "HALFOGRE":
+                player_race == HalfOgre(self.logger)
+
             inventory = Inventory(
                 items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
             )
@@ -127,7 +157,9 @@ class Players(Utility):
                 await self.register(player, world_state)
 
                 # moe player to initial room
-                world_state = await world_state.move_room_player(player.location_id, player)
+                world_state = await world_state.move_room_player(
+                    player.location_id, player
+                )
             else:
                 raise Exception(f"Shananigans? received request: {request['type']}")
 

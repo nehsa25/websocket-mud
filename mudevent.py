@@ -3,7 +3,6 @@ import json
 
 import jsonpickle
 from log_utils import LogUtils
-from race import Races
 
 class MudEvents:
     def __init__(self) -> None:
