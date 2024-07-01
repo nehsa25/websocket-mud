@@ -3,6 +3,7 @@ import json
 from random import randint
 import random
 from websockets import ConnectionClosedOK
+from races.goblin import Goblin
 from races.orc import Orc
 from races.arguna import Arguna
 from races.earea import Earea
@@ -94,7 +95,7 @@ class Players(Utility):
             msg = await websocket.recv()
             LogUtils.info(f"Message received: {msg}", self.logger)
             request = json.loads(msg)
-            player_race = random.choice(list(Utility.Share.Races)).name
+            player_race = random.choice(list(Utility.Share.Races))
             player_class = random.choice(list(Utility.Share.Classes)).name
             player_intelligence = randint(1, 50)
             player_hp = randint(1, 50)
@@ -107,26 +108,28 @@ class Players(Utility):
             age = randint(1, 75)
             pronoun = random.choice(["he", "she", "it"])
 
-            if player_race == "ARGUNA":
+            if player_race == Utility.Share.Races.ARGUNA:
                 player_race = Arguna(self.logger)
-            elif player_race == "EAREA":
+            elif player_race == Utility.Share.Races.EAREA:
                 player_race = Earea(self.logger)
-            elif player_race == "HALFLING":
+            elif player_race == Utility.Share.Races.HALFLING:
                 player_race = Halfing(self.logger)
-            elif player_race == "HUMAN":
+            elif player_race == Utility.Share.Races.HUMAN:
                 player_race = Human(self.logger)
-            elif player_race == "NYRISS":
+            elif player_race == Utility.Share.Races.NYRRISS:
                 player_race = Nyrriss(self.logger)
-            elif player_race == "ORC":
+            elif player_race == Utility.Share.Races.ORC:
                 player_race = Orc(self.logger)
-            elif player_race == "KOBOLD":
-                player_race == Kobold(self.logger)
-            elif player_race == "ELF":
-                player_race == Elf(self.logger)
-            elif player_race == "FAE":
-                player_race == Fae(self.logger)
-            elif player_race == "HALFOGRE":
-                player_race == HalfOgre(self.logger)
+            elif player_race == Utility.Share.Races.KOBOLD:
+                player_race = Kobold(self.logger)
+            elif player_race == Utility.Share.Races.ELF:
+                player_race = Elf(self.logger)
+            elif player_race == Utility.Share.Races.FAE:
+                player_race = Fae(self.logger)
+            elif player_race == Utility.Share.Races.HALFOGRE:
+                player_race = HalfOgre(self.logger)
+            elif player_race == Utility.Share.Races.GOBLIN:
+                player_race = Goblin(self.logger) 
 
             inventory = Inventory(
                 items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
