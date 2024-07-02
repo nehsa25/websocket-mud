@@ -3,6 +3,24 @@ import json
 from random import randint
 import random
 from websockets import ConnectionClosedOK
+from player_classes.barbarian import Barbarian
+from player_classes.bard import Bard
+from player_classes.battle_mage import BattleMage
+from player_classes.berserker import Berserker
+from player_classes.bowman import Bowman
+from player_classes.cleric import Cleric
+from player_classes.druid import Druid
+from player_classes.illusionist import Illusionist
+from player_classes.knight import Knight
+from player_classes.mage import Mage
+from player_classes.monk import Monk
+from player_classes.necromancer import Necromancer
+from player_classes.paladin import Paladin
+from player_classes.ranger import Ranger
+from player_classes.rogue import Rogue
+from player_classes.sorcerer import Sorcorer
+from player_classes.warlock import Warlock
+from player_classes.warrior import Warrior
 from races.goblin import Goblin
 from races.orc import Orc
 from races.arguna import Arguna
@@ -21,6 +39,7 @@ from mudevent import MudEvents
 from races.nyrriss import Nyrriss
 from player import Player
 from utility import Utility
+from wordsmith import Pronouns
 
 class Players(Utility):
     logger = None
@@ -106,7 +125,47 @@ class Players(Utility):
             player_faith = randint(1, 50)
             player_determination = randint(1, 50)
             age = randint(1, 75)
-            pronoun = random.choice(["he", "she", "it"])
+            level = randint(1, 75)
+            pronoun = random.choice(list(Pronouns))
+            
+            if player_class == Utility.Share.Classes.MAGE.name:
+                player_class = Mage(self.logger)
+            elif player_class == Utility.Share.Classes.BATTLE_MAGE.name:
+                player_class = BattleMage(self.logger)
+            elif player_class == Utility.Share.Classes.WARLOCK.name:
+                player_class = Warlock(self.logger)
+            elif player_class == Utility.Share.Classes.WARRIOR.name:
+                player_class = Warrior(self.logger)
+            elif player_class == Utility.Share.Classes.ROGUE.name:
+                player_class = Rogue(self.logger)
+            elif player_class == Utility.Share.Classes.PALADIN.name:
+                player_class = Paladin(self.logger)
+            elif player_class == Utility.Share.Classes.RANGER.name:
+                player_class = Ranger(self.logger)
+            elif player_class == Utility.Share.Classes.BARD.name:
+                player_class = Bard(self.logger)
+            elif player_class == Utility.Share.Classes.DRUID.name:
+                player_class = Druid(self.logger)
+            elif player_class == Utility.Share.Classes.CLERIC.name:
+                player_class = Cleric(self.logger)
+            elif player_class == Utility.Share.Classes.SORCERER.name:
+                player_class = Sorcorer(self.logger)
+            elif player_class == Utility.Share.Classes.BARBARIAN.name:
+                player_class = Barbarian(self.logger)
+            elif player_class == Utility.Share.Classes.MONK.name:
+                player_class = Monk(self.logger)
+            elif player_class == Utility.Share.Classes.PALADIN.name:
+                player_class = Paladin(self.logger)
+            elif player_class == Utility.Share.Classes.NECROMANCER.name:
+                player_class = Necromancer(self.logger)
+            elif player_class == Utility.Share.Classes.ILLUSIONIST.name:
+                player_class = Illusionist(self.logger)
+            elif player_class == Utility.Share.Classes.KNIGHT.name:
+                player_class = Knight(self.logger)
+            elif player_class == Utility.Share.Classes.BOWMAN.name:
+                player_class = Bowman(self.logger)
+            elif player_class == Utility.Share.Classes.BERSERKER.name:
+                player_class = Berserker(self.logger)
 
             if player_race == Utility.Share.Races.ARGUNA:
                 player_race = Arguna(self.logger)
@@ -136,6 +195,7 @@ class Players(Utility):
             )
             player = Player(
                 name=request["username"],
+                level = level,
                 race=player_race,
                 pronoun=pronoun,
                 age=age,
@@ -159,10 +219,13 @@ class Players(Utility):
             ):
                 await self.register(player, world_state)
 
-                # moe player to initial room
+                # move player to initial room
                 world_state = await world_state.move_room_player(
                     player.location_id, player
                 )
+                
+                # send initial status
+                await player.send_status()
             else:
                 raise Exception(f"Shananigans? received request: {request['type']}")
 

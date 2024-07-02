@@ -185,13 +185,15 @@ class MudEvents:
         type = None
         message = ""
         is_resting = None
+        is_poisoned = None
+        statuses = []
 
-        def __init__(self, message, is_resting = False):
+        def __init__(self, message, statuses = []):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.HEALTH
             )
             self.message = message
-            self.is_resting = is_resting
+            self.statuses = statuses
 
         def to_json(self):
             return jsonpickle.encode(self)

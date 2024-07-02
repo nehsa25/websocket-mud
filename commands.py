@@ -205,15 +205,15 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # doesn't return anything, just sends messages
-    async def process_look(self, wanted_direction, player, world_state):
+    async def process_look(self, look_object, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter, direction: {wanted_direction}", self.logger)
+        LogUtils.debug(f"{method_name}: enter, direction: {look_object}", self.logger)
         found = False
-        if len(wanted_direction.split(" ", 1)) > 1:
-            wanted_direction = wanted_direction.split(" ", 1)[1].lower()
+        if len(look_object.split(" ", 1)) > 1:
+            look_object = look_object.split(" ", 1)[1].lower()
 
         # do we just want to look around the room?
-        if wanted_direction == "l" or wanted_direction == "look":
+        if look_object == "l" or look_object == "look":
             found = True
             await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
             await world_state.show_room(player)
@@ -223,13 +223,13 @@ class Commands(Utility):
             if found: return
 
         # are we looking in a direction?
-        if self.is_valid_look_direction(wanted_direction):
+        if self.is_valid_look_direction(look_object):
             found = True
-            await self.process_look_direction(wanted_direction, player, world_state)
+            await self.process_look_direction(look_object, player, world_state)
             if found: return
 
         # are we looking at ourselve?
-        if wanted_direction == player.name.lower():
+        if look_object in player.name.lower():
             found = True
             msg = await player.get_player_description()
             await self.send_message(
@@ -240,17 +240,17 @@ class Commands(Utility):
 
         # are we looking at a player?
         if player.room.players != None:
-            for player in player.room.players:
-                if wanted_direction in player.name.lower():
+            for p in p.room.players:
+                if look_object in p.name.lower():
                     found = True
-                    await self.send_message(MudEvents.InfoEvent(player.description), player.websocket)
+                    await self.send_message(MudEvents.InfoEvent(await p.get_player_description()), player.websocket)
                     break
             if found: return
                 
         # are we looking at a npc?
         if player.room.npcs != None:
             for npc in player.room.npcs:
-                if wanted_direction in npc.name.lower() or wanted_direction in npc.title.lower():
+                if look_object in npc.name.lower() or look_object in npc.title.lower():
                     found = True
                     await self.send_message(MudEvents.InfoEvent(npc.description), player.websocket)
                     break
@@ -259,7 +259,7 @@ class Commands(Utility):
         # are we looking at a monster?
         if player.room.monsters != None:
             for monster in player.room.monsters:
-                if wanted_direction in monster.name.lower():
+                if look_object in monster.name.lower():
                     found = True
                     await self.send_message(MudEvents.InfoEvent(monster.description), player.websocket)
                     break
@@ -268,7 +268,7 @@ class Commands(Utility):
         # are we looking at a item?
         if player.room.items != None:
             for item in player.room.items:
-                if wanted_direction in item.name.lower():
+                if look_object in item.name.lower():
                     found = True
                     await self.send_message(MudEvents.InfoEvent(item.description), player.websocket)
                     break
@@ -425,7 +425,7 @@ class Commands(Utility):
         msg += f"Experience: {player.experience}<br>"
         msg += "**************************************************<br>"
         msg += "You have the following attributes:<br>"
-        msg += f"* Health {player.hitpoints}<br>"
+        msg += f"* Health {player.statuses.current_hp}<br>"
         msg += f"* Strength {player.strength}<br>"
         msg += f"* Agility {player.agility}<br>"
         msg += f"* Perception {player.perception}<br>"
@@ -648,7 +648,7 @@ class Commands(Utility):
         await self.send_message(MudEvents.CommandEvent(command), player.websocket)
 
         # if the player is dead, don't do anything..
-        if player.hitpoints <= 0:
+        if player.statuses.current_hp <= 0:
             return player
 
         # process each command

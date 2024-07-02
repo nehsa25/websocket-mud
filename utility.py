@@ -31,26 +31,25 @@ class Utility(MudEvents):
             EAREA = 10
             
         class Classes(Enum):
-            WARRIOR = "You hit things with weapons.",
-            MAGE = "You cast spells.",
-            THIEF = "You steal things.",
-            CLERIC = "You heal things.",
-            RANGER = "You shoot things with a bow.",
-            DRUID = "You turn into animals.",
-            BARD = "You play music.",
-            PALADIN = "You smite things.",
-            MONK = "You punch things.",
-            BARBARIAN = "You rage.",
-            WARLOCK = "You make pacts with demons.",
-            SORCERER = "You cast spells with charisma.",
-            ROGUE = "You sneak around.",
-            BERSERKER = "You rage and hit things.",
-            BATTLE_MAGE = "You hit things with weapons and cast spells.",
-            ARCHER = "You shoot things with a bow.",
-            BOWMAN = "You shoot things with a bow.",
-            KNIGHT = "You wear heavy armor and hit things with weapons.",
-            NECROMANCER = "You raise the dead. You smell bad and people do not like you.",
-            ILLUSIONIST = "You cast illusions."
+            WARRIOR = 0,
+            MAGE = 1,
+            THIEF = 2,
+            CLERIC = 3,
+            RANGER = 4,
+            DRUID = 5,
+            BARD = 6,
+            PALADIN = 7,
+            MONK = 8,
+            BARBARIAN = 9,
+            WARLOCK = 10,
+            SORCERER = 11,
+            ROGUE = 12,
+            BERSERKER = 13,
+            BATTLE_MAGE = 14,
+            BOWMAN = 15,
+            KNIGHT = 16,
+            NECROMANCER = 17,
+            ILLUSIONIST = 18
             
         class MudDirections:  # directions
             up = ["u", "up"]
@@ -132,6 +131,14 @@ class Utility(MudEvents):
             Silver = 2
             Gold = 3
     
+        # how much is your blood pumping?
+        class Feriocity(Enum):
+            NORMAL = 1
+            MAD = 2
+            ENRAGED = 3
+            FRENZIED = 4
+            BERSERK = 5
+            
         class Monsters(Enum):
             SKELETON = 1
             ZOMBIE = 2

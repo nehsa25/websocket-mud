@@ -1,5 +1,5 @@
 from enum import Enum
-from Orc import Orc
+from orc import Orc
 from arguna import Arguna
 from earea import Earea
 from elf import Elf
