@@ -10,3 +10,5 @@ private.key
 mudevent.py
 output.png
 races/__pycache__/*
+monsters/__pycache__/*
+*/__pycache__/*
