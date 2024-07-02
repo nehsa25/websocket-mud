@@ -3,7 +3,7 @@ from enum import Enum
 import inspect
 import random
 from log_utils import LogUtils
-from monsters import Monster
+from monster import Monster
 from mudevent import MudEvents
 from utility import Utility
     

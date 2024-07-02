@@ -132,6 +132,19 @@ class Utility(MudEvents):
             Silver = 2
             Gold = 3
     
+        class Monsters(Enum):
+            SKELETON = 1
+            ZOMBIE = 2
+            ZOMBIE_SURFER = 3
+            GHOUL = 4
+            SHADE = 5
+    
+        class Alignment(Enum):
+            GOOD = 1  # attacks evil players only
+            NEUTRAL = 2  # only attacks if attacked
+            EVIL = 3  # attacks good players only
+            CHOATIC = 4  # attacks all players
+    
         class EnvironmentTypes(Enum):
             TOWNSMEE = 1,
             BEACH = 2,

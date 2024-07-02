@@ -7,7 +7,7 @@ import time
 import traceback
 from aiimages import AIImages
 from map import Map
-from monsters import Monsters
+from monster import Monster
 from mudevent import MudEvents
 from players import Players
 from utility import Utility
@@ -583,7 +583,7 @@ class WorldState(Utility):
                     )
 
     players = None
-    monsters = None
+    monster = None
     world_events = None
     logger = None
     active_rooms = []
@@ -608,8 +608,8 @@ class WorldState(Utility):
         if self.players is None:
             self.players = Players(self.logger)
 
-        if self.monsters is None:
-            self.monsters = Monsters(self.logger)
+        if self.monster is None:
+            self.monster = Monster(self.logger)
 
         if self.ai_images is None:
             self.ai_images = AIImages(self.logger)

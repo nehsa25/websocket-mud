@@ -1,0 +1,40 @@
+import inspect
+import random
+from log_utils import LogUtils
+from mob import Mob
+from money import Money
+from utility import Utility
+
+
+
+
+class Skeleton(Mob):
+    logger = None
+    name = "Skeleton"
+    pronoun = "it"
+    type = Utility.Share.Monsters.SKELETON
+    alignment = Utility.Share.Alignment.NEUTRAL
+    description = "A dusty old skeleton"
+    possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
+    adjective_chance = 70 # chance we'll get something like Nasty
+    respawn_rate_secs = None
+    dead_epoch = None
+    wander = True
+    wander_speed = 1  # 1 room / minute
+    
+    def __init__(self, logger):
+        method_name = inspect.currentframe().f_code.co_name
+        self.logger = logger
+        LogUtils.debug(f"{method_name}: Initializing Skeleton() class", self.logger)
+        if random.randint(1, 100) < self.adjective_chance:
+            self.name = f"{random.choice(self.possible_adjectives)} Skeleton"
+        self.death_cry = f"{self.name} falls over and dies.."
+        self.entrance_cry = f"A {self.name} wanders in.."
+        self.victory_cry = f"The {self.name} gives an elegent bow before losing interest."
+        self.hitpoints = 10
+        self.damage_potential = "1d4"
+        self.experience = 100
+        self.money = Money(random.randint(0, 10))
+        
+    def generate(self):
+        LogUtils.debug("Generating a Skeleton...", self.logger)

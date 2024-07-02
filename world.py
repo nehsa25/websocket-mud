@@ -3,7 +3,7 @@ import inspect
 from environments import Environments
 from mudevent import MudEvents
 from players import Players
-from monsters import Monsters
+from monster import Monster
 from utility import Utility
 from log_utils import LogUtils
 from commands import Commands

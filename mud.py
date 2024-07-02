@@ -75,7 +75,7 @@ class Mud(Utility):
                     # send updated hp
                     await p.send_health()
 
-                for m in self.world_state.monsters.monsters:
+                for m in self.world_state.monster.monsters:
                     asyncio.gather(await m.respawn(self.world_state), await m.check_for_combat(self.world_state), await m.wander(self.world_state))
                     
 

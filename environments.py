@@ -6,13 +6,13 @@ import time
 from aiimages import AIImages
 from log_utils import LogUtils
 from map import Map
-from monsters import Monsters
+from monster import Monster
 from townsmee import TownSmee
 from utility import Utility
 
 
 class Environments(Utility):
-    monsters = None
+    monster = None
     running_image_threads = []
     running_map_threads = []
     logger = None
@@ -29,8 +29,8 @@ class Environments(Utility):
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Environments() class", self.logger)
 
-        if self.monsters is None:
-            self.monsters = Monsters(self.logger)
+        if self.monster is None:
+            self.monster = Monster(self.logger)
 
         if self.townsmee is None:
             self.townsmee = TownSmee(self.logger)
@@ -54,8 +54,8 @@ class Environments(Utility):
             if random.randint(0, 1) <= room.monster_saturation:
                 # if we are going to put a monster in this room, how many?
                 for i in range(room.scariness):
-                    monster = self.monsters.undead.get_monster(
-                        monster_type=Monsters.Monsters.SKELETON, worldstate=initial_world_state
+                    monster = self.monster.get_monster(
+                        monster_type=Utility.Share.Monsters.SKELETON, worldstate=initial_world_state
                     )
                     monster.room = room
                     LogUtils.debug(

@@ -3,7 +3,7 @@ import inspect
 import random
 from items import Items
 from log_utils import LogUtils
-from monsters import Monsters
+from monster import Monster
 from room import Room, RoomFactory
 from unit import Unit
 from utility import Utility
@@ -20,9 +20,7 @@ class TownSmeeUnitFactory:
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(
-            f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger
-        )
+        LogUtils.debug(f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger)
         self.utility = Utility(self.logger)
         self.unit_factory = Unit(self.logger)
 
@@ -132,7 +130,7 @@ class TownSmee(Room):
                 inside=True,
                 description="You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.",
                 exits=[
-                    {"direction": Room.dirs.west, "id": 12},  # sun road
+                    {"direction": Room.dirs.west, "id": 11},  # sun road
                     {"direction": Room.dirs.east, "id": 6},  # back room
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
@@ -181,7 +179,7 @@ class TownSmee(Room):
             ),
             self.room_factory.add_room(
                 id=10,
-                name=f"{self.name} - Moon Road (East)---1",
+                name=f"{self.name} - Moon Road (East)---3",
                 inside=False,
                 description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
@@ -197,6 +195,7 @@ class TownSmee(Room):
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 2},  # sheriff's office
+                    {"direction": Room.dirs.east, "id": 5},  # blacksmith
                     {"direction": Room.dirs.south, "id": 0},  # town square
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
@@ -225,7 +224,7 @@ class TownSmee(Room):
             ),
             self.room_factory.add_room(
                 id=14,
-                name=f"{self.name} - Sun Road (South)---2",
+                name=f"{self.name} - Sun Road (South)---3",
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
@@ -236,7 +235,7 @@ class TownSmee(Room):
             ),
             self.room_factory.add_room(
                 id=15,
-                name=f"{self.name} - Sun Road (South)---1",
+                name=f"{self.name} - Sun Road (South)---4",
                 inside=False,
                 description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions.  The street is broad, allowing for two wagons to pass each other.",
                 exits=[
