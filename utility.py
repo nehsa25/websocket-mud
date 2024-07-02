@@ -8,6 +8,7 @@ class Utility(MudEvents):
     class Share:
         WORLD_NAME = "Illisurom"
         PLAYER_BASE_REST_WAIT_SECS = 2
+        EVENT_SPEED = PLAYER_BASE_REST_WAIT_SECS
         
         class EnvironmentTypes(Enum):
             TOWNSMEE = 1,

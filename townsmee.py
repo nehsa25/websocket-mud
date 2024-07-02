@@ -15,6 +15,8 @@ class TownSmeeUnitFactory:
     inn_keeper = None
     unit_factory = None
     armorer = None
+    backsmith = None
+    princess = None
     units = []
     logger = None
 
@@ -33,6 +35,7 @@ class TownSmeeUnitFactory:
                 title="Sheriff",
                 name=self.utility.generate_name(),
                 hp=250,
+                wanders=True,
                 strength=10,
                 agility=30,
                 description="""The sheriff of Town Smee. The sheriff is a slender, man with a mustache. 
@@ -61,18 +64,45 @@ class TownSmeeUnitFactory:
 
         self.armorer = deepcopy(
             self.unit_factory.generate_unit(
-                title="Smith",
+                title="Armorer",
                 name="Geoff",
-                hp=300,
-                strength=20,
+                hp=400,
+                strength=25,
                 agility=20,
-                description="""Geoof is a large, blond haired behemoth of a man. 
-                He's at least 8 feet tall with limbs the size of tree trunks. 
-                Geoff is wearing a leather apron, a leather vest, and leather glove that reach past his elbows.""",
+                description="""Geoff is a large, blond haired behemoth of a man. 
+                He's nearly 8 feet tall with limbs the size of tree trunks. 
+                He wears scalemail armor and looks ready for battle at any moment.""",
                 perception=250,
             )
         )
         self.units.append(self.armorer)
+        
+        self.blacksmith = deepcopy(
+            self.unit_factory.generate_unit(
+                title="Smith",
+                name="Frederick",
+                hp=300,
+                strength=20,
+                agility=20,
+                description="""Frederick is a large, balding man despite only just becoming an adult. He has serious Azure eyes and a oiled mustache. 
+                Frederick is wearing a leather apron, a leather vest, and leather glove that reach past his elbows.""",
+                perception=250,
+            )
+        )
+        self.units.append(self.blacksmith)
+        
+        self.princess = deepcopy(
+            self.unit_factory.generate_unit(
+                title="Princess",
+                name="Candie",
+                hp=600,
+                strength=10,
+                agility=50,
+                description="""Princess Candie is visiting nobility from a neighboring kingdom to the distant west, across the Tarth sea. She is striking in a shimmering maroon gown.""",
+                perception=350,
+            )
+        )
+        self.units.append(self.princess)
 
 
 class TownSmee(Room):
@@ -116,7 +146,7 @@ class TownSmee(Room):
                     {"direction": Room.dirs.south, "id": 9},
                     {"direction": Room.dirs.up, "id": 3},
                 ],
-                npcs=[self.units.inn_keeper],
+                npcs=[self.units.inn_keeper, self.units.princess],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
             self.room_factory.add_room(
@@ -155,8 +185,8 @@ class TownSmee(Room):
             self.room_factory.add_room(
                 id=5,
                 name=f"{self.name} - Blacksmith",
-                npcs=[self.units.armorer],  # [self.units.armorer
                 inside=True,
+                npcs=[self.units.blacksmith],
                 description="You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.",
                 exits=[
                     {"direction": Room.dirs.west, "id": 11},  # sun road
@@ -192,6 +222,7 @@ class TownSmee(Room):
                 exits=[
                     {"direction": Room.dirs.north, "id": 9},  # moon road
                 ],
+                npcs=[self.units.armorer],  
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
             ),
             self.room_factory.add_room(
