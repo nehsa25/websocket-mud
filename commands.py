@@ -250,7 +250,7 @@ class Commands(Utility):
         # are we looking at a npc?
         if player.room.npcs != None:
             for npc in player.room.npcs:
-                if wanted_direction in npc.name.lower():
+                if wanted_direction in npc.name.lower() or wanted_direction in npc.title.lower():
                     found = True
                     await self.send_message(MudEvents.InfoEvent(npc.description), player.websocket)
                     break

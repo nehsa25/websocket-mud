@@ -55,7 +55,7 @@ class Environments(Utility):
                 # if we are going to put a monster in this room, how many?
                 for i in range(room.scariness):
                     monster = self.monster.get_monster(
-                        monster_type=Utility.Share.Monsters.SKELETON, worldstate=initial_world_state
+                        monster_type=random.choice(list(Utility.Share.Monsters)), worldstate=initial_world_state
                     )
                     monster.room = room
                     LogUtils.debug(

@@ -60,7 +60,7 @@ class TownSmee(Room):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing TownSmee() class", self.logger)
-        self.monster_saturation = 0.1
+        self.monster_saturation = 0.5
         self.room_factory = RoomFactory(self.logger)
         self.units = TownSmeeUnitFactory(logger)
         self.rooms = [

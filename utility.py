@@ -138,6 +138,8 @@ class Utility(MudEvents):
             ZOMBIE_SURFER = 3
             GHOUL = 4
             SHADE = 5
+            WIGHT = 6
+            WRAITH = 7
     
         class Alignment(Enum):
             GOOD = 1  # attacks evil players only

@@ -5,26 +5,24 @@ from mob import Mob
 from money import Money
 from utility import Utility
 
-
-
-
-class Skeleton(Mob):
+class Zombie(Mob):
     logger = None
-    name = "Skeleton"
+    name = "Zombie"
     pronoun = "it"
-    type = Utility.Share.Monsters.SKELETON
+    type = Utility.Share.Monsters.ZOMBIE
     alignment = Utility.Share.Alignment.NEUTRAL
-    description = "A dusty old skeleton"
-    possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
+    description = "A rotting zombie"
+    possible_adjectives = ["Decrepit", "Rotting", "Mad"]
     adjective_chance = 70 # chance we'll get something like Nasty
     respawn_rate_secs = None
     dead_epoch = None
     wander = True
     wander_speed = 1  # 1 room / minute
-    hitpoints = 10
-    damage_potential = "1d4"
-    experience = 100
-        
+    hitpoints = 20
+    damage_potential = "1d6"
+    experience = 200
+    money = Money(random.randint(0, 20))
+    
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
@@ -32,9 +30,8 @@ class Skeleton(Mob):
         if random.randint(1, 100) < self.adjective_chance:
             self.name = f"{random.choice(self.possible_adjectives)} Skeleton"
         self.death_cry = f"{self.name} falls over and dies.."
-        self.entrance_cry = f"A {self.name} wanders in.."
-        self.victory_cry = f"The {self.name} gives an elegent bow before losing interest."
-        self.money = Money(random.randint(0, 10))
-        
+        self.entrance_cry = f"{self.name} wanders in.."
+        self.victory_cry = f"The {self.name} smiles morosely."
+                
     def generate(self):
-        LogUtils.debug("Generating a Skeleton...", self.logger)
+        LogUtils.debug("Generating a Zombie...", self.logger)
