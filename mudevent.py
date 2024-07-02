@@ -183,16 +183,16 @@ class MudEvents:
 
     class HealthEvent:
         type = None
-        message = ""
+        name = ""
         is_resting = None
         is_poisoned = None
         statuses = []
 
-        def __init__(self, message, statuses = []):
+        def __init__(self, name, statuses = []):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.HEALTH
             )
-            self.message = message
+            self.name = name
             self.statuses = statuses
 
         def to_json(self):

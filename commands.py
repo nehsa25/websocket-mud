@@ -127,7 +127,7 @@ class Commands(Utility):
 
         if will_travel:
             # stop resting
-            if player.is_resting:
+            if player.statuses.is_resting:
                 await player.set_rest(False)
 
             # update you
@@ -240,7 +240,7 @@ class Commands(Utility):
 
         # are we looking at a player?
         if player.room.players != None:
-            for p in p.room.players:
+            for p in player.room.players:
                 if look_object in p.name.lower():
                     found = True
                     await self.send_message(MudEvents.InfoEvent(await p.get_player_description()), player.websocket)
@@ -622,14 +622,14 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         monsters_in_room = len(player.room.monsters)
         if player.in_combat == True or monsters_in_room > 0:
-            player.is_resting = False
+            player.statuses.is_resting = False
             await self.send_message(MudEvents.RestEvent("You cannot rest at this time.  You are in combat.", rest_error=True, is_resting=False), player.websocket)
         else:
             # message staying you're starting to rest
             await self.send_message(MudEvents.RestEvent("You settle to rest.", rest_error=False, is_resting=True), player.websocket)
 
             # set an attribute that we can use later
-            player.is_resting = True
+            player.statuses.is_resting = True
 
         # press enter (refresh the room)
         await world_state.show_room(player)

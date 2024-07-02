@@ -14,38 +14,66 @@ class TownSmeeUnitFactory:
     sheriff = None
     inn_keeper = None
     unit_factory = None
+    armorer = None
     units = []
     logger = None
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger)
+        LogUtils.debug(
+            f"{method_name}: Initializing TownSmeeUnitFactory() class", self.logger
+        )
         self.utility = Utility(self.logger)
         self.unit_factory = Unit(self.logger)
 
         # NPC characters of the town of Smee
-        self.sheriff = deepcopy(self.unit_factory.generate_unit(
-            title="Sheriff",
-            name=self.utility.generate_name(),
-            hp=250,
-            strength=10,
-            agility=30,
-            description="The sheriff of Town Smee. The sheriff is a slender, man with a mustache. The sheriff is wearing an unsightly but practical bear cloak across his shoulders to stave off the rain. He has a menacing cudgel at his waist and smiles showing oddly white teeth when he notices you look at it.",
-            perception=250,
-        ))
+        self.sheriff = deepcopy(
+            self.unit_factory.generate_unit(
+                title="Sheriff",
+                name=self.utility.generate_name(),
+                hp=250,
+                strength=10,
+                agility=30,
+                description="""The sheriff of Town Smee. The sheriff is a slender, man with a mustache. 
+                The sheriff is wearing an unsightly but practical bear cloak across his shoulders to stave off the rain. 
+                He has a menacing cudgel at his waist and smiles showing oddly white teeth when he notices you look at it.""",
+                perception=250,
+            )
+        )
         self.units.append(self.sheriff)
 
-        self.inn_keeper = deepcopy(self.unit_factory.generate_unit(
-            title="",
-            name="Jared the Inn-keeper",
-            hp=250,
-            strength=10,
-            agility=30,
-            description="""A slightly obese man with short blonde hair and a sickly pale face. Jared is well beloved by the residents of town Smee, for his charming stories and friendly demeaner. Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron.  Jared smiles at you welcomely when you look at him.""",
-            perception=250,
-        ))
+        self.inn_keeper = deepcopy(
+            self.unit_factory.generate_unit(
+                title="",
+                name="Jared the Inn-keeper",
+                hp=250,
+                strength=10,
+                agility=30,
+                description="""A slightly obese man with short blonde hair and a sickly pale face. 
+                Jared is well beloved by the residents of town Smee, for his charming stories and friendly demeaner. 
+                Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron.  
+                Jared smiles at you welcomely when you look at him.""",
+                perception=250,
+            )
+        )
         self.units.append(self.inn_keeper)
+
+        self.armorer = deepcopy(
+            self.unit_factory.generate_unit(
+                title="Smith",
+                name="Geoff",
+                hp=300,
+                strength=20,
+                agility=20,
+                description="""Geoof is a large, blond haired behemoth of a man. 
+                He's at least 8 feet tall with limbs the size of tree trunks. 
+                Geoff is wearing a leather apron, a leather vest, and leather glove that reach past his elbows.""",
+                perception=250,
+            )
+        )
+        self.units.append(self.armorer)
+
 
 class TownSmee(Room):
     monsters = None
@@ -127,6 +155,7 @@ class TownSmee(Room):
             self.room_factory.add_room(
                 id=5,
                 name=f"{self.name} - Blacksmith",
+                npcs=[self.units.armorer],  # [self.units.armorer
                 inside=True,
                 description="You are in the blacksmith's shop.  An assortment of the blacksmiths wares are on display.",
                 exits=[
@@ -159,7 +188,7 @@ class TownSmee(Room):
                 id=8,
                 name=f"{self.name} - Armoury",
                 inside=True,
-                description="You are in the town armoury. A prominent case displays a beautifully crafted broadsword with a leather bound hilt. An assortment of swords, shields, and armor are on display along the walls.",
+                description="You are in the town armoury. A prominent case displays a beautifully crafted broadsword.  The blade of the sword seems to glow slightly.  It has a worn but well-kepted tightly-bound leather hilt. An assortment of other swords, shields, and armor are on display along the walls.",
                 exits=[
                     {"direction": Room.dirs.north, "id": 9},  # moon road
                 ],

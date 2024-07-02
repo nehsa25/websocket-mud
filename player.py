@@ -72,7 +72,7 @@ class Player(Utility):
         # whether player is resting, poisoned, etc.
         self.statuses = Status(
             current_hp=hp,
-            max_hitpoints=hp,
+            max_hp=hp,
             int=intelligence,
             faith=faith,
             agility=agility,
@@ -297,9 +297,9 @@ class Player(Utility):
     async def send_status(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        msg = f"{self.name}|{str(self.statuses.current_hp)}/{str(self.max_hitpoints)}"
+        name = self.name
         await self.send_message(
-            MudEvents.HealthEvent(msg, self.statuses), self.websocket
+            MudEvents.HealthEvent(name, self.statuses), self.websocket
         )
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
