@@ -3,6 +3,7 @@ import asyncio
 from random import random, randint
 
 # my stuff
+from aiimages import AIImages
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -79,10 +80,15 @@ class Commands(Utility):
 
     logger = None
     command_utility = None
+    ai_images = None
+    running_image_threads = []
 
     def __init__(self, logger) -> None:
         self.logger = logger
         LogUtils.debug(f"Initializing Command() class", self.logger)
+        
+        if self.ai_images is None:
+            self.ai_images = AIImages(self.logger)
 
         if self.command_utility is None:
             self.command_utility = Commands.CommandUtility(logger)
@@ -231,6 +237,20 @@ class Commands(Utility):
         # are we looking at ourselve?
         if look_object in player.name.lower():
             found = True
+            player_description = await player.get_player_description()
+            
+            self.running_image_threads.append(
+                asyncio.create_task(
+                    self.ai_images.generate_image(
+                        item_name=self.create_unique_name(f"{player.name}_player_self") + ".png",
+                        item_description=player_description,
+                        player=player,
+                        world_state=world_state,
+                        type=Utility.Share.ImageType.PLAYER
+                    )
+                )
+            )
+            
             msg = await player.get_player_description()
             await self.send_message(
                 MudEvents.RestEvent(msg, is_resting=False),

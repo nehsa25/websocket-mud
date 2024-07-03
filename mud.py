@@ -31,15 +31,13 @@ class Mud(Utility):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Mud() class", logger)
-        
-        
         self.world = World(self.logger)
         
         # session state
         self.world_state = WorldState(self.world.environments.all_rooms, self.logger)
 
         # populate monsters
-        self.world_state.all_room_definitions = self.world.environments.populate_monsters(self.world)
+        self.world_state.all_room_definitions = self.world.environments.populate_monsters()
         self.monsters = [room for room in self.world_state.all_room_definitions]
         self.total_monsters = len(self.monsters)
         LogUtils.info(f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}", self.logger)
@@ -118,7 +116,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.INFO,
+            console_level=Level.DEBUG,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)
@@ -149,13 +147,9 @@ if __name__ == "__main__":
 
         # start listening loop
         loop = asyncio.get_event_loop()
+        loop.run_until_complete(m.world_state.setup_world_events())
         loop.run_until_complete(start_server)
         loop.run_forever()
-
-        # start worldevent loop
-        event_loop = asyncio.get_event_loop()
-        event_loop.run_until_complete(m.world.world_events.setup_world_events())
-        event_loop.run_forever()
 
         # if we got here the loop was cancelled, just quit
         LogUtils.info(f"Exiting...", logger)

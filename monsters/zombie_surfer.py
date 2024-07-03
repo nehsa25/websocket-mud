@@ -23,13 +23,12 @@ class ZombieSurfer(Mob):
     experience = 225
     money = Money(random.randint(5, 10))
     
-    
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing ZombieSurfer() class", self.logger)
         if random.randint(1, 100) < self.adjective_chance:
-            self.name = f"{random.choice(self.possible_adjectives)} ZombieSurfer"
+            self.name = f"{random.choice(self.possible_adjectives)} Zombie Surfer"
         self.death_cry = (
             f'{self.name} says "Narley", then falls over and dies..'
         )

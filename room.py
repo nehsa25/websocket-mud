@@ -18,6 +18,7 @@ class Room(Utility):
         HIGH = 4
         EXTREME = 5
         POOP = 6
+        RANDOM = 7  
         
     dirs = Utility.Share.MudDirections()
     id: 0
@@ -34,6 +35,8 @@ class Room(Utility):
     monsters = ([],)
     players = ([],)
     npcs = []
+    in_town = False
+    logger = None
 
     def __init__(
         self,
@@ -43,13 +46,14 @@ class Room(Utility):
         description,
         exits,
         environment,
-        scariness,
         logger,
+        scariness=None,
         items=[],
         hidden_items=[],
         monsters=[],
         players=[],
         npcs=[],
+        in_town=False,
     ) -> None:
         self.id = id
         self.name = name
@@ -58,13 +62,15 @@ class Room(Utility):
         self.exits = exits
         self.environment = environment
         self.items = items
+        self.scariness = scariness
         self.hidden_items = hidden_items
         self.monsters = monsters
         self.players = players
         self.npcs = npcs
+        self.in_town = in_town
         self.logger = logger
         self.scariness = random.choice(list(self.Scariness)).value
-        LogUtils.debug(f"Initializing RoomFactory() class", self.logger)
+        LogUtils.debug(f"Initializing Room() class", self.logger)
 
     async def alert(
         self, message, exclude_player=False, player=None, event_type=MudEvents.InfoEvent
@@ -81,13 +87,12 @@ class Room(Utility):
             else:
                 await self.send_message(event_type(message), p.websocket)
 
-
 class RoomFactory(Utility):
     environment = None
 
     def __init__(self, logger) -> None:
         self.logger = logger
-        LogUtils.debug(f"Initializing Room() class", self.logger)
+        LogUtils.debug(f"Initializing RoomFactory() class", self.logger)
 
     def add_room(
         self,
@@ -97,6 +102,8 @@ class RoomFactory(Utility):
         description,
         exits,
         environment,
+        scariness,
+        in_town=False,
         items=[],
         hidden_items=[],
         monsters=[],
@@ -104,22 +111,22 @@ class RoomFactory(Utility):
         npcs=[],
     ):
         method_name = inspect.currentframe().f_code.co_name
-        
-        scariness = random.choice(list(Room.Scariness)).value
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         room = Room(
-            id,
-            name,
-            inside,
-            description,
-            exits,
-            environment,
-            scariness,
+            id=id,
+            name=name,
+            inside=inside,
+            description=description,
+            exits=exits,
+            environment=environment,
+            scariness=scariness,
             items=items,
+            in_town=in_town,
             hidden_items=hidden_items,
             monsters=monsters,
             players=players,
             npcs=npcs,
-            logger=self.logger,
+            logger=self.logger
         )
         LogUtils.debug(f"{method_name}: generated room: {room}", self.logger)
         return room

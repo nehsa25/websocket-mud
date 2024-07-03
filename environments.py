@@ -42,7 +42,7 @@ class Environments(Utility):
             f"{method_name}: The world has {len(self.all_rooms)} rooms", self.logger
         )
         
-    def populate_monsters(self, initial_world_state):
+    def populate_monsters(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
@@ -52,10 +52,14 @@ class Environments(Utility):
         for room in rooms:
             room.monsters = []
             if random.randint(0, 1) <= room.monster_saturation:
-                # if we are going to put a monster in this room, how many?
+                found_monster = False
                 for i in range(room.scariness):
-                    monster = self.monster.get_monster(
-                        monster_type=random.choice(list(Utility.Share.Monsters)))
+                    while found_monster == False:  
+                        m_type = monster_type=random.choice(list(Utility.Share.Monsters))                  
+                        monster = self.monster.get_monster(m_type)
+                        if room.in_town and monster.allowed_in_city == False:
+                            continue                        
+                        found_monster = True
                     monster.room = room
                     LogUtils.debug(
                         f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',

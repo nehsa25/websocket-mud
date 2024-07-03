@@ -11,6 +11,12 @@ from utility import Utility
 
 
 class Player(Utility):
+    eye_color=None
+    hair_color=None
+    hair_length = None
+    tattoes_placement=None
+    tattoes_severity=None
+    scars=None
     logger = None
     utility = None
     name = None
@@ -32,9 +38,15 @@ class Player(Utility):
     DEATH_RESPAWN_ROOM = 6
     room = None
     previous_room = None
-
+    
     def __init__(
         self,
+        eye_color,
+        hair_color,
+        hair_length,
+        tattoes_placement,
+        tattoes_severity,
+        scars,
         level,
         name,
         hp,
@@ -57,6 +69,12 @@ class Player(Utility):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Player() class", self.logger)
+        self.eye_color = eye_color
+        self.hair_color = hair_color
+        self.hair_length = hair_length
+        self.tattoes_placement = tattoes_placement
+        self.tattoes_severity = tattoes_severity
+        self.scars = scars
         self.name = name
         self.age = age
         self.level = level
@@ -263,8 +281,9 @@ class Player(Utility):
         determination = await self.get_player_determination_description()
         faith = await self.get_player_faith_description()
         is_resting = "idly resting" if self.statuses.is_resting else "not resting"
+        
         msg = f"""
-        {self.name} is a level {self.level}, {age} {sex} {self.race.name.capitalize()} {self.player_class.name.capitalize()} of {hitpoint_status} health.    
+        {self.name} is a level {self.level}, {age} {sex} {self.race.name.capitalize()} {self.player_class.name.capitalize()}. {self.pronoun.value.pronoun.capitalize()} has {self.eye_color} eyes, {self.hair_length}, {self.hair_color} hair and is of {hitpoint_status} health.    
         {self.pronoun.value.pronoun.capitalize()} has a {physique} body and {self.pronoun.value.pronoun} moves with {agility} agility.  {self.name} appears {perception}, {intelligence}, {faith}, and {determination}.<br><br>    
         {self.name} appears to be {health_status} and is {is_resting}. Her mood is {self.statuses.feriocity.name.lower()}."""
         LogUtils.debug(f"{method_name}: exit", self.logger)

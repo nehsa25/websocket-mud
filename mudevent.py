@@ -41,6 +41,10 @@ class MudEvents:
             ENVIRONMENT = 21
             REST = 22
             HELP = 23
+            MONSTER_IMAGE = 24
+            PLAYER_IMAGE = 25
+            NPC_IMAGE = 26
+            ITEM_IMAGE = 27            
 
         @staticmethod
         def get_event_type_id(event):
@@ -259,6 +263,50 @@ class MudEvents:
         def to_json(self):
             return jsonpickle.encode(self)
 
+    class MonsterImageEvent:
+        type = None
+        image_name = ""
+        def __init__(self, image_name):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.MONSTER_IMAGE
+            )
+            self.image_name = image_name
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class PlayerImageEvent:
+        type = None
+        image_name = ""
+        def __init__(self, image_name):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.PLAYER_IMAGE
+            )
+            self.image_name = image_name
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class NpcImageEvent:
+        type = None
+        image_name = ""
+        def __init__(self, image_name):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.NPC_IMAGE
+            )
+            self.image_name = image_name
+        def to_json(self):
+            return jsonpickle.encode(self)
+
+    class ItemImageEvent:
+        type = None
+        image_name = ""
+        def __init__(self, image_name):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.ITEM_IMAGE
+            )
+            self.image_name = image_name
+        def to_json(self):
+            return jsonpickle.encode(self)
+        
     class DirectionEvent:
         type = None
         image_name = ""
@@ -323,7 +371,3 @@ class MudEvents:
             self.message = message
         def to_json(self):
             return jsonpickle.encode(self)
-
-
-
-

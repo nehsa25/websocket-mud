@@ -193,7 +193,22 @@ class Players(Utility):
             inventory = Inventory(
                 items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
             )
+            
+            # random characteristics
+            eye_color = random.choice(list(Utility.Share.EyeColors)).name
+            hair_color = random.choice(list(Utility.Share.HairColors)).name
+            tattoes_placement = random.choice(list(Utility.Share.TattooPlacements)).name
+            tattoes_severity = random.choice(list(Utility.Share.TattooSeverities)).name
+            scars = random.choice(list(Utility.Share.Scars)).name
+            hair_length = random.choice(list(Utility.Share.HairLength)).name
+            
             player = Player(
+                eye_color=eye_color,
+                hair_color=hair_color,
+                hair_length=hair_length,
+                tattoes_placement=tattoes_placement,
+                tattoes_severity=tattoes_severity,
+                scars=scars,
                 name=request["username"],
                 level = level,
                 race=player_race,

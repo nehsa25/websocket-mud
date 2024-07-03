@@ -7,6 +7,7 @@ from random import randint
 from log_utils import LogUtils
 from money import Money
 from monsters.ghoul import Ghoul
+from monsters.rite import Rite
 from monsters.shade import Shade
 from monsters.skeleton import Skeleton
 from monsters.wight import Wight
@@ -53,7 +54,7 @@ class Monster(Utility):
         LogUtils.debug(f"{method_name}: Initializing Monster() class", self.logger)
         self.skeleton = Skeleton(self.logger)
     
-    def get_monster(self, monster_type, worldstate):
+    def get_monster(self, monster_type):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         monster = None
@@ -71,6 +72,7 @@ class Monster(Utility):
             monster = Zombie(self.logger)
         if monster_type == Utility.Share.Monsters.ZOMBIE_SURFER:
             monster = ZombieSurfer(self.logger)
-            
+        if monster_type == Utility.Share.Monsters.RITE:
+            monster = Rite(self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return monster

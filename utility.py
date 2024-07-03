@@ -1,6 +1,7 @@
 from enum import Enum
 import inspect
 import random
+import time
 from log_utils import LogUtils
 from mudevent import MudEvents
 
@@ -132,6 +133,13 @@ class Utility(MudEvents):
             Silver = 2
             Gold = 3
     
+        class ImageType(Enum):
+            ROOM = 0
+            ITEM = 1
+            PLAYER = 2
+            NPC = 3
+            MONSTER = 4
+        
         # how much is your blood pumping?
         class Feriocity(Enum):
             NORMAL = 1
@@ -148,6 +156,7 @@ class Utility(MudEvents):
             SHADE = 5
             WIGHT = 6
             WRAITH = 7
+            RITE = 8
     
         class Alignment(Enum):
             GOOD = 1  # attacks evil players only
@@ -181,7 +190,63 @@ class Utility(MudEvents):
             SUMMER = 2
             FALL = 3
             WINTER = 4
-           
+        
+        class AIGeneration(Enum):
+            StabilityAI = 1
+            GeminiAI = 2
+             
+        class EyeColors(Enum):
+            BLUE = 1
+            GREEN = 2
+            BROWN = 3
+            HAZEL = 4
+            GRAY = 5
+            AMBER = 6
+            RED = 7
+            VIOLET = 8
+            BLACK = 9
+            WHITE = 10
+            SILVER = 11
+            GOLD = 12
+            AQUA = 13
+            TEAL = 14
+            ORANGE = 15
+
+        class HairColors(Enum):
+            BLACK = 1
+            BROWN = 2
+            BLONDE = 3
+            RED = 4
+            GRAY = 5
+            WHITE = 6
+            SILVER = 7
+            BLUE = 8
+            
+        class TattooPlacements(Enum):
+            FACE = 0
+            NECK = 1
+            ARM = 2
+            
+        class TattooSeverities(Enum):
+            NONE = 0
+            LIGHT = 1
+            MEDIUM = 2
+            HEAVY = 3
+        
+        class Scars(Enum):
+            NONE = 0
+            LIGHT = 1
+            MEDIUM = 2
+            HEAVY = 3
+            SEVERE = 4
+
+        class HairLength(Enum):
+            BALD = 0
+            SHORT = 1
+            MEDIUM = 2
+            LONG = 3
+            VERY_LONG = 4
+                         
     logger = None
     # rooms = None <-- need this?
 
@@ -246,6 +311,13 @@ class Utility(MudEvents):
 
         return name
 
+    def create_unique_name(self, original_name):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        name = f"{original_name}_{int(time.time())}".lower()
+        LogUtils.debug(f"{method_name}: exit, returning: {name}", self.logger)
+        return name
+    
     def sanitize_filename(self, filename):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)

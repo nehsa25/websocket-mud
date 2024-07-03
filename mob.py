@@ -36,6 +36,7 @@ class Mob(Utility):
     entrance_cry = ""
     victory_cry = ""
     damage_potential = ""
+    allowed_in_city = False
 
     # announce we're here!
     async def announce_entrance(self, room):
