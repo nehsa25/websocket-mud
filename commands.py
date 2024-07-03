@@ -242,7 +242,7 @@ class Commands(Utility):
             self.running_image_threads.append(
                 asyncio.create_task(
                     self.ai_images.generate_image(
-                        item_name=self.create_unique_name(f"{player.name}_player_self") + ".png",
+                        item_name=self.create_unique_name(f"{player.name}_player") + ".png",
                         item_description=player_description,
                         player=player,
                         world_state=world_state,
@@ -263,6 +263,18 @@ class Commands(Utility):
             for p in player.room.players:
                 if look_object in p.name.lower():
                     found = True
+                    description = await p.get_player_description()                    
+                    self.running_image_threads.append(
+                        asyncio.create_task(
+                            self.ai_images.generate_image(
+                                item_name=self.create_unique_name(f"{player.name}_player") + ".png",
+                                item_description=description,
+                                player=player,
+                                world_state=world_state,
+                                type=Utility.Share.ImageType.PLAYER
+                            )
+                        )
+                    )
                     await self.send_message(MudEvents.InfoEvent(await p.get_player_description()), player.websocket)
                     break
             if found: return
@@ -272,6 +284,17 @@ class Commands(Utility):
             for npc in player.room.npcs:
                 if look_object in npc.name.lower() or look_object in npc.title.lower():
                     found = True
+                    self.running_image_threads.append(
+                        asyncio.create_task(
+                            self.ai_images.generate_image(
+                                item_name=self.create_unique_name(f"{player.name}_npc") + ".png",
+                                item_description=npc.description,
+                                player=player,
+                                world_state=world_state,
+                                type=Utility.Share.ImageType.NPC
+                            )
+                        )
+                    )
                     await self.send_message(MudEvents.InfoEvent(npc.description), player.websocket)
                     break
             if found: return
@@ -281,6 +304,17 @@ class Commands(Utility):
             for monster in player.room.monsters:
                 if look_object in monster.name.lower():
                     found = True
+                    self.running_image_threads.append(
+                        asyncio.create_task(
+                            self.ai_images.generate_image(
+                                item_name=self.create_unique_name(f"{player.name}_monster") + ".png",
+                                item_description=monster.description,
+                                player=player,
+                                world_state=world_state,
+                                type=Utility.Share.ImageType.MONSTER
+                            )
+                        )
+                    )
                     await self.send_message(MudEvents.InfoEvent(monster.description), player.websocket)
                     break
             if found: return
@@ -290,6 +324,17 @@ class Commands(Utility):
             for item in player.room.items:
                 if look_object in item.name.lower():
                     found = True
+                    self.running_image_threads.append(
+                        asyncio.create_task(
+                            self.ai_images.generate_image(
+                                item_name=self.create_unique_name(f"{player.name}_item") + ".png",
+                                item_description=item.description,
+                                player=player,
+                                world_state=world_state,
+                                type=Utility.Share.ImageType.ITEM
+                            )
+                        )
+                    )
                     await self.send_message(MudEvents.InfoEvent(item.description), player.websocket)
                     break
             if found: return
