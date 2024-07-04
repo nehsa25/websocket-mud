@@ -1,4 +1,5 @@
 import asyncio
+from copy import deepcopy
 import datetime
 import inspect
 from random import randint
@@ -6,6 +7,7 @@ import random
 import time
 import traceback
 from aiimages import AIImages
+from environments import Environments
 from map import Map
 from monster import Monster
 from mudevent import MudEvents
@@ -20,7 +22,6 @@ class WorldState(Utility):
     world_events = None
     logger = None
     active_rooms = []
-    all_room_definitions = []
     running_map_threads = []
     running_image_threads = []
     map = None
@@ -41,6 +42,8 @@ class WorldState(Utility):
     dayornight = random.choice(list(Utility.Share.DayOrNight))
     dayornight_interval = 1000
     weather = None
+    monster_check_event = None
+    environments = None
     
     class Weather:
         start_description = None
@@ -212,14 +215,13 @@ class WorldState(Utility):
                 self.room_description = "The sky is completely overcast. It looks like it may rain soon."
                 self.start_description = "A heavy overcast begins to form."
 
-    def __init__(self, rooms, logger):
+    def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(
             f"{method_name}: Initializing WorldState() class - Keeps session information of all active rooms sync'd acrossed users, monsters, npcs",
             self.logger,
         )
-        self.all_room_definitions = rooms
 
         if self.weather is None:
             self.weather = self.Weather(logger)
@@ -236,10 +238,20 @@ class WorldState(Utility):
         if self.map is None:
             self.map = Map(self.logger)
 
+        if self.environments is None:
+            self.environments = Environments(self.logger)
+
     # schedule some events that'll do shit
     async def setup_world_events(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+        # populate monsters
+        self.environments.all_rooms = await self.populate_monsters()
+        self.monsters = [room for room in self.environments.all_rooms]
+        self.total_monsters = len(self.monsters)
+        LogUtils.info(f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}", self.logger)
+        
         if self.breeze_event is None:
             self.breeze_event = asyncio.create_task(self.breeze())
 
@@ -278,11 +290,28 @@ class WorldState(Utility):
         if self.get_weather_season_event is None:
             self.get_weather_season_event = asyncio.create_task(self.get_weather())
 
+        if self.monster_check_event is None:
+            self.monster_check_event = asyncio.create_task(self.check_monsters())
+
         # # start our monster resurrection task
         # if self.monster_respawn_event is None:
         #     self.monster_respawn_event = asyncio.create_task(
         #         self.monsters.respawn_mobs(self.rooms.rooms)
         #     )
+
+    async def check_monsters(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        while not self.shutdown:
+            try:
+                await asyncio.sleep(2)
+                for m in self.monster.monsters:
+                    LogUtils.info(f"{method_name}: checking monsters: {m}", self.logger)
+                    asyncio.gather(await m.respawn(self), await m.check_for_combat(self), await m.wander(self))
+            except:
+                LogUtils.error(
+                    f"{method_name}: {traceback.format_exc()}", self.logger
+                )
 
     # A startling bang..
     async def bang(self):
@@ -620,6 +649,35 @@ class WorldState(Utility):
                     f"{method_name}: {traceback.format_exc()}", self.logger
                 )
 
+    async def populate_monsters(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        rooms = deepcopy(self.environments.all_rooms)
+        
+        # add in monsters
+        for room in rooms:
+            room.monsters = []
+            if random.randint(0, 1) <= room.monster_saturation:
+                found_monster = False
+                for i in range(room.scariness):
+                    while found_monster == False:  
+                        m_type = monster_type=random.choice(list(Utility.Share.Monsters))                  
+                        monster = self.monster.get_monster(m_type)
+                        if room.in_town and monster.allowed_in_city == False:
+                            continue                        
+                        found_monster = True
+                    monster.room = room
+                    LogUtils.debug(
+                        f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',
+                        self.logger,
+                    )                    
+                    room.monsters.append(monster)
+            LogUtils.info(f"monsters added to {room.name}: {len(room.monsters)}", self.logger)        
+
+        LogUtils.debug(f"{method_name}: exit, monsters added: {len(room.monsters)}", self.logger)
+        
+        return rooms
+
     # returns the name of the area based on the type
     def get_area_identifier(self, area):
         method_name = inspect.currentframe().f_code.co_name
@@ -673,7 +731,7 @@ class WorldState(Utility):
                     new_room,
                     map_image_name,
                     player,
-                    self.all_room_definitions,
+                    self.environments.all_rooms,
                     self.get_area_identifier(new_room.environment),
                 )
             )
@@ -739,7 +797,7 @@ class WorldState(Utility):
     async def get_room_definition(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, room_id: {room_id}", self.logger)
-        room = [room for room in self.all_room_definitions if room.id == room_id][0]
+        room = [room for room in self.environments.all_rooms if room.id == room_id][0]
         LogUtils.debug(
             f'{method_name}: exit, returning room "{room.name}"', self.logger
         )
@@ -764,7 +822,7 @@ class WorldState(Utility):
         new_room = player.room
 
         if look_location_id is not None:
-            new_room = self.all_room_definitions[look_location_id]
+            new_room = self.environments.all_rooms[look_location_id]
 
         # get the description
         if new_room.inside:

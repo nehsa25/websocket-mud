@@ -45,15 +45,13 @@ class MonsterStats(Utility):
 
 class Monster(Utility):
     logger = None
-    skeleton = None
     monsters = []
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Monster() class", self.logger)
-        self.skeleton = Skeleton(self.logger)
-    
+
     def get_monster(self, monster_type):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)

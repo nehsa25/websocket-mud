@@ -4,6 +4,7 @@ import random
 from items import Items
 from log_utils import LogUtils
 from monster import Monster
+from npc import Npc
 from room import Room, RoomFactory
 from unit import Unit
 from utility import Utility
@@ -112,32 +113,21 @@ class TownSmee(Room):
     rooms = None
     room_factory = None
     in_town = True
+    npcs = None
     name = "Town Smee"
     type = Utility.Share.EnvironmentTypes.TOWNSMEE
-
-    def add_room(self, id, name, inside, description, exits, environment, hidden_items=[], items=[], monsters=[], npcs=[]):
-        return  self.room_factory.add_room(
-        id=id,
-        name=name,
-        inside=inside,
-        description=description,
-        exits=exits,
-        items=items,
-        monsters=monsters,
-        environment=environment,
-        npcs=npcs,
-        hidden_items=hidden_items,
-        in_town = True,
-        scariness=Room.Scariness.NONE
-      )
-        
+ 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing TownSmee() class", self.logger)
         self.monster_saturation = 0.5
         self.room_factory = RoomFactory(self.logger)
-        self.units = TownSmeeUnitFactory(logger)
+        self.units = TownSmeeUnitFactory(self.logger)
+        
+        if self.npcs is None:
+          self.npcs = Npc(self.logger)
+          
         self.rooms = [
          self.add_room(
             id=0,
@@ -152,6 +142,7 @@ class TownSmee(Room):
             ],
             items=[Items.helmet, Items.stick, Items.maul],
             monsters=[],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -365,5 +356,21 @@ class TownSmee(Room):
         ]
         pass
 
+    def add_room(self, id, name, inside, description, exits, environment, hidden_items=[], items=[], monsters=[], npcs=[]):
+        return  self.room_factory.add_room(
+        id=id,
+        name=name,
+        inside=inside,
+        description=description,
+        exits=exits,
+        items=items,
+        monsters=monsters,
+        environment=environment,
+        npcs=npcs,
+        hidden_items=hidden_items,
+        in_town = True,
+        scariness=Room.Scariness.NONE
+      )
+       
     # self.rooms = self.rooms
     # self.units = self.units

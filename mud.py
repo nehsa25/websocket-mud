@@ -34,13 +34,7 @@ class Mud(Utility):
         self.world = World(self.logger)
         
         # session state
-        self.world_state = WorldState(self.world.environments.all_rooms, self.logger)
-
-        # populate monsters
-        self.world_state.all_room_definitions = self.world.environments.populate_monsters()
-        self.monsters = [room for room in self.world_state.all_room_definitions]
-        self.total_monsters = len(self.monsters)
-        LogUtils.info(f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}", self.logger)
+        self.world_state = WorldState(self.logger)
 
     async def exit_handler(self, signal, frame):
         method_name = inspect.currentframe().f_code.co_name
@@ -72,10 +66,6 @@ class Mud(Utility):
 
                     # send updated hp
                     await p.send_status()
-
-                for m in self.world_state.monster.monsters:
-                    asyncio.gather(await m.respawn(self.world_state), await m.check_for_combat(self.world_state), await m.wander(self.world_state))
-                    
 
                 # wait for a command to be sent
                 LogUtils.info(f"Waiting for command...", self.logger)
@@ -116,7 +106,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
+            console_level=Level.ERROR,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)

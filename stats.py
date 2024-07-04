@@ -3,7 +3,7 @@ from log_utils import LogUtils
 from utility import Utility
 
 
-class Status(Utility):
+class Stats(Utility):
     logger = None
     current_hp = 0
     is_dead = None

@@ -42,33 +42,3 @@ class Environments(Utility):
             f"{method_name}: The world has {len(self.all_rooms)} rooms", self.logger
         )
         
-    def populate_monsters(self):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        
-        rooms = deepcopy(self.all_rooms)
-        
-        # add in monsters
-        for room in rooms:
-            room.monsters = []
-            if random.randint(0, 1) <= room.monster_saturation:
-                found_monster = False
-                for i in range(room.scariness):
-                    while found_monster == False:  
-                        m_type = monster_type=random.choice(list(Utility.Share.Monsters))                  
-                        monster = self.monster.get_monster(m_type)
-                        if room.in_town and monster.allowed_in_city == False:
-                            continue                        
-                        found_monster = True
-                    monster.room = room
-                    LogUtils.debug(
-                        f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',
-                        self.logger,
-                    )                    
-                    room.monsters.append(monster)
-            LogUtils.info(f"monsters added to {room.name}: {len(room.monsters)}", self.logger)        
-
-        LogUtils.debug(f"{method_name}: exit, monsters added: {len(room.monsters)}", self.logger)
-        
-        return rooms
-
