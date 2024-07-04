@@ -142,7 +142,7 @@ class TownSmee(Room):
             ],
             items=[Items.helmet, Items.stick, Items.maul],
             monsters=[],
-            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD), self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -154,7 +154,7 @@ class TownSmee(Room):
             {"direction": Room.dirs.south, "id": 9},
             {"direction": Room.dirs.up, "id": 3},
             ],
-            npcs=[self.units.inn_keeper, self.units.princess],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.INNKEEPER), self.npcs.get_npc(Utility.Share.Npcs.PRINCESS)],
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -165,7 +165,7 @@ class TownSmee(Room):
             exits=[
             {"direction": Room.dirs.east, "id": 11}, # sun road
             ],
-            npcs=[self.units.sheriff],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.SHERIFF)],
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -194,7 +194,7 @@ class TownSmee(Room):
             id=5,
             name=f"{self.name} - Blacksmith",
             inside=True,
-            npcs=[self.units.blacksmith],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.BLACKSMITH)],
             description="You are in the blacksmith's shop. An assortment of the blacksmiths wares are on display.",
             exits=[
             {"direction": Room.dirs.west, "id": 11}, # sun road
@@ -220,6 +220,7 @@ class TownSmee(Room):
             exits=[
             {"direction": Room.dirs.north, "id": 10},
             ],
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.MERCHANT), self.npcs.get_npc(Utility.Share.Npcs.THIEF)],
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -230,7 +231,7 @@ class TownSmee(Room):
             exits=[
             {"direction": Room.dirs.north, "id": 9}, # moon road
             ],
-            npcs=[self.units.armorer], 
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.ARMORER)], 
             environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
         ),
          self.add_room(
@@ -283,6 +284,7 @@ class TownSmee(Room):
             id=13,
             name=f"{self.name} - Sun Road (South)---2",
             inside=False,
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD), self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
             description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             exits=[
             {"direction": Room.dirs.north, "id": 12}, # town square
@@ -317,6 +319,7 @@ class TownSmee(Room):
             name=f"{self.name} - Gallows Road (East)---1",
             inside=False,
             description=f"The road is more an alley than main thoroughfare. The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD), self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
             exits=[
             {"direction": Room.dirs.west, "id": 15},
             {"direction": Room.dirs.east, "id": 17},
@@ -338,6 +341,7 @@ class TownSmee(Room):
             id=18,
             name=f"{self.name} - The Gallows",
             inside=False,
+            npcs=[self.npcs.get_npc(Utility.Share.Npcs.GUARD), self.npcs.get_npc(Utility.Share.Npcs.GUARD)],
             description=f"The road widens into a large gathering area. Sets of gallow line the road. A sign reads 'Next service in 3 days'. Admission is free but donations are accepted.",
             exits=[
             {"direction": Room.dirs.west, "id": 17},

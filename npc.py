@@ -1,11 +1,13 @@
 import inspect
 from log_utils import LogUtils
 from npcs.alchemist import Alchemist
+from npcs.armorer import Armorer
 from npcs.blacksmith import Blacksmith
 from npcs.guard import Guard
 from npcs.healer import Healer
 from npcs.innkeeper import InnKeeper
 from npcs.merchant import Merchant
+from npcs.princess import Princess
 from npcs.sheriff import Sheriff
 from npcs.thief import Thief
 from npcs.wizard import Wizard
@@ -36,6 +38,10 @@ class Npc(Utility):
             npc = Thief(self.logger)
         if npc_type == Utility.Share.Npcs.WIZARD:
             npc = Wizard(self.logger)
+        if npc_type == Utility.Share.Npcs.ARMORER:
+            npc = Armorer(self.logger)
+        if npc_type == Utility.Share.Npcs.PRINCESS:
+            npc = Princess(self.logger)
                         
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return npc
