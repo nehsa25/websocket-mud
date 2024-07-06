@@ -6,6 +6,8 @@ from random import randint
 import random
 import time
 import traceback
+
+import websockets
 from aiimages import AIImages
 from environment import Environments
 from locks import NpcWanderLock
@@ -355,16 +357,21 @@ class WorldState(Utility):
     async def npc_wander(self, npc):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        npclock = NpcWanderLock(npc)
-        async with npclock.lock:
-            method_name = inspect.currentframe().f_code.co_name
-            rand = randint(0, 10)
-            LogUtils.debug(
-                f'NPC "{npc.name}" will move in {str(rand)} seconds...',
-                self.logger,
-            )
-            await asyncio.sleep(rand)
-            self = await npc.wander(self)
+        try:            
+            npclock = NpcWanderLock(npc)
+            async with npclock.lock:
+                method_name = inspect.currentframe().f_code.co_name
+                rand = randint(0, 10)
+                LogUtils.debug(
+                    f'NPC "{npc.name}" will move in {str(rand)} seconds...',
+                    self.logger,
+                )
+                await asyncio.sleep(rand)
+                self = await npc.wander(self)
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
+        except:
+            LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # A startling bang..

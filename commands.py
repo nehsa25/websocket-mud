@@ -145,7 +145,7 @@ class Commands(Utility):
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:
-                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].capitalize()}."), p.websocket)
+                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].name.capitalize()}."), p.websocket)
 
             # update location
             world_state = await world_state.move_room_player(new_room_id, player)
