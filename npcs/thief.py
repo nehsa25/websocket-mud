@@ -6,6 +6,8 @@ from utility import Utility
 class Thief(NpcMob):
     logger = None
     name = "Tijer"
+    title = "Butcher"
+    wanders = True
     description = """Tijer the butcher is a tall, thin teenanger. He is wearing a simple tunic and a pair of brown trousers."""
     interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "items of value", "your valuables", "your money"]
     type = Utility.Share.Npcs.THIEF

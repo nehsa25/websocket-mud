@@ -7,6 +7,7 @@ class Sheriff(NpcMob):
     logger = None
     name = "Cog"
     title = "Sheriff"
+    wanders = True
     description = """The sheriff of Town Smee. The sheriff is a slender, man with a mustache. 
         The sheriff is wearing an unsightly but practical bear cloak across his shoulders to stave off the rain. 
         He has a menacing cudgel at his waist and smiles showing oddly white teeth when he notices you look at it."""
