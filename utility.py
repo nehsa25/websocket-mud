@@ -5,7 +5,6 @@ import time
 from log_utils import LogUtils
 from mudevent import MudEvents
 
-
 class Utility(MudEvents):
     common_names = [
         "William",
@@ -110,76 +109,17 @@ class Utility(MudEvents):
             NECROMANCER = (17,)
             ILLUSIONIST = 18
 
-        class MudDirections:  # directions
-            up = ["u", "up"]
-            down = ["d", "down"]
-            north = ["n", "north", "nor"]
-            south = ["s", "south", "sou"]
-            east = ["e", "east", "eas", "ea"]
-            west = ["w", "west", "wes", "we"]
-            northwest = ["nw", "northwest", "northw"]
-            northeast = ["ne", "northeast", "northe"]
-            southeast = ["se", "southeast", "southe"]
-            southwest = ["sw", "southwest", "southw"]
-            directions = [
-                up[0].lower(),
-                up[1].lower(),
-                down[0].lower(),
-                down[1].lower(),
-                north[0].lower(),
-                north[1].lower(),
-                north[2].lower(),
-                south[0].lower(),
-                south[1].lower(),
-                south[2].lower(),
-                east[0].lower(),
-                east[1].lower(),
-                east[2].lower(),
-                west[0].lower(),
-                west[1].lower(),
-                west[2].lower(),
-                northwest[0].lower(),
-                northwest[1].lower(),
-                northwest[2].lower(),
-                northeast[0].lower(),
-                northeast[1].lower(),
-                northeast[2].lower(),
-                southeast[0].lower(),
-                southeast[1].lower(),
-                southeast[2].lower(),
-                southwest[0].lower(),
-                southwest[1].lower(),
-                southwest[2].lower(),
-            ]
-            pretty_directions = [
-                up,
-                down,
-                north,
-                south,
-                east,
-                west,
-                northwest,
-                northeast,
-                southeast,
-                southwest,
-            ]
-
-            opp_directions = [
-                (up, down),
-                (east, west),
-                (north, south),
-                (northeast, southwest),
-                (northwest, southeast),
-            ]
-
-            @staticmethod
-            def get_friendly_name(direction):
-                friendly_name = None
-                for pretty_direction in Utility.Share.MudDirections.pretty_directions:
-                    if direction in pretty_direction:
-                        friendly_name = pretty_direction[1].capitalize()
-                        break
-                return friendly_name
+        class MudDirections(Enum):  # directions
+            UP = 0
+            DOWN = 1
+            NORTH = 2
+            SOUTH = 3
+            EAST = 4
+            WEST = 5
+            NORTHWEST = 6
+            NORTHEAST = 7
+            SOUTHEAST = 8
+            SOUTHWEST = 9
 
         class DayOrNight(Enum):
             DAY = 1
@@ -339,19 +279,6 @@ class Utility(MudEvents):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         return id
 
-    def is_valid_look_direction(self, direction):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        found = False
-        for valid_direction in Utility.Share.MudDirections.pretty_directions:
-            if direction.lower() in valid_direction:
-                found = True
-                break
-
-        LogUtils.info(f"Is valid look direction? {found}", self.logger)
-        LogUtils.debug(f"{method_name}: exit", self.logger)
-        return found
-
     def generate_name(self, include_identifier=True, include_sirname=False):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -368,7 +295,7 @@ class Utility(MudEvents):
             identifier = random.choice(self.common_identifiers)
 
         # combine name and title
-        name = f"{sirname_choice} {name_choice} {identifier}"
+        name = f"{sirname_choice.strip()} {name_choice.strip()} {identifier.strip()}".strip()
 
         LogUtils.debug(f"{method_name}: exit, returing: {name}", self.logger)
 

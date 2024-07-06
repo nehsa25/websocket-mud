@@ -19,8 +19,7 @@ class Room(Utility):
         EXTREME = 5
         POOP = 6
         RANDOM = 7  
-        
-    dirs = Utility.Share.MudDirections()
+
     id: 0
     name = ""
     inside = False

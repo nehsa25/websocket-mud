@@ -14,6 +14,7 @@ class Merchant(NpcMob):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Merchant() class", self.logger)
+        super().__init__(title=self.title, description=self.description, logger=self.logger)
 
     def generate(self):
         LogUtils.info(f"Generating Merchant {self.name}...", self.logger)

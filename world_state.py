@@ -8,6 +8,7 @@ import time
 import traceback
 from aiimages import AIImages
 from environments import Environments
+from locks import NpcWanderLock
 from map import Map
 from monster import Monster
 from mudevent import MudEvents
@@ -44,7 +45,9 @@ class WorldState(Utility):
     weather = None
     monster_check_event = None
     environments = None
-    
+    npc_events = None
+    npc_running_wander_event = []  # ensures we don't run the same event twice
+
     class Weather:
         start_description = None
         weather_type = None
@@ -76,9 +79,8 @@ class WorldState(Utility):
             self.weather_strength = random.choice(list(Utility.Share.WeatherStrength))
             self.logger = logger
             LogUtils.debug("Initializing WorldEvents.Weather() class", self.logger)
-            
+
             self.set_weather_descriptions()
-            
 
         async def change_weather(self, weather_type, weather_strength):
             method_name = inspect.currentframe().f_code.co_name
@@ -159,7 +161,9 @@ class WorldState(Utility):
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
                 self.room_description = "It's pouring rain."
-                self.start_description = "It's starting to rain very hard. The sky is beginning to darken."
+                self.start_description = (
+                    "It's starting to rain very hard. The sky is beginning to darken."
+                )
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.THUNDER
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
@@ -198,9 +202,7 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = (
-                    "Small patches of sun shine through the clouds."
-                )
+                self.room_description = "Small patches of sun shine through the clouds."
                 self.start_description = "Clouds are starting to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
@@ -212,7 +214,9 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = "The sky is completely overcast. It looks like it may rain soon."
+                self.room_description = (
+                    "The sky is completely overcast. It looks like it may rain soon."
+                )
                 self.start_description = "A heavy overcast begins to form."
 
     def __init__(self, logger):
@@ -225,7 +229,7 @@ class WorldState(Utility):
 
         if self.weather is None:
             self.weather = self.Weather(logger)
-            
+
         if self.players is None:
             self.players = Players(self.logger)
 
@@ -245,13 +249,19 @@ class WorldState(Utility):
     async def setup_world_events(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        
+
         # populate monsters
         self.environments.all_rooms = await self.populate_monsters()
         self.monsters = [room for room in self.environments.all_rooms]
         self.total_monsters = len(self.monsters)
-        LogUtils.info(f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}", self.logger)
-        
+        LogUtils.info(
+            f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}",
+            self.logger,
+        )
+
+        if self.npc_events is None:
+            self.npc_events = asyncio.create_task(self.check_npc_events())
+
         if self.breeze_event is None:
             self.breeze_event = asyncio.create_task(self.breeze())
 
@@ -273,10 +283,10 @@ class WorldState(Utility):
         if self.bang_event is None:
             self.time_event = asyncio.create_task(self.bang())
 
-        if self.check_for_attack_event is None:
-            self.check_for_attack_event = asyncio.create_task(
-                self.check_for_combat()
-            )
+        # if self.check_for_attack_event is None:
+        #     self.check_for_attack_event = asyncio.create_task(
+        #         self.check_for_combat()
+        # )
 
         if self.dayornight_event is None:
             self.dayornight_event = asyncio.create_task(self.check_day_or_night())
@@ -307,11 +317,40 @@ class WorldState(Utility):
                 await asyncio.sleep(2)
                 for m in self.monster.monsters:
                     LogUtils.info(f"{method_name}: checking monsters: {m}", self.logger)
-                    asyncio.gather(await m.respawn(self), await m.check_for_combat(self), await m.wander(self))
+                    asyncio.gather(
+                        await m.respawn(self),
+                        await m.check_for_combat(self),
+                        await m.wander(self),
+                    )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+
+    async def check_npc_events(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        while not self.shutdown:
+            try:
+                # setup npc events
+                for npc in self.environments.townsmee.npcs.npcs:
+                    if npc.wanders:
+                        await asyncio.create_task(self.npc_wander(npc))
+            except:
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+
+    async def npc_wander(self, npc):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        npclock = NpcWanderLock(npc)
+        async with npclock.lock:
+            method_name = inspect.currentframe().f_code.co_name
+            rand = randint(0, 10)
+            LogUtils.debug(
+                f'NPC "{npc.name}" will move in {str(rand)} seconds...',
+                self.logger,
+            )
+            await asyncio.sleep(rand)
+            await npc.wander(self)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # A startling bang..
     async def bang(self):
@@ -349,9 +388,7 @@ class WorldState(Utility):
                         MudEvents.EnvironmentEvent(msg), p.websocket
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # Setup weather event
     async def get_weather(self):
@@ -368,13 +405,9 @@ class WorldState(Utility):
                 self.weather.weather_type = random.choice(
                     list(Utility.Share.WeatherTypes)
                 )
-                self.weather.start_description = (
-                    self.weather.set_weather_descriptions()
-                )
+                self.weather.start_description = self.weather.set_weather_descriptions()
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # Setup weather season event
     async def get_weather_season(self):
@@ -387,9 +420,7 @@ class WorldState(Utility):
                     f"{method_name}: Checking: get_weather_season", self.logger
                 )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # It begins to rain..
     async def rain(self):
@@ -423,9 +454,7 @@ class WorldState(Utility):
                         p.websocket,
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -447,9 +476,7 @@ class WorldState(Utility):
                         p.websocket,
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # A gentle breeze blows by you..
     async def breeze(self):
@@ -465,15 +492,11 @@ class WorldState(Utility):
                 LogUtils.info(f"{method_name}: Checking: breeze", self.logger)
                 for p in self.players.players:
                     await self.send_message(
-                        MudEvents.EnvironmentEvent(
-                            "A gentle breeze blows by you.."
-                        ),
+                        MudEvents.EnvironmentEvent("A gentle breeze blows by you.."),
                         p.websocket,
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -487,9 +510,7 @@ class WorldState(Utility):
                     self.logger,
                 )
                 await asyncio.sleep(rand)
-                LogUtils.info(
-                    f"{method_name}: Checking: eerie_silence", self.logger
-                )
+                LogUtils.info(f"{method_name}: Checking: eerie_silence", self.logger)
                 for p in self.players.players:
                     await self.send_message(
                         MudEvents.EnvironmentEvent(
@@ -498,9 +519,7 @@ class WorldState(Utility):
                         p.websocket,
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # Eyes are watching you..
     async def being_observed(self):
@@ -514,9 +533,7 @@ class WorldState(Utility):
                     self.logger,
                 )
                 await asyncio.sleep(rand)
-                LogUtils.info(
-                    f"{method_name}: Checking: being_observed", self.logger
-                )
+                LogUtils.info(f"{method_name}: Checking: being_observed", self.logger)
                 for p in self.players.players:
                     await self.send_message(
                         MudEvents.EnvironmentEvent(
@@ -525,9 +542,7 @@ class WorldState(Utility):
                         p.websocket,
                     )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # admin status
     async def get_admin_status(self):
@@ -544,13 +559,9 @@ class WorldState(Utility):
                     await self.send_message(MudEvents.InfoEvent(msg), p.websocket)
 
                 await asyncio.sleep(60 * 15)
-                LogUtils.info(
-                    f"{method_name}: Checking: get_admin_status", self.logger
-                )
+                LogUtils.info(f"{method_name}: Checking: get_admin_status", self.logger)
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # just return the current date/time
     async def get_system_time(self):
@@ -564,55 +575,9 @@ class WorldState(Utility):
 
                 # sleep 10 minutes
                 await asyncio.sleep(60 * 10)
-                LogUtils.info(
-                    f"{method_name}: Checking: get_system_time", self.logger
-                )
+                LogUtils.info(f"{method_name}: Checking: get_system_time", self.logger)
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
-
-    # responsible for the "prepares to attack you messages"
-    async def check_for_combat(self):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        battle = None
-        while not self.shutdown:
-            await asyncio.sleep(2)
-            LogUtils.debug(f"{method_name}: checking combat", self.logger)
-        #     try:
-        #         # LogUtils.info(f"{method_name}: Checking: check_for_combat", self.logger)
-        #         # LogUtils.debug(f"{method_name}: FIX THIS:  THIS IS CERTAINLY NOT RIGHT IF MULTIPLE BATTLES ARE OCCURING.", self.logger)
-        #         # battle, self = await self.battles.run_combat_round(battle, self.players, world=self)
-        #         # if battle is not None and battle.state == battle.BattleState.COMPLETED:
-        #         #     self.battles.battles.append(await battle.stop_battle(battle, self))
-        #         #     battle.state = battle.BattleState.RECORDED
-
-        #         # check for new battles
-        #         new_battle = await self.battles.check_for_combat(
-        #             self.players, self.monsters, self.rooms
-        #         )
-        #         if new_battle is not None:
-        #             self.battles.active_battles(new_battle)
-
-        #         # iterate each battle in progress
-        #         for current_battle in self.battles.active_battles:
-        #             current_battle, self = await self.battles.run_combat_round(
-        #                 current_battle, self.players, world=self
-        #             )
-        #             if (
-        #                 current_battle is not None
-        #                 and current_battle.state
-        #                 == current_battle.BattleState.COMPLETED
-        #             ):
-        #                 await battle.stop_battle(battle, self)
-        #                 battle.state = battle.BattleState.RECORDED
-        #     except:
-        #         LogUtils.error(
-        #             f"{method_name}: {traceback.format_exc()}", self.logger
-        #         )
-
-        # LogUtils.debug(f"{method_name}: exit", self.logger)
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # sets day or night
     async def check_day_or_night(self):
@@ -645,37 +610,41 @@ class WorldState(Utility):
                     event_type=MudEvents.EnvironmentEvent,
                 )
             except:
-                LogUtils.error(
-                    f"{method_name}: {traceback.format_exc()}", self.logger
-                )
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     async def populate_monsters(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         rooms = deepcopy(self.environments.all_rooms)
-        
+
         # add in monsters
         for room in rooms:
             room.monsters = []
             if random.randint(0, 1) <= room.monster_saturation:
                 found_monster = False
                 for i in range(room.scariness):
-                    while found_monster == False:  
-                        m_type = monster_type=random.choice(list(Utility.Share.Monsters))                  
+                    while found_monster == False:
+                        m_type = monster_type = random.choice(
+                            list(Utility.Share.Monsters)
+                        )
                         monster = self.monster.get_monster(m_type)
                         if room.in_town and monster.allowed_in_city == False:
-                            continue                        
+                            continue
                         found_monster = True
                     monster.room = room
                     LogUtils.debug(
                         f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',
                         self.logger,
-                    )                    
+                    )
                     room.monsters.append(monster)
-            LogUtils.info(f"monsters added to {room.name}: {len(room.monsters)}", self.logger)        
+            LogUtils.info(
+                f"monsters added to {room.name}: {len(room.monsters)}", self.logger
+            )
 
-        LogUtils.debug(f"{method_name}: exit, monsters added: {len(room.monsters)}", self.logger)
-        
+        LogUtils.debug(
+            f"{method_name}: exit, monsters added: {len(room.monsters)}", self.logger
+        )
+
         return rooms
 
     # returns the name of the area based on the type
@@ -718,7 +687,9 @@ class WorldState(Utility):
         await self.show_room(player)
 
         # name for images
-        map_image_name = self.sanitize_filename(self.create_unique_name(f"{player.name}_map"))  # renkath_map_1718628698
+        map_image_name = self.sanitize_filename(
+            self.create_unique_name(f"{player.name}_map")
+        )  # renkath_map_1718628698
         room_image_name = (
             self.sanitize_filename(self.create_unique_name(f"{new_room.name}_room"))
             + ".png"
@@ -776,14 +747,27 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return monster
 
-    async def move_room_npc(self, room_id, npc):
+    # returns player, world, responsible for moving a player from one room to the next
+    async def move_room_npc(self, new_room_id, npc, direction):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        for room in self.active_rooms:
-            if room.id == room_id:
-                room.npcs.append(npc)
-                return room
-        return None
+
+        # if the npc has a previous room, update it
+        if npc.room is not None:
+            await npc.room.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}")
+            npc.room.npcs.remove(npc)
+
+        # add player to new room
+        new_room = await self.get_room(new_room_id)
+        await npc.room.alert(f"{npc.get_full_name()} has arrived from the {direction["direction"].opposite.name.capitalize()}")
+        new_room.npcs.append(npc)
+
+        # update to new room
+        npc.previous_room = npc.room
+        npc.room = new_room
+
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return self
 
     async def get_active_room(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
@@ -818,7 +802,7 @@ class WorldState(Utility):
     async def show_room(self, player, look_location_id=None):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        
+
         new_room = player.room
 
         if look_location_id is not None:
@@ -828,9 +812,7 @@ class WorldState(Utility):
         if new_room.inside:
             description = new_room.description
         else:
-            description = self.weather.add_weather_description(
-                new_room.description
-            )
+            description = self.weather.add_weather_description(new_room.description)
 
         # show items
         items = ""
@@ -842,7 +824,7 @@ class WorldState(Utility):
         # offer possible exits
         exits = ""
         for available_exit in new_room.exits:
-            exits += available_exit["direction"][1] + ", "
+            exits += available_exit["direction"].name + ", "
         exits = exits[0 : len(exits) - 2]
 
         # show npcs
@@ -900,7 +882,9 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return world.environments
 
-    async def alert_world(self, message, exclude_player=True, player = None, event_type=MudEvents.InfoEvent):
+    async def alert_world(
+        self, message, exclude_player=True, player=None, event_type=MudEvents.InfoEvent
+    ):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, message: {message}", self.logger)
         for p in self.players.players:
@@ -909,6 +893,5 @@ class WorldState(Utility):
                     await self.send_message(event_type(message), p.websocket)
             else:
                 await self.send_message(MudEvents.InfoEvent(message), p.websocket)
-                
-        LogUtils.debug(f"{method_name}: exit", self.logger)
 
+        LogUtils.debug(f"{method_name}: exit", self.logger)

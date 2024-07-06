@@ -90,12 +90,12 @@ class Map(Utility):
             
             for exit in room_exits:
                 exit_room = rooms[exit["id"]]
-                exit_direction = exit["direction"][0]
+                exit_direction = exit["direction"].name
                 edge = pydot.Edge(room_name, exit_room.name, label=exit_direction)
                 if active_node:
                     edge = pydot.Edge(room_name, 
                                       exit_room.name,
-                                      label=exit["direction"][1],
+                                      label=exit["direction"],
                                       fillcolor = "red")
                 self.graph.add_edge(edge)
 

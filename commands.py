@@ -127,7 +127,7 @@ class Commands(Utility):
         will_travel = False
         new_room_id = None
         for avail_exit in player.room.exits:
-            if (wanted_direction == avail_exit["direction"][0].lower() or wanted_direction == avail_exit["direction"][1].lower()):
+            if wanted_direction in avail_exit["direction"].variations:
                 will_travel = True
                 new_room_id = avail_exit["id"]
                 break
@@ -138,14 +138,14 @@ class Commands(Utility):
                 await player.set_rest(False)
 
             # update you
-            await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'][1].lower()}."), player.websocket)
+            await self.send_message(MudEvents.DirectionEvent(f"You travel {avail_exit['direction'].name.capitalize()}."), player.websocket)
 
             # Update users you've left
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id == player.room.id:
-                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'][1].lower()}."), p.websocket)
+                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].capitalize()}."), p.websocket)
 
             # update location
             world_state = await world_state.move_room_player(new_room_id, player)
@@ -184,15 +184,12 @@ class Commands(Utility):
 
         # check if it's a valid direction in the room
         for avail_exit in room.exits:
-            if (
-                wanted_direction == avail_exit["direction"][0].lower()
-                or wanted_direction == avail_exit["direction"][1].lower()
-            ):
+            if wanted_direction in avail_exit["direction"].variations:
                 valid_direction = True
                 break
 
         if valid_direction == True:
-            await self.send_message(MudEvents.InfoEvent(f"You look to the {Utility.Share.MudDirections.get_friendly_name(wanted_direction)}."), player.websocket)
+            await self.send_message(MudEvents.InfoEvent(f"You look to the {avail_exit["direction"].name.capitalize()}."), player.websocket)
 
             # send message to any players in same room
             for p in world_state.players.players:
@@ -230,7 +227,7 @@ class Commands(Utility):
             if found: return
 
         # are we looking in a direction?
-        if self.is_valid_look_direction(look_object):
+        if world_state.environments.dirs.is_valid_direction(look_object):
             found = True
             await self.process_look_direction(look_object, player, world_state)
             if found: return
@@ -736,9 +733,8 @@ class Commands(Utility):
                 await world_state.show_room(player)
             elif command == "help":  # display help
                 player = await self.process_help(player)
-            elif command in self.Share.MudDirections.directions:  # process direction
+            elif world_state.environments.dirs.is_valid_direction(command):  # process direction
                 player = await self.process_direction(command, player, world_state)
-
             # a look command - could be at the room, a person, a monster, an item
             elif command == "l" or command == "look" or command.startswith("l ") or command.startswith("look "):
                 player = await self.process_look(command, player, world_state)

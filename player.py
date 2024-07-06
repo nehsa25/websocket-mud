@@ -7,7 +7,6 @@ from mudevent import MudEvents
 from stats import Stats
 from utility import Utility
 
-
 class Player(Utility):
     eye_color=None
     hair_color=None
@@ -36,6 +35,7 @@ class Player(Utility):
     DEATH_RESPAWN_ROOM = 6
     room = None
     previous_room = None
+    attack_task = None
     
     def __init__(
         self,
@@ -101,8 +101,50 @@ class Player(Utility):
         if self.rest_task is None:
             self.rest_task = asyncio.create_task(self.check_for_resting())
 
-        # if self.mob_attack_task is None:
-        #     self.mob_attack_task = asyncio.create_task(self.check_for_new_attacks())
+        if self.attack_task is None:
+            self.attack_task = asyncio.create_task(self.check_for_combat())
+
+    # responsible for the "prepares to attack you messages"
+    async def check_for_combat(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        battle = None
+        while True:
+            await asyncio.sleep(2)
+            LogUtils.debug(f"{method_name}: {self.name} - checking combat", self.logger)
+        #     try:
+        #         # LogUtils.info(f"{method_name}: Checking: check_for_combat", self.logger)
+        #         # LogUtils.debug(f"{method_name}: FIX THIS:  THIS IS CERTAINLY NOT RIGHT IF MULTIPLE BATTLES ARE OCCURING.", self.logger)
+        #         # battle, self = await self.battles.run_combat_round(battle, self.players, world=self)
+        #         # if battle is not None and battle.state == battle.BattleState.COMPLETED:
+        #         #     self.battles.battles.append(await battle.stop_battle(battle, self))
+        #         #     battle.state = battle.BattleState.RECORDED
+
+        #         # check for new battles
+        #         new_battle = await self.battles.check_for_combat(
+        #             self.players, self.monsters, self.rooms
+        #         )
+        #         if new_battle is not None:
+        #             self.battles.active_battles(new_battle)
+
+        #         # iterate each battle in progress
+        #         for current_battle in self.battles.active_battles:
+        #             current_battle, self = await self.battles.run_combat_round(
+        #                 current_battle, self.players, world=self
+        #             )
+        #             if (
+        #                 current_battle is not None
+        #                 and current_battle.state
+        #                 == current_battle.BattleState.COMPLETED
+        #             ):
+        #                 await battle.stop_battle(battle, self)
+        #                 battle.state = battle.BattleState.RECORDED
+        #     except:
+        #         LogUtils.error(
+        #             f"{method_name}: {traceback.format_exc()}", self.logger
+        #         )
+
+        # LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def get_player_hitpoint_description(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -314,7 +356,7 @@ class Player(Utility):
     async def send_status(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        LogUtils.info(f"{method_name}: {self.name}: sending updated statues", self.logger)
+        LogUtils.info(f"{method_name}: {self.name}: sending updated statuses", self.logger)
         name = self.name
         await self.send_message(
             MudEvents.HealthEvent(name, self.stats), self.websocket

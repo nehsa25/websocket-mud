@@ -15,6 +15,7 @@ class Blacksmith(NpcMob):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Blacksmith() class", self.logger)
-
+        super().__init__(title=self.title, description=self.description, logger=self.logger)
+        
     def generate(self):
         LogUtils.info(f"Generating Blacksmith {self.name}...", self.logger)

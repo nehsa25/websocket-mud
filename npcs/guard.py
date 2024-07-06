@@ -9,12 +9,12 @@ class Guard(NpcMob):
     title = "Guard"
     description = """The guard stands alert. While in it's armor, you cannot tell many other details. The armour is standard issue but well-maintained hardened leather with metal plating."""
     interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "justice", "women", "cards"]
+    wanders = True
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"{method_name}: Initializing Guard() class", self.logger)
-        
+        LogUtils.debug(f"{method_name}: Initializing Guard() class", self.logger)        
         super().__init__(title=self.title, description=self.description, logger=self.logger)
 
     def generate(self):
