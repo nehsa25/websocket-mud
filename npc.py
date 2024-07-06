@@ -15,9 +15,14 @@ from utility import Utility
 
 
 class Npc(Utility):
-    npcs = []
-        
-    def get_npc(self, npc_type):
+    logger = None
+    
+    def __init__(self, logger) -> None:
+        method_name = inspect.currentframe().f_code.co_name
+        self.logger = logger
+        LogUtils.debug(f"{method_name}: Initializing Npc() class", logger)
+              
+    def get_npc(self, npc_type, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)        
         npc = None
@@ -44,7 +49,7 @@ class Npc(Utility):
         if npc_type == Utility.Share.Npcs.PRINCESS:
             npc = Princess(self.logger)
   
-        self.npcs.append(npc)
+        npc = npc.generate(room_id)
                      
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return npc

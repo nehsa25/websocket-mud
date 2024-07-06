@@ -14,8 +14,8 @@ class NpcMob(Utility):
     wander_event = None
     last_direction = None
     wanders = False
-    room = None
-    previous_room = None
+    room_id = None
+    prev_room_id = None
     
     def __init__(self, logger, name="", description="", title=""):
         method_name = inspect.currentframe().f_code.co_name
@@ -48,16 +48,17 @@ class NpcMob(Utility):
         
         # get random direction
         direction = None
+        room = await world_state.get_room(self.room_id)  
         if self.last_direction is None:
-            direction = random.choice(self.room.exits)
+            direction = random.choice(room.exits)
         else:
             found_direction = False
             while not found_direction:
-                direction = random.choice(self.room.exits)
-                if direction != self.last_direction or len(self.room.exits) == 1:
+                direction = random.choice(room.exits)
+                if direction != self.last_direction or len(room.exits) == 1:
                     found_direction = True
 
-        await self.move(direction, world_state)
+        self, world_state = await self.move(direction, world_state)
         self.last_direction = direction
             
         LogUtils.debug(f"{method_name}: exit", self.logger)
@@ -67,8 +68,9 @@ class NpcMob(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         LogUtils.info(f"{method_name}: {self.name} is moving {direction}", self.logger)
-        room_id = [a for a in self.room.exits if a["direction"] == direction["direction"]][0]["id"]
-        await world_state.move_room_npc(room_id, self, direction)
+        room = await world_state.get_room(self.room_id)  
+        room_id = [a for a in room.exits if a["direction"] == direction["direction"]][0]["id"]
+        self, world_state = await world_state.move_room_npc(room_id, self, direction)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return world_state
+        return self, world_state
         

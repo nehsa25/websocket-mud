@@ -9,12 +9,16 @@ class Alchemist(NpcMob):
     title = "Elder"
     description = """Zofia is a frail old woman. Sit remains seated in her chair and gestures for you to look around and get what you want."""
     interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "potions", "herbs", "alchemy", "I am old and tired.", "I am patronizing"]
-
-    def __init__(self, logger):
+    type = Utility.Share.Npcs.ALCHEMIST
+    
+    def __init__(self, room_id, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Alchemist() class", self.logger)
-        super().__init__(title=self.title, description=self.description, logger=self.logger)
+        super().__init__(name=self.name, title=self.title, description=self.description, logger=self.logger)
 
-    def generate(self):
-        LogUtils.info(f"Generating Alchemist {self.name}...", self.logger)
+    def generate(self, room_id):
+        LogUtils.info(f"Generating {self.type} {self.name} at room {room_id}...", self.logger)
+        self.room_id = room_id
+        return self
+    

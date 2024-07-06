@@ -7,7 +7,7 @@ import random
 import time
 import traceback
 from aiimages import AIImages
-from environments import Environments
+from environment import Environments
 from locks import NpcWanderLock
 from map import Map
 from monster import Monster
@@ -15,7 +15,6 @@ from mudevent import MudEvents
 from players import Players
 from utility import Utility
 from log_utils import LogUtils
-
 
 class WorldState(Utility):
     players = None
@@ -47,7 +46,11 @@ class WorldState(Utility):
     environments = None
     npc_events = None
     npc_running_wander_event = []  # ensures we don't run the same event twice
-
+    
+    # instances of monsters/npcs
+    monsters = []
+    npcs = []
+    
     class Weather:
         start_description = None
         weather_type = None
@@ -258,6 +261,15 @@ class WorldState(Utility):
             f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}",
             self.logger,
         )
+        
+        # populate npcs
+        self.environments.all_npcs, self.environments.all_rooms = await self.populate_npcs()
+        self.npcs = [room for room in self.environments.all_rooms]
+        self.total_monsters = len(self.npcs)
+        LogUtils.info(
+            f"npcs added to {Utility.Share.WORLD_NAME}: {self.total_monsters}",
+            self.logger,
+        )
 
         if self.npc_events is None:
             self.npc_events = asyncio.create_task(self.check_npc_events())
@@ -331,7 +343,7 @@ class WorldState(Utility):
         while not self.shutdown:
             try:
                 # setup npc events
-                for npc in self.environments.townsmee.npcs.npcs:
+                for npc in self.environments.all_npcs:
                     if npc.wanders:
                         await asyncio.create_task(self.npc_wander(npc))
             except:
@@ -349,7 +361,7 @@ class WorldState(Utility):
                 self.logger,
             )
             await asyncio.sleep(rand)
-            await npc.wander(self)
+            self = await npc.wander(self)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     # A startling bang..
@@ -647,6 +659,35 @@ class WorldState(Utility):
 
         return rooms
 
+    async def populate_npcs(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        npcs = []
+        new_rooms = []
+        rooms = deepcopy(self.environments.all_rooms)
+
+        # add in npcs
+        LogUtils.info(f"{method_name}: Adding NPCs..", self.logger)
+        for room in rooms:            
+            LogUtils.info(f"{method_name}: room: {room.name}", self.logger)
+            new_room = deepcopy(room)
+            for npc_type in new_room.npc_types:
+                new_npc = self.environments.npcs.get_npc(npc_type, room.id)
+                LogUtils.info(f"{method_name}: Adding npc \"{new_npc.name}\" to room \"{new_room.name}\"", self.logger)
+                new_room.npcs.append(new_npc)
+                npcs.append(new_npc)
+                
+            LogUtils.info(
+                f"Added to room \"{new_room.name}\": {len(new_room.npcs)}", self.logger
+            )
+            new_rooms.append(new_room)
+
+        LogUtils.debug(
+            f"{method_name}: exit, npcs added: {len(room.npcs)}", self.logger
+        )
+
+        return npcs, new_rooms
+
     # returns the name of the area based on the type
     def get_area_identifier(self, area):
         method_name = inspect.currentframe().f_code.co_name
@@ -753,21 +794,22 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # if the npc has a previous room, update it
-        if npc.room is not None:
-            await npc.room.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}")
-            npc.room.npcs.remove(npc)
+        if npc.room_id is not None:
+            room = await self.get_room(npc.room_id)
+            await room.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}.")
+            room.npcs.remove(npc)
 
         # add player to new room
         new_room = await self.get_room(new_room_id)
-        await npc.room.alert(f"{npc.get_full_name()} has arrived from the {direction["direction"].opposite.name.capitalize()}")
+        await new_room.alert(f"{npc.get_full_name()} approaches from the {direction["direction"].opposite.name.capitalize()}.")
         new_room.npcs.append(npc)
 
         # update to new room
-        npc.previous_room = npc.room
-        npc.room = new_room
+        npc.prev_room_id = npc.room_id
+        npc.room_id = new_room_id
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return self
+        return npc, self
 
     async def get_active_room(self, room_id):
         method_name = inspect.currentframe().f_code.co_name

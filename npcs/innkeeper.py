@@ -12,12 +12,16 @@ class InnKeeper(NpcMob):
         Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron. 
         Jared smiles at you welcomely when you look at him."""
     interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "cleaing", "checking on guests"]
+    type = Utility.Share.Npcs.INNKEEPER
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"{method_name}: Initializing Sheriff() class", self.logger)
-        super().__init__(title=self.title, description=self.description, logger=self.logger)
+        LogUtils.debug(f"{method_name}: Initializing InnKeeper() class", self.logger)
+        super().__init__(name=self.name, title=self.title, description=self.description, logger=self.logger)
         
-    def generate(self):
-        LogUtils.info(f"Generating Sheriff {self.name}...", self.logger)
+    def generate(self, room_id):
+        LogUtils.info(f"Generating {self.type} {self.name} at room {room_id}...", self.logger)
+        self.room_id = room_id
+        return self
+        

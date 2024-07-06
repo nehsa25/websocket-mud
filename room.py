@@ -32,8 +32,9 @@ class Room(Utility):
     items = ([],)
     hidden_items = ([],)
     monsters = ([],)
-    players = ([],)
-    npcs = []
+    players = ([],) # you, hopefully
+    npcs = [] # actual instances of npcs
+    npc_types = [] # this is the enum of the types of npcs that can be in the room
     in_town = False
     logger = None
 
@@ -52,6 +53,7 @@ class Room(Utility):
         monsters=[],
         players=[],
         npcs=[],
+        npc_types=[],
         in_town=False,
     ) -> None:
         self.id = id
@@ -67,6 +69,7 @@ class Room(Utility):
         self.players = players
         self.npcs = npcs
         self.in_town = in_town
+        self.npc_types = npc_types
         self.logger = logger
         self.scariness = random.choice(list(self.Scariness)).value
         LogUtils.debug(f"Initializing Room() class", self.logger)
@@ -85,47 +88,3 @@ class Room(Utility):
                     await self.send_message(event_type(message), p.websocket)
             else:
                 await self.send_message(event_type(message), p.websocket)
-
-class RoomFactory(Utility):
-    environment = None
-
-    def __init__(self, logger) -> None:
-        self.logger = logger
-        LogUtils.debug(f"Initializing RoomFactory() class", self.logger)
-
-    def add_room(
-        self,
-        id,
-        name,
-        inside,
-        description,
-        exits,
-        environment,
-        scariness,
-        in_town=False,
-        items=[],
-        hidden_items=[],
-        monsters=[],
-        players=[],
-        npcs=[],
-    ):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        room = Room(
-            id=id,
-            name=name,
-            inside=inside,
-            description=description,
-            exits=exits,
-            environment=environment,
-            scariness=scariness,
-            items=items,
-            in_town=in_town,
-            hidden_items=hidden_items,
-            monsters=monsters,
-            players=players,
-            npcs=npcs,
-            logger=self.logger
-        )
-        LogUtils.debug(f"{method_name}: generated room: {room}", self.logger)
-        return room

@@ -1,19 +1,16 @@
 import inspect
 from items import Items
 from log_utils import LogUtils
-from npc import Npc
-from room import Room, RoomFactory
+from room import Room
 from utility import Utility
 
 
-class TownSmee(Room):
+class TownSmee:
     monsters = None
     logger = None
     units = None
     rooms = None
-    room_factory = None
     in_town = True
-    npcs = None
     name = "Town Smee"
     type = Utility.Share.EnvironmentTypes.TOWNSMEE
 
@@ -22,23 +19,19 @@ class TownSmee(Room):
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing TownSmee() class", self.logger)
         self.monster_saturation = 0.5
-        self.room_factory = RoomFactory(self.logger)
-
-        if self.npcs is None:
-            self.npcs = Npc(self.logger)
 
         self.rooms = [
-            self.add_room(
+            Room(
                 id=0,
                 name=f"{self.name} - Town Square",
                 inside=False,
                 description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
                 exits=[
                     {"direction": dirs.west, "id": 9},  # moon road w
-                    {"direction": dirs.northeast, "id": 9},
-                    {"direction": dirs.southeast, "id": 9},
-                    {"direction": dirs.northwest, "id": 9},
-                    {"direction": dirs.southwest, "id": 9},
+                    {"direction": dirs.northeast, "id": 22},
+                    {"direction": dirs.southeast, "id": 21},
+                    {"direction": dirs.northwest, "id": 20},
+                    {"direction": dirs.southwest, "id": 23},
                     {"direction": dirs.east, "id": 10},  # moon road e
                     {"direction": dirs.north, "id": 11},  # sun road n
                     {"direction": dirs.south, "id": 12},  # sun road s
@@ -47,8 +40,9 @@ class TownSmee(Room):
                 monsters=[],
                 npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=1,
                 name=f"{self.name} - Inn",
                 inside=True,
@@ -59,8 +53,9 @@ class TownSmee(Room):
                 ],
                 npc_types=[Utility.Share.Npcs.INNKEEPER, Utility.Share.Npcs.PRINCESS],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=2,
                 name=f"{self.name} - Sheriff's Office",
                 inside=True,
@@ -70,8 +65,9 @@ class TownSmee(Room):
                 ],
                 npc_types=[Utility.Share.Npcs.SHERIFF],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=3,
                 name=f"{self.name} - Inn, second floor",
                 inside=True,
@@ -81,8 +77,9 @@ class TownSmee(Room):
                     {"direction": dirs.down, "id": 1},  # inn, first floor
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=4,
                 name=f"{self.name} - Inn, third floor",
                 inside=True,
@@ -92,8 +89,9 @@ class TownSmee(Room):
                 ],
                 hidden_items=[Items.helmet],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=5,
                 name=f"{self.name} - Blacksmith",
                 inside=True,
@@ -104,8 +102,9 @@ class TownSmee(Room):
                     {"direction": dirs.east, "id": 6},  # back room
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=6,
                 name=f"{self.name} - Blacksmith, back room",
                 inside=True,
@@ -114,8 +113,9 @@ class TownSmee(Room):
                     {"direction": dirs.west, "id": 5},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=7,
                 name=f"{self.name} - Market",
                 inside=False,
@@ -125,8 +125,9 @@ class TownSmee(Room):
                 ],
                 npc_types=[Utility.Share.Npcs.MERCHANT, Utility.Share.Npcs.THIEF],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=8,
                 name=f"{self.name} - Armoury",
                 inside=True,
@@ -136,8 +137,9 @@ class TownSmee(Room):
                 ],
                 npc_types=[Utility.Share.Npcs.ARMORER],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=9,
                 name=f"{self.name} - Moon Road (West)---1",
                 inside=False,
@@ -148,8 +150,9 @@ class TownSmee(Room):
                     {"direction": dirs.east, "id": 0},  # town square
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=10,
                 name=f"{self.name} - Moon Road (East)---3",
                 inside=False,
@@ -159,8 +162,9 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 7},  # market
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=11,
                 name=f"{self.name} - Sun Road (North)---1",
                 inside=False,
@@ -171,8 +175,9 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 0},  # town square
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=12,
                 name=f"{self.name} - Sun Road (South)---1",
                 inside=False,
@@ -182,8 +187,9 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 13},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=13,
                 name=f"{self.name} - Sun Road (South)---2",
                 inside=False,
@@ -194,8 +200,9 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 14},  # blacksmith
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=14,
                 name=f"{self.name} - Sun Road (South)---3",
                 inside=False,
@@ -205,8 +212,9 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 15},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=15,
                 name=f"{self.name} - Sun Road (South)---4",
                 inside=False,
@@ -216,8 +224,9 @@ class TownSmee(Room):
                     {"direction": dirs.east, "id": 16},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=16,
                 name=f"{self.name} - Gallows Road (East)---1",
                 inside=False,
@@ -228,8 +237,9 @@ class TownSmee(Room):
                     {"direction": dirs.east, "id": 17},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=17,
                 name=f"{self.name} - Gallows Road (East)---2",
                 inside=False,
@@ -239,8 +249,9 @@ class TownSmee(Room):
                     {"direction": dirs.east, "id": 18},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=18,
                 name=f"{self.name} - The Gallows",
                 inside=False,
@@ -251,84 +262,51 @@ class TownSmee(Room):
                     {"direction": dirs.south, "id": 19},
                 ],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=19,
                 name=f"{self.name} - The Lower Quarter",
                 inside=False,
                 description=f"A gate with two guards stands before you. Each guard casually leans against halberds taller than they are. The gate is open and the guards are pleasantly chatting with each other whilst a long line of weary towns folk await admission into the city. A sign reads “1 copper entrance free. No exceptions.”",
                 exits=[{"direction": dirs.north, "id": 18}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=20,
                 name=f"{self.name} - Mind Road (Northwest)---1",
                 inside=False,
                 description=f"Mind road, also known as Scholar's Avenue, is a narrow, gravel road that runs northwest to southeast in Smee, the road extends far to the southeast at the University of Smee.",
                 exits=[{"direction": dirs.southeast, "id": 0}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=21,
                 name=f"{self.name} - Mind Road (SouthEast)---1",
                 inside=False,
                 description=f"Mind road, also known as Scholar's Avenue, is a narrow, gravel road that runs northwest, past the town square, to the University of Smee to the southeast.",
                 exits=[{"direction": dirs.northwest, "id": 0}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=22,
                 name=f"{self.name} - Talent Road (NorthEast)---1",
                 inside=False,
                 description=f"Talent road is a cobblestoned street with an inclined elevation to the south.  This road has some of the finer merchants, inns, and shops in the town.  The street is lined with trees and the buildings are well kept.",
                 exits=[{"direction": dirs.southwest, "id": 0}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
-            self.add_room(
+            Room(
                 id=23,
                 name=f"{self.name} - Talent Road (SouthWest)---1",
                 inside=False,
                 description=f"Talent road is a cobblestoned street with an inclined elevation to the south.  This road has some of the finer merchants, inns, and shops in the town.  The street is lined with trees and the buildings are well kept.",
                 exits=[{"direction": dirs.northeast, "id": 0}],
                 environment=Utility.Share.EnvironmentTypes.TOWNSMEE,
+                logger=logger
             ),
         ]
-
-    def add_room(
-        self,
-        id,
-        name,
-        inside,
-        description,
-        exits,
-        environment,
-        hidden_items=[],
-        items=[],
-        monsters=[],
-        npc_types=[],
-    ):
-        room = self.room_factory.add_room(
-            id=id,
-            name=name,
-            inside=inside,
-            description=description,
-            exits=exits,
-            items=items,
-            monsters=monsters,
-            environment=environment,
-            npcs=[],
-            hidden_items=hidden_items,
-            in_town=True,
-            scariness=Room.Scariness.NONE,
-        )
-
-        # populate npcs for it
-        for npc_type in npc_types:
-            npc = self.npcs.get_npc(npc_type)
-            npc.room = room
-            room.npcs.append(npc)
-
-        return room
-
-    # self.rooms = self.rooms
-    # self.units = self.units

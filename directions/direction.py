@@ -1,14 +1,14 @@
 from log_utils import LogUtils
-from class_types.down import Down
-from class_types.east import East
-from class_types.north import North
-from class_types.northeast import NorthEast
-from class_types.northwest import NorthWest
-from class_types.south import South
-from class_types.southeast import SouthEast
-from class_types.southwest import SouthWest
-from class_types.up import Up
-from class_types.west import West
+from directions.down import Down
+from directions.east import East
+from directions.north import North
+from directions.northeast import NorthEast
+from directions.northwest import NorthWest
+from directions.south import South
+from directions.southeast import SouthEast
+from directions.southwest import SouthWest
+from directions.up import Up
+from directions.west import West
 from utility import Utility
 
 class Directions:
