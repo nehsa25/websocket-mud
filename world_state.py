@@ -341,11 +341,14 @@ class WorldState(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         while not self.shutdown:
+            npcs = []
             try:
                 # setup npc events
                 for npc in self.environments.all_npcs:
                     if npc.wanders:
-                        await asyncio.create_task(self.npc_wander(npc))
+                        npcs.append(asyncio.create_task(self.npc_wander(npc)))
+                        
+                await asyncio.gather(*npcs)
             except:
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
