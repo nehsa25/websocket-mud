@@ -8,7 +8,6 @@ from dontcheckin import Secrets
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
-import google.generativeai as genai
 
 class GeneratedFileType(Utility):
     description = None
@@ -27,23 +26,7 @@ class AIImages(Utility):
     secrets = Secrets()
     generator = None
     seed = None
-
-    class GeminiAPI:
-        logger = None
-        key = None
-        seed = None
-        def __init__(self, seed, logger) -> None:
-            self.logger = logger
-            LogUtils.debug("Initializing GeminiAPI() class", self.logger)            
-            self.key = Secrets.GeminiAPIKey
-            self.seed = seed
-        
-        def create(self, seed, description, room_image_name):
-            genai.configure(api_key=self.key)            
-            model = genai.GenerativeModel('gemini-1.5-flash',)
-            response = model.generate_content(f"create 300x300px png image of {description}")
-            pass
-            
+       
     class StabilityAPI:
         logger = None
         key = None

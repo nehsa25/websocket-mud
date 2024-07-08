@@ -351,6 +351,9 @@ class WorldState(Utility):
                     if npc.wanders:
                         npcs.append(asyncio.create_task(self.npc_wander(npc)))
                     
+                    # check for dialog
+                    npcs.append(asyncio.create_task(self.npc_dialog(npc)))
+                    
                     # check for combat
                     npcs.append(asyncio.create_task(self.npc_check_for_combat(npc)))
                         
@@ -371,6 +374,28 @@ class WorldState(Utility):
                 )
                 await asyncio.sleep(rand)
                 self = await npc.wander(self)
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
+        except:
+            LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        
+    async def npc_dialog(self, npc):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        try:            
+            npclock = NpcLock(npc)
+            async with npclock.lock:
+                room = await self.get_room(npc.room_id)
+                if len(room.players) == 0:
+                    return
+                await npc.speak(room)
+                rand = randint(60, 60 * 10)
+                LogUtils.debug(
+                    f'NPC "{npc.name}" will speak again in {str(rand)} seconds if a player still in room...',
+                    self.logger,
+                )
+                await asyncio.sleep(rand)                
         except websockets.ConnectionClosedOK:
             LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
         except:
@@ -824,7 +849,8 @@ class WorldState(Utility):
         if npc.room_id is not None:
             room = await self.get_room(npc.room_id)
             await room.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}.")
-            room.npcs.remove(npc)
+            if npc in room.npcs:
+                room.npcs.remove(npc)
 
         # add player to new room
         new_room = await self.get_room(new_room_id)

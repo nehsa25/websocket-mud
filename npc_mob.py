@@ -4,6 +4,7 @@ import random
 import time
 from alignment import Alignment
 from log_utils import LogUtils
+from npc_dialog import NpcDialog
 from utility import Utility
 
 class NpcMob(Utility):
@@ -34,6 +35,7 @@ class NpcMob(Utility):
         self.title = title
         self.description = description
         self.alignment = Alignment(Utility.Share.Alignment.GOOD, self.logger)
+        self.dialog = NpcDialog(self.logger)
         
     def get_attack_phrase(self, target):    
         npc_attack_templates = [
@@ -119,6 +121,35 @@ class NpcMob(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return world_state
     
+    # check for dialog options
+    async def speak(self, room):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+         # gather things we may be interested in
+        # num players
+        # num monsters
+        # num other npcs
+        # time of day
+        # weather
+        # room description
+        # room exits
+        # room items
+        
+        current_interests = []
+        players_names = [p.name for p in room.players]
+        current_interests.append(f"all players in room: {",".join(players_names)}") 
+        disliked_players = []
+        for p in room.players:
+            if await self.alignment.is_opposing_alignment(p.alignment):
+                disliked_players.append(p.name)            
+        current_interests.append(f"disliked players in room: {",".join(disliked_players)}")     
+        if len(room.players) > 0:
+            msg = await self.dialog.intelligize_npc(self, room.description, current_interests)
+            
+        await room.alert(msg)
+        
+        LogUtils.debug(f"{method_name}: exit", self.logger)
     
     async def move(self, direction, world_state):
         method_name = inspect.currentframe().f_code.co_name
