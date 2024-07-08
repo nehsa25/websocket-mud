@@ -1,3 +1,4 @@
+import random
 from dontcheckin import Secrets
 from log_utils import LogUtils
 import google.generativeai as genai
@@ -32,4 +33,9 @@ class NpcDialog:
         Pick only one thing to reply to and it shoud be something that is in your general interest if possible. Reply as if you were {npc.name}.
         The latest thing said in the room was \"{last_message.message}\" by \"{last_message.player_name}\".  Reply to this if you can."""
         response =  model.generate_content(msg)
-        return response.text.strip('\"')
+        
+        response_options = [
+            f"{npc.get_full_name()} says {response.text.strip('\"')}",
+            f"{npc.get_full_name()} mentions {response.text.strip('\"')}",
+            f"{npc.get_full_name()} states {response.text.strip('\"')}",]
+        return random.choice(response_options)
