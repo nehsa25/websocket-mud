@@ -1,6 +1,6 @@
 import asyncio
 
-class NpcWanderLock:
+class NpcLock:
     npc = None
     lock = None
     

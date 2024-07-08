@@ -52,7 +52,7 @@ class Monster(Utility):
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Monster() class", self.logger)
 
-    def get_monster(self, monster_type):
+    def get_monster(self, monster_type, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         monster = None
@@ -72,5 +72,7 @@ class Monster(Utility):
             monster = ZombieSurfer(self.logger)
         if monster_type == Utility.Share.Monsters.RITE:
             monster = Rite(self.logger)
+            
+        monster.generate(room_id)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return monster

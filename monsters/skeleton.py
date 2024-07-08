@@ -35,6 +35,8 @@ class Skeleton(Mob):
         self.entrance_cry = f"A {self.name} wanders in.."
         self.victory_cry = f"The {self.name} gives an elegent bow before losing interest."
         self.money = Money(random.randint(0, 10))
+        super().__init__(self.logger, alignment=Utility.Share.Alignment.EVIL)
         
-    def generate(self):
+    def generate(self, room_id):
         LogUtils.debug("Generating a Skeleton...", self.logger)
+        self.room_id = room_id

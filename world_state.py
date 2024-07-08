@@ -10,7 +10,7 @@ import traceback
 import websockets
 from aiimages import AIImages
 from environment import Environments
-from locks import NpcWanderLock
+from locks import NpcLock
 from map import Map
 from monster import Monster
 from mudevent import MudEvents
@@ -345,10 +345,14 @@ class WorldState(Utility):
         while not self.shutdown:
             npcs = []
             try:
-                # setup npc events
+                # run events
                 for npc in self.environments.all_npcs:
+                    # wander
                     if npc.wanders:
                         npcs.append(asyncio.create_task(self.npc_wander(npc)))
+                    
+                    # check for combat
+                    npcs.append(asyncio.create_task(self.npc_check_for_combat(npc)))
                         
                 await asyncio.gather(*npcs)
             except:
@@ -358,9 +362,8 @@ class WorldState(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         try:            
-            npclock = NpcWanderLock(npc)
+            npclock = NpcLock(npc)
             async with npclock.lock:
-                method_name = inspect.currentframe().f_code.co_name
                 rand = randint(0, 10)
                 LogUtils.debug(
                     f'NPC "{npc.name}" will move in {str(rand)} seconds...',
@@ -373,6 +376,21 @@ class WorldState(Utility):
         except:
             LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
+        
+    async def npc_check_for_combat(self, npc):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        try:            
+            npclock = NpcLock(npc)
+            async with npclock.lock:
+                LogUtils.debug(f'NPC "{npc.name}" will checking combat',self.logger)  
+                self = await npc.check_combat(self)
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
+        except:
+            LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+
 
     # A startling bang..
     async def bang(self):
@@ -649,11 +667,10 @@ class WorldState(Utility):
                         m_type = monster_type = random.choice(
                             list(Utility.Share.Monsters)
                         )
-                        monster = self.monster.get_monster(m_type)
+                        monster = self.monster.get_monster(m_type, room.id)
                         if room.in_town and monster.allowed_in_city == False:
                             continue
                         found_monster = True
-                    monster.room = room
                     LogUtils.debug(
                         f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',
                         self.logger,

@@ -2,6 +2,7 @@ import asyncio
 import inspect
 import random
 import time
+from alignment import Alignment
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -30,13 +31,19 @@ class Mob(Utility):
     wander_loop = None
     respawn_loop = None
     check_combat_loop = None
-    room = None
+    room_id = None
     previous_room = None
     death_cry = ""
     entrance_cry = ""
     victory_cry = ""
     damage_potential = ""
     allowed_in_city = False
+    alignment = None
+    
+    def __init__(self, logger, alignment=Utility.Share.Alignment.EVIL):
+        self.logger = logger
+        LogUtils.debug(f"Initializing Mob() class", logger)
+        self.alignment = Alignment(alignment, self.logger)   
 
     # announce we're here!
     async def announce_entrance(self, room):

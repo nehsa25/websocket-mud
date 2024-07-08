@@ -1,6 +1,7 @@
 import asyncio
 import inspect
 from random import randint
+from alignment import Alignment
 from items import Items
 from log_utils import LogUtils
 from mudevent import MudEvents
@@ -36,6 +37,7 @@ class Player(Utility):
     room = None
     previous_room = None
     attack_task = None
+    alignment = None
     
     def __init__(
         self,
@@ -63,6 +65,7 @@ class Player(Utility):
         ip,
         websocket,
         logger,
+        alignment = Utility.Share.Alignment.NEUTRAL
     ):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
@@ -103,6 +106,8 @@ class Player(Utility):
 
         if self.attack_task is None:
             self.attack_task = asyncio.create_task(self.check_for_combat())
+
+        self.alignment = Alignment(Utility.Share.Alignment.NEUTRAL, self.logger)
 
     # responsible for the "prepares to attack you messages"
     async def check_for_combat(self):
