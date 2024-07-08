@@ -9,8 +9,17 @@ from utility import Utility
 
 
 class Environments(Utility):
+    class RoomHistory:
+        id: int = None
+        player_name: str
+        message: str
         
-    class Rooms(Utility):
+        def __init__(self, room_id, player_name, message):
+            self.id = room_id
+            self.player_name = player_name
+            self.message = message
+            
+    class Rooms(Utility): 
         environment = None
 
         def __init__(self, logger) -> None:
@@ -53,6 +62,7 @@ class Environments(Utility):
             )
             LogUtils.debug(f"{method_name}: generated room: {room}", self.logger)
             return room
+    
     npcs = None
     monster = None
     running_image_threads = []
@@ -62,6 +72,7 @@ class Environments(Utility):
     all_rooms = []
     all_npcs = []
     dirs = None
+    room_history = []
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
@@ -85,4 +96,13 @@ class Environments(Utility):
             f"{method_name}: The world has {len(self.all_rooms)} rooms", self.logger
         )
 
-
+    async def update_room_history(self, room_id, player_name, message):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter, message: {message}", self.logger)
+        room_history_message = self.RoomHistory(room_id, player_name, message)
+        self.room_history.append(room_history_message)
+        LogUtils.debug(f"{method_name}: exit", self.logger) 
+        
+    async def get_room_history(self, room_id):
+        lines = [a for a in self.room_history if a.id == room_id]
+        return lines

@@ -389,7 +389,7 @@ class WorldState(Utility):
                 room = await self.get_room(npc.room_id)
                 if len(room.players) == 0:
                     return
-                await npc.speak(room)
+                await npc.speak(room, self)
                 rand = randint(60, 60 * 10)
                 LogUtils.debug(
                     f'NPC "{npc.name}" will speak again in {str(rand)} seconds if a player still in room...',

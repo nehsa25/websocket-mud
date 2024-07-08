@@ -28,6 +28,7 @@ class Room(Utility):
     monster_saturation = 0.7
     scariness = 0
     environment = (None,)
+    history = []
     exits = ([],)
     items = ([],)
     hidden_items = ([],)

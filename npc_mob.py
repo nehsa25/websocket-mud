@@ -122,7 +122,7 @@ class NpcMob(Utility):
         return world_state
     
     # check for dialog options
-    async def speak(self, room):
+    async def speak(self, room, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
@@ -144,8 +144,11 @@ class NpcMob(Utility):
             if await self.alignment.is_opposing_alignment(p.alignment):
                 disliked_players.append(p.name)            
         current_interests.append(f"disliked players in room: {",".join(disliked_players)}")     
+        
+        # get room messages
+        room_history = await world_state.environments.get_room_history(room.id)
         if len(room.players) > 0:
-            msg = await self.dialog.intelligize_npc(self, room.description, current_interests)
+            msg = await self.dialog.intelligize_npc(self, room.description, current_interests, room_history[len(room_history)-1])
             
         await room.alert(msg)
         

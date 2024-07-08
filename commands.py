@@ -680,11 +680,12 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         if command.startswith("/say "):
             msg = command.split(" ", 1)[1]
-            for p in world_state.players.players:
-                if p.name == player.name:
-                    await self.send_message(MudEvents.CommandEvent(f'You say "{msg}"'), p.websocket)
-                else:
-                    await self.send_message(MudEvents.CommandEvent(f'{player.name} says "{msg}"'), p.websocket)
+            room = await world_state.get_room(player.room.id)      
+            await self.send_message(MudEvents.CommandEvent(f'You say "{msg}"'), player.websocket)
+            await room.alert(f"{player.name} says \"{msg}\"", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
+
+            # add to room history
+            history = await world_state.environments.update_room_history(player.room.id, player.name, msg)
 
         # elif command.startswith('/yell '): # can be heard from ajoining rooms
         #     pass
