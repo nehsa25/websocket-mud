@@ -1,4 +1,6 @@
+from copy import deepcopy
 import inspect
+import time
 from directions.direction import Directions
 from environments.townsmee import TownSmee
 from log_utils import LogUtils
@@ -10,14 +12,24 @@ from utility import Utility
 
 class Environments(Utility):
     class RoomHistory:
-        id: int = None
+        room_id: int = None
         player_name: str
         message: str
+        creation_time = None
+        response_time = None
+        players_in_room = []
+        npcs_in_room = []
+        monsters_in_room = []
         
-        def __init__(self, room_id, player_name, message):
-            self.id = room_id
+        def __init__(self, room_id, player_name, message, world_state):
+            self.room_id = room_id
             self.player_name = player_name
-            self.message = message
+            self.message = message            
+            room = world_state.get_room(room_id)
+            self.players_in_room = room.players
+            self.npcs_in_room = room.npcs
+            self.monsters_in_room = room.monsters
+            self.creation_time = time.time()
             
     class Rooms(Utility): 
         environment = None
@@ -96,12 +108,29 @@ class Environments(Utility):
             f"{method_name}: The world has {len(self.all_rooms)} rooms", self.logger
         )
 
-    async def update_room_history(self, room_id, player_name, message):
+    async def update_room_history(self, room_id, player_name, message, world_state):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        room_histories = []
+        histories = deepcopy(self.room_history)
+        last_history = None
+        for history in histories:
+            if room_id == history.room_id:
+                last_history.response_time = time.time()
+                room_histories.append(last_history)
+            else:
+                room_histories.append(self.append_room_history(room_id, player_name, message, world_state))
+
+        room_histories.append(history)
+        LogUtils.debug(f"{method_name}: exit", self.logger) 
+        self.room_history = deepcopy(room_histories)
+        
+    async def append_room_history(self, room_id, player_name, message, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, message: {message}", self.logger)
-        room_history_message = self.RoomHistory(room_id, player_name, message)
+        room_history_message = self.RoomHistory(room_id, player_name, message, world_state)
         self.room_history.append(room_history_message)
-        LogUtils.debug(f"{method_name}: exit", self.logger) 
+        LogUtils.debug(f"{method_name}: exit", self.logger)  
         
     async def get_room_history(self, room_id):
         lines = [a for a in self.room_history if a.id == room_id]

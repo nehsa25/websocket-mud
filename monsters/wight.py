@@ -11,7 +11,7 @@ class Wight(Mob):
     pronoun = "it"
     type = Utility.Share.Monsters.WIGHT
     alignment = Utility.Share.Alignment.NEUTRAL
-    description = "A scary wight"
+    description = "Wights are deceased humans, cursed to endure horrific pain. They look humannoid in appearance but with an odd jerky grace and molton-red eyes."
     possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
     adjective_chance = 70 # chance we'll get something like Nasty
     respawn_rate_secs = None
