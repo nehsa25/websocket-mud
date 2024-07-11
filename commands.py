@@ -180,10 +180,9 @@ class Commands(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         valid_direction = False
-        room = await world_state.get_room(player.room.id)
 
         # check if it's a valid direction in the room
-        for avail_exit in room.exits:
+        for avail_exit in player.room.exits:
             if wanted_direction in avail_exit["direction"].variations:
                 valid_direction = True
                 break

@@ -55,7 +55,7 @@ class NpcMob(Utility):
     # responsible for moving npc
     async def wander(self, world_state):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
+        LogUtils.debug(f"{method_name}: enter: {self.name}", self.logger)
         if not self.wanders:
             LogUtils.info(f"{method_name}: {self.name} - I don't wander", self.logger)
             return
@@ -145,12 +145,16 @@ class NpcMob(Utility):
                 disliked_players.append(p.name)            
         current_interests.append(f"disliked players in room: {",".join(disliked_players)}")     
         
-        # get room messages
-        room_history = await world_state.environments.get_room_history(room.id)
-        if len(room.players) > 0:
-            msg = await self.dialog.intelligize_npc(self, room.description, current_interests, room_history[len(room_history)-1])
+        # # get room messages
+        # room_history = await world_state.environments.get_room_history(room.id)
+        # history = None
+        # if len(room_history) > 1:
+        #     history = room_history[len(room_history)-1]
+        # if len(room.players) > 0:
+        #     msg = await self.dialog.intelligize_npc(self, room.description, current_interests, history)
             
-        await room.alert(msg)
+        # await room.alert(msg)
+        # await world_state.environments.update_room_history(room.id, self.name, msg, world_state)
         
         LogUtils.debug(f"{method_name}: exit", self.logger)
     

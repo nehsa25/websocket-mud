@@ -30,8 +30,10 @@ class NpcDialog:
         msg = f"""You are a {npc.name} {npc.title}. More about you: {npc.description}.  You live in the world of 
         {Utility.Share.WORLD_NAME} in the town of Smee. Your general interests are \"{npc.interests}\".  
         You are in the room \"{room_description}\" and the following events are currently happening: \"{current_interests}\".  
-        Pick only one thing to reply to and it shoud be something that is in your general interest if possible. Reply as if you were {npc.name}.
-        The latest thing said in the room was \"{last_message.message}\" by \"{last_message.player_name}\".  Reply to this if you can."""
+        Pick only one thing to reply to and it shoud be something that is in your general interest if possible. Reply as if you were {npc.name}."""
+        
+        if last_message is not None and last_message.response_time is None:
+            msg += f" The latest thing said in the room was \"{last_message.message}\" by \"{last_message.player_name}\".  Reply to this if you can and if this player is still in the room."
         response =  model.generate_content(msg)
         
         response_options = [

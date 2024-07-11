@@ -32,7 +32,7 @@ class Wight(Mob):
         self.death_cry = f"{self.name} falls over and dies.."
         self.entrance_cry = f"A {self.name} wanders in.."
         self.victory_cry = f"The {self.name} gives an elegent bow before losing interest."
-        super().__init__(self.logger, alignment=Utility.Share.Alignment.EVIL)
+        super().__init__(self.logger, alignment=self.alignment)
         
     def generate(self, room_id):
         LogUtils.debug("Generating a Wight...", self.logger)

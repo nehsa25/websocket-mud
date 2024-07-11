@@ -25,20 +25,20 @@ class Map(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         if ImageSize == ImageSize.MINI:
-            map_output = re.sub('width="\d*pt"', 'width="200pt"', map_output)
+            map_output = re.sub('width="\d*pt"', 'width="1200pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)   
         elif ImageSize == ImageSize.SMALL:
-            map_output = re.sub('width="\d*pt"', 'width="800pt"', map_output)
+            map_output = re.sub('width="\d*pt"', 'width="1600pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)
         else:
-            map_output = re.sub('width="\d*pt"', 'width="1200pt"', map_output)
+            map_output = re.sub('width="\d*pt"', 'width="2400pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)            
         map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
         map_output = re.sub('&#45;\d*', "", map_output)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
 
-    async def generate_map(self, room, image_name, player, rooms, area_identifier, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
+    async def generate_map(self, room, image_name, player, world_state, area_identifier, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.graph = pydot.Dot(
@@ -71,25 +71,22 @@ class Map(Utility):
         if os.path.exists(image_name):
             os.remove(image_name)
 
-        # get rooms
-        rooms = [a for a in rooms if a.environment == environment]
- 
         # generate map
         count = 0
-        for room in rooms:
+        for room in world_state.environments.rooms:
             count += 1
             room_name = room.name
             room_exits = room.exits
             
             # change color of active node
             active_node = False
-            if room.id == player.location_id:
+            if room.name == player.room.name:
                 active_node = True
                 node = pydot.Node(room_name, fillcolor = "springgreen", fontcolor="black")
                 self.graph.add_node(node)
             
             for exit in room_exits:
-                exit_room = rooms[exit["id"]]
+                exit_room = exit["id"]
                 exit_direction = exit["direction"].name
                 edge = pydot.Edge(room_name, exit_room.name, label=exit_direction)
                 if active_node:

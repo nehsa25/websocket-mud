@@ -1,1 +1,4 @@
 {"py/object": "aiimages.AIImages.LogEntry", "file_name": "jay_monster_1720031688.png", "description": "A small azure and beige colored lizard two feet tall. It looks at you with adorable eyes."}
+{"py/object": "aiimages.AIImages.LogEntry", "file_name": "gorg_monster_1720618991.png", "description": "A scary wight"}
+{"py/object": "aiimages.AIImages.LogEntry", "file_name": "wilem_monster_1720623679.png", "description": "A eerie hovering wraith"}
+{"py/object": "aiimages.AIImages.LogEntry", "file_name": "wilem_monster_1720623689.png", "description": "A zombie wearing shorts"}

@@ -36,7 +36,7 @@ class ZombieSurfer(Mob):
         self.victory_cry = (
             "The zombie surfer stares at the corpse in confusion."
         )
-        super().__init__(self.logger, alignment=Utility.Share.Alignment.EVIL)
+        super().__init__(self.logger, alignment=self.alignment)
         
     def generate(self, room_id):
         LogUtils.debug("Generating a ZombieSurfer...", self.logger)

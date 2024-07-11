@@ -256,8 +256,8 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # populate monsters
-        self.environments.all_rooms = await self.populate_monsters()
-        self.monsters = [room for room in self.environments.all_rooms]
+        self.environments.rooms = await self.populate_monsters()
+        self.monsters = [room for room in self.environments.rooms]
         self.total_monsters = len(self.monsters)
         LogUtils.info(
             f"monsters added to {Utility.Share.WORLD_NAME}: {self.total_monsters}",
@@ -265,8 +265,8 @@ class WorldState(Utility):
         )
         
         # populate npcs
-        self.environments.all_npcs, self.environments.all_rooms = await self.populate_npcs()
-        self.npcs = [room for room in self.environments.all_rooms]
+        self.environments.all_npcs, self.environments.rooms = await self.populate_npcs()
+        self.npcs = [room for room in self.environments.rooms]
         self.total_monsters = len(self.npcs)
         LogUtils.info(
             f"npcs added to {Utility.Share.WORLD_NAME}: {self.total_monsters}",
@@ -680,7 +680,7 @@ class WorldState(Utility):
     async def populate_monsters(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        rooms = deepcopy(self.environments.all_rooms)
+        rooms = deepcopy(self.environments.rooms)
 
         # add in monsters
         for room in rooms:
@@ -692,7 +692,7 @@ class WorldState(Utility):
                         m_type = monster_type = random.choice(
                             list(Utility.Share.Monsters)
                         )
-                        monster = self.monster.get_monster(m_type, room.id)
+                        monster = self.monster.get_monster(m_type, room)
                         if room.in_town and monster.allowed_in_city == False:
                             continue
                         found_monster = True
@@ -716,7 +716,7 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         npcs = []
         new_rooms = []
-        rooms = deepcopy(self.environments.all_rooms)
+        rooms = deepcopy(self.environments.rooms)
 
         # add in npcs
         LogUtils.info(f"{method_name}: Adding NPCs..", self.logger)
@@ -724,7 +724,7 @@ class WorldState(Utility):
             LogUtils.info(f"{method_name}: room: {room.name}", self.logger)
             new_room = deepcopy(room)
             for npc_type in new_room.npc_types:
-                new_npc = self.environments.npcs.get_npc(npc_type, room.id)
+                new_npc = self.environments.npcs.get_npc(npc_type, room)
                 LogUtils.info(f"{method_name}: Adding npc \"{new_npc.name}\" to room \"{new_room.name}\"", self.logger)
                 new_room.npcs.append(new_npc)
                 npcs.append(new_npc)
@@ -762,7 +762,7 @@ class WorldState(Utility):
 
         # if the player has a previous room, update it
         if player.room is not None:
-            old_room = await self.get_room(player.room.id)
+            old_room = await self.get_room(player.room)
 
             if old_room != new_room:
                 for monster in old_room.monsters:
@@ -795,7 +795,7 @@ class WorldState(Utility):
                     new_room,
                     map_image_name,
                     player,
-                    self.environments.all_rooms,
+                    self,
                     self.get_area_identifier(new_room.environment),
                 )
             )
@@ -828,7 +828,7 @@ class WorldState(Utility):
 
         # if the monster has a previous room, update it
         if monster.room is not None:
-            old_room = await self.get_room(monster.room.id)
+            old_room = await self.get_room(monster.room)
 
             # remove monster from old room
             old_room.monster.remove(monster)
@@ -865,18 +865,24 @@ class WorldState(Utility):
         return npc, self
 
     async def get_active_room(self, room_id):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        for room in self.active_rooms:
-            if room.id == room_id:
-                return room
+        # method_name = inspect.currentframe().f_code.co_name
+        # LogUtils.debug(f"{method_name}: enter", self.logger)
+        # for room in self.active_rooms:
+        #     if room.name == room_id.name:
+        #         return room
         return None
 
     # just returns a specific room in our list of rooms
     async def get_room_definition(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, room_id: {room_id}", self.logger)
-        room = [room for room in self.environments.all_rooms if room.id == room_id][0]
+        room = [room for room in self.environments.rooms if room.name == room_id.name]
+        LogUtils.debug(
+            f'{method_name}: room "{room}"', self.logger
+        )
+        if room == []:
+            raise Exception(f"Room {room_id} not found.")
+        room = room[0]
         LogUtils.debug(
             f'{method_name}: exit, returning room "{room.name}"', self.logger
         )
@@ -898,33 +904,32 @@ class WorldState(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
-        new_room = player.room
-
+        room = player.room
         if look_location_id is not None:
-            new_room = self.environments.all_rooms[look_location_id]
-
+            room = look_location_id
+            
         # get the description
-        if new_room.inside:
-            description = new_room.description
+        if room.inside:
+            description = room.description
         else:
-            description = self.weather.add_weather_description(new_room.description)
+            description = self.weather.add_weather_description(room.description)
 
         # show items
         items = ""
-        if len(new_room.items) > 0:
-            for item in new_room.items:
+        if len(room.items) > 0:
+            for item in room.items:
                 items += item.name + ", "
             items = items[0 : len(items) - 2]
 
         # offer possible exits
         exits = ""
-        for available_exit in new_room.exits:
+        for available_exit in room.exits:
             exits += available_exit["direction"].name + ", "
         exits = exits[0 : len(exits) - 2]
 
         # show npcs
         npcs = ""
-        for npc in new_room.npcs:
+        for npc in room.npcs:
             new_npc = npc.name
             if npc.title is not None and npc.title != "":
                 new_npc = f"{npc.title} {npc.name}"
@@ -934,7 +939,7 @@ class WorldState(Utility):
 
         # show monsters
         monsters = ""
-        for monster in new_room.monsters:
+        for monster in room.monsters:
             monsters += monster.name + ", "
         monsters = monsters[0 : len(monsters) - 2]
         LogUtils.info(f"Monsters in room: {monsters}", self.logger)
@@ -944,18 +949,16 @@ class WorldState(Utility):
         for p in self.players.players:
             if player.name == p.name:
                 continue
-            if p.room.id == player.room.id:
+            if p.room.name == player.room.name:
                 people += p.name + ", "
         if people != "":
             people = people[0 : len(people) - 2]
 
         # formulate message to client
-        json_msg = MudEvents.RoomEvent(
-            new_room.name, description, items, exits, monsters, people, npcs
+        room_event = MudEvents.RoomEvent(
+            room.name, description, items, exits, monsters, people, npcs
         )
-
-        LogUtils.debug(f"Sending json: {json_msg}", self.logger)
-        await self.send_message(json_msg, player.websocket)
+        await self.send_message(room_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def add_room(self, room):
@@ -972,7 +975,7 @@ class WorldState(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         for r in world.environments.rooms:
-            if r.id == room.id:
+            if r.name == room.name:
                 r = room
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return world.environments

@@ -20,7 +20,6 @@ class Room(Utility):
         POOP = 6
         RANDOM = 7  
 
-    id: 0
     name = ""
     inside = False
     description = ""
@@ -41,11 +40,9 @@ class Room(Utility):
 
     def __init__(
         self,
-        id,
         name,
         inside,
         description,
-        exits,
         environment,
         logger,
         scariness=None,
@@ -57,11 +54,9 @@ class Room(Utility):
         npc_types=[],
         in_town=False,
     ) -> None:
-        self.id = id
         self.name = name
         self.inside = inside
         self.description = description
-        self.exits = exits
         self.environment = environment
         self.items = items
         self.scariness = scariness
@@ -75,6 +70,10 @@ class Room(Utility):
         self.scariness = random.choice(list(self.Scariness)).value
         LogUtils.debug(f"Initializing Room() class", self.logger)
 
+    def set_exits(self, exits):
+        self.exits = exits
+        return self
+        
     async def alert(
         self, message, exclude_player=False, player=None, event_type=MudEvents.InfoEvent
     ):

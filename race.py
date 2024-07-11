@@ -1,14 +1,14 @@
 from enum import Enum
-from orc import Orc
-from arguna import Arguna
-from earea import Earea
-from elf import Elf
-from fae import Fae
-from halfling import Halfing
-from human import Human
-from kobold import Kobold
+from races.orc import Orc
+from races.arguna import Arguna
+from races.earea import Earea
+from races.elf import Elf
+from races.fae import Fae
+from races.halfling import Halfing
+from races.human import Human
+from races.kobold import Kobold
 from log_utils import LogUtils
-from nyrriss import Nyrriss
+from races.nyrriss import Nyrriss
 from races.goblin import Goblin
 
 class SpecialAttributes:

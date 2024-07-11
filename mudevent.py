@@ -91,6 +91,7 @@ class MudEvents:
 
         def to_json(self):
             return jsonpickle.encode(self)
+        
 
     class DuplicateNameEvent:
         type = None
@@ -124,7 +125,7 @@ class MudEvents:
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.USERNAME_REQUEST
             )
-            self.races = Races()
+            # self.races = Races()
 
         def to_json(self):
             return jsonpickle.encode(self)

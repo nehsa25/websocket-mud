@@ -68,12 +68,14 @@ class Utility(MudEvents):
         EVENT_SPEED = PLAYER_BASE_REST_WAIT_SECS
 
         class EnvironmentTypes(Enum):
-            TOWNSMEE = (1,)
-            BEACH = (2,)
-            FOREST = (3,)
-            JUNGLE = (4,)
-            BREACH = (5,)
+            TOWNSMEE = 1
+            BEACH = 2
+            FOREST = 3
+            JUNGLE = 4
+            BREACH = 5
             GRAVEYARD = 6
+            UNIVERSITY = 7
+            FYUCJKBY = 8
 
         class Races(Enum):
             HUMAN = (0,)
@@ -173,14 +175,6 @@ class Utility(MudEvents):
             NEUTRAL = 2  # only attacks if attacked
             EVIL = 3  # attacks good players only
             CHOATIC = 4  # attacks all players
-
-        class EnvironmentTypes(Enum):
-            TOWNSMEE = (1,)
-            BEACH = (2,)
-            FOREST = (3,)
-            JUNGLE = (4,)
-            BREACH = (5,)
-            GRAVEYARD = 6
 
         class WeatherTypes(Enum):
             RAIN = 1
