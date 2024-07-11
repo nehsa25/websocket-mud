@@ -144,7 +144,7 @@ class Commands(Utility):
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
-                if p.location_id == player.room.id:
+                if p.location_id.name == player.room.name:
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].name.capitalize()}."), p.websocket)
 
             # update location
