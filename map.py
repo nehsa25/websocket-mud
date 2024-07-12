@@ -34,7 +34,7 @@ class Map(Utility):
             map_output = re.sub('width="\d*pt"', '', map_output)
             map_output = re.sub('(viewBox="[^"]+")', '', map_output)  
             map_output = re.sub('height="\d*pt"', '', map_output)            
-        map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
+        map_output = re.sub(area_identifier + "\s&#45;\s", ": ", map_output)
         map_output = re.sub('&#45;\d*', "", map_output)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
