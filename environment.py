@@ -412,6 +412,16 @@ class Environments(Utility):
                     },
                 ]
             ),
+            self.townsmee.mindroad_se3.set_exits([
+                {
+                    "direction": self.dirs.northwest,
+                    "id": self.townsmee.mindroad_bridge,
+                },
+                {
+                    "direction": self.dirs.southeast,
+                    "id": self.townsmee.mindroad_se2,
+                }
+            ]),
             self.townsmee.mindroad_se2.set_exits(
                 [
                     {

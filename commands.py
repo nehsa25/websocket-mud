@@ -161,7 +161,7 @@ class Commands(Utility):
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
-                if p.location_id == player.room.id:
+                if p.location_id.name == player.room.name:
                     opp_direction = None
                     for opp_dir in self.Share.MudDirections.opp_directions:
                         if avail_exit["direction"] == opp_dir[0]:

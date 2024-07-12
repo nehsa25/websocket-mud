@@ -31,7 +31,8 @@ class Map(Utility):
             map_output = re.sub('width="\d*pt"', 'width="1600pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)
         else:
-            map_output = re.sub('width="\d*pt"', 'width="2400pt"', map_output)
+            map_output = re.sub('width="\d*pt"', '', map_output)
+            map_output = re.sub('(viewBox="[^"]+")', '', map_output)  
             map_output = re.sub('height="\d*pt"', '', map_output)            
         map_output = re.sub(area_identifier + "\s&#45;\s", "", map_output)
         map_output = re.sub('&#45;\d*', "", map_output)
