@@ -679,18 +679,17 @@ class Commands(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         if command.startswith("/say "):
             msg = command.split(" ", 1)[1]
-            room = await world_state.get_room(player.room.id)      
             await self.send_message(MudEvents.CommandEvent(f'You say "{msg}"'), player.websocket)
-            await room.alert(f"{player.name} says \"{msg}\"", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
+            await player.room.alert(f"{player.name} says \"{msg}\"", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
 
             # add to room history
-            history = await world_state.environments.update_room_history(player.room.id, player.name, msg)
+            #history = await world_state.environments.update_room_history(player.room, player.name, msg)
 
         # elif command.startswith('/yell '): # can be heard from ajoining rooms
         #     pass
         # else: # it's a telepath
         #     pass
-        LogUtils.debug(f"{method_name}: exit")
+        LogUtils.debug(f"{method_name}: exit", self.logger)
         return player
 
     async def process_rest(self, player, world_state):
