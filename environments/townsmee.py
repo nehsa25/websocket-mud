@@ -13,7 +13,7 @@ class TownSmee:
     in_town = True
     name = "Town Smee"
     type = Utility.Share.EnvironmentTypes.TOWNSMEE
-    
+
     # rooms
     townsquare = None
     inn = None
@@ -32,7 +32,7 @@ class TownSmee:
     sunroad_south4 = None
     gallows_east1 = None
     gallows_east2 = None
-    gallows = None 
+    gallows = None
     lower_quarter = None
     mindroad_nw1 = None
     mindroad_se1 = None
@@ -52,6 +52,49 @@ class TownSmee:
     moonroad_east2 = None
     moonroad_west2 = None
     moonroad_west3 = None
+    rooftop_townsquare = None
+    rooftop_west1 = None
+    rooftop_west2 = None
+    outer_west1 = None
+    outer_west2 = None
+    outer_west3 = None
+    outer_west4 = None
+    outer_west5 = None
+    outer_west6 = None
+    outer_west7 = None
+    outer_west8 = None
+    outer_west9 = None
+    outer_west10 = None
+    outer_south1 = None
+    outer_south2 = None
+    outer_south3 = None
+    outer_south4 = None
+    outer_south5 = None
+    outer_south6 = None
+    outer_south7 = None
+    outer_south8 = None
+    outer_south9 = None
+    outer_south10 = None
+    outer_east1 = None
+    outer_east2 = None
+    outer_east3 = None
+    outer_east4 = None
+    outer_east5 = None
+    outer_east6 = None
+    outer_east7 = None
+    outer_east8 = None
+    outer_east9 = None
+    outer_east10 = None
+    outer_north1 = None
+    outer_north2 = None
+    outer_north3 = None
+    outer_north4 = None
+    outer_north5 = None
+    outer_north6 = None
+    outer_north7 = None
+    outer_north8 = None
+    outer_north9 = None
+    outer_north10 = None
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
@@ -60,16 +103,15 @@ class TownSmee:
         self.monster_saturation = 0.5
 
         self.townsquare = Room(
-                name=f"{self.name} - Town Square",
-                inside=False,
-                description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
-                items=[Items.helmet, Items.stick, Items.maul],
-                monsters=[],
-                npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
-                environment=self.type,
-                logger=logger,
-            )
-    
+            name=f"{self.name} - Town Square",
+            inside=False,
+            description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
+            items=[Items.helmet, Items.stick, Items.maul],
+            monsters=[],
+            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            environment=self.type,
+            logger=logger,
+        )
         self.inn = Room(
             name=f"{self.name} - Inn",
             inside=True,
@@ -78,7 +120,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sheriff = Room(
             name=f"{self.name} - Sheriff's Office",
             inside=True,
@@ -87,7 +128,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.inn_second = Room(
             name=f"{self.name} - Inn, second floor",
             inside=True,
@@ -95,7 +135,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.inn_third = Room(
             name=f"{self.name} - Inn, third floor",
             inside=True,
@@ -104,7 +143,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.blacksmith = Room(
             name=f"{self.name} - Blacksmith",
             inside=True,
@@ -113,7 +151,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.blacksmith_backroom = Room(
             name=f"{self.name} - Blacksmith, back room",
             inside=True,
@@ -121,7 +158,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.market = Room(
             name=f"{self.name} - Market",
             inside=False,
@@ -130,7 +166,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.armoury = Room(
             name=f"{self.name} - Armoury",
             inside=True,
@@ -139,7 +174,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.moonroad_west1 = Room(
             name=f"{self.name} - Moon Road (West)---1",
             inside=False,
@@ -147,7 +181,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-
         self.moonroad_east3 = Room(
             name=f"{self.name} - Moon Road (East)---3",
             inside=False,
@@ -155,7 +188,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_north1 = Room(
             name=f"{self.name} - Sun Road (North)---1",
             inside=False,
@@ -163,7 +195,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_south1 = Room(
             name=f"{self.name} - Sun Road (South)---1",
             inside=False,
@@ -171,7 +202,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_south2 = Room(
             name=f"{self.name} - Sun Road (South)---2",
             inside=False,
@@ -180,15 +210,13 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
-        self.sunroad_south3 =Room(
+        self.sunroad_south3 = Room(
             name=f"{self.name} - Sun Road (South)---3",
             inside=False,
             description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_south4 = Room(
             name=f"{self.name} - Sun Road (South)---4",
             inside=False,
@@ -196,7 +224,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.gallows_east1 = Room(
             name=f"{self.name} - Gallows Road (East)---1",
             inside=False,
@@ -205,7 +232,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.gallows_east2 = Room(
             name=f"{self.name} - Gallows Road (East)---2",
             inside=False,
@@ -213,7 +239,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.gallows = Room(
             name=f"{self.name} - The Gallows",
             inside=False,
@@ -222,7 +247,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.lower_quarter = Room(
             name=f"{self.name} - The Lower Quarter",
             inside=False,
@@ -230,7 +254,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.mindroad_nw1 = Room(
             name=f"{self.name} - Mind Road (Northwest)---1",
             inside=False,
@@ -238,7 +261,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.mindroad_se1 = Room(
             name=f"{self.name} - Mind Road (SouthEast)---1",
             inside=False,
@@ -246,7 +268,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.talentroad_ne1 = Room(
             name=f"{self.name} - Talent Road (NorthEast)---1",
             inside=False,
@@ -254,7 +275,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.talentroad_sw1 = Room(
             name=f"{self.name} - Talent Road (SouthWest)---1",
             inside=False,
@@ -262,7 +282,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.talentroad_sw2 = Room(
             name=f"{self.name} - Talent Road (SouthWest)---2",
             inside=False,
@@ -270,15 +289,13 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-
         self.mindroad_se2 = Room(
             name=f"{self.name} - Mind Road (SouthEast)---2",
             inside=False,
             description=f"Mind road, also known as Scholar's Avenue, is a narrow, gravel road that runs northwest, past the town square, to the University of Smee to the southeast.",
             environment=self.type,
             logger=logger,
-        )      
-       
+        )
         self.mindroad_bridge = Room(
             name=f"{self.name} - Mind Road (SouthEast) - Massive Bridge",
             inside=False,
@@ -286,7 +303,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.mindroad_se3 = Room(
             name=f"{self.name} - Mind Road (SouthEast)---3",
             inside=False,
@@ -294,7 +310,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.talentroad_sw3 = Room(
             name=f"{self.name} - Talent Road (SouthWest)---3",
             inside=False,
@@ -302,7 +317,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.talentroad_ne2 = Room(
             name=f"{self.name} - Talent Road (NorthEast)---2",
             inside=False,
@@ -310,7 +324,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.mindroad_nw2 = Room(
             name=f"{self.name} - Mind Road (Northwest)---2",
             inside=False,
@@ -318,7 +331,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.gallows_east2 = Room(
             name=f"{self.name} - Gallows Road (East)---2",
             inside=False,
@@ -327,7 +339,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.gallows_east3 = Room(
             name=f"{self.name} - Gallows Road (East)---3",
             inside=False,
@@ -336,7 +347,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_south5 = Room(
             name=f"{self.name} - Sun Road (South)---5",
             inside=False,
@@ -344,7 +354,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.sunroad_north2 = Room(
             name=f"{self.name} - Sun Road (North)---2",
             inside=False,
@@ -352,7 +361,13 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
+        self.moonroad_east1 = Room(
+            name=f"{self.name} - Moon Road (East)---1",
+            inside=False,
+            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            environment=self.type,
+            logger=logger,
+        )
         self.moonroad_east2 = Room(
             name=f"{self.name} - Moon Road (East)---2",
             inside=False,
@@ -360,7 +375,6 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.moonroad_west2 = Room(
             name=f"{self.name} - Moon Road (West)---2",
             inside=False,
@@ -368,11 +382,313 @@ class TownSmee:
             environment=self.type,
             logger=logger,
         )
-        
         self.moonroad_west3 = Room(
             name=f"{self.name} - Moon Road (West)---3",
             inside=False,
             description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.rooftop_townsquare = Room(
+            name=f"{self.name} - Rooftop - Townsquare",
+            inside=False,
+            description=f"You are on the rooftop of the town square. The rooftop feels secure with dark, sturdy wooden shingles. You can see the entire town from here and see paths to other rooftops. The town square is bustling with activity below.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.rooftop_west1 = Room(
+            name=f"{self.name} - Rooftop (West)---1",
+            inside=False,
+            description=f"The rooftop feels secure with dark, sturdy wooden shingles. You are on the rooftop overlooking the entrance to armoury below. You may be able to get down from here but will unikely be able to get back up here.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.rooftop_west2 = Room(
+            name=f"{self.name} - Rooftop (West)---2",
+            inside=False,
+            description=f"The rooftop feels secure with dark, sturdy wooden shingles. You are on the rooftop overlooking the entrance to inn below. You may be able to get down from here but will unikely be able to get back up here.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west1 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---1",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west2 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---2",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west3 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---3",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west4 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---4",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west5 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---5",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west6 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---6",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west7 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---7",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_west8 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---8",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+
+        self.outer_west9 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---9",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+
+        self.outer_west10 = Room(
+            name=f"{self.name} - Outer wall (Inside West)---10",
+            inside=False,
+            description=f"You are at the western edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south1 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---1",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south2 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---2",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south3 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---3",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south4 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---4",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south5 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---5",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south6 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---6",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south7 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---7",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south8 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---8",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south9 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---9",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_south10 = Room(
+            name=f"{self.name} - Outer wall (Inside South)---10",
+            inside=False,
+            description=f"You are at the southern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east1 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---1",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east2 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---2",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east3 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---3",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east4 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---4",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east5 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---5",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east6 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---6",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east7 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---7",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east8 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---8",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east9 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---9",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_east10 = Room(
+            name=f"{self.name} - Outer wall (Inside East)---10",
+            inside=False,
+            description=f"You are at the eastern edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north1 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---1",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north2 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---2",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north3 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---3",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north4 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---4",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north5 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---5",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north6 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---6",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north7 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---7",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north8 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---8",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north9 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---9",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
+            environment=self.type,
+            logger=logger,
+        )
+        self.outer_north10 = Room(
+            name=f"{self.name} - Outer wall (Inside North)---10",
+            inside=False,
+            description=f"You are at the norther edge of Town Smee, just inside the outer wall. A large, cobbled road runs along the entire outer wall of town, 9 meters. The wall rises 7 meters high of young green timber. It's painted fresh with glossy brown paint on the inside.",
             environment=self.type,
             logger=logger,
         )

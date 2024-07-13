@@ -144,11 +144,11 @@ class Environments(Utility):
                     },
                     {
                         "direction": self.dirs.northeast,
-                        "id": self.townsmee.sunroad_north1,
+                        "id": self.townsmee.talentroad_ne1,
                     },
                     {
                         "direction": self.dirs.southeast,
-                        "id": self.townsmee.sunroad_south1,
+                        "id": self.townsmee.mindroad_se1,
                     },
                     {
                         "direction": self.dirs.northwest,
@@ -158,16 +158,17 @@ class Environments(Utility):
                         "direction": self.dirs.southwest,
                         "id": self.townsmee.talentroad_sw1,
                     },
-                    {"direction": self.dirs.east, "id": self.townsmee.blacksmith},
-                    {"direction": self.dirs.north, "id": self.townsmee.inn},
-                    {"direction": self.dirs.south, "id": self.townsmee.gallows},
+                    {"direction": self.dirs.east, "id": self.townsmee.moonroad_east1},
+                    {"direction": self.dirs.north, "id": self.townsmee.sunroad_north1},
+                    {"direction": self.dirs.south, "id": self.townsmee.sunroad_south1},
+                    {"direction": self.dirs.up, "id": self.townsmee.rooftop_townsquare},
                 ]
             ),
             self.townsmee.inn.set_exits(
                 [
                     {
                         "direction": self.dirs.south,
-                        "id": self.townsmee.moonroad_west1,
+                        "id": self.townsmee.moonroad_west2,
                     },
                     {"direction": self.dirs.up, "id": self.townsmee.inn_second},
                 ]
@@ -212,7 +213,7 @@ class Environments(Utility):
                 [
                     {
                         "direction": self.dirs.north,
-                        "id": self.townsmee.moonroad_east3,
+                        "id": self.townsmee.moonroad_east1,
                     },
                 ]
             ),
@@ -220,21 +221,24 @@ class Environments(Utility):
                 [
                     {
                         "direction": self.dirs.north,
-                        "id": self.townsmee.moonroad_east2,
+                        "id": self.townsmee.moonroad_west1,
                     },
                 ]
             ),
             self.townsmee.moonroad_west1.set_exits(
                 [
                     {
-                        "direction": self.dirs.north,
+                        "direction": self.dirs.west,
                         "id": self.townsmee.moonroad_west2,
                     },
                     {
-                        "direction": self.dirs.south,
-                        "id": self.townsmee.moonroad_west3,
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.townsquare,
                     },
-                    {"direction": self.dirs.east, "id": self.townsmee.townsquare},
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.armoury,
+                    },
                 ]
             ),
             self.townsmee.moonroad_east3.set_exits(
@@ -243,37 +247,51 @@ class Environments(Utility):
                         "direction": self.dirs.west,
                         "id": self.townsmee.moonroad_east2,
                     },
-                    {"direction": self.dirs.south, "id": self.townsmee.market},
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_east5,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_east5,
+                    },
                 ]
             ),
             self.townsmee.sunroad_north1.set_exits(
                 [
                     {
                         "direction": self.dirs.west,
-                        "id": self.townsmee.moonroad_west1,
+                        "id": self.townsmee.sheriff,
                     },
                     {
                         "direction": self.dirs.east,
-                        "id": self.townsmee.sunroad_north2,
+                        "id": self.townsmee.blacksmith,
                     },
-                    {"direction": self.dirs.south, "id": self.townsmee.sheriff},
+                    {"direction": self.dirs.north, "id": self.townsmee.sunroad_north2},
+                    {"direction": self.dirs.south, "id": self.townsmee.townsquare},
                 ]
             ),
-            self.townsmee.sunroad_north2.set_exits([
-                {
-                    "direction": self.dirs.west,
-                    "id": self.townsmee.sunroad_north1,
-                }
-            ]),
+            self.townsmee.sunroad_north2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_north5,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.sunroad_north1,
+                    }
+                ]
+            ),
             self.townsmee.sunroad_south1.set_exits(
                 [
                     {
                         "direction": self.dirs.north,
-                        "id": self.townsmee.sunroad_south2,
+                        "id": self.townsmee.townsquare,
                     },
                     {
                         "direction": self.dirs.south,
-                        "id": self.townsmee.sunroad_south1,
+                        "id": self.townsmee.sunroad_south2,
                     },
                 ]
             ),
@@ -308,20 +326,30 @@ class Environments(Utility):
                         "id": self.townsmee.sunroad_south3,
                     },
                     {
-                        "direction": self.dirs.east,
+                        "direction": self.dirs.south,
                         "id": self.townsmee.sunroad_south5,
                     },
                 ]
             ),
-            self.townsmee.sunroad_south5.set_exits([
-                {
-                    "direction": self.dirs.west,
-                    "id": self.townsmee.sunroad_south4,
-                }
-            ]),
+            self.townsmee.sunroad_south5.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.sunroad_south4,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_south5
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.gallows_east1,
+                    },
+                ]
+            ),
             self.townsmee.gallows_east1.set_exits(
                 [
-                    {"direction": self.dirs.west, "id": self.townsmee.gallows},
+                    {"direction": self.dirs.west, "id": self.townsmee.sunroad_south5},
                     {"direction": self.dirs.east, "id": self.townsmee.gallows_east2},
                 ]
             ),
@@ -334,41 +362,43 @@ class Environments(Utility):
             self.townsmee.gallows_east3.set_exits(
                 [
                     {"direction": self.dirs.west, "id": self.townsmee.gallows_east2},
+                    {"direction": self.dirs.south, "id": self.townsmee.gallows},
                 ]
             ),
             self.townsmee.gallows.set_exits(
                 [
                     {
-                        "direction": self.dirs.west,
-                        "id": self.townsmee.moonroad_west1,
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.gallows_east3,
                     },
                     {
                         "direction": self.dirs.south,
-                        "id": self.townsmee.gallows_east1,
+                        "id": self.townsmee.lower_quarter,
                     },
                 ]
             ),
             self.townsmee.lower_quarter.set_exits(
                 [
-                    {"direction": self.dirs.north, "id": self.townsmee.mindroad_nw1},
+                    {"direction": self.dirs.north, "id": self.townsmee.gallows},
                 ]
             ),
             self.townsmee.mindroad_nw1.set_exits(
                 [
                     {
                         "direction": self.dirs.southeast,
-                        "id": self.townsmee.lower_quarter,
+                        "id": self.townsmee.townsquare,
                     },
-                    {"direction": self.dirs.north, "id": self.townsmee.mindroad_nw2},
-                    {"direction": self.dirs.east, "id": self.townsmee.townsquare},
-                    {"direction": self.dirs.south, "id": self.townsmee.mindroad_se1},
+                    {
+                        "direction": self.dirs.northwest,
+                        "id": self.townsmee.mindroad_nw2,
+                    },
                 ]
             ),
             self.townsmee.mindroad_se1.set_exits(
                 [
                     {
                         "direction": self.dirs.northwest,
-                        "id": self.townsmee.mindroad_nw2,
+                        "id": self.townsmee.townsquare,
                     },
                     {
                         "direction": self.dirs.southeast,
@@ -380,7 +410,7 @@ class Environments(Utility):
                 [
                     {
                         "direction": self.dirs.southwest,
-                        "id": self.townsmee.talentroad_sw1,
+                        "id": self.townsmee.townsquare,
                     },
                     {
                         "direction": self.dirs.northwest,
@@ -392,10 +422,10 @@ class Environments(Utility):
                 [
                     {
                         "direction": self.dirs.northeast,
-                        "id": self.townsmee.talentroad_ne1,
+                        "id": self.townsmee.townsquare,
                     },
                     {
-                        "direction": self.dirs.southeast,
+                        "direction": self.dirs.southwest,
                         "id": self.townsmee.talentroad_sw2,
                     },
                 ]
@@ -412,16 +442,18 @@ class Environments(Utility):
                     },
                 ]
             ),
-            self.townsmee.mindroad_se3.set_exits([
-                {
-                    "direction": self.dirs.northwest,
-                    "id": self.townsmee.mindroad_bridge,
-                },
-                {
-                    "direction": self.dirs.southeast,
-                    "id": self.townsmee.mindroad_se2,
-                }
-            ]),
+            self.townsmee.mindroad_se3.set_exits(
+                [
+                    {
+                        "direction": self.dirs.southeast,
+                        "id": self.townsmee.mindroad_bridge,
+                    },
+                    {
+                        "direction": self.dirs.northwest,
+                        "id": self.townsmee.mindroad_se2,
+                    },
+                ]
+            ),
             self.townsmee.mindroad_se2.set_exits(
                 [
                     {
@@ -442,32 +474,569 @@ class Environments(Utility):
                     },
                     {
                         "direction": self.dirs.southeast,
-                        "id": self.townsmee.mindroad_se2,
+                        "id": self.university.university_entry,
                     },
                 ]
             ),
             self.jungle.jungle_entry.set_exits(
                 [
-                    {"direction": self.dirs.north, "id": self.townsmee.mindroad_nw1},
+                    {"direction": self.dirs.west, "id": self.townsmee.outer_east5},
+                ]
+            ),
+            self.university.university_entry.set_exits(
+                [
+                    {"direction": self.dirs.northwest, "id": self.townsmee.mindroad_bridge},
                 ]
             ),
             self.forest.forest_entry.set_exits(
                 [
                     {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_north5,
+                    },
+                ]
+            ),
+            self.beach.beach_entry.set_exits(
+                [
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_west5,
+                    },
+                ]
+            ),
+            self.breach.breach_portal.set_exits(
+                [
+                    {
                         "direction": self.dirs.north,
-                        "id": self.townsmee.talentroad_sw3,
+                        "id": self.townsmee.outer_south5,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west5.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west4,
+                    },
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.beach.beach_entry,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.moonroad_west3,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west6,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west6.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west5,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west7,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west7.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west6,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west8,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west8.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west7,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west9,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west9.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west8,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west10.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west9,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_south1,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west10,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south2,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south1,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south3,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south3.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south2,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south4,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south4.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south3,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south5,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south5.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south4,
+                    },
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.sunroad_south5,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.breach.breach_portal,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south6,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south6.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south5,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south7,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south7.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south6,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south8,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south8.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south7,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south9,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south9.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south8,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_south10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_south10.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_south9,
+                    },
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east10.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east9,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_south10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east9.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east8,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east8.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east7,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east9,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east7.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east6,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east8,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east6.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east5,
+                    },
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.moonroad_east3,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.jungle.jungle_entry,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east7,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east5.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east4,
+                    },
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.moonroad_east3,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east6,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east4.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east3,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east5,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east3.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east2,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east4,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_east1,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east3,
+                    },
+                ]
+            ),
+            self.townsmee.outer_east1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_north10,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east2,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north10.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north9,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_east1,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north9.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north8,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north10,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north8.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north7,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north9,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north7.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north6,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north8,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north6.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north5,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north7,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north5.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north4,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.sunroad_north2,
+                    },
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.forest.forest_entry,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north6,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north4.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north3,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north5,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north3.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north2,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north4,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_north1,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north3,
+                    },
+                ]
+            ),
+            self.townsmee.outer_north1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west1,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.outer_north2,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_north1,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west2,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west1,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west3,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west3.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west2,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west4,
+                    },
+                ]
+            ),
+            self.townsmee.outer_west4.set_exits(
+                [
+                    {
+                        "direction": self.dirs.north,
+                        "id": self.townsmee.outer_west3,
+                    },
+                    {
+                        "direction": self.dirs.south,
+                        "id": self.townsmee.outer_west5,
                     },
                 ]
             ),
             self.townsmee.moonroad_west3.set_exits(
                 [
                     {
-                        "direction": self.dirs.north,
+                        "direction": self.dirs.east,
                         "id": self.townsmee.moonroad_west2,
                     },
                     {
-                        "direction": self.dirs.south,
-                        "id": self.townsmee.moonroad_west1,
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.outer_west5,
                     },
                 ]
             ),
@@ -475,21 +1044,34 @@ class Environments(Utility):
                 [
                     {
                         "direction": self.dirs.north,
-                        "id": self.townsmee.moonroad_west3,
+                        "id": self.townsmee.inn,
                     },
                     {
-                        "direction": self.dirs.south,
+                        "direction": self.dirs.east,
                         "id": self.townsmee.moonroad_west1,
                     },
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.moonroad_west3,
+                    },
+                ]
+            ),
+            self.townsmee.moonroad_east1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.townsquare,
+                    },
+                    {"direction": self.dirs.east, "id": self.townsmee.moonroad_east2},
+                    {"direction": self.dirs.south, "id": self.townsmee.market},
                 ]
             ),
             self.townsmee.moonroad_east2.set_exits(
                 [
                     {
                         "direction": self.dirs.west,
-                        "id": self.townsmee.moonroad_east3,
+                        "id": self.townsmee.moonroad_east1,
                     },
-                    {"direction": self.dirs.south, "id": self.townsmee.market},
                 ]
             ),
             self.townsmee.talentroad_ne2.set_exits(
@@ -513,6 +1095,46 @@ class Environments(Utility):
                     {
                         "direction": self.dirs.southeast,
                         "id": self.townsmee.mindroad_nw1,
+                    },
+                ]
+            ),
+            self.townsmee.rooftop_townsquare.set_exits(
+                [
+                    {
+                        "direction": self.dirs.down,
+                        "id": self.townsmee.townsquare,
+                    },
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.rooftop_west1,
+                    },
+                ]
+            ),
+            self.townsmee.rooftop_west1.set_exits(
+                [
+                    {
+                        "direction": self.dirs.west,
+                        "id": self.townsmee.rooftop_west2,
+                    },
+                    {
+                        "direction": self.dirs.down,
+                        "id": self.townsmee.moonroad_west1,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.rooftop_townsquare,
+                    },
+                ]
+            ),
+            self.townsmee.rooftop_west2.set_exits(
+                [
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.rooftop_west1,
+                    },
+                    {
+                        "direction": self.dirs.down,
+                        "id": self.townsmee.moonroad_west2,
                     },
                 ]
             ),

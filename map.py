@@ -47,7 +47,6 @@ class Map(Utility):
             graph_type="digraph",
             bgcolor="#999",
             splines="ortho",
-            concentrate="true",
         )
 
         self.graph.set_node_defaults(
@@ -60,8 +59,7 @@ class Map(Utility):
 
         self.graph.set_edge_defaults(
             color="black",
-            style="dotted",
-            dir="both",
+            style="dotted"
         )
     
         self.path = f"c:/src/mud_images"
@@ -89,11 +87,13 @@ class Map(Utility):
             for exit in room_exits:
                 exit_room = exit["id"]
                 exit_direction = exit["direction"].name
+                print(exit_direction)
                 edge = pydot.Edge(room_name, exit_room.name, label=exit_direction)
                 if active_node:
                     edge = pydot.Edge(room_name, 
                                       exit_room.name,
-                                      label=exit["direction"],
+                                      label=exit_direction,
+                                      style="line",
                                       fillcolor = "red")
                 self.graph.add_edge(edge)
 

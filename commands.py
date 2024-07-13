@@ -194,7 +194,7 @@ class Commands(Utility):
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
-                if p.location_id == player.room.id:
+                if p.location_id.name == player.room.name:
                     await self.send_message(MudEvents.InfoEvent(f"You notice {player.name} looking to the {wanted_direction}."), p.websocket)
 
             await world_state.show_room(player, look_location_id=avail_exit["id"])

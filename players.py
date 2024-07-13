@@ -120,7 +120,8 @@ class Players(Utility):
             player_hp = randint(1, 50)
             player_strength = randint(1, 50)
             player_agility = randint(1, 50)
-            player_location = random.choice(world_state.environments.rooms)
+            # player_location = random.choice(world_state.environments.rooms)
+            player_location = world_state.environments.rooms[0]
             player_perception = randint(1, 50)
             player_faith = randint(1, 50)
             player_determination = randint(1, 50)

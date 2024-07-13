@@ -5,7 +5,7 @@ class SouthEast:
     logger = None
     variations = ["se", "southeast", "southe"]
     opposite = None
-    name = "SouthEast"
+    name = "Southeast"
     type = Utility.Share.MudDirections.SOUTHEAST
     def __init__(self, logger):
         self.logger = logger

@@ -75,7 +75,6 @@ class Utility(MudEvents):
             BREACH = 5
             GRAVEYARD = 6
             UNIVERSITY = 7
-            FYUCJKBY = 8
 
         class Races(Enum):
             HUMAN = (0,)
