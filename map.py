@@ -87,7 +87,6 @@ class Map(Utility):
             for exit in room_exits:
                 exit_room = exit["id"]
                 exit_direction = exit["direction"].name
-                print(exit_direction)
                 edge = pydot.Edge(room_name, exit_room.name, label=exit_direction)
                 if active_node:
                     edge = pydot.Edge(room_name, 
