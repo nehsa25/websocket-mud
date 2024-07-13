@@ -251,10 +251,6 @@ class Environments(Utility):
                         "direction": self.dirs.east,
                         "id": self.townsmee.outer_east5,
                     },
-                    {
-                        "direction": self.dirs.east,
-                        "id": self.townsmee.outer_east5,
-                    },
                 ]
             ),
             self.townsmee.sunroad_north1.set_exits(
@@ -775,14 +771,6 @@ class Environments(Utility):
                         "id": self.townsmee.outer_east5,
                     },
                     {
-                        "direction": self.dirs.west,
-                        "id": self.townsmee.moonroad_east3,
-                    },
-                    {
-                        "direction": self.dirs.east,
-                        "id": self.jungle.jungle_entry,
-                    },
-                    {
                         "direction": self.dirs.south,
                         "id": self.townsmee.outer_east7,
                     },
@@ -797,6 +785,10 @@ class Environments(Utility):
                     {
                         "direction": self.dirs.west,
                         "id": self.townsmee.moonroad_east3,
+                    },
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.jungle.jungle_entry,
                     },
                     {
                         "direction": self.dirs.south,
@@ -1068,6 +1060,10 @@ class Environments(Utility):
             ),
             self.townsmee.moonroad_east2.set_exits(
                 [
+                    {
+                        "direction": self.dirs.east,
+                        "id": self.townsmee.moonroad_east3,
+                    },
                     {
                         "direction": self.dirs.west,
                         "id": self.townsmee.moonroad_east1,
