@@ -168,6 +168,7 @@ class Utility(MudEvents):
             THIEF = 9
             ARMORER = 10
             PRINCESS = 11
+            GARDENER = 12
 
         class Alignment(Enum):
             GOOD = 1  # attacks evil players only

@@ -482,8 +482,50 @@ class Environments(Utility):
             self.university.university_entry.set_exits(
                 [
                     {"direction": self.dirs.northwest, "id": self.townsmee.mindroad_bridge},
+                    {"direction": self.dirs.east, "id": self.university.university_courtyard},
                 ]
             ),
+            self.university.university_courtyard.set_exits(
+                [
+                    {"direction": self.dirs.northeast, "id": self.university.university_garden},
+                    {"direction": self.dirs.west, "id": self.university.university_entry},
+                    {"direction": self.dirs.north, "id": self.university.university_scriptorium},
+                    {"direction": self.dirs.east, "id": self.university.university_dormitory},
+                    {"direction": self.dirs.south, "id": self.university.university_refectory},
+                    {"direction": self.dirs.southwest, "id": self.university.university_observatory},
+                    {"direction": self.dirs.northwest, "id": self.university.university_mirrology}  
+                ]
+            ),   
+            self.university.university_scriptorium.set_exits(
+                [
+                    {"direction": self.dirs.south, "id": self.university.university_courtyard},
+                ]
+            ),
+            self.university.university_garden.set_exits(
+                [
+                    {"direction": self.dirs.southwest, "id": self.university.university_courtyard},
+                ]
+            ),
+            self.university.university_dormitory.set_exits(
+                [
+                    {"direction": self.dirs.west, "id": self.university.university_courtyard},
+                ]
+            ),
+            self.university.university_refectory.set_exits(
+                [
+                    {"direction": self.dirs.north, "id": self.university.university_courtyard},
+                ]
+            ),
+            self.university.university_observatory.set_exits(
+                [
+                    {"direction": self.dirs.northeast, "id": self.university.university_courtyard},
+                ]
+            ),
+            self.university.university_mirrology.set_exits(
+                [
+                    {"direction": self.dirs.southeast, "id": self.university.university_courtyard},
+                ]
+            ),    
             self.forest.forest_entry.set_exits(
                 [
                     {
@@ -1177,3 +1219,13 @@ class Environments(Utility):
     async def get_room_history(self, room_id):
         lines = [a for a in self.townsmee.room_history if a.id == room_id]
         return lines
+
+    async def get_room_by_name(self, name):
+        room = None
+        rooms = [a for a in self.rooms if a.name == name]
+        if len(rooms) > 0:
+            room = rooms[0]
+        else:
+            raise Exception(f"Room not found: {name}")
+        return room
+        

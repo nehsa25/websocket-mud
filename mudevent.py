@@ -44,7 +44,8 @@ class MudEvents:
             MONSTER_IMAGE = 24
             PLAYER_IMAGE = 25
             NPC_IMAGE = 26
-            ITEM_IMAGE = 27            
+            ITEM_IMAGE = 27
+            INVALID_NAME = 28        
 
         @staticmethod
         def get_event_type_id(event):
@@ -103,6 +104,17 @@ class MudEvents:
 
         def to_json(self):
             return jsonpickle.encode(self)
+        
+    class InvalidNameEvent:
+        type = None
+
+        def __init__(self):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.INVALID_NAME
+            )
+
+        def to_json(self):
+            return jsonpickle.encode(self)
 
     class UsernameRequestEvent:
         world_name = ""
@@ -146,11 +158,13 @@ class MudEvents:
     class WelcomeEvent:
         type = None
         message = ""
+        name = ""
 
-        def __init__(self, message):
+        def __init__(self, message, name):
             self.type = MudEvents.EventUtility.get_event_type_id(
                 MudEvents.EventUtility.EventTypes.WELCOME
             )
+            self.name = name
             self.message = message
 
         def to_json(self):
