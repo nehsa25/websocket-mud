@@ -123,6 +123,8 @@ class Commands(Utility):
     async def process_direction(self, wanted_direction, player, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+        friendly_direction = await world_state.environments.dirs.get_friendly_name(wanted_direction)
 
         will_travel = False
         new_room_id = None
@@ -162,16 +164,11 @@ class Commands(Utility):
                 if player.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
-                    opp_direction = None
-                    for opp_dir in self.Share.MudDirections.opp_directions:
-                        if avail_exit["direction"] == opp_dir[0]:
-                            opp_direction = opp_dir[1]
-                        if avail_exit["direction"] == opp_dir[1]:
-                            opp_direction = opp_dir[0]
+                    opp_direction = avail_exit['direction'].opposite.name
                     await self.send_message(MudEvents.InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}."), p.websocket)
         else:
             await self.send_message(MudEvents.ErrorEvent(f"You cannot go in that direction."), player.websocket)
-            await player.room.alert(f"{player.name} attempted to go {wanted_direction} but ran into a wall!", exclude_player=True, player=player)
+            await player.room.alert(f"{player.name} attempted to go {friendly_direction} but could not!", exclude_player=True, player=player)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, world_state
 
@@ -718,7 +715,7 @@ class Commands(Utility):
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(f"{method_name}: enter", self.logger)
             LogUtils.debug(f'Command: "{command}"', self.logger)
-            command = command.lower()
+            lowercase_cmd = command.lower()
 
             # send back the command we received as info - (this could just be printed client side and save the traffic cost)
             await self.send_message(MudEvents.CommandEvent(command), player.websocket)
@@ -730,42 +727,42 @@ class Commands(Utility):
             # process each command
             if command == "":
                 await world_state.show_room(player)
-            elif command == "help":  # display help
+            elif lowercase_cmd == "help":  # display help
                 player = await self.process_help(player)
             elif world_state.environments.dirs.is_valid_direction(command):  # process direction
                 player = await self.process_direction(command, player, world_state)
             # a look command - could be at the room, a person, a monster, an item
-            elif command == "l" or command == "look" or command.startswith("l ") or command.startswith("look "):
+            elif lowercase_cmd == "l" or lowercase_cmd == "look" or lowercase_cmd.startswith("l ") or lowercase_cmd.startswith("look "):
                 player = await self.process_look(command, player, world_state)
-            elif command.startswith("g ") or command.startswith("get "):  # get
+            elif lowercase_cmd.startswith("g ") or command.startswith("get "):  # get
                 player = await self.process_get(command, player, world_state)
-            elif command == "i" or command == "inv" or command == "inventory":  # inv
+            elif lowercase_cmd == "i" or lowercase_cmd == "inv" or lowercase_cmd == "inventory":  # inv
                 player = await self.process_inventory(player)
-            elif command == "sea" or command == "search":  # search
+            elif lowercase_cmd == "sea" or lowercase_cmd == "search":  # search
                 player = await self.process_search(player, world_state)
-            elif command.startswith("dr ") or command.startswith("drop "):  # drop
+            elif lowercase_cmd.startswith("dr ") or lowercase_cmd.startswith("drop "):  # drop
                 player = await self.process_drop(command, player)
-            elif command.startswith("hide ") or command.startswith("stash "):  # hide
+            elif lowercase_cmd.startswith("hide ") or lowercase_cmd.startswith("stash "):  # hide
                 player = await self.process_hide_item(command, player, world_state)
-            elif command.startswith("eq ") or command.startswith("equip "):  # eq
+            elif lowercase_cmd.startswith("eq ") or lowercase_cmd.startswith("equip "):  # eq
                 player = await self.process_equip_item(command, player)
-            elif command.startswith("system "):  # a system command like changing username
+            elif lowercase_cmd.startswith("system "):  # a system command like changing username
                 player = await self.process_system_command(command, extra, player, world_state)
-            elif command == "stat":  # stat
+            elif lowercase_cmd == "stat":  # stat
                 player = await self.process_stat(player)
-            elif (command.startswith("a ")  or command.startswith("att ") or command.startswith("attack ")):  # attack
+            elif (lowercase_cmd.startswith("a ")  or lowercase_cmd.startswith("att ") or lowercase_cmd.startswith("attack ")):  # attack
                 asyncio.create_task(
                     self.process_attack_mob(command, player, world_state)
                 )
-            elif command == ("exp") or command == ("experience"):  # experience
+            elif lowercase_cmd == ("exp") or lowercase_cmd == ("experience"):  # experience
                 player = await self.process_exp(player)
-            elif command.startswith("loot "):  # loot corpse
+            elif lowercase_cmd.startswith("loot "):  # loot corpse
                 player = await self.process_loot(command, player, world_state)
-            elif command == ("who"):
+            elif lowercase_cmd == ("who"):
                 player = await self.process_who(player, world_state)
-            elif command.startswith("/"):
+            elif lowercase_cmd.startswith("/"):
                 player = await self.process_comms(command, player, world_state)
-            elif command == "rest":
+            elif lowercase_cmd == "rest":
                 player, world_state = await self.process_rest(player, world_state)
             else:  # you're going to say it to the room..
                 await self.send_message(MudEvents.ErrorEvent(f'"{command}" is not a valid command.'), player.websocket)

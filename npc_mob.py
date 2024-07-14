@@ -86,9 +86,7 @@ class NpcMob(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
         # check for alignments opposite of npc
-        room = await world_state.get_room(self.room_id)
-        
-        if self.in_combat and not len(room.players) > 0:
+        if self.in_combat and not len(self.room_id.players) > 0:
             return world_state
         
         current_time = time.time()
@@ -99,23 +97,23 @@ class NpcMob(Utility):
 
         
         # check players
-        for p in room.players:
-            if await self.alignment.is_opposing_alignment(p.alignment):
+        for p in self.room_id.players:
+            if await self.alignment.is_opposing_alignment(self.name, p.alignment):
                 LogUtils.info(f"{method_name}: {self.name} is attacking {p.name}".upper(), self.logger)
-                room.alert(self.get_attack_phrase(p.name))
+                self.room_id.alert(self.get_attack_phrase(p.name))
 
         # check npcs
-        for n in room.npcs:
-            if await self.alignment.is_opposing_alignment(n.alignment):
+        for n in self.room_id.npcs:
+            if await self.alignment.is_opposing_alignment(self.name, n):
                 LogUtils.info(f"{method_name}: {self.name} is attacking {n.name}".upper(), self.logger)
-                room.alert(self.get_attack_phrase(n.name))
+                self.room_id.alert(self.get_attack_phrase(n.name))
    
         # check for monsters
-        for m in room.monsters:
-            if await self.alignment.is_opposing_alignment(m.alignment):                
+        for m in self.room_id.monsters:
+            if await self.alignment.is_opposing_alignment(self.name, m):                
                 LogUtils.info(f"{method_name}: {self.name} is attacking {m.name}".upper(), self.logger)
-                if len(room.players) > 0:
-                    await room.alert(self.get_attack_phrase(m.name))
+                if len(self.room_id.players) > 0:
+                    await self.room_id.alert(self.get_attack_phrase(m.name))
             
         self.last_check_combat = current_time
         LogUtils.debug(f"{method_name}: exit", self.logger)
@@ -141,7 +139,7 @@ class NpcMob(Utility):
         current_interests.append(f"all players in room: {",".join(players_names)}") 
         disliked_players = []
         for p in room.players:
-            if await self.alignment.is_opposing_alignment(p.alignment):
+            if await self.alignment.is_opposing_alignment(self.name, p):
                 disliked_players.append(p.name)            
         current_interests.append(f"disliked players in room: {",".join(disliked_players)}")     
         

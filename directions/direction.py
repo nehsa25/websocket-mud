@@ -51,13 +51,12 @@ class Directions:
         self.directions.append(self.northwest)
         self.directions.append(self.southeast)
         self.directions.append(self.southwest)
-
         
     def is_valid_direction(self, direction):
         foundness = [x for x in self.directions if direction.lower() in x.variations]
         return len(foundness) > 0
         
-    def get_opposite_direction(direction):
+    async def get_opposite_direction(self, direction):
         opp_direction = None
         for directions in Utility.Share.MudDirections.opp_directions:
             if direction in directions[0]:
@@ -68,10 +67,6 @@ class Directions:
                 break
         return opp_direction
 
-    def get_friendly_name(direction):
-        friendly_name = None
-        for pretty_direction in Utility.Share.MudDirections.pretty_directions:
-            if direction in pretty_direction:
-                friendly_name = pretty_direction[1].capitalize()
-                break
-        return friendly_name
+    async def get_friendly_name(self, direction):
+        foundness = [x for x in self.directions if direction.lower() in x.variations]
+        return foundness[0].name.lower()

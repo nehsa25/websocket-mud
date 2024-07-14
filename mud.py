@@ -106,7 +106,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.ERROR,
+            console_level=Level.INFO,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)

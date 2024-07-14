@@ -825,10 +825,8 @@ class WorldState(Utility):
 
         # if the monster has a previous room, update it
         if monster.room is not None:
-            old_room = await self.get_room(monster.room)
-
             # remove monster from old room
-            old_room.monster.remove(monster)
+            monster.room.monster.remove(monster)
 
         # update to new room
         monster.previous_room = monster.room
@@ -844,10 +842,9 @@ class WorldState(Utility):
 
         # if the npc has a previous room, update it
         if npc.room_id is not None:
-            room = await self.get_room(npc.room_id)
-            await room.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}.")
-            if npc in room.npcs:
-                room.npcs.remove(npc)
+            await npc.room_id.alert(f"{npc.get_full_name()} has left to the {direction['direction'].name.capitalize()}.")
+            if npc in npc.room_id.npcs:
+                npc.room_id.npcs.remove(npc)
 
         # add player to new room
         new_room = new_room_id
@@ -861,14 +858,6 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return npc, self
 
-    async def get_active_room(self, room_id):
-        # method_name = inspect.currentframe().f_code.co_name
-        # LogUtils.debug(f"{method_name}: enter", self.logger)
-        # for room in self.active_rooms:
-        #     if room.name == room_id.name:
-        #         return room
-        return None
-
     # just returns a specific room in our list of rooms
     async def get_room_definition(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
@@ -880,18 +869,6 @@ class WorldState(Utility):
         if room == []:
             raise Exception(f"Room {room_id} not found.")
         room = room[0]
-        LogUtils.debug(
-            f'{method_name}: exit, returning room "{room.name}"', self.logger
-        )
-        return room
-
-    # looks for an active room first, then returns definition
-    async def get_room(self, room_id):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter, room_id: {room_id}", self.logger)
-        room = await self.get_active_room(room_id)
-        if room is None:
-            room = await self.get_room_definition(room_id)
         LogUtils.debug(
             f'{method_name}: exit, returning room "{room.name}"', self.logger
         )
