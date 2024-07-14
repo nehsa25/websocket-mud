@@ -1,9 +1,9 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
 
-class Warrior(Utility):
+class Warrior(PlayerClass):
     logger = None
     name = "Warrior"
     description = "A strong and powerful warrior who can take a lot of damage and deal a lot of damage."

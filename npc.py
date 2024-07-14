@@ -7,6 +7,7 @@ from npcs.gardener import Gardener
 from npcs.guard import Guard
 from npcs.healer import Healer
 from npcs.innkeeper import InnKeeper
+from npcs.maximus import Maximus
 from npcs.merchant import Merchant
 from npcs.princess import Princess
 from npcs.sheriff import Sheriff
@@ -51,6 +52,8 @@ class Npc(Utility):
             npc = Princess(self.logger)
         if npc_type == Utility.Share.Npcs.GARDENER:
             npc = Gardener(self.logger)
+        if npc_type == Utility.Share.Npcs.MAXIMUS:
+            npc = Maximus(self.logger)
             
         npc = npc.generate(room_id)
                      

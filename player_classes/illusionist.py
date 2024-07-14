@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Illusionist(Utility):
+class Illusionist(PlayerClass):
     logger = None
     name = "Illusionist"
     description = "An illusionist can create illusions and deceive enemies."

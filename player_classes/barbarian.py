@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Barbarian(Utility):
+class Barbarian(PlayerClass):
     logger = None
     name = "Barbarian"
     description = "A strong and powerful barbarian who can take a lot of damage and deal a lot of damage."

@@ -116,7 +116,7 @@ class TownSmee:
             name=f"{self.name} - Inn",
             inside=True,
             description="You find yourself within a majestic inn. A worn, well-kept fireplace burned softly in the corner. There's a shelf with a small assortment of books and a prized map of the town and surrounding area stands on display but it is sealed behind glass to prevent touching.",
-            npc_types=[Utility.Share.Npcs.INNKEEPER, Utility.Share.Npcs.PRINCESS],
+            npc_types=[Utility.Share.Npcs.INNKEEPER, Utility.Share.Npcs.PRINCESS, Utility.Share.Npcs.MAXIMUS],
             environment=self.type,
             logger=logger,
         )

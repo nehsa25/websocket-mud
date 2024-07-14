@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Ranger(Utility):
+class Ranger(PlayerClass):
     logger = None
     name = "Ranger"
     description = "A ranger who can use a bow and speak with animals."

@@ -1,7 +1,7 @@
 import inspect
 from utility import Utility
 from log_utils import LogUtils
-from commands import Commands
+from command import Commands
 
 class World(Utility):
     logger = None

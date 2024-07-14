@@ -89,6 +89,30 @@ class Utility(MudEvents):
             ARGUNA = (9,)
             EAREA = 10
 
+        class Commands(Enum):
+            LOOK = 1
+            MOVE = 2
+            ATTACK = 3
+            GET = 4
+            INVENTORY = 5
+            DROP = 6
+            SEARCH = 7
+            HIDE = 8
+            STASH = HIDE
+            EQUIP = 10
+            STATISTICS = 11
+            EXPERIENCE = 12
+            LOOT = 13
+            WHO = 14
+            REST = 15
+            SAY = 16
+            SYSTEM = 17
+            HELP = 18
+            QUIT = 19
+            YELL = 20
+            TELEPATHY = 21
+            WHISPER = 22
+            
         class Classes(Enum):
             WARRIOR = (0,)
             MAGE = (1,)
@@ -169,6 +193,7 @@ class Utility(MudEvents):
             ARMORER = 10
             PRINCESS = 11
             GARDENER = 12
+            MAXIMUS = 13
 
         class Alignment(Enum):
             GOOD = 1  # attacks evil players only

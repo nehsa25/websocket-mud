@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Warlock(Utility):
+class Warlock(PlayerClass):
     logger = None
     name = "Warlock"
     description = "A warlock who can cast spells."

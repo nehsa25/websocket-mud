@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Knight(Utility):
+class Knight(PlayerClass):
     logger = None
     name = "Knight"
     description = "A knight is a heavily armored warrior who can deal massive damage."

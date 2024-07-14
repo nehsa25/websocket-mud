@@ -38,7 +38,7 @@ class Mud(Utility):
 
     async def exit_handler(self, signal, frame):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
+        LogUtils.debug(f"{method_name}: enter, signal: {signal}, frame: {frame}", self.logger)
         LogUtils.info(
             f"{method_name}: An exit signal as been received.  Exiting!", self.logger
         )

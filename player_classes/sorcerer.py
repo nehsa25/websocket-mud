@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Sorcorer(Utility):
+class Sorcorer(PlayerClass):
     logger = None
     name = "Sorcorer"
     description = "A sorcorer who can cast spells."

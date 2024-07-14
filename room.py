@@ -75,7 +75,11 @@ class Room(Utility):
         return self
         
     async def alert(
-        self, message, exclude_player=False, player=None, event_type=MudEvents.InfoEvent
+        self, message, 
+        exclude_player=False, 
+        player=None, 
+        event_type=MudEvents.InfoEvent,
+        adjacent_message=""
     ):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, message: {message}", self.logger)
@@ -88,3 +92,8 @@ class Room(Utility):
                     await self.send_message(event_type(message), p.websocket)
             else:
                 await self.send_message(event_type(message), p.websocket)
+                
+        if adjacent_message != "":
+            for e in self.exits:
+                if e is not None:
+                    await e.alert(adjacent_message, event_type=event_type, adjacent=False)

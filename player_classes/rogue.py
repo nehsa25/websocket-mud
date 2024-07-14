@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Rogue(Utility):
+class Rogue(PlayerClass):
     logger = None
     name = "Rogue"
     description = "A rogue who can deal damage and evade attacks."

@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Berserker(Utility):
+class Berserker(PlayerClass):
     logger = None
     name = "Berserker"
     description = "Berserkers who can take a lot of damage and deal a lot of damage. Will go berserk in battle."

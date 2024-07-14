@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Paladin(Utility):
+class Paladin(PlayerClass):
     logger = None
     name = "Paladin"
     description = "A paladin who can heal and deal damage."

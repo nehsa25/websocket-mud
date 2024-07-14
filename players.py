@@ -311,3 +311,19 @@ class Players(Utility):
                 break
         LogUtils.debug(f"{method_name}: exit, returning: {player.name}", self.logger)
         return player
+    
+    async def find_player_by_name(self, name):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        player = None
+        if self.players == []:
+            return player
+
+        for p in self.players:
+            if p.name == name:
+                player = p
+                break
+        LogUtils.debug(f"{method_name}: exit, returning: {player.name}", self.logger)
+        return player
+        
+        

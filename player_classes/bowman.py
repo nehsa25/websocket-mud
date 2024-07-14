@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Bowman(Utility):
+class Bowman(PlayerClass):
     logger = None
     name = "Bowman"
     description = "A skilled archer who can shoot arrows from a distance."

@@ -11,7 +11,7 @@ class Forest:
     units = None
     rooms = None
     in_town = False
-    name = "Jolly Forest"
+    name = "Green Woods"
     type = Utility.Share.EnvironmentTypes.FOREST
 
     # rooms
@@ -25,7 +25,7 @@ class Forest:
         self.forest_entry = Room(
             name=f"{self.name} - Meadow",
             inside=False,
-            description="You are in the Jolly forest.  Tall, sparse, fir trees spread out around you in all directions.  Dry sticks snap and rustle and you walk.",
+            description="You are in the great Green Woods forest. Small forest animals and birds are everywhere. Tall but dispersed fir trees spread out around you in all directions. Dry sticks snap and rustle and you walk. It's peaceful and you feel safe.",
             environment=self.type,
             logger=logger,
         )

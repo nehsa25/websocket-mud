@@ -109,6 +109,11 @@ class Player(Utility):
 
         self.alignment = Alignment(Utility.Share.Alignment.NEUTRAL, self.logger)
 
+    async def can_telepath(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        return self.stats.intelligence > 10 and (self.race.telepathic or self.player_class.telepathic)
+    
     # responsible for the "prepares to attack you messages"
     async def check_for_combat(self):
         method_name = inspect.currentframe().f_code.co_name

@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Necromancer(Utility):
+class Necromancer(PlayerClass):
     logger = None
     name = "Necromancer"
     description = "A necromancer who can raise the dead."

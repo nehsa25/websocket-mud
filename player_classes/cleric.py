@@ -1,9 +1,8 @@
 import inspect
 from log_utils import LogUtils
-from utility import Utility
+from player_classes.player_class import PlayerClass
 
-
-class Cleric(Utility):
+class Cleric(PlayerClass):
     logger = None
     name = "Cleric"
     description = "A healer who can heal and buff allies."
