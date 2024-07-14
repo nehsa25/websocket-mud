@@ -64,7 +64,7 @@ class NpcMob(Utility):
         
         # get random direction
         direction = None
-        room = await world_state.get_room(self.room_id)  
+        room = self.room_id
         if self.last_direction is None:
             direction = random.choice(room.exits)
         else:
@@ -162,7 +162,7 @@ class NpcMob(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         LogUtils.info(f"{method_name}: {self.name} is moving {direction}", self.logger)
-        room = await world_state.get_room(self.room_id)  
+        room = self.room_id
         room_id = [a for a in room.exits if a["direction"] == direction["direction"]][0]["id"]
         self, world_state = await world_state.move_room_npc(room_id, self, direction)
         LogUtils.debug(f"{method_name}: exit", self.logger)

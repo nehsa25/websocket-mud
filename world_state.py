@@ -386,7 +386,7 @@ class WorldState(Utility):
         try:            
             npclock = NpcLock(npc)
             async with npclock.lock:
-                room = await self.get_room(npc.room_id)
+                room = npc.room_id
                 if len(room.players) == 0:
                     return
                 await npc.speak(room, self)
@@ -757,12 +757,12 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # add player to new room
-        new_room = await self.get_room(new_room_id)
+        new_room = new_room_id
         new_room.players.append(player)
 
         # if the player has a previous room, update it
         if player.room is not None:
-            old_room = await self.get_room(player.room)
+            old_room = player.room
 
             if old_room != new_room:
                 for monster in old_room.monsters:
@@ -775,9 +775,6 @@ class WorldState(Utility):
         # update to new room
         player.previous_room = player.room
         player.room = new_room
-
-        # show new room
-        await self.show_room(player)
 
         # name for images
         map_image_name = self.sanitize_filename(
@@ -823,7 +820,7 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # add player to new room
-        new_room = await self.get_room(new_room_id)
+        new_room = new_room_id
         new_room.monster.append(monster)
 
         # if the monster has a previous room, update it
@@ -853,7 +850,7 @@ class WorldState(Utility):
                 room.npcs.remove(npc)
 
         # add player to new room
-        new_room = await self.get_room(new_room_id)
+        new_room = new_room_id
         await new_room.alert(f"{npc.get_full_name()} approaches from the {direction["direction"].opposite.name.capitalize()}.")
         new_room.npcs.append(npc)
 

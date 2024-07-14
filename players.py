@@ -49,6 +49,24 @@ class Players(Utility):
         self.logger = logger
         LogUtils.debug("Initializing Players() class", self.logger)
 
+    async def check_valid_name(self, name):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+        problem_names = ["", "admin", "administrator", "moderator", "map", "help", "look", "inv", "inventory", 
+                         "quit", "exit", "sys", "system", "god", "superuser", "super", "nehsa", 
+                         "nehsamud", "nehsa_mud", "candie", "princess candie"]
+ 
+        valid = True
+        if len(name) < 3 or len(name) > 15 or not name.isalnum():
+            valid = False
+            
+        if name.lower() in problem_names:
+            valid = False            
+                
+        LogUtils.debug(f"{method_name}: exit, returning: {valid}", self.logger)
+        return valid
+
     # used to update webpage on user count
     async def update_website_users_online(self, world_state):
         method_name = inspect.currentframe().f_code.co_name
@@ -62,6 +80,11 @@ class Players(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, player: {player.name}", self.logger)
 
+        # if the name is empty, request another
+        if not await self.check_valid_name(player.name):
+            LogUtils.debug(f"Name ({player.name}) is invalid, requesting a different one..", self.logger)
+            await self.new_user(world_state, player.websocket, invalid_username=True)
+        
         # if the name is already taken, request another
         matching_players = [p for p in self.players if p.name == player.name]
         if matching_players != []:
@@ -78,7 +101,7 @@ class Players(Utility):
         for p in self.players:
             if p.name == player.name:
                 await self.send_message(
-                    MudEvents.WelcomeEvent(f"Welcome {player.name}!"), p.websocket
+                    MudEvents.WelcomeEvent(f"Welcome {player.name}!", player.name), p.websocket
                 )
             else:
                 await self.send_message(
@@ -90,11 +113,11 @@ class Players(Utility):
         return player, world_state
 
     # calls at the beginning of the connection.  websocket connection here is the real connection
-    async def new_user(self, world_state, websocket, dupe=False):
+    async def new_user(self, world_state, websocket, dupe=False, invalid_username=False):
         try:
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(
-                f"{method_name}: enter, duplicate user flow: {dupe}", self.logger
+                f"{method_name}: enter, duplicate user flow: {dupe}, empty username flow: {invalid_username}", self.logger
             )
             LogUtils.info(f"{method_name}: {websocket.remote_address}", self.logger)
             ip = websocket.remote_address[0]
@@ -106,6 +129,8 @@ class Players(Utility):
             LogUtils.info(f"Requesting username", self.logger)
             if dupe:
                 await self.send_message(MudEvents.DuplicateNameEvent(), websocket)
+            elif invalid_username:
+                await self.send_message(MudEvents.InvalidNameEvent(), websocket)    
             else:
                 await self.send_message(
                     MudEvents.UsernameRequestEvent(Utility.Share.WORLD_NAME), websocket
@@ -121,7 +146,7 @@ class Players(Utility):
             player_strength = randint(1, 50)
             player_agility = randint(1, 50)
             # player_location = random.choice(world_state.environments.rooms)
-            player_location = world_state.environments.rooms[0]
+            player_location = await world_state.environments.get_room_by_name("Town Smee - University - Courtyard")
             player_perception = randint(1, 50)
             player_faith = randint(1, 50)
             player_determination = randint(1, 50)
@@ -271,6 +296,7 @@ class Players(Utility):
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
         LogUtils.debug(f"register: exit", self.logger)
+        return world_state
 
     async def get_player(self, websocket):
         method_name = inspect.currentframe().f_code.co_name
