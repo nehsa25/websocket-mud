@@ -250,6 +250,17 @@ class WorldState(Utility):
         if self.environments is None:
             self.environments = Environments(self.logger)
 
+    # returns the name of the area based on the type
+    def get_area_identifier(self, area):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        result = ""
+        for env in Utility.Share.EnvironmentTypes:
+            if area == env.name:
+                result = env.name
+        LogUtils.debug(f"{method_name}: exit, returning: {result}", self.logger)
+        return result
+
     # schedule some events that'll do shit
     async def setup_world_events(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -315,7 +326,7 @@ class WorldState(Utility):
             self.get_weather_season_event = asyncio.create_task(self.get_weather())
 
         if self.monster_check_event is None:
-            self.monster_check_event = asyncio.create_task(self.check_monsters())
+            self.monster_check_event = asyncio.create_task(self.check_monsters_events())
 
         # # start our monster resurrection task
         # if self.monster_respawn_event is None:
@@ -323,7 +334,7 @@ class WorldState(Utility):
         #         self.monsters.respawn_mobs(self.rooms.rooms)
         #     )
 
-    async def check_monsters(self):
+    async def check_monsters_events(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         while not self.shutdown:
@@ -358,6 +369,23 @@ class WorldState(Utility):
                     npcs.append(asyncio.create_task(self.npc_check_for_combat(npc)))
                         
                 await asyncio.gather(*npcs)
+            except:
+                LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+
+
+    async def check_player_events(self):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        while not self.shutdown:
+            players = []
+            try:
+                # run events
+                for player in self.players:
+                    
+                    # check for combat
+                    players.append(asyncio.create_task(self.player_check_for_combat(player)))
+                        
+                await asyncio.gather(*players)
             except:
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
@@ -410,6 +438,34 @@ class WorldState(Utility):
             async with npclock.lock:
                 LogUtils.debug(f'NPC "{npc.name}" will checking combat',self.logger)  
                 self = await npc.check_combat(self)
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
+        except:
+            LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+
+    async def player_check_for_combat(self, player):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        try:            
+            npclock = NpcLock(player)
+            async with npclock.lock:
+                LogUtils.debug(f'Player "{player.name}" will checking combat',self.logger)  
+                self = await player.check_combat()
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
+        except:
+            LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+
+    async def player_check_for_resting(self, player):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        try:            
+            npclock = NpcLock(player)
+            async with npclock.lock:
+                LogUtils.debug(f'Player "{player.name}" will check if resting',self.logger)  
+                self = await player.check_resting()
         except websockets.ConnectionClosedOK:
             LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
         except:
@@ -641,7 +697,8 @@ class WorldState(Utility):
                 # sleep 10 minutes
                 await asyncio.sleep(60 * 10)
                 LogUtils.info(f"{method_name}: Checking: get_system_time", self.logger)
-            except:
+            except Exception as ex:
+                print(ex)
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
     # sets day or night
@@ -740,17 +797,6 @@ class WorldState(Utility):
 
         return npcs, new_rooms
 
-    # returns the name of the area based on the type
-    def get_area_identifier(self, area):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        result = ""
-        for env in Utility.Share.EnvironmentTypes:
-            if area == env.name:
-                result = env.name
-        LogUtils.debug(f"{method_name}: exit, returning: {result}", self.logger)
-        return result
-
     # returns player, world, responsible for moving a player from one room to the next
     async def move_room_player(self, new_room_id, player):
         method_name = inspect.currentframe().f_code.co_name
@@ -812,7 +858,7 @@ class WorldState(Utility):
         )
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return self
+        return player, self
 
     # returns monster, responsible for moving a monster from one room to the next
     async def move_room_monster(self, new_room_id, monster):
@@ -859,7 +905,7 @@ class WorldState(Utility):
         return npc, self
 
     # just returns a specific room in our list of rooms
-    async def get_room_definition(self, room_id):
+    async def get_room(self, room_id):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, room_id: {room_id}", self.logger)
         room = [room for room in self.environments.rooms if room.name == room_id.name]
@@ -874,13 +920,13 @@ class WorldState(Utility):
         )
         return room
 
-    async def show_room(self, player, look_location_id=None):
+    async def show_room(self, player, look_location_room=None):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
-        room = player.room
-        if look_location_id is not None:
-            room = look_location_id
+        room = await self.get_room(player.room)
+        if look_location_room is not None:
+            room = await self.get_room(look_location_room)
             
         # get the description
         if room.inside:
@@ -935,10 +981,13 @@ class WorldState(Utility):
         await self.send_message(room_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
-    async def add_room(self, room):
+    async def update_item_in_room(self, room):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        self.active_rooms.append(room)
+        for place, item in enumerate(self.environments.rooms.items):
+            print(place, item)
+                # self.environments.rooms[place] = item
+        LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def remove_room(self, room):
         method_name = inspect.currentframe().f_code.co_name

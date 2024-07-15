@@ -64,7 +64,7 @@ class NpcMob(Utility):
         
         # get random direction
         direction = None
-        room = self.room_id
+        room = await world_state.get_room(self.room_id)
         if self.last_direction is None:
             direction = random.choice(room.exits)
         else:
@@ -74,6 +74,9 @@ class NpcMob(Utility):
                 if direction != self.last_direction or len(room.exits) == 1:
                     found_direction = True
 
+        if direction is None or direction == []:
+            raise Exception(f"{method_name}: {self.name} - No exits found")
+        
         self, world_state = await self.move(direction, world_state)
         self.last_direction = direction
             
@@ -93,12 +96,10 @@ class NpcMob(Utility):
         if  self.last_check_combat is None:
             self.last_check_combat = current_time
         LogUtils.info(f"{method_name}: Time between combat checks: {current_time - self.last_check_combat}", self.logger)
-        
 
-        
         # check players
         for p in self.room_id.players:
-            if await self.alignment.is_opposing_alignment(self.name, p.alignment):
+            if await self.alignment.is_opposing_alignment(self.name, p):
                 LogUtils.info(f"{method_name}: {self.name} is attacking {p.name}".upper(), self.logger)
                 self.room_id.alert(self.get_attack_phrase(p.name))
 
@@ -150,7 +151,6 @@ class NpcMob(Utility):
         #     history = room_history[len(room_history)-1]
         # if len(room.players) > 0:
         #     msg = await self.dialog.intelligize_npc(self, room.description, current_interests, history)
-            
         # await room.alert(msg)
         # await world_state.environments.update_room_history(room.id, self.name, msg, world_state)
         
@@ -160,9 +160,9 @@ class NpcMob(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         LogUtils.info(f"{method_name}: {self.name} is moving {direction}", self.logger)
-        room = self.room_id
-        room_id = [a for a in room.exits if a["direction"] == direction["direction"]][0]["id"]
-        self, world_state = await world_state.move_room_npc(room_id, self, direction)
+        room = await world_state.get_room(self.room_id)
+        room_id = [a for a in room.exits if a["direction"].name.lower() == direction["direction"].name.lower()][0]
+        self, world_state = await world_state.move_room_npc(room_id["id"], self, direction)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return self, world_state
         

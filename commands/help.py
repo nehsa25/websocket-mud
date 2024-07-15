@@ -1,3 +1,4 @@
+from doctest import Example
 import inspect
 from commands.attack import Attack
 from commands.drop import Drop

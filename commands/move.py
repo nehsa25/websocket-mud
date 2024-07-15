@@ -1,3 +1,4 @@
+from copy import deepcopy
 import inspect
 from log_utils import LogUtils
 from mudevent import MudEvents
@@ -30,6 +31,8 @@ class Move(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         
         friendly_direction = await world_state.environments.dirs.get_friendly_name(wanted_direction)
+        
+        player.room = await world_state.get_room(player.room)
 
         will_travel = False
         new_room_id = None
@@ -52,13 +55,13 @@ class Move(Utility):
                 if player.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
-                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].name.capitalize()}."), p.websocket)
+                    await self.send_message(MudEvents.InfoEvent(f"{player.name} travels {avail_exit['direction'].name.lower()}."), p.websocket)
 
             # update location
-            world_state = await world_state.move_room_player(new_room_id, player)
+            player, world_state = await world_state.move_room_player(new_room_id, player)
 
             # render new room
-            await world_state.show_room(player, look_location_id=new_room_id)
+            await world_state.show_room(player)
 
             # your combat will end but the monster/other players shouldn't
             if player.in_combat:

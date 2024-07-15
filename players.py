@@ -145,8 +145,9 @@ class Players(Utility):
             player_hp = randint(1, 50)
             player_strength = randint(1, 50)
             player_agility = randint(1, 50)
+            player_location = world_state.environments.rooms[0]
             # player_location = random.choice(world_state.environments.rooms)
-            player_location = await world_state.environments.get_room_by_name("Town Smee - University - Courtyard")
+            # player_location = await world_state.environments.get_room_by_name("Town Smee - University - Courtyard")
             player_perception = randint(1, 50)
             player_faith = randint(1, 50)
             player_determination = randint(1, 50)
@@ -261,7 +262,7 @@ class Players(Utility):
                 await self.register(player, world_state)
 
                 # move player to initial room
-                world_state = await world_state.move_room_player(
+                player, world_state = await world_state.move_room_player(
                     player.location_id, player
                 )
                 

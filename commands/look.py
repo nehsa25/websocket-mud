@@ -25,6 +25,8 @@ class Look(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         valid_direction = False
+        
+        player.room = await world_state.get_room(player.room)
 
         # check if it's a valid direction in the room
         for avail_exit in player.room.exits:
@@ -42,7 +44,7 @@ class Look(Utility):
                 if p.location_id.name == player.room.name:
                     await self.send_message(MudEvents.InfoEvent(f"You notice {player.name} looking to the {wanted_direction}."), p.websocket)
 
-            await world_state.show_room(player, look_location_id=avail_exit["id"])
+            await world_state.show_room(player, look_location_room=avail_exit["id"])
         else:
             for direction in self.Share.MudDirections.pretty_directions:
                 if (
@@ -56,6 +58,8 @@ class Look(Utility):
         LogUtils.debug("Executing Look command", self.logger)
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, direction: {look_object}", self.logger)
+        
+        player.room = await world_state.get_room(player.room)
         
         # do we just want to look around the room?
         if look_object == "" or look_object == "l" or look_object == "look":

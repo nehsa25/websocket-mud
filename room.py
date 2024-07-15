@@ -1,4 +1,5 @@
 import asyncio
+from copy import deepcopy
 from enum import Enum
 import inspect
 import random
@@ -71,8 +72,8 @@ class Room(Utility):
         LogUtils.debug(f"Initializing Room() class", self.logger)
 
     def set_exits(self, exits):
-        self.exits = exits
-        return self
+        self.exits = exits        
+        return deepcopy(self)
         
     async def alert(
         self, message, 

@@ -1,7 +1,11 @@
 from enum import Enum
+import inspect
+
+from log_utils import LogUtils
+from utility import Utility
 
 
-class Item:
+class Item(Utility):
     name = None
     damage_potential = None
     weight_class = None
@@ -9,6 +13,7 @@ class Item:
     verb = None
     plural_verb = None
     equiped = False
+    can_be_equiped = False
     description = None
     contents = None
 
@@ -49,3 +54,28 @@ class Item:
         self.plural_verb = plural_verb
         self.description = description
         self.contents = contents
+
+    async def equip(self, player, action_eq=True):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        if not self.can_be_equiped and action_eq == True:
+            await self.world.self.world.utility.send_msg(
+                f"You cannot wield {self.name}.", "info", player.websocket, self.logger
+            ) 
+            return
+            
+        if  action_eq == True and self.equiped == False:   
+            self.equiped = True                        
+            await self.world.self.world.utility.send_msg(
+                f"You wield {self.name}.", "info", player.websocket, self.logger
+            )
+            await player.room.alert(f"You notice {player.name} equip {self.name}.", exclude_player=True, player=player)
+            
+        if  action_eq == False and self.equiped == True:   
+            self.equiped = False                        
+            await self.world.self.world.utility.send_msg(
+                f"You unequip {self.name}.", "info", player.websocket, self.logger
+            )
+            await player.room.alert(f"You notice {player.name} unequip {self.name}.", exclude_player=True, player=player)
+            
+        LogUtils.debug(f"{method_name}: exit", self.logger)

@@ -101,11 +101,11 @@ class Player(Utility):
             logger=self.logger,
         )
 
-        if self.rest_task is None:
-            self.rest_task = asyncio.create_task(self.check_for_resting())
+        # if self.rest_task is None:
+        #     self.rest_task = asyncio.create_task(self.check_resting())
 
-        if self.attack_task is None:
-            self.attack_task = asyncio.create_task(self.check_for_combat())
+        # if self.attack_task is None:
+        #     self.attack_task = asyncio.create_task(self.check_combat())
 
         self.alignment = Alignment(Utility.Share.Alignment.NEUTRAL, self.logger)
 
@@ -115,7 +115,7 @@ class Player(Utility):
         return self.stats.intelligence > 10 and (self.race.telepathic or self.player_class.telepathic)
     
     # responsible for the "prepares to attack you messages"
-    async def check_for_combat(self):
+    async def check_combat(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         battle = None

@@ -123,7 +123,7 @@ class TownSmee:
         self.sheriff = Room(
             name=f"{self.name} - Sheriff's Office",
             inside=True,
-            description="You are in the sheriff's office. A locked cell is in the corner of the Room. Currently, it is empty. A young bestraught woman is pleading and gusticulating to someone behind a small window.",
+            description="You are in the sheriff's office. A locked cell is in the corner of the Room. Currently, it is empty and the cell door is slightly ajar. A young bestraught woman is pleading and gusticulating to someone in another room through a small window.",
             npc_types=[Utility.Share.Npcs.SHERIFF],
             environment=self.type,
             logger=logger,

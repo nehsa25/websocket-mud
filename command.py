@@ -25,6 +25,13 @@ from mudevent import MudEvents
 from utility import Utility
 
 class Commands(Utility):
+    class Example:
+        example = ""
+        result = ""
+        def __init__(self, example, result):
+            self.example = example
+            self.result = result
+            
     logger = None
     command_utility = None
     
@@ -101,7 +108,7 @@ class Commands(Utility):
             elif lowercase_cmd == "sea" or lowercase_cmd == "search":  # search
                 player = await self.search.execute(player, world_state)
             elif lowercase_cmd.startswith("d ") or lowercase_cmd.startswith("dr ") or lowercase_cmd.startswith("drop "):  # drop
-                player = await self.drop.execute(command, player)
+                player = await self.drop.execute(command, player, world_state)
             elif lowercase_cmd.startswith("hide ") or lowercase_cmd.startswith("stash "):  # hide
                 player = await self.hide.execute(command, player, world_state)
             elif lowercase_cmd.startswith("eq ") or lowercase_cmd.startswith("equip ") or lowercase_cmd.startswith("wield "):  # eq
