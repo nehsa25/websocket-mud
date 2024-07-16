@@ -19,13 +19,11 @@ class Shade(Mob):
     adjective_chance = 70 # chance we'll get something like Nasty
     respawn_rate_secs = None
     dead_epoch = None
-    wander = True
-    wander_speed = 1  # 1 room / minute
+    wanders = True
     hitpoints = 10
     damage_potential = "1d10"
     experience = 250
     money = Money(random.randint(10, 25))
-    
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
@@ -36,7 +34,7 @@ class Shade(Mob):
         self.death_cry = f"{self.name} falls over and dies.."
         self.entrance_cry = f"{self.name} wanders in.."
         self.victory_cry = F"The {self.name} makes no emotion."
-        super().__init__(self.logger, alignment=self.alignment)
+        super().__init__(name=self.name, title=self.title, description=self.description, logger=self.logger)
         
     def generate(self, room_id):
         LogUtils.debug("Generating a Shade...", self.logger)

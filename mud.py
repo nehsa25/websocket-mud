@@ -32,13 +32,15 @@ class Mud(Utility):
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Mud() class", logger)
         self.world = World(self.logger)
-        
+
         # session state
         self.world_state = WorldState(self.logger)
 
     async def exit_handler(self, signal, frame):
         method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter, signal: {signal}, frame: {frame}", self.logger)
+        LogUtils.debug(
+            f"{method_name}: enter, signal: {signal}, frame: {frame}", self.logger
+        )
         LogUtils.info(
             f"{method_name}: An exit signal as been received.  Exiting!", self.logger
         )
@@ -51,7 +53,9 @@ class Mud(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # register client websockets - runs onces each time a new person starts
-        self.world_state = await self.world_state.players.new_user(self.world_state, websocket)
+        self.world_state = await self.world_state.players.new_user(
+            self.world_state, websocket
+        )
 
         player = None
         try:
@@ -95,7 +99,9 @@ class Mud(Utility):
             )
         finally:
             if player is not None:
-                await self.world_state.players.unregister(player, self.world_state, False)
+                await self.world_state.players.unregister(
+                    player, self.world_state, False
+                )
 
         LogUtils.debug(f"{method_name}: Done Done.", self.logger)
 
@@ -106,7 +112,7 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
+            console_level=Level.ERROR,
             log_location="c:\\src\\websocket-mud",
         )
         m = Mud(logger)

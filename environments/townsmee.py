@@ -390,9 +390,9 @@ class TownSmee:
             logger=logger,
         )
         self.rooftop_townsquare = Room(
-            name=f"{self.name} - Rooftop - Townsquare",
+            name=f"{self.name} - Rooftop - Town Square",
             inside=False,
-            description=f"You are on the rooftop of the town square. The rooftop feels secure with dark, sturdy wooden shingles. You can see the entire town from here and see paths to other rooftops. The town square is bustling with activity below.",
+            description=f"You are on the rooftop above the town square. The rooftop feels secure with dark, sturdy wooden shingles. You can see the entire town from here and see paths to other rooftops. The town square is bustling with activity below.",
             environment=self.type,
             logger=logger,
         )

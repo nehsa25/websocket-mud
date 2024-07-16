@@ -5,57 +5,45 @@ import time
 from alignment import Alignment
 from log_utils import LogUtils
 from mudevent import MudEvents
+from npc_dialog import NpcDialog
 from utility import Utility
 
 
 class Mob(Utility):
     name = ""
-    hitpoints = 0
-    damage = None
-    experience = 0
-    money = None
-    world = None
-    is_alive = True
-    in_combat = None
-    players_seen = None
-    num_attack_targets = None
-    pronoun = "it"
-    logger = None
-    monster_wander_event = None
-    last_exit = None
-    respawn_rate_secs = 60 * 5
-    respawn_event = None
-    check_combat_event = None
+    title=""
+    description=""
+    common_phrases = []
+    interests = []
+    schedules = []
     wander_event = None
-    last_exit = None
-    wander_loop = None
-    respawn_loop = None
-    check_combat_loop = None
+    last_direction = None
+    wanders = False
     room_id = None
-    previous_room = None
-    death_cry = ""
-    entrance_cry = ""
-    victory_cry = ""
-    damage_potential = ""
-    allowed_in_city = False
+    prev_room_id = None
+    last_check_combat = None
     alignment = None
+    in_combat = False
     
-    def __init__(self, logger, alignment=Utility.Share.Alignment.EVIL):
+    def __init__(self, logger, name="", description="", title=""):
+        method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.debug(f"Initializing Mob() class", logger)
-        self.alignment = Alignment(alignment, self.logger)   
-
+        LogUtils.debug(f"{method_name}: Initializing Npc() class", logger)
+        if name == "":
+            self.name = self.generate_name(include_identifier=False)
+        else:
+            self.name = name
+            
+        self.title = title
+        self.description = description
+        self.alignment = Alignment(Utility.Share.Alignment.GOOD, self.logger)
+        self.dialog = NpcDialog(self.logger)
+        
     # announce we're here!
     async def announce_entrance(self, room):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.debug(f"{method_name}: enter", self.logger)
-        if self.entrance_cry != None:
-            for player in room["players"]:
-                await self.send_message(
-                    MudEvents.InfoEvent(self.entrance_cry), player.websocket
-                )
-        LogUtils.debug(f"{method_name}: exit", self.logger)
-
+        # eventually we can use the room to indicate which direciton the monster came from/going to
+        return self.entrance_cry
+    
     async def stop_combat(self, player):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -84,10 +72,6 @@ class Mob(Utility):
                 await self.send_message(
                     MudEvents.InfoEvent(self.death_cry), player.websocket
                 )
-
-    async def check_for_combat(self):
-        method_name = inspect.currentframe().f_code.co_name
-        LogUtils.info(f"{self.name} checking for combat", self.logger)
 
     # respawn mobs after a certain amount of time
     async def respawn(self, world_state):
@@ -123,26 +107,136 @@ class Mob(Utility):
         #                     )
         #                     room.monsters.append(new_monster)
 
-    async def wander(self, world_state):
-        LogUtils.info(f"{self.name} checking for wander", self.logger)
-        last_position = None
-        while True:
-            await asyncio.sleep(self.wander_speed)
-            will_travel = False
-            max_num_attempts = len(self.room.exits)
-            current_attempt = 1
-            while not will_travel:
-                potential_room = random.choice(self.room.exits)
-                if potential_room != self.last_exit:
-                    will_travel = True
-                    self.previous_room = self.room
-                    self.room, self.world = world_state.move_room_monster(
-                        potential_room.id, self)
-                    LogUtils.debug(
-                        f"{self.name} wanders {potential_room} from room {last_position} to {self.room.id}",
-                        self.logger,
-                    )
-                    break
-                current_attempt += 1
-                if current_attempt >= max_num_attempts:
-                    break
+    def get_attack_phrase(self, target):    
+        npc_attack_templates = [
+            f"{self.name} alters course to intercept {target}!",
+            f"{self.name} moves to attack {target}!",
+            f"{self.name} moves to block {target}'s path!",
+        ]
+        return random.choice(npc_attack_templates)
+    
+    def get_full_name(self):
+        return f"{self.title} {self.name}".strip()
+
+    def generate(self):
+        LogUtils.info(f"Generating Npc {self.name}...", self.logger)
+        return self
+    
+    # responsible for moving npc
+    async def wander(self, world_state, is_npc):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter: {self.name}", self.logger)
+        if not self.wanders:
+            LogUtils.info(f"{method_name}: {self.name} - I don't wander", self.logger)
+            return
+        
+        LogUtils.info(f"NPC {self.name} wandering!", self.logger)
+        
+        # get random direction
+        direction = None
+        room = await world_state.get_room(self.room_id)
+        if self.last_direction is None:
+            direction = random.choice(room.exits)
+        else:
+            found_direction = False
+            while not found_direction:
+                direction = random.choice(room.exits)
+                if direction != self.last_direction or len(room.exits) == 1:
+                    found_direction = True
+
+        if direction is None or direction == []:
+            raise Exception(f"{method_name}: {self.name} - No exits found")
+        
+        self, world_state = await self.move(direction, world_state, is_npc)
+        self.last_direction = direction
+            
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return world_state
+    
+    # responsible for checking combat
+    async def check_combat(self, world_state):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+        # check for alignments opposite of npc
+        if self.in_combat and not len(self.room_id.players) > 0:
+            return world_state
+        
+        current_time = time.time()
+        if  self.last_check_combat is None:
+            self.last_check_combat = current_time
+        LogUtils.info(f"{method_name}: Time between combat checks: {current_time - self.last_check_combat}", self.logger)
+
+        # check players
+        for p in self.room_id.players:
+            if await self.alignment.is_opposing_alignment(self.name, p):
+                LogUtils.info(f"{method_name}: {self.name} is attacking {p.name}".upper(), self.logger)
+                self.room_id.alert(self.get_attack_phrase(p.name))
+
+        # check npcs
+        for n in self.room_id.npcs:
+            if await self.alignment.is_opposing_alignment(self.name, n):
+                LogUtils.info(f"{method_name}: {self.name} is attacking {n.name}".upper(), self.logger)
+                self.room_id.alert(self.get_attack_phrase(n.name))
+   
+        # check for monsters
+        for m in self.room_id.monsters:
+            if await self.alignment.is_opposing_alignment(self.name, m):                
+                LogUtils.info(f"{method_name}: {self.name} is attacking {m.name}".upper(), self.logger)
+                if len(self.room_id.players) > 0:
+                    await self.room_id.alert(self.get_attack_phrase(m.name))
+            
+        self.last_check_combat = current_time
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return world_state
+    
+    # check for dialog options
+    async def speak(self, room, world_state):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        
+         # gather things we may be interested in
+        # num players
+        # num monsters
+        # num other npcs
+        # time of day
+        # weather
+        # room description
+        # room exits
+        # room items
+        
+        current_interests = []
+        players_names = [p.name for p in room.players]
+        current_interests.append(f"all players in room: {",".join(players_names)}") 
+        disliked_players = []
+        for p in room.players:
+            if await self.alignment.is_opposing_alignment(self.name, p):
+                disliked_players.append(p.name)            
+        current_interests.append(f"disliked players in room: {",".join(disliked_players)}")     
+        
+        # # get room messages
+        # room_history = await world_state.environments.get_room_history(room.id)
+        # history = None
+        # if len(room_history) > 1:
+        #     history = room_history[len(room_history)-1]
+        # if len(room.players) > 0:
+        #     msg = await self.dialog.intelligize_npc(self, room.description, current_interests, history)
+        # await room.alert(msg)
+        # await world_state.environments.update_room_history(room.id, self.name, msg, world_state)
+        
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+    
+    async def move(self, direction, world_state, isNpc=True):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        LogUtils.info(f"{method_name}: {self.name} is moving {direction}", self.logger)
+        room = await world_state.get_room(self.room_id)
+        room_id = [a for a in room.exits if a["direction"].name.lower() == direction["direction"].name.lower()][0]
+        if isNpc:
+            self, world_state = await world_state.move_room_npc(room_id["id"], self, direction)
+        else:
+            self, world_state = await world_state.move_room_monster(room_id["id"], self, direction)
+        
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return self, world_state
+        

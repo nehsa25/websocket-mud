@@ -5,9 +5,6 @@ from mob import Mob
 from money import Money
 from utility import Utility
 
-
-
-
 class Skeleton(Mob):
     logger = None
     name = "Skeleton"
@@ -19,8 +16,7 @@ class Skeleton(Mob):
     adjective_chance = 70 # chance we'll get something like Nasty
     respawn_rate_secs = None
     dead_epoch = None
-    wander = True
-    wander_speed = 1  # 1 room / minute
+    wanders = True
     hitpoints = 10
     damage_potential = "1d4"
     experience = 100
@@ -35,7 +31,7 @@ class Skeleton(Mob):
         self.entrance_cry = f"A {self.name} wanders in.."
         self.victory_cry = f"The {self.name} gives an elegent bow before losing interest."
         self.money = Money(random.randint(0, 10))
-        super().__init__(self.logger, alignment=self.alignment)
+        super().__init__(name=self.name, title=self.title, description=self.description, logger=self.logger)
         
     def generate(self, room_id):
         LogUtils.debug("Generating a Skeleton...", self.logger)

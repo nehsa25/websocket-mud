@@ -10,6 +10,65 @@ from mudevent import MudEvents
 from utility import Utility
 
 class Room(Utility):
+    class BasicRoom:
+        class BasicExit:
+            name = ""
+            description = ""
+            
+            def __init__(self, exit) -> None:
+                self.name = exit.name
+                self.description = exit.description
+            
+        class BasicMob:
+            name = ""
+            alignment = ""
+            description = ""
+            
+            def __init__(self, name, alignment, description) -> None:
+                self.name = name
+                self.alignment = alignment
+                self.description = description
+            
+        class BasicItem:
+            name = ""
+            description = ""
+            
+            def __init__(self, name, description) -> None:
+                self.name = name
+                self.description = description
+                
+        name = ""
+        description = ""
+        monsters = []
+        items = []
+        npcs = []
+        players = []
+        exits = []
+        
+        def __init__(self, room):
+            self.name = room.name
+            self.description = room.description
+            
+            for exit in room.exits:
+                self.exits.append(self.BasicExit(exit))                
+            self.exits = self.exits
+            
+            for monster in room.monsters:
+                self.monsters.append(self.BasicMob(monster.name, monster.alignment, monster.description))    
+            self.monsters = self.monsters
+            
+            for item in room.items:
+                self.items.append(self.BasicItem(item.name, item.description))
+            self.items = self.items
+            
+            for npc in room.npcs:
+                self.npcs.append(self.BasicMob(npc.name, npc.alignment, npc.description))   
+            self.npcs = self.npcs
+            
+            for player in room.players:
+                self.players.append(self.BasicMob(player.name, player.alignment, player.description))   
+            self.players = self.players
+            
     # number of monsters in the room
     class Scariness(Enum):
         NONE = 0

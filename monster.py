@@ -17,7 +17,6 @@ from monsters.zombie_surfer import ZombieSurfer
 from mudevent import MudEvents
 from utility import Utility
 
-
 class MonsterStats(Utility):
     name = ""
     hitpoints = 0
@@ -46,7 +45,7 @@ class MonsterStats(Utility):
 class Monster(Utility):
     logger = None
     monsters = []
-    
+
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
@@ -72,7 +71,6 @@ class Monster(Utility):
             monster = ZombieSurfer(self.logger)
         if monster_type == Utility.Share.Monsters.RITE:
             monster = Rite(self.logger)
-            
         monster.generate(room_id)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return monster

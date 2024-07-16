@@ -1,9 +1,9 @@
 import inspect
 from log_utils import LogUtils
-from npc_mob import NpcMob
+from mob import Mob
 from utility import Utility
 
-class Guard(NpcMob):
+class Guard(Mob):
     logger = None
     name = "" # alas, guards are generic
     title = "Guard"

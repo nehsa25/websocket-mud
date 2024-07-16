@@ -1,11 +1,11 @@
 import inspect
 from log_utils import LogUtils
-from npc_mob import NpcMob
+from mob import Mob
 from utility import Utility
 
-class Maximus(NpcMob):
+class Maximus(Mob):
     logger = None
-    name = "Maxiumus"
+    name = "Maximus"
     wanders = True
     description = """Maximus is a overweight orange tabby cat with a white belly and paws.  He has a small white patch on his nose and a long tail.  He is friendly and will often follow you around and rub against your legs."""
     interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "cat treats", "cat foot"]

@@ -98,6 +98,7 @@ class Environments(Utility):
 
     rooms = []
     all_npcs = []
+    all_monsters = [] # used in world_state.py check_monster_events
     dirs = None
     room_history = []
 

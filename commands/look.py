@@ -103,7 +103,7 @@ class Look(Utility):
                 if found: return
 
             # are we looking at a player?
-            if player.room.players != None:
+            if player.room.players != None and player.room.players != []:
                 for p in player.room.players:
                     if look_object in p.name.lower():
                         found = True

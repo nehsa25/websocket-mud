@@ -127,13 +127,13 @@ class Commands(Utility):
             elif lowercase_cmd == ("who"):
                 player = await self.who.execute(player, world_state)
             elif lowercase_cmd.startswith("yell "):
-                player = await self.yell.execute(command, player)
+                player = await self.yell.execute(command, player, world_state)
             elif lowercase_cmd.startswith("whisper "):
-                player = await self.whisper.execute(command, player)
+                player = await self.whisper.execute(command, player, world_state)
             elif lowercase_cmd.startswith("say "):
-                player = await self.say.execute(command, player)
+                player = await self.say.execute(command, player, world_state)
             elif lowercase_cmd.startswith("telepath "):
-                player = await self.telepath.execute(command, player)
+                player = await self.telepath.execute(command, player, world_state)
             elif lowercase_cmd == "rest":
                 player, world_state = await self.rest.execute(player, world_state)
             else:  # you're going to say it to the room..

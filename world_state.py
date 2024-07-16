@@ -20,8 +20,8 @@ from log_utils import LogUtils
 
 class WorldState(Utility):
     players = None
-    monster = None
     world_events = None
+    monster_events = None
     logger = None
     active_rooms = []
     running_map_threads = []
@@ -238,7 +238,7 @@ class WorldState(Utility):
         if self.players is None:
             self.players = Players(self.logger)
 
-        if self.monster is None:
+        if self.monster_events is None:
             self.monster = Monster(self.logger)
 
         if self.ai_images is None:
@@ -267,7 +267,7 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
         # populate monsters
-        self.environments.rooms = await self.populate_monsters()
+        self.environments.all_monsters, self.environments.rooms = await self.populate_monsters()
         self.monsters = [room for room in self.environments.rooms]
         self.total_monsters = len(self.monsters)
         LogUtils.info(
@@ -326,27 +326,33 @@ class WorldState(Utility):
             self.get_weather_season_event = asyncio.create_task(self.get_weather())
 
         if self.monster_check_event is None:
-            self.monster_check_event = asyncio.create_task(self.check_monsters_events())
+            self.monster_check_event = asyncio.create_task(self.check_monster_events())
 
         # # start our monster resurrection task
         # if self.monster_respawn_event is None:
         #     self.monster_respawn_event = asyncio.create_task(
         #         self.monsters.respawn_mobs(self.rooms.rooms)
         #     )
-
-    async def check_monsters_events(self):
+    
+    async def check_monster_events(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         while not self.shutdown:
+            monsters = []
             try:
-                await asyncio.sleep(2)
-                for m in self.monster.monsters:
-                    LogUtils.info(f"{method_name}: checking monsters: {m}", self.logger)
-                    asyncio.gather(
-                        await m.respawn(self),
-                        await m.check_for_combat(self),
-                        await m.wander(self),
-                    )
+                # run events
+                for monster in self.environments.all_monsters:
+                    # wander
+                    if monster.wanders:
+                        monsters.append(asyncio.create_task(self.mob_wander(monster, is_npc=False)))
+                    
+                    # check for dialog
+                    monsters.append(asyncio.create_task(self.npc_dialog(monster)))
+                    
+                    # check for combat
+                    monsters.append(asyncio.create_task(self.npc_check_for_combat(monster)))
+                        
+                await asyncio.gather(*monsters)
             except:
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
@@ -360,7 +366,7 @@ class WorldState(Utility):
                 for npc in self.environments.all_npcs:
                     # wander
                     if npc.wanders:
-                        npcs.append(asyncio.create_task(self.npc_wander(npc)))
+                        npcs.append(asyncio.create_task(self.mob_wander(npc, is_npc=True)))
                     
                     # check for dialog
                     npcs.append(asyncio.create_task(self.npc_dialog(npc)))
@@ -389,19 +395,19 @@ class WorldState(Utility):
             except:
                 LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
 
-    async def npc_wander(self, npc):
+    async def mob_wander(self, mob, is_npc=True):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         try:            
-            npclock = NpcLock(npc)
+            npclock = NpcLock(mob)
             async with npclock.lock:
                 rand = randint(0, 10)
                 LogUtils.debug(
-                    f'NPC "{npc.name}" will move in {str(rand)} seconds...',
+                    f'NPC "{mob.name}" will move in {str(rand)} seconds...',
                     self.logger,
                 )
                 await asyncio.sleep(rand)
-                self = await npc.wander(self)
+                self = await mob.wander(self, is_npc)
         except websockets.ConnectionClosedOK:
             LogUtils.warn(f"{method_name} Someone left. We're going to move on.", self.logger)
         except:
@@ -471,7 +477,6 @@ class WorldState(Utility):
         except:
             LogUtils.error(f"{method_name}: {traceback.format_exc()}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-
 
     # A startling bang..
     async def bang(self):
@@ -738,26 +743,31 @@ class WorldState(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         rooms = deepcopy(self.environments.rooms)
-
+        monsters = []
+        
         # add in monsters
         for room in rooms:
             room.monsters = []
             if random.randint(0, 1) <= room.monster_saturation:
-                found_monster = False
                 for i in range(room.scariness):
-                    while found_monster == False:
-                        m_type = monster_type = random.choice(
-                            list(Utility.Share.Monsters)
+                    monster = None
+                    m_type = random.choice(
+                        list(Utility.Share.Monsters)
+                    )
+                    monster = self.monster.get_monster(m_type, room)
+                    if room.in_town and monster.allowed_in_city == False:
+                        LogUtils.debug(
+                            f'{method_name}: Will not add "{monster.name}" to room "{room.name}: not allowed in city"',
+                            self.logger,
                         )
-                        monster = self.monster.get_monster(m_type, room)
-                        if room.in_town and monster.allowed_in_city == False:
-                            continue
-                        found_monster = True
+                        continue
                     LogUtils.debug(
                         f'{method_name}: Adding monster "{monster.name}" to room "{room.name}"',
                         self.logger,
                     )
                     room.monsters.append(monster)
+                    monsters.append(monster)
+
             LogUtils.info(
                 f"monsters added to {room.name}: {len(room.monsters)}", self.logger
             )
@@ -766,7 +776,7 @@ class WorldState(Utility):
             f"{method_name}: exit, monsters added: {len(room.monsters)}", self.logger
         )
 
-        return rooms
+        return monsters, rooms
 
     async def populate_npcs(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -860,28 +870,31 @@ class WorldState(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return player, self
 
-    # returns monster, responsible for moving a monster from one room to the next
-    async def move_room_monster(self, new_room_id, monster):
+    # returns player, world, responsible for moving a monster from one room to the next
+    async def move_room_monster(self, new_room_id, monster, direction):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
+        # if the npc has a previous room, update it
+        if monster.room_id is not None:
+            await monster.room_id.alert(f"{monster.get_full_name()} has left to the {direction['direction'].name.capitalize()}!")
+            if monster in monster.room_id.npcs:
+                monster.room_id.npcs.remove(monster)
+
         # add player to new room
         new_room = new_room_id
-        new_room.monster.append(monster)
-
-        # if the monster has a previous room, update it
-        if monster.room is not None:
-            # remove monster from old room
-            monster.room.monster.remove(monster)
+        # print(await monster.announce_entrance(new_room))
+        await new_room.alert(f"{monster.get_full_name()} approaches from the {direction["direction"].opposite.name.capitalize()}!")
+        new_room.monsters.append(monster)
 
         # update to new room
-        monster.previous_room = monster.room
-        monster.room = new_room
+        monster.prev_room_id = monster.room_id
+        monster.room_id = new_room_id
 
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return monster
+        return monster, self
 
-    # returns player, world, responsible for moving a player from one room to the next
+    # returns player, world, responsible for moving a npc from one room to the next
     async def move_room_npc(self, new_room_id, npc, direction):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -933,7 +946,9 @@ class WorldState(Utility):
             description = room.description
         else:
             description = self.weather.add_weather_description(room.description)
-
+        room.description = description
+        # room_def = room.BasicRoom(room)
+        
         # show items
         items = ""
         if len(room.items) > 0:
@@ -966,7 +981,7 @@ class WorldState(Utility):
 
         # show people
         people = ""
-        for p in self.players.players:
+        for p in room.players:
             if player.name == p.name:
                 continue
             if p.room.name == player.room.name:
@@ -975,6 +990,10 @@ class WorldState(Utility):
             people = people[0 : len(people) - 2]
 
         # formulate message to client
+        # room_event = MudEvents.RoomEvent(
+        #     room_def.name, room_def.description, room_def.items, room_def.exits, room_def.monsters, room_def.players, room_def.npcs
+        # )
+        
         room_event = MudEvents.RoomEvent(
             room.name, description, items, exits, monsters, people, npcs
         )

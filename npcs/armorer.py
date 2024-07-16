@@ -1,9 +1,9 @@
 import inspect
 from log_utils import LogUtils
-from npc_mob import NpcMob
+from mob import Mob
 from utility import Utility
 
-class Armorer(NpcMob):
+class Armorer(Mob):
     logger = None
     name = "Geoff"
     title = "Armorer"

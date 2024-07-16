@@ -17,6 +17,7 @@ class Whisper(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         target_player_name = command.split(" ", 1)[1].split(" ", 1)[0]
+        player.room = await world_state.get_room(player.room)
         msg = command.split(" ", 1)[1]        
         target_player = world_state.players.find_player_by_name(target_player_name)
         if target_player is not None and target_player.room == player.room:        

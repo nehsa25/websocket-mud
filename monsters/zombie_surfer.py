@@ -16,8 +16,7 @@ class ZombieSurfer(Mob):
     adjective_chance = 70 # chance we'll get something like Nasty
     respawn_rate_secs = None
     dead_epoch = None
-    wander = True
-    wander_speed = 1  # 1 room / minute
+    wanders = True
     hitpoints = 10
     damage_potential = "1d8"
     experience = 225
@@ -36,7 +35,7 @@ class ZombieSurfer(Mob):
         self.victory_cry = (
             "The zombie surfer stares at the corpse in confusion."
         )
-        super().__init__(self.logger, alignment=self.alignment)
+        super().__init__(name=self.name, title=self.title, description=self.description, logger=self.logger)
         
     def generate(self, room_id):
         LogUtils.debug("Generating a ZombieSurfer...", self.logger)

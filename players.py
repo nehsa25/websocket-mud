@@ -55,7 +55,7 @@ class Players(Utility):
         
         problem_names = ["", "admin", "administrator", "moderator", "map", "help", "look", "inv", "inventory", 
                          "quit", "exit", "sys", "system", "god", "superuser", "super", "nehsa", 
-                         "nehsamud", "nehsa_mud", "candie", "princess candie"]
+                         "nehsamud", "nehsa_mud", "candie", "princess candie", "renkath", "cog", "frederick", "jaque", "maximus"]
  
         valid = True
         if len(name) < 3 or len(name) > 15 or not name.isalnum():
