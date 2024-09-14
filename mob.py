@@ -130,7 +130,7 @@ class Mob(Utility):
             LogUtils.info(f"{method_name}: {self.name} - I don't wander", self.logger)
             return
         
-        LogUtils.info(f"NPC {self.name} wandering!", self.logger)
+        LogUtils.debug(f"NPC {self.name} wandering!", self.logger)
         
         # get random direction
         direction = None
@@ -229,7 +229,7 @@ class Mob(Utility):
     async def move(self, direction, world_state, isNpc=True):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        LogUtils.info(f"{method_name}: {self.name} is moving {direction}", self.logger)
+        LogUtils.debug(f"{method_name}: {self.name} is moving {direction}", self.logger)
         room = await world_state.get_room(self.room_id)
         room_id = [a for a in room.exits if a["direction"].name.lower() == direction["direction"].name.lower()][0]
         if isNpc:

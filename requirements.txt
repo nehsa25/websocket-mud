@@ -1,0 +1,4 @@
+pydot
+websockets
+jsonpickle
+google-generativeai

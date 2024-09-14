@@ -111,17 +111,14 @@ if __name__ == "__main__":
         # logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="d:\\src\\mud", logger_name='websockets')
         logger = LogUtils.get_logger(
             filename="mud.log",
-            file_level=Level.DEBUG,
-            console_level=Level.DEBUG,
-            log_location="~/src/websocket-mud",
+            file_level=Level.ERROR,
+            console_level=Level.INFO,
+            log_location="~/",
         )
         m = Mud(logger)
 
         # start websocket
         host = SysArgs.read_sys_args("--host=")
-        if host == None:
-            host = "192.168.68.105"
-
         port = SysArgs.read_sys_args("--port=")
         if port == None:
             port = 60049
@@ -135,7 +132,7 @@ if __name__ == "__main__":
         LogUtils.info(f"Starting websocket server", logger)
         ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         ssl_context.load_cert_chain(
-            "/home/nehsa/src/websocket-mud/certificate.pem", "/home/nehsa/src/websocket-mud/private.key"
+            "certificate.pem", "private.key"
         )
         start_server = websockets.serve(
             m.main, host, port, max_size=9000000, ssl=ssl_context
