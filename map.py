@@ -62,7 +62,7 @@ class Map(Utility):
             style="dotted"
         )
     
-        self.path = f"c:/src/mud_images"
+        self.path = f"/home/nehsa/mud_images"
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
 
