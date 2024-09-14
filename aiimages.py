@@ -63,7 +63,7 @@ class AIImages(Utility):
                 }
             )            
             if response.status_code == 200:
-                self.path = f"c:/src/mud_images/rooms"
+                self.path = f"~/mud_images/rooms"
                 full_path = f"{self.path}/{room_image_name}"   
                 if os.path.exists(full_path):
                     os.remove(full_path)
