@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-VOLUME /home/nehsa/mud_images
+VOLUME c:\data\mud-images
 
 EXPOSE 60049
 

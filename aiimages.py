@@ -41,42 +41,46 @@ class AIImages(Utility):
             return self.create_sd3_medium(seed, description, room_image_name)
             
         def create_sd3_medium(self, seed, description, room_image_name):
-            method_name = inspect.currentframe().f_code.co_name
-            LogUtils.debug(f"{method_name}: enter", self.logger)
-            api_key = self.key
-            full_path = "" 
-            if api_key is None:
-                raise Exception("Missing Stability API key.")
-            headers={
-                    "authorization": f"Bearer {api_key}",
-                    "accept": "image/*"
-                }
-            response = requests.post(
-                f"https://api.stability.ai/v2beta/stable-image/generate/sd3",
-                headers=headers,
-                files={"none": ''},
-                data={
-                    "prompt":  "pixelated,medieval,gothic,scary, and " + description,
-                    "seed": seed,
-                    "model": "sd3-large-turbo",
-                    "output_format": "png"
-                }
-            )            
-            if response.status_code == 200:
-                self.path = f"~/mud_images/rooms"
-                full_path = f"{self.path}/{room_image_name}"   
-                if os.path.exists(full_path):
-                    os.remove(full_path)
-                    
-                with open(full_path, "wb") as f:
-                    f.write(response.content)
-            elif response.status_code == 402:
-                    LogUtils.warn(f"AI image could not be generated via Stability AI", self.logger)
-            else:
-                LogUtils.error(f"Non-200 response: {str(response.text)}", self.logger)   
-                                  
-            LogUtils.debug(f"{method_name}: exit", self.logger)
-            return full_path
+            try:
+                method_name = inspect.currentframe().f_code.co_name
+                LogUtils.debug(f"{method_name}: enter", self.logger)
+                api_key = self.key
+                full_path = "" 
+                if api_key is None:
+                    raise Exception("Missing Stability API key.")
+                headers={
+                        "authorization": f"Bearer {api_key}",
+                        "accept": "image/*"
+                    }
+                response = requests.post(
+                    f"https://api.stability.ai/v2beta/stable-image/generate/sd3",
+                    headers=headers,
+                    files={"none": ''},
+                    data={
+                        "prompt":  "pixelated,medieval,gothic,scary, and " + description,
+                        "seed": seed,
+                        "model": "sd3-large-turbo",
+                        "output_format": "png"
+                    }
+                )            
+                if response.status_code == 200:
+                    self.path = f"d:/data/mud-images/rooms"
+                    full_path = f"{self.path}/{room_image_name}"   
+                    if os.path.exists(full_path):
+                        os.remove(full_path)
+                        
+                    with open(full_path, "w+b") as f:
+                        f.write(response.content)
+                elif response.status_code == 402:
+                        LogUtils.warn(f"AI image could not be generated via Stability AI", self.logger)
+                else:
+                    LogUtils.error(f"Non-200 response: {str(response.text)}", self.logger)   
+                                    
+                LogUtils.debug(f"{method_name}: exit", self.logger)
+                return full_path
+            except Exception as e:
+                LogUtils.error(f"Error: {str(e)}", self.logger)
+                raise e
         
         def create_ultra(self, seed, description, room_image_name):
             method_name = inspect.currentframe().f_code.co_name
