@@ -62,7 +62,7 @@ class Map(Utility):
             style="dotted"
         )
     
-        self.path = f"/home/nehsa/mud_images"
+        self.path = f"D:/data/mud-images"
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
 
@@ -96,7 +96,11 @@ class Map(Utility):
                                       fillcolor = "red")
                 self.graph.add_edge(edge)
 
-        output_graphviz_svg = self.graph.create_svg()
+        try:
+            output_graphviz_svg = self.graph.create_svg()
+        except Exception as e:
+            LogUtils.error(f"{method_name}: {e}", self.logger)
+            return
 
         # write original to file
         with open(full_path + extension, "w") as text_file:
