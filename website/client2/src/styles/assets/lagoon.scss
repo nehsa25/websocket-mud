@@ -1,0 +1,106 @@
+$base-size: 5rem;
+
+/* main body */
+.lagoon {
+    width:3.6 * $base-size;
+    height: 4.8 * $base-size;
+    /* Adjust height for ellipse shape */
+    border-radius: calc(2.4 * $base-size / 1.8);
+    /* Horizontal and vertical radii */
+    background-color: #CFF09E;
+    position: relative;
+    left: 0;
+    border: 1px solid hsl(0, 27%, 72%);
+    animation: move-lagoon 5s linear infinite, lagoon-animation 2s linear infinite;
+}
+
+/* the eye */
+.lagoon::before {
+    content: "";
+    position: absolute;
+    top: .5 * $base-size;
+    left: 2.6 * $base-size;
+    width:  1 * $base-size;
+    height:  .8 * $base-size;
+    border-radius: 50%;
+    background-color: forestgreen;
+    /* Adjust for eye color */
+    border: 3px solid #FAFAFA;
+}
+
+/* the beak */
+.lagoon::after {
+    content: "";
+    position: absolute;
+    top: 1.5 * $base-size;
+    left: 2.6 * $base-size;
+    width:  3 * $base-size;
+    height:  .8 * $base-size;
+    border-radius: 50%;
+    background-color: chocolate;
+    /* Black for the mouth */
+}
+
+/* the feet */
+.lagoon-feet {
+    position: absolute;
+    bottom: -.1 * $base-size;
+    left: .8 * $base-size;
+    width:  3 * $base-size;
+    height:  .8 * $base-size;
+    border-radius: 50%;
+    background-color: yellow;
+    /* Adjust for feet color */
+    border: 1px solid #444;
+    display: flex;
+}
+
+/* for webbed feet */
+.web  {
+    position: absolute;
+    bottom: .25 * $base-size;
+    right: -.187 * $base-size;
+    width:  .6 * $base-size;
+    height:  .33 * $base-size;
+    border-radius: 100%;
+    background-color: white;
+    /* Adjust for feet color */
+    border-left: 1px solid black;
+    z-index: 100;
+}
+
+/* rocking motion */
+@keyframes lagoon-animation {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(10deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(-10deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* moving lagoon */
+@keyframes move-lagoon {
+    0% {
+        left: 0;
+    }
+
+    100% {
+        left: calc(100% - 48px);
+    }
+
+    /* Adjust for lagoon's width */
+}

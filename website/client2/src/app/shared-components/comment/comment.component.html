@@ -1,0 +1,56 @@
+<div class="comments">
+    <div class="topics grid">
+        <div *ngIf="userService.name != null && userService.name != ''">
+            <div class="add-comment" *ngIf="addComment == false" (click)="addcomment()">Click to add comment</div>
+            <div *ngIf="addComment == true">
+                <div class="addcommentgrid">
+                    <div>
+                        <form [formGroup]="commentform">
+                            <mat-form-field class="comment">
+                                <mat-label>Comments! Enter your comment here!</mat-label>
+                                <textarea [(ngModel)]="commenttext" class="comments-textarea" matInput maxlength="10"
+                                    placeholder="What's your comment?" formControlName="comment"></textarea>
+                            </mat-form-field>
+                        </form>
+                    </div>
+                    <div class="submit-btn-div"><button mat-button (click)="submit()">Submit</button><button mat-button
+                            (click)="cancel()">Cancel</button></div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div>
+                <table class="view-comments" mat-table density="-4" [dataSource]="dataSource" matSort #table>
+                    <ng-container matColumnDef="commentid">
+                        <th class="column-id" mat-header-cell *matHeaderCellDef>commentid</th>
+                        <td mat-cell *matCellDef="let element">{{element.commentid}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="date">
+                        <th class="column-date" mat-header-cell *matHeaderCellDef>date</th>
+                        <td mat-cell *matCellDef="let element">{{element.date}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="username">
+                        <th class="column-username" mat-header-cell *matHeaderCellDef>username</th>
+                        <td mat-cell *matCellDef="let element">{{element.username}}</td>
+                    </ng-container>
+                    <ng-container matColumnDef="comment">
+                        <th class="column-comment" mat-header-cell *matHeaderCellDef>comment</th>
+                        <td mat-cell *matCellDef="let element">{{element.comment}}</td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="getDisplayedColumnsAll()"></tr>
+                    <tr mat-row *matRowDef="let row; columns: getDisplayedColumnsAll();"></tr>
+                    <!-- Row shown when there is no matching data.-->
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" colspan="4">Alas, no comments. Maybe you'll add one! Click here to see
+                            if
+                            you'll be the one that adds a comment: <button mat-stroked-button
+                                (click)="checkAddComment()">Will I add a comment?</button>&nbsp;&nbsp;<span
+                                *ngIf="clicked">{{result}}</span></td>
+                    </tr>
+                </table>
+            </div>
+            <mat-paginator class="paginators" [pageSize]="10" [pageSizeOptions]="[10, 100, 200, totalItems]"
+                [length]="totalItems" showFirstLastButtons></mat-paginator>
+        </div>
+    </div>
+</div>

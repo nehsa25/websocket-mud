@@ -1,0 +1,8 @@
+<mat-expansion-panel *ngIf="pages != []">
+    <mat-expansion-panel-header>
+        <mat-panel-title>Related Content</mat-panel-title>
+    </mat-expansion-panel-header>
+    <ul class="condensed">
+        <li *ngFor="let page of pages"><a routerLink="{{page.stem}}">{{page.title}}</a></li>
+    </ul>
+</mat-expansion-panel>

@@ -1,0 +1,14 @@
+<div class="main">
+    <div>
+        <h4>Alas, the username {{this.name}} has already been chosen. Please pick another!</h4><br>
+    </div>
+    <div>
+        <form [formGroup]="formGroup">
+            <mat-form-field class="nameinput">
+                <mat-label>Name thy adventurer!</mat-label>
+                <input maxlength="10" matInput placeholder="Drogo GoodSmeller" formControlName="name" />
+            </mat-form-field>
+        </form>
+    </div>
+    <div><button mat-button (click)="submit()">Update</button></div>
+</div>

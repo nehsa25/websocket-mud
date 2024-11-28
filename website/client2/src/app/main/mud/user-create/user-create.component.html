@@ -1,0 +1,79 @@
+<div class="main">
+    <mat-horizontal-stepper headerPosition="bottom" labelPosition="bottom" linear="true" #stepper>
+        <mat-step [stepControl]="formGroup1">
+            <form [formGroup]="formGroup1">
+                <ng-template matStepLabel>{{nameLabel}}</ng-template>
+                <div class="sectiongrid">
+                    <div><span class="mud-title">Welcome! Welcome! NehsaMUD is a "roguelike" in that you have one life
+                            and must start over if you die. It's not procedurally generated like... REGARDLESS. WELCOME!
+                        </span></div>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="formGroup1">
+            <form [formGroup]="formGroup1">
+                <ng-template matStepLabel>{{nameLabel}}</ng-template>
+                <div class="sectiongrid">
+                    <div><span class="mud-title">Pick a name for your adventurer</span>
+                        <mat-form-field class="full-field">
+                            <input matInput type="string" placeholder="What is your character name?"
+                                [(ngModel)]="this.data.username" />
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="formGroup2">
+            <form [formGroup]="formGroup2">
+                <ng-template matStepLabel>{{raceLabel}}</ng-template>
+                <div class="sectiongrid">
+                    <div>
+                        <span class="mud-title">Choose a race:</span>
+                        <mat-radio-group [(ngModel)]="race">
+                            <table>
+                                <tr>
+                                    <th>Selected</th>
+                                    <th>Race</th>
+                                    <th>Race Charactistics</th>
+                                </tr>
+                                <tr *ngFor="let r of races">
+                                    <td>input</td>
+                                    <td>{{r}}</td>
+                                    <td>{{r}}</td>
+                                </tr>
+                            </table>
+                        </mat-radio-group>
+                        <div class="btns">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </mat-step>
+        <mat-step [stepControl]="formGroup3">
+            <form [formGroup]="formGroup3">
+                <ng-template matStepLabel>{{raceLabel}}</ng-template>
+                <div class="sectiongrid">
+                    <div>
+                        <span class="mud-title">Choose your devotion:</span>
+                        <mat-radio-group [(ngModel)]="race">
+                            <table>
+                                <tr>
+                                    <th>Selected</th>
+                                    <th>Race</th>
+                                    <th>Race Charactistics</th>
+                                </tr>
+                                <tr *ngFor="let r of races">
+                                    <td>input</td>
+                                    <td>{{r}}</td>
+                                    <td>{{r}}</td>
+                                </tr>
+                            </table>
+                        </mat-radio-group>
+                        <div class="btns">
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </mat-step>
+    </mat-horizontal-stepper>
+</div>

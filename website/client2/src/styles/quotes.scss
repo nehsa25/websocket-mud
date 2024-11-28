@@ -1,0 +1,37 @@
+quote-text, .quote {
+    margin: 1rem 0;
+    padding: 0.5rem 1rem 0 1rem;
+    font-family: "Englebert", cursive;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 1.5rem;
+}
+
+quote-text::before {
+    content: "“";
+    color: var(--theme-quote-color);
+}
+
+quote-text::after {
+    content: "”";
+    color: var(--theme-quote-color);
+}
+
+quote-person::before {
+    content: "— ";
+    color: var(--theme-quote-color);
+}
+
+// who said it
+.credit:before {
+    content: "— ";
+    font-style: normal;
+    margin-left: 1rem;
+}
+
+.credit {
+    font-style: inherit;
+    float: right;
+    text-align: right;
+    padding: 0.5rem 1rem;
+}

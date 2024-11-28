@@ -1,0 +1,18 @@
+<mat-card class="card" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()">
+    <mat-card-header>
+        <mat-card-title>
+            <h1 data-testid="header-title">Ask Comet</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="prompt" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()">
+            <div class="input-container"><br>Press <span class="key">Enter</span> to submit or <span
+                    class="key">Esc</span> to cancel.
+                <div class="input">
+                    <textarea #prompt matInput (keyup.enter)="submit(prompt)"
+                        (keyup.escape)="cancel()"></textarea>
+                </div>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>

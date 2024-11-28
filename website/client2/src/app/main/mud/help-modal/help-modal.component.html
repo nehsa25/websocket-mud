@@ -1,0 +1,22 @@
+<mat-card class="card">
+    <mat-card-header>
+        <mat-card-title>
+            <h1 data-testid="header-title">NehsaMUD Help</h1>
+        </mat-card-title>
+        <mat-card-subtitle>
+            <span class="subtitle">These are some commands to get you started. You can click the ? or type "help" at any
+                time to get
+                this information again.</span>
+        </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="topics">
+            <dl class="condensed" *ngFor="let dat of data.cmds">
+                <dt>
+                    {{dat.command}}
+                </dt>
+                <dd>{{dat.description}}</dd>
+            </dl>
+        </div>
+    </mat-card-content>
+</mat-card>

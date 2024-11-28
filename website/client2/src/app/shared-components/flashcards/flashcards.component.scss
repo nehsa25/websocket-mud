@@ -1,0 +1,17 @@
+
+.flashcards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 1em;
+    margin-top: 1em;
+}
+
+.flashcards div {
+    border: 1px solid var(--theme-border-color);
+    padding: 100px 50px;
+}
+
+.nextbtn {
+    float: right;
+    margin-top: 1em;
+}

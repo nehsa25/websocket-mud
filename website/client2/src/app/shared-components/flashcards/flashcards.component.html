@@ -1,0 +1,19 @@
+<div>
+    <button mat-stroked-button (click)="launchCards()">Flashcards</button>
+    <div *ngIf="launchCardsBtn">
+        <div class="flashcards">
+            <div *ngIf="flashcardsService.QuestionAnswer != null"
+                [innerHTML]="flashcardsService.QuestionAnswer.question"></div>
+            <div *ngIf="flashcardsService.QuestionAnswer != null && !ShowAnswer"><button mat-stroked-button (click)="showAnswer()">Display Answer</button></div>
+            <div *ngIf="flashcardsService.QuestionAnswer != null && ShowAnswer"
+                [innerHTML]="flashcardsService.QuestionAnswer.answer"></div>
+        </div>
+        <div class="actions">
+            <div>
+                {{flashcardsService.current}} of {{flashcardsService.getTotal()}}
+            </div>
+            <div *ngIf="flashcardsService.QuestionAnswer == null"><button class="nextbtn" mat-stroked-button (click)="showNext()">Start</button></div>
+            <div *ngIf="flashcardsService.QuestionAnswer != null"><button class="nextbtn" mat-stroked-button (click)="showNext()">Next</button></div>
+        </div>
+    </div>
+</div>

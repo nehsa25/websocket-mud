@@ -1,0 +1,124 @@
+@media (min-width: 0) {}
+
+@media (min-width: 576px) {}
+
+@media (min-width: 768px) {}
+
+@media (min-width: 992px) {}
+
+@media (min-width: 1200px) {}
+
+@media (min-width: 1400px) {}
+
+::ng-deep .mat-expansion-panel-header[aria-disabled=true] {
+    background-color: var(--theme-background-color) !important;
+    color: tomato !important;
+    cursor: default;
+}
+
+.norm {
+    font-size: .9rem;
+    text-transform: uppercase;
+}
+
+.navbar {
+    display: grid;
+    grid-template-rows: min-content 1fr;
+    grid-gap: 1px;
+    overflow: auto;
+    height: 100%;
+}
+
+.navbar-links {
+    list-style-type: none;
+    margin: 0;
+}
+
+.navbar-links li {
+    text-align: left;
+}
+
+ul {
+    padding: 0px;
+}
+
+.norm-navbar-links li:hover {
+    background-color: var(--theme-navbar-background) !important;
+    color: var(--theme-navbar-color) !important;
+    border-radius: 12px !important;
+    border: 1px solid var(--theme-border-color);
+    cursor: pointer;
+}
+
+.navbar-featured li:hover {
+    border-radius: 0 !important;
+}
+
+.panel-expanded,
+.panel-collapsed {
+    width: 100%;
+    background-color: whitesmoke;
+}
+
+.panel-expanded .navbar-featured {
+    border-top: 1px solid greenyellow;
+    border-bottom: 1px solid greenyellow;
+}
+
+mat-panel-title {
+    cursor: text;
+    color: #9E2200 !important;
+    font-weight: normal !important;
+    -webkit-text-stroke-color: inherit !important;
+    -webkit-text-stroke-width: .5px !important;
+}
+
+mat-panel-title:hover {
+    cursor: text;
+    color: #9E2200 !important;
+    font-weight: normal !important;
+    -webkit-text-stroke-color: inherit !important;
+    -webkit-text-stroke-width: .5px !important;
+}
+
+.navbar-featured li {
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 1rem 0;
+}
+
+.navbar-featured-navbar-links li:hover {
+    border-top: 1px solid greenyellow;
+    border-bottom: 1px solid greenyellow;
+    border-radius: 0 !important;
+    cursor: pointer;
+}
+
+.navbar-featured-navbar-links-dark li:hover {
+    background-color: whitesmoke !important;
+}
+
+.navbar-featured-navbar-links-light li:hover {
+    background-color: orangered !important;
+}
+
+// selected
+.nav-selected {
+    background-color: greenyellow !important;
+    color: #222 !important;
+    border-radius: 12px !important;
+    border: 1px solid #222;
+}
+
+.nav-menu-title-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px solid orangered;
+    text-align: center;
+}
+
+.nav-menu-title-text mat-icon {
+    margin: 1rem;
+}

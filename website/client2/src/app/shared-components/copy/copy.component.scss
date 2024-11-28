@@ -1,0 +1,22 @@
+.copy {
+    width: fit-content;
+    height: fit-content;
+    margin: 2px 5px 5px 5px;
+    padding: 5px;
+    position: relative;
+    float: right;
+    top: -.8rem;
+    right: -.8rem;
+}
+
+.copy button:hover {
+    cursor: pointer !important;
+}
+
+.mousedown {
+    background-color: #f0f0f0 !important;
+}
+
+.mouseup {
+    background-color: aquamarine !important;
+}

@@ -1,0 +1,79 @@
+h5 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.mainarea {
+    padding: 0px;
+    margin: 0px;    
+    background-color: #999;
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ffcc00;
+    border: 1px solid #333;
+    overflow: hidden;
+}
+
+.maingrid {
+    display: grid;
+    grid-template-rows: 45px 1fr;
+    grid-gap: 0px;
+    height: 100%;
+}
+
+.titlegrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0px;
+    place-content: center;
+    background-color: #333;
+}
+
+.title {
+    padding: 1em .5em;
+}
+
+.map-sub-btns {
+    text-align: right;
+    margin-right: 5px;
+    align-self: center;
+}
+
+.map-sub-btns button {
+    margin-right: 7px;
+}
+
+.map-buttons-icons {
+    color: hotpink;
+    margin: 0px;
+    text-align: center;
+}
+
+.edit {
+    background-color: khaki;
+    color: hotpink;
+    font-size: 4rem;
+}
+
+.mapcontent {
+    background-color: #999;
+}
+
+.maparea {
+    background-color: #999;
+    color: #333;
+    padding: 0px;
+    height: 400px;
+    padding: 1em;
+    width: 100%;
+    text-align: center;   
+}
+
+.mapmap {
+    width: 95%;
+    margin: 1em;
+}

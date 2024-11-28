@@ -1,0 +1,31 @@
+<mat-card class="card">
+    <mat-card-header>
+        <mat-card-title>
+            <h1 data-testid="header-title">Projects</h1>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <div class="commentgrid topics">
+            <div><app-related-content></app-related-content></div>
+            <div class="rowgrid">
+                <div class="w-100 p-3">
+                    Change Log:<br>
+                    <dl>
+                        <ng-template ngFor let-change [ngForOf]="changes" class="change w-100">
+                            <dt class="change-date">{{change.date}}</dt>
+                            <dd class="change-description">
+                                <ul>
+                                    <ng-template ngFor let-description [ngForOf]="change.description"
+                                        class="change w-100">
+                                        <li>{{description}}</li>
+                                    </ng-template>
+                                </ul>
+                            </dd>
+                        </ng-template>
+                    </dl>
+                </div>
+            </div>
+            <div><app-comment></app-comment></div>
+        </div>
+    </mat-card-content>
+</mat-card>

@@ -1,0 +1,459 @@
+.angel-with-border {
+    border-left: 7px solid var(--theme-light-primary-color) !important;
+    border-right: 7px solid var(--theme-light-primary-color) !important;
+    border-top: 2px solid var(--theme-light-primary-color) !important;
+    border-bottom: 2px solid var(--theme-light-primary-color) !important;
+}
+
+.angel {
+    background-color: whitesmoke !important;
+    color: var(--theme-light-primary-color);
+}
+
+.angel div {
+    background-color: transparent;
+    color: var(--theme-light-primary-color);
+}
+
+.angel,
+.vampire .mat-mdc-form-field {
+    background-color: whitesmoke;
+    color: var(--theme-light-primary-color);
+}
+
+.angel,
+.vampire .mat-mdc-floating-label {
+    background-color: whitesmoke;
+    color: var(--theme-light-primary-color);
+}
+
+.angel a:link,
+a:visited,
+a:active {
+    color: #222;
+}
+
+.angel .mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button,
+.mat-mdc-flat-button,
+.mat-mdc-unelevated-button {
+    background-color: var(--theme-light-button-background-color) !important;
+    color: #222 !important;
+    text-decoration: none !important;
+}
+
+.angel a:hover,
+.mat-mdc-button:hover,
+.mat-mdc-raised-button:hover,
+.mat-mdc-outlined-button:hover,
+.mat-mdc-flat-button:hover,
+.mat-mdc-unelevated-button:hover {
+    background-color: var(--theme-light-button-hover-background-color) !important;
+    color: #222;
+}
+
+.angel .important,
+.angel .importantish,
+.angel .important-less,
+.angel important-high,
+.angel important-med,
+.angel important-normal,
+.angel important-low,
+.angel important-text,
+.angel importantish-text {
+    color: #222;
+}
+
+// breadcrumbs
+.angel .bread-root a,
+.angel .bread-root a:link,
+.angel .bread-root a:visited,
+.angel .bread-root a:active {
+    color: #9E2200;
+}
+
+.angel .topics>div {
+    border: 1px solid var(--theme-border);
+}
+
+.angel .file,
+.angel inline-file {
+    background-color: var(--theme-file-background) !important;
+    color: var(--theme-file-color) !important;
+}
+
+.angel .disclaimer {
+    background-color: teal !important;
+    color: white !important;
+    border: 1px solid springgreen;
+}
+
+.angel .answer {
+    background-color: var(--theme-answer-background) !important;
+    color: var(--theme-answer-color) !important;
+    border: 1px solid var(--theme-border);
+}
+
+.angel mat-card {
+    background-color: var(--theme-card-background) !important;
+    color: var(--theme-card-color) !important;
+}
+
+.angel .card {
+    background-color: var(--theme-card-background) !important;
+    color: var(--theme-card-color) !important;
+}
+
+.angel .note {
+    background-color: var(--theme-note-background) !important;
+    color: var(--theme-note-color) !important;
+}
+
+.angel .comment,
+.angel comment-text {
+    background-color: var(--theme-comment-background) !important;
+    color: #6B1000 !important;
+}
+
+.angel .comment-arrow,
+.angel .comment->mat-icon {
+    color: cornflowerblue;
+}
+
+.angel .paginators {
+    background-color: var(--theme-table-background) !important;
+    color: var(--theme-table-color) !important;
+}
+
+.angel .olq {
+    border: 1px solid var(--theme-border);
+}
+
+.angel .ula {
+    border: 1px solid var(--theme-border-color);
+}
+
+.angel .questionmark {
+    color: var(--theme-pop);
+}
+
+.angel .min-table {
+    border: 1px solid var(--theme-border);
+}
+
+.angel .good {
+    color: springgreen;
+}
+
+.angel .bad {
+    color: red;
+}
+
+.angel table,
+.angel th,
+.angel td {
+    background-color: var(--theme-table-background) !important;
+    color: var(--theme-table-color) !important;
+    border: 1px solid var(--theme-border);
+}
+
+highlight-text {
+    color: forestgreen;
+}
+
+.angel .example-container,
+.angel .terminal-result,
+.angel .result,
+.angel result-text,
+.angel .example-container-large,
+.angel .terminal-result-large,
+.angel .result-large,
+.angel .cmd-large,
+.angel .cmd {
+    color: black;
+    border: 1px solid black;
+    background-color: var(--theme-light-code-background) !important;
+}
+
+.angel .example {
+    background-color: var(--theme-light-code-background) !important;
+    color: var(--theme-light-code-color) !important;
+}
+
+
+// scrollbar
+/* Track */
+.angel ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 5px var(--theme-background-light-gray);
+}
+
+/* Handle */
+.angel ::-webkit-scrollbar-thumb {
+    background: var(--theme-background-light-gray);
+}
+
+/* Handle on hover */
+.angel ::-webkit-scrollbar-thumb:hover {
+    background: var(--theme-background-gray);
+}
+
+
+.angel .code {
+    background-color: var(--theme-light-code-background) !important;
+    color: var(--theme-light-code-color) !important;
+}
+
+.angel .code-command {
+    background-color: var(--theme-light-code-background) !important;
+    color: var(--theme-light-code-color) !important;
+}
+
+.angel div.code:hover {
+    color: var(--theme-pop);
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+.angel inline-code,
+.angel span.code,
+.angel code {
+    background-color: var(--theme-light-code-background) !important;
+    color: var(--theme-light-code-color) !important;
+}
+
+.angel inline-code:hover,
+.angel span.code:hover {
+    color: var(--theme-pop);
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+.angel .inline-additional-note,
+.angel .inline-additional-notes,
+.angel .inline-asterisk,
+.angel .additional-note,
+.angel .additional-notes,
+.angel .asterisk {
+    color: #B55E51;
+}
+
+
+.angel ulnav-links>li:hover {
+    color: var(--theme-background-purple) !important;
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+.angel mat-panel-title:hover {
+    color: var(--theme-background-light);
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+.angel li>h3:hover {
+    color: var(--theme-background-light);
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+.angel li>h4:hover {
+    color: var(--theme-pop);
+    -webkit-text-stroke-color: var(--theme-background-purple) !important;
+}
+
+// notches
+.angel .colorSlider .mat-mdc-slider .mdc-slider__tick-mark--active,
+.mat-mdc-slider .mdc-slider__tick-mark--inactive {
+    background-color: var(--theme-light-primary-color);
+}
+
+.angel h1,
+h2 {
+    color: var(--theme-light-primary-color);
+}
+
+.angel h3,
+h4,
+h5,
+h6 {
+    color: #222;
+}
+
+// card
+.angel .mat-mdc-card-title {
+    color: var(--theme-light-primary-color) !important;
+}
+
+.angel .mat-mdc-card-subtitle {
+    color: var(--theme-light-primary-color) !important;
+}
+
+// statuses
+.angel .done {
+    color: #4CAF50;
+    background-color: #f1f1f1;
+    border-color: #4CAF50;
+}
+
+.angel .not-started {
+    color: #999;
+    background-color: #f1f1f1;
+    border-color: #999;
+}
+
+.angel .bug {
+    color: limegreen;
+    background-color: #f1f1f1;
+    border-color: crimson;
+}
+
+.angel .in-progress,
+.angel .pending {
+    color: #FFC107;
+    background-color: #f1f1f1;
+    border-color: #FFC107;
+}
+
+// navigation menu text color
+.angel .nav-menu-title-text {
+    color: #9E2200 !important;
+}
+
+// ads
+#ad1 {
+    border-top: 1px solid var(--theme-border) !important;
+}
+
+.angel .dh-quote {
+    color: #666 !important;
+}
+
+$light-primary: (
+    "primary": #9E2200,
+    "link": "#7F7F7F",
+    "code-background": "#F2C2C2",
+    "code-color": "#222",
+    50 : #fbf4fb,
+    100 : #f5e3f5,
+    200 : #eed0ee,
+    300 : #e7bde7,
+    400 : #e2aee2,
+    500 : #dda0dd,
+    600 : #d998d9,
+    700 : #d48ed4,
+    800 : #cf84cf,
+    900 : #c773c7,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffdeff,
+    A700 : #ffc4ff,
+    contrast: (50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #000000,
+        900 : #000000,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+$light-primary-palette: mat.define-palette($light-primary);
+
+$light-accent: (
+    "primary": pink,
+    "link": "#7F7F7F",
+    "code-background": "#D4AC0D",
+    "code-color": "#222",
+    50 : #edebf9,
+    100 : #d2cef0,
+    200 : #b5ade6,
+    300 : #978cdc,
+    400 : #8073d5,
+    500 : #6a5acd,
+    600 : #6252c8,
+    700 : #5748c1,
+    800 : #4d3fba,
+    900 : #3c2eae,
+    A100 : #f3f2ff,
+    A200 : #c5bfff,
+    A400 : #978cff,
+    A700 : #8073ff,
+    contrast: (50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #ffffff,
+        600 : #ffffff,
+        700 : #ffffff,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+$light-accent-palette: mat.define-palette($light-accent);
+
+$light-warn: (
+    50 : #ffece9,
+    100 : #ffd0c8,
+    200 : #ffb1a3,
+    300 : #ff927e,
+    400 : #ff7a63,
+    500 : #ff6347,
+    600 : #ff5b40,
+    700 : #ff5137,
+    800 : #ff472f,
+    900 : #ff3520,
+    A100 : #ffffff,
+    A200 : #ffffff,
+    A400 : #ffd3cf,
+    A700 : #ffbcb6,
+    contrast: (50 : #000000,
+        100 : #000000,
+        200 : #000000,
+        300 : #000000,
+        400 : #000000,
+        500 : #000000,
+        600 : #000000,
+        700 : #000000,
+        800 : #ffffff,
+        900 : #ffffff,
+        A100 : #000000,
+        A200 : #000000,
+        A400 : #000000,
+        A700 : #000000,
+    )
+);
+$light-warn-palette: mat.define-palette($light-warn);
+
+$density: -1;
+
+$typography: mat.define-typography-config($font-family: 'monospace, "Helvetica Neue", sans-serif',
+    );
+$light-theme: mat.define-dark-theme((color: (theme-type: light,
+                primary: $dark-primary-palette,
+                accent: $dark-accent-palette,
+                warn: $light-warn-palette ),
+            density: -1,
+            typography: $typography ));
+
+.angel {
+    @include mat.all-component-colors($light-primary);
+    @include mat.core-color($light-theme);
+    @include mat.button-color($light-theme);
+    @include mat.card-color($light-theme);
+    @include mat.checkbox-color($light-theme);
+    @include mat.dialog-color($light-theme);
+    @include mat.icon-color($light-theme);
+    @include mat.input-color($light-theme);
+    @include mat.list-color($light-theme);
+    @include mat.menu-color($light-theme);
+    @include mat.radio-color($light-theme);
+    @include mat.select-color($light-theme);
+    @include mat.sidenav-color($light-theme);
+}
