@@ -1,0 +1,827 @@
+@media (min-width: 0) {
+  #status {
+    height: 371px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 55svh repeat(5, min-content);
+    height: 100svh !important;
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: min-content 55svh repeat(5, min-content);
+    grid-template-rows: min-content;
+    height: 80svh !important;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 55svh repeat(5, min-content);
+    height: 100svh !important;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+@media (min-width: 576px) {
+  #status {
+    height: 371px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 55svh repeat(5, min-content);
+    height: 100svh !important;
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content 55svh repeat(5, min-content);
+    height: 80svh !important;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title"
+      "main"
+      "command"
+      "status"
+      "aiimage"
+      "helpsection"
+      "usersconnected";
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content;
+    height: 100svh !important;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+@media (min-width: 768px) {
+  #status {
+    height: 355px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 100svh !important;
+
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh !important;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title title status"
+      "main main status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh !important;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+@media (min-width: 992px) {
+  #status {
+    height: 355px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 100svh !important;
+
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title title status"
+      "main main status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  #status {
+    height: 355px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 100svh !important;
+
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title title status"
+      "main main status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+@media (min-width: 1400px) {
+  #status {
+    height: 355px;
+  }
+
+  .mudgrid-fullscreen {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 100svh !important;
+
+  }
+
+  .mudgrid-expanded {
+    grid-template-areas:
+      "title title status"
+      "title title status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .mudgrid-collapsed {
+    grid-template-areas:
+      "title title status"
+      "main main status"
+      "main main aiimage"
+      "main main helpsection"
+      "command command helpsection"
+      "usersconnected usersconnected helpsection";
+    grid-template-columns: 400px 1fr 325px;
+    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    height: 68svh;
+  }
+
+  .ticker-grid {
+    grid-template-columns: 1fr 50px;
+    place-content: center;
+  }
+}
+
+.hide {
+  position: absolute;
+  z-index: 10000;
+  width: 100%;
+  height: 100%;
+  background-color: #222 !important;
+}
+
+.center {
+  width: 60%;
+  min-width: 500px;
+  background-color: #333 !important;
+  margin: 1rem auto 0 1rem;
+}
+
+a {
+  color: teal !important;
+}
+
+a:link {
+  color: teal !important;
+}
+
+textarea {
+  width: 100%;
+  font-size: 1.5em;
+  background-color: #333;
+  color: #fff;
+  border: none;
+  padding: 10px 5px;
+  height: 40px;
+  resize: none;
+  margin: 0;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  border: 1px solid var(--theme-border-color);
+}
+
+td {
+  padding: 5px;
+  border: 1px solid var(--theme-border-color);
+}
+
+.mudgrid-fullscreen {
+  display: grid;
+}
+
+.mudgrid-expanded {
+  display: grid;
+}
+
+.mudgrid-collapsed {
+  display: grid;
+}
+
+#playername,
+#health {
+  font-size: 2rem;
+}
+
+.mud-dark {
+  background-color: #4a4231 !important;
+}
+
+.title-panel-expanded {
+  background-color: #999;
+  height: 470px;
+  overflow: hidden;
+}
+
+.title-panel-collapsed {
+  background-color: #999;
+}
+
+#title {
+  grid-area: title;
+  overflow: hidden;
+  width: 100%;
+  background-color: #999;
+  margin: 0;
+  padding: 0;
+}
+
+#helpsection {
+  grid-area: helpsection;
+  overflow: auto;
+  padding: 1em;
+}
+
+#helpsection span {
+  font-size: inherit;
+  color: azure;
+}
+
+#main {
+  grid-area: main;
+  background-color: black;
+  overflow: hidden;
+  overflow-y: scroll;
+  padding: 1em;
+  font-size: large;
+  font-family: monospace;
+  color: beige;
+}
+
+#aiimage {
+  grid-area: aiimage;
+  background-color: #999;
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
+}
+
+.aiimage-btn {
+  background-color: #666;
+  color: #fff;
+  border: 1px solid var(--theme-border-color);
+  border-radius: 5px;
+  margin: 5px;
+}
+
+#usersconnected {
+  grid-area: usersconnected;
+  display: block;
+  padding-left: inherit;
+  text-align: center;
+}
+
+#command {
+  grid-area: command;
+  background-color: #333;
+  height: 60px;
+  font-size: 2em;
+  overflow: hidden;
+}
+
+#status {
+  grid-area: status;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+
+#status td {
+  background-color: greenyellow important;
+}
+
+.icon-status-na {
+  color: silver;
+  height: 32px;
+  width: 32px;
+  font-size: 32px;
+  padding: 0;
+  margin: 0;
+}
+
+
+.icon-status-good {
+  color: green;
+  height: 32px;
+  width: 32px;
+  font-size: 32px;
+  padding: 0;
+  margin: 0;
+}
+
+.icon-status-mood-good {
+  color: green;
+  height: 32px;
+  width: 32px;
+  font-size: 32px;
+  padding: 0;
+  margin: 0;
+}
+
+.mud-title {
+  padding: 0 1em;
+  color: teal !important;
+}
+
+.mud-subtitle {
+  background-color: #999;
+  padding: 0 5px;
+  color: #333;
+}
+
+#inventory {
+  overflow: hidden;
+  overflow-y: scroll;
+  height: 80px;
+}
+
+#inventory ul {
+  padding: 2px 20px;
+}
+
+#inventory ul li {
+  width: 45%;
+  float: left;
+}
+
+.event-message {
+  color: #999;
+}
+
+.error-message {
+  color: red;
+}
+
+.time-message {
+  color: #999;
+  font-size: 0.8em;
+}
+
+.changename-message {
+  color: #999;
+  font-size: 0.8em;
+}
+
+.info-message {
+  color: #999;
+}
+
+// royalblue
+.rest-message {
+  color: bisque;
+}
+
+.input-message {
+  color: yellow;
+}
+
+.you-attack-message {
+  color: fuchsia;
+}
+
+.attach1-message {
+  color: brown;
+}
+
+.attack2-message {
+  vertical-align: super;
+}
+
+.status-good {
+  color: springgreen;
+}
+
+.room-message {
+  color: cornflowerblue;
+}
+
+.status-dicey {
+  color: orangered;
+}
+
+.status-danger {
+  color: crimson;
+}
+
+.room-description-message {
+  color: antiquewhite;
+}
+
+.people1-message {
+  color: cornflowerblue;
+}
+
+.people2-message {
+  color: khaki;
+}
+
+.announcement-message {
+  color: tomato;
+}
+
+/* Monsters: */
+.monster1-message {
+  color: cornflowerblue;
+}
+
+.monster2-message {
+  color: tomato;
+}
+
+/* npcs: */
+.npcs1-message {
+  color: darkseagreen;
+}
+
+.environment-message {
+  color: whitesmoke;
+  font-size: 0.8em;
+}
+
+/* You see.. */
+.items1-message {
+  color: cornflowerblue;
+}
+
+.items2-message {
+  color: #ffcc00;
+}
+
+/* Exits: */
+.exits1-message {
+  color: cornflowerblue;
+}
+
+.exits2-message {
+  color: sienna;
+}
+
+.color-white {
+  color: whitesmoke;
+}
+
+.color-blue {
+  color: skyblue;
+}
+
+.color-red {
+  color: red;
+}
+
+.color-puple {
+  color: purple;
+}
+
+.color-black {
+  color: #333;
+}
+
+.color-gray {
+  color: #666;
+}
+
+.hr-border {
+  border: 1px dashed whitesmoke;
+}
+
+.welcome-message {
+  color: hotpink;
+}
+
+.direction-message {
+  color: yellow;
+}
+
+.action {
+  background-color: springgreen;
+  border: 1px solid var(--theme-border-color);
+}
+
+.map-selected {
+  background-color: springgreen !important;
+  color: black !important;
+}
+
+.map-deselected {
+  background-color: silver !important;
+  color: black !important;
+}
+
+.help-selected {
+  background-color: springgreen !important;
+  color: black !important;
+}
+
+.help-deselected {
+  background-color: silver !important;
+  color: black !important;
+}
+
+.rest-selected {
+  background-color: springgreen !important;
+  color: black !important;
+}
+
+.rest-deselected {
+  background-color: silver !important;
+  color: black !important;
+}
+
+
+.action:not(:first-child) {
+  margin-left: 5px;
+}
+
+.action mat-icon {
+  background-color: springgreen;
+}
+
+.teal {
+  color: teal;
+}
+
+.purple {
+  color: rebeccapurple;
+}
+
+.red {
+  color: crimson;
+}
+
+.minimap {
+  width: 100%;
+  height: auto;
+}
+
+.mud-sub-title-actions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.command-input {
+  width: 100%;
+  font-size: 1.5rem;
+  background-color: #333;
+  color: #999 !important;
+  border: 0;
+  padding: 5px 25px;
+  height: 40px;
+  resize: none;
+  margin: 0;
+  overflow: hidden;
+}
+
+.command-input:focus {
+  color: #fff !important;
+  background-color: black;
+}
+
+.panel-description-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  width: 100%;
+}
+
+.title-btns {
+  padding: 10px;
+  color: black;
+  border: 1px solid #333;
+  width: auto;
+  height: auto;
+}
+
+.player-image,
+.npc-image,
+.monster-image,
+.item-image {
+  width: 300px;
+  height: 300px;
+  border: 1px solid whitesmoke;
+}
+
+// Monsters
+.friendly-monster {
+  color: cornflowerblue;
+}
+
+.hostile-monster {
+  color: tomato;
+}
+
+.neutral-monster {
+  color: darkseagreen;
+}
+
+.soundtrack {
+  width: 600px;
+  height: 1em;
+  line-height: 1em;
+  font-size: .8rem;
+  color: seagreen !important;
+  background-color: #999 !important;
+  margin: auto 0;
+  white-space: nowrap;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%);
+  /* Safari */
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%);
+  /* Standard browsers */
+}
+
+.ticker-text {
+  display: inline-block;
+  /* Allow for scrolling within the container */
+}
+
+.ticker-grid {
+  display: grid;
+  grid-template-columns: 1fr 50px 50px;
+}
+
+.ticker-icon {
+  color: black;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.datacolumn {
+  text-align: center;
+}

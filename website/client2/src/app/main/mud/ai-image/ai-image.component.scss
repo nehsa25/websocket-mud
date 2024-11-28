@@ -1,0 +1,49 @@
+h5 {
+    margin: 0px;
+    padding: 0px;
+}
+
+.mainarea {
+    padding: 0px;
+    margin: 0px;
+    overflow: hidden;
+}
+
+.map {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: #ffcc00;
+    border: 1px solid #333;
+    overflow: hidden;
+}
+
+.maingrid {
+    display: grid;
+    grid-template-rows: 35px 1fr;
+    grid-gap: 0px;
+}
+
+.titlegrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 0px;
+    height: 35px;
+}
+
+.title {
+    padding: 1em .5em;
+}
+
+.imagearea {
+    width: 100%;
+    background-color: silver;
+    color: #333;
+    padding: 0px;
+    max-height: 500px;
+    overflow: auto;
+}
+
+.imagearea-image {
+    overflow: auto;
+}

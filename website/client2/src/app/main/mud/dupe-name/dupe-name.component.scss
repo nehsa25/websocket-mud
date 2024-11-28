@@ -1,0 +1,17 @@
+.main {
+    display: grid;
+    grid-template-rows: 70px 1fr 40px;
+    padding: 1em;
+    background-color: peachpuff;
+    color: black;
+    height: 100%;
+}
+
+mat-form-field {
+    width: 100%;
+}
+
+input {
+    width: 100%;
+    margin: 1em;
+}

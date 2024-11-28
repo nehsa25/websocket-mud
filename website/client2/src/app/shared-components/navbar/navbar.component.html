@@ -1,0 +1,247 @@
+<div class="black-theme" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()">
+  <ul class="navbar-featured navbar-links featured-navbar-links"
+    [class.navbar-featured-navbar-links-dark]="userService.appIsDark()"
+    [class.navbar-featured-navbar-links-light]="!userService.appIsDark()">
+    <li class="bungee-spice-regular" (click)="sendUser('/mud')">NehsaMUD</li>
+  </ul>
+</div>
+<div class="black-theme navbar" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()">
+  <mat-expansion-panel #panel [expanded]="expanded" [disabled]="!allowExpand" [class.panel-expanded]="panel.expanded"
+    [class.panel-collapsed]="!panel.expanded" [hideToggle]="!allowExpand">
+    <mat-expansion-panel-header #header>
+      <mat-panel-title class="nav-menu-title-text">
+        <div style="margin: 0 auto;">Topics <mat-icon>menu</mat-icon></div>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <ul class="navbar-links norm-navbar-links">
+      <li class="norm" [class.nav-selected]="this.userService.page === 'agile'" (click)="sendUser('/agile')">
+        Agile Development
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'angular'" (click)="sendUser('/angular')">
+        Angular
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'ssr'" (click)="sendUser('/ssr')">
+        Angular Universal
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'ai'" (click)="sendUser('/ai')">AI
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'aspnet'" (click)="sendUser('/aspnet')">
+        ASP.NET
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'aws'" (click)="sendUser('/aws')">
+        AWS
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'azure'" (click)="sendUser('/azure')">
+        Azure
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'blog'" (click)="sendUser('/blog')">
+        Blog
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'bootstrap'" (click)="sendUser('/bootstrap')">
+        Bootstrap
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'clarity'" (click)="sendUser('/clarity')">
+        Clarity
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'cloud'" (click)="sendUser('/cloud')">
+        (the) Cloud
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'csharp'" (click)="sendUser('/csharp')">
+        C#
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'chef'" (click)="sendUser('/chef')">
+        Chef
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'choco'" (click)="sendUser('/choco')">
+        Chocolatey
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'webdesign'" (click)="sendUser('/webdesign')">
+        CSS / Web Design
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'design'" (click)="sendUser('/design')">
+        Development
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'dns'" (click)="sendUser('/dns')">
+        DNS
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'docker'" (click)="sendUser('/docker')">
+        Docker
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'dot'" (click)="sendUser('/dot')">
+        Dot
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'doxy'" (click)="sendUser('/doxy')">
+        Doxygen
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'dynamics365'"
+        (click)="sendUser('/dynamics365')">
+        Dynamics 365
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'entity'" (click)="sendUser('/entity')">
+        Entity Framework
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'games'" (click)="sendUser('/games')">
+        Games
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'gimp'" (click)="sendUser('/gimp')">
+        Gimp
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'git'" (click)="sendUser('/git')">
+        git
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'github'" (click)="sendUser('/github')">
+        github
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'go'" (click)="sendUser('/go')">
+        go
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'graphql'" (click)="sendUser('/graphql')">
+        GraphQL
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'welcome'" (click)="sendUser('/welcome')">
+        Home
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'ide'" (click)="sendUser('/ide')">
+        IDEs
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'iis'" (click)="sendUser('/iis')">
+        IIS
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'inno'" (click)="sendUser('/inno')">
+        Inno Setup
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'java'" (click)="sendUser('/java')">
+        Java
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'typescript'" (click)="sendUser('typescript')">
+        JavaScript
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'jenkins'" (click)="sendUser('/jenkins')">
+        Jenkins
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'jsdoc'" (click)="sendUser('/jsdoc')">
+        jsdoc
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'kestrel'" (click)="sendUser('/kestrel')">
+        Kestrel
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'k8s'" (click)="sendUser('/k8s')">
+        Kubernetes
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'linux'" (click)="sendUser('/linux')">
+        Linux
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'linq'" (click)="sendUser('/linq')">
+        linq
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'llama'" (click)="sendUser('/llama')">
+        Llama
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'mariadb'" (click)="sendUser('/mariadb')">
+        MariaDB (PL/SQL)
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'mercurial'" (click)="sendUser('/mercurial')">
+        Mercurial
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'tsql'" (click)="sendUser('/sql')">
+        MSSQL (T-SQL)
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'monetizenow'"
+        (click)="sendUser('/monetizenow')">
+        Monetize Now
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'mud'" (click)="sendUser('/mud')">
+        mud
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'mysql'" (click)="sendUser('/mysql')">
+        MySQL (PL/SQL)
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'nosql'" (click)="sendUser('/nosql')">
+        nosql
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'npm'" (click)="sendUser('/npm')">
+        npm / Node
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'ohai'" (click)="sendUser('/ohai')">
+        Ohai
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'playwright'" (click)="sendUser('/playwright')">
+        Playwright
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'powershell'" (click)="sendUser('/powershell')">
+        Powershell
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'agile'" (click)="sendUser('/agile')">
+        Project Management
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'pytest'" (click)="sendUser('/pytest')">
+        Pytest
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'python'" (click)="sendUser('/python')">
+        Python
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'react'" (click)="sendUser('/react')">
+        React
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'redux'" (click)="sendUser('/redux')">
+        redux
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'regex'" (click)="sendUser('/regex')">
+        Regex
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'seo'" (click)="sendUser('/seo')">
+        Search Engine Optimization (SEO)
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'security'" (click)="sendUser('/security')">
+        Security
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'semanticui'" (click)="sendUser('/semanticui')">
+        Semantic UI
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'tls'" (click)="sendUser('/tls')">
+        SSH/TLS
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'ssr'" (click)="sendUser('/ssr')">
+        Server-Side Rendering (SSR)
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'tsql'" (click)="sendUser('/tsql')">
+        SQL
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'swagger'" (click)="sendUser('/swagger')">
+        Swagger
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'testing'" (click)="sendUser('/testing')">
+        Testing
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'tls'" (click)="sendUser('/tls')">
+        TLS/SSH
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'tailwindcss'"
+        (click)="sendUser('/tailwindcss')">
+        Tailwind CSS
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'typescript'" (click)="sendUser('/typescript')">
+        TypeScript
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'vue'" (click)="sendUser('/vue')">
+        Vue
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'vuex'" (click)="sendUser('/vue/vuex')">
+        Vuex
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'webdev-frameworks'"
+        (click)="sendUser('/webdev-frameworks')">
+        Web Development Frameworks
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'asyncio'" (click)="sendUser('/asyncio')">
+        Websockets
+      </li>
+      <li class="norm" [class.nav-selected]="this.userService.page === 'windows'" (click)="sendUser('/windows')">
+        Windows
+      </li>
+    </ul>
+    <div class="navbar-actions">
+      <!-- Add login/logout buttons or user-related actions here -->
+    </div>
+  </mat-expansion-panel>
+</div>

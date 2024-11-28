@@ -1,8 +1,8 @@
 var socket;
 
 $(document).ready(function () {
-  var host = "208.52.52.157";
-  var port = 81;
+  var host = "localhost";
+  var port = 60049;
   var full_address = "ws://" + host + ":" + port + "/"
 
   $("#formdiv").hide();

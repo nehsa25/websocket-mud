@@ -1,0 +1,63 @@
+reference-item {
+    display: block;
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    color: gray;
+    padding: 0 1rem;
+}
+
+reference-title {
+    font-weight: bold;
+}
+
+reference-title::after {
+    content: ". ";
+}
+
+reference-site {
+    font-style: italic;
+}
+
+reference-site::before {
+    content: "Site: ";
+}
+
+reference-site::after {
+    content: ", ";
+}
+
+reference-author,
+reference-date-accessed,
+reference-date {
+    font-style: italic;
+}
+
+reference-author::before {
+    content: "(";
+}
+
+reference-date::after {
+    content: ")";
+}
+
+reference-date-accessed::before {
+    content: "Date Accessed: ";
+}
+
+reference-date-accessed::after {
+    content: ". ";
+}
+
+reference-url {
+    font-style: inherit;
+}
+
+reference-url::before {
+    content: "URL: ";
+}
+
+reference-url::after {
+    content: ". ";
+}
+

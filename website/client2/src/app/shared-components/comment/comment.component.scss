@@ -1,0 +1,148 @@
+@media (min-width: 0) {
+    .addcommentgrid {
+        grid-template-rows: 1fr min-content;
+        grid-template-columns: inherit;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+@media (min-width: 576px) {
+    .addcommentgrid {
+        grid-template-rows: 1fr min-content;
+        grid-template-columns: inherit;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+@media (min-width: 768px) {
+    .addcommentgrid {
+        grid-template-columns: 1fr 200px;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+@media (min-width: 992px) {
+    .addcommentgrid {
+        grid-template-columns: 1fr 200px;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+@media (min-width: 1200px) {
+    .addcommentgrid {
+        grid-template-columns: 1fr 200px;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+@media (min-width: 1400px) {
+    .addcommentgrid {
+        grid-template-columns: 1fr 200px;
+    }
+    .grid {
+        grid-template-rows: 1fr min-content min-content;
+    }
+}
+
+
+.addcommentgrid {
+    display: grid;
+    grid-gap: 1em;
+}
+
+.comments {
+    padding-top: 10px;
+}
+
+.comment {
+    font-size: 1.2em;
+    padding: 10px;
+    width: 100%;
+    height: 100px;
+    width: 100%;
+    color: #333 !important;
+    resize: none;
+}
+
+textarea {
+    width: 100%;
+}
+
+
+.submit-btn-div {
+    place-content: center;
+    text-align: center;
+}
+
+.add-comment:hover {
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+    grid-gap: 1em;
+}
+
+table {
+    border: none;
+}
+
+th {
+    text-decoration: solid;
+    font-variant: small-caps;
+    border: none;
+    font-size: 1.5rem;
+}
+
+.column-username {
+    background-color: lightblue !important;
+    width: 200px;
+}
+
+.column-id {
+    background-color: lemonchiffon !important;
+    color: black;
+    border-radius: 25px 0 0 0;
+    width: 100px;
+}
+
+.column-date {
+    background-color: lightcoral !important;
+    border-radius: 0 0 0 0;
+    width: 150px;
+}
+
+.column-comment {
+    background-color: sandybrown !important;
+    border-radius: 0 25px 0 0;
+}
+
+.view-comments {
+    width: 100%;
+}
+
+.view-comments td {
+    width: 10px;
+    border-collapse: collapse;
+    border: 1px solid #999;
+}
+
+.comment-light {
+    background-color: white !important;
+    border: none;
+}
+
+.comment-dark {
+    background-color: bisque !important;
+    border: none;
+}

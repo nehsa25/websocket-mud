@@ -1,0 +1,15 @@
+&#64; @
+&#123; {
+&#125; }
+&#x28; (
+&#x29; )
+Timoth&eacute;e
+&#x2227; logic up
+&#x2228; logic down
+&#xac; logic not
+&deg; degree symb
+&ouml; ö
+&aring; å
+Sm&ouml;rg&aring;sbord
+&#183; ·
+&#8776; ≈

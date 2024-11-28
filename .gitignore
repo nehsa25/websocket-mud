@@ -14,3 +14,6 @@ monsters/__pycache__/*
 */__pycache__/*
 monsters/__pycache__/skeleton.cpython-312.pyc
 dontcheckin.py
+website/client2/.angular/cache/*
+website/client2/dist/*
+website/client2/node_modules/*

@@ -1,0 +1,18 @@
+<mat-dialog-content class="mainarea" cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <div class="maingrid" cdkDragHandle>
+        <div class="titlegrid">
+            <div>
+                <h5 class="title">NehsaMUD Map</h5>
+            </div>
+            <div class="map-sub-btns">
+                <button mat-button (click)="enlargen()"><mat-icon class="map-buttons-icons">zoom_in</mat-icon></button>
+                <button mat-button (click)="min()"><mat-icon class="map-buttons-icons">close</mat-icon></button>
+            </div>
+        </div>
+        <div class="mapcontent">
+            <div class="maparea">
+                <img class="mapmap" [src]="this.image" />
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>

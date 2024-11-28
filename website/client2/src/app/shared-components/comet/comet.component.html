@@ -1,0 +1,9 @@
+<div *ngIf="cometOpen" class="comet-grid" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()">
+    <div (click)="launchPrompt($event)">
+        <div [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()"
+            *ngIf="cometCurrentMessage != ''" class="comet-bubble" innerHTML="{{cometCurrentMessage}}"></div>
+    </div>
+    <div class="sep"></div>
+    <div (click)="launchPrompt($event)" [class.vampire]="userService.appIsDark()" [class.angel]="!userService.appIsDark()"><img class="image"
+            src="../../../assets/images/comet.png" alt="Comet, the AI dog"><button class="close-button" (click)="closeButton($event)" mat-stroked-button>x</button></div>
+</div>

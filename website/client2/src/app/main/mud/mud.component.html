@@ -1,0 +1,130 @@
+<div class="mud-dark">
+    <!-- <div class="hide">
+        <div class="center">
+            <span class="display-1">
+                NehsaMUD turned off for now until basic functionality is restored. Sorry for the inconvenience.
+            </span>
+        </div>
+    </div> -->
+    <mat-card class="mud-dark">
+        <div
+            [ngClass]="{'mudgrid-fullscreen': isFullscreen, 'mudgrid-expanded': panelExpanded === true, 'mudgrid-collapsed' : panelExpanded === false }">
+            <div id="title">
+                <mat-expansion-panel disabled="true" [expanded]="panelExpanded" hideToggle
+                    [ngClass]="{'title-panel-expanded': panelExpanded === true, 'title-panel-collapsed' : panelExpanded === false }">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>NehsaMUD
+                        </mat-panel-title>
+                        <mat-panel-description>
+                            <div class="panel-description-grid">
+                                <div class="ticker-grid">
+                                    <div class="soundtrack">
+                                        <span class="ticker-text"
+                                            [ngStyle]="{'transform': 'translateX(' + this.soundtrackPosition + 'px)'}">{{
+                                            soundtrack }}</span>
+                                    </div>
+                                    <div>
+                                        <mat-icon *ngIf="this.soundtrack != ''" class="ticker-icon"
+                                            (click)="mute()">music_note</mat-icon>
+                                        <mat-icon *ngIf="this.soundtrack == ''" class="ticker-icon"
+                                            (click)="mute()">music_off</mat-icon>
+                                    </div>
+                                </div>
+                                <div>
+                                    <mat-icon class="title-btns" (click)="fullscreen()">fullscreen</mat-icon>
+                                    <mat-icon class="title-btns" (click)="expandPanel()">keyboard_arrow_down</mat-icon>
+                                </div>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header><img class="minimap" [src]="this.miniMap" />
+                </mat-expansion-panel>
+            </div>
+            <div #scrollMe [scrollTop]="scrollMe.scrollHeight" id="main" [innerHTML]="mudEvents"
+                (click)="refocus(sendcommandarea)">
+            </div>
+            <div id="status">
+                <table class="stats-table">
+                    <tr>
+                        <td>Health</td>
+                        <td class="datacolumn" colspan="2" id="health"><span [innerHTML]="health"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Hungry</td>
+                        <td class="datacolumn" colspan="2"><mat-icon
+                                class="icon-status-good">sentiment_satisfied</mat-icon>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Thirsty</td>
+                        <td class="datacolumn" colspan="2"><mat-icon
+                                class="icon-status-good">sentiment_satisfied</mat-icon>
+                            <!-- sentiment_satisfied, sentiment_dissatisfied -->
+                        </td>
+                    <tr>
+                    <tr>
+                        <td>Statuses</td>
+                        <td class="datacolumn" colspan="2">
+                            <mat-icon class="icon-status-na" matTooltip="Poisoned" matTooltipClass="status-tooltip"
+                                [matTooltipPosition]="'before'">sick</mat-icon>
+                            <mat-icon class="icon-status-na" matTooltip="Resting" matTooltipClass="status-tooltip"
+                                [matTooltipPosition]="'before'">night_shelter</mat-icon>
+                            <mat-icon class="icon-status-na" matTooltip="Meditating" matTooltipClass="status-tooltip"
+                                [matTooltipPosition]="'before'">self_improvement</mat-icon>
+                            <mat-icon class="icon-status-na" matTooltip="Dazzled" matTooltipClass="status-tooltip"
+                                [matTooltipPosition]="'before'">psychology</mat-icon>
+                        </td>
+                    <tr>
+                        <td>Overall Mood</td>
+                        <td class="datacolumn" colspan="2"><mat-icon
+                                class="icon-status-mood-good">sentiment_very_satisfied</mat-icon>
+                            <!-- sentiment_very_satisfied, sentiment_neutral, sentiment_extremely_dissatisfied -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="inv" colspan="4">Inventory<br>
+                            <div id="inventory">
+                                <ul class="condensed">
+                                    <li *ngFor="let item of inventory" [innerHtml]="item"></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>actions</td>
+                        <td colspan="2">
+                            <button class="action" [class.map-selected]="mapSelected"
+                                [class.map-deselected]="!mapSelected" *ngIf="this.mapImageAvailable === true"
+                                (click)="launchMap()"><mat-icon [class.map-selected]="mapSelected"
+                                    [class.map-deselected]="!mapSelected">map</mat-icon></button>
+
+                            <button class="action" [class.rest-selected]="restSelected"
+                                [class.rest-deselected]="!restSelected" *ngIf="this.mapImageAvailable === true"
+                                (click)="startRest()"><mat-icon [class.rest-selected]="restSelected"
+                                    [class.rest-deselected]="!restSelected">favorite</mat-icon></button>
+
+                            <button class="action" [class.help-selected]="helpSelected"
+                                [class.help-deselected]="!helpSelected" *ngIf="this.mapImageAvailable === true"
+                                (click)="getHelp()"><mat-icon [class.help-selected]="helpSelected"
+                                    [class.help-deselected]="!helpSelected">help</mat-icon></button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div id="helpsection"><span class="important">A text-based multi-user dungeon. HUZZAH!</span>
+            </div>
+            <div id="command">
+                <input id="mud-input" autocomplete="off" autofocus="ture" spellcheck="false" type="text"
+                    class="command-input" #sendcommandarea (keydown)="sendKeyCommand($event)" [(ngModel)]="command"
+                    placeholder="Type a command here and press &lt;ENTER&gt;.  (e.g. type &quot;say Hi!&quot;&lt;ENTER&gt; to say hello)" />
+            </div>
+            <div id="aiimage">
+                <div *ngIf="this.roomImageName !=''">
+                    <button class="aiimage-btn" *ngIf="this.roomImageAvailable === true" (click)="launchImage()"><img
+                            class="aiimage" [src]="this.roomImageName"></button>
+                </div>
+            </div>
+            <div id="usersconnected">{{usersConnected}} users online.</div>
+        </div>
+        <div></div>
+    </mat-card>
+</div>

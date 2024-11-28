@@ -1,0 +1,14 @@
+<div class="main">
+    <div>
+        <h4>Please choose a name</h4><br>
+    </div>
+    <div>
+        <form [formGroup]="formGroup">
+            <mat-form-field class="nameinput">
+                <mat-label>Name thy adventurer!</mat-label>
+                <input maxlength="10" matInput placeholder="Hink CoggleSmelt" formControlName="name" />
+            </mat-form-field>
+        </form>
+    </div>
+    <div><button mat-button (click)="submit()">Begin</button></div>
+</div>
