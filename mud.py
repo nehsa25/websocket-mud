@@ -117,7 +117,7 @@ async def main():
     ssl_context.load_cert_chain(
         "certificate.pem", "private.key"
     )
-    async with websockets.serve(m.main, host, port, max_size=9000000, ssl=ssl_context):
+    async with websockets.serve(m.main, host, port, max_size=9000000):
         await asyncio.Future()  # Run forever
 
 if __name__ == "__main__":

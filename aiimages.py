@@ -9,13 +9,13 @@ from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
 
-class GeneratedFileType(Utility):
+# 
+class AIFile(Utility):
     description = None
     file_name = None
-    secrets = None
-    
+    logger = None
+
     def __init__(self, line, logger) -> None:
-        LogUtils.debug("Initializing GeneratedFileType() class", logger)
         item = json.loads(line)
         self.logger = logger
         self.description = item["description"]
@@ -193,7 +193,7 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
@@ -203,7 +203,7 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
@@ -213,7 +213,7 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
@@ -223,7 +223,7 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
@@ -233,7 +233,7 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
