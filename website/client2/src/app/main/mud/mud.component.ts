@@ -261,6 +261,9 @@ export class MudComponent implements OnInit, OnDestroy {
       height: '600px',
       position: { top: '50px', right: '200px' }
     });
+    dialogRef.afterClosed().subscribe(result => {
+      this.helpSelected = false;
+    });
   }
 
   launchMap() {
@@ -551,23 +554,22 @@ export class MudComponent implements OnInit, OnDestroy {
         this.mapImageName = data.map_image_name;
         this.mapImageAvailable = true;
         this.miniMap = `https://api.nehsa.net/${this.mapImageName}_small.svg`;
-        //this.launchMap(this.mapName);
         break;
       case MudEvents.ROOM_IMAGE:
         this.roomImageName = `https://api.nehsa.net/rooms/${data.room_image_name}`;
         this.roomImageAvailable = true;
         break;
       case MudEvents.PLAYER_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/rooms/${data.image_name}" alt="player image" class="player-image" />`;
+        this.mudEvents += `<br><img src="https://api.nehsa.net/players/${data.image_name}" alt="player image" class="player-image" />`;
         break;
       case MudEvents.NPC_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/rooms/${data.image_name}" alt="npc image" class="npc-image" />`;
+        this.mudEvents += `<br><img src="https://api.nehsa.net/npcs/${data.image_name}" alt="npc image" class="npc-image" />`;
         break;
       case MudEvents.ITEM_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/rooms/${data.image_name}" alt="item image" class="item-image" />`;
+        this.mudEvents += `<br><img src="https://api.nehsa.net/items/${data.image_name}" alt="item image" class="item-image" />`;
         break;
       case MudEvents.MONSTER_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/rooms/${data.image_name}" alt="monster image" class="monster-image" />`;
+        this.mudEvents += `<br><img src="https://api.nehsa.net/monsters/${data.image_name}" alt="monster image" class="monster-image" />`;
         break;
       case MudEvents.DIRECTION:
         if (data.message != "") {

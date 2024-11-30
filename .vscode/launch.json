@@ -6,10 +6,20 @@
     "configurations": [
         {
             "name": "Python: Current File",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-        }
+        },
+        {
+            "name": "mud.py - start",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "mud.py",
+            "args": [
+                " --host=localhost"
+            ],
+            "console": "integratedTerminal",
+        },
     ]
 }

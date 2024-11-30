@@ -6,8 +6,10 @@ from utility import Utility
 class Loot(Utility):
     logger = None
     command = "loot <target>"
-    examples = []
-    description = "Loot an item from a corpse."
+    examples = [
+        "loot skeleton",
+    ]
+    description = "Loot from corpses"
     type = Utility.Share.Commands.LOOT
     def __init__(self, logger):
         self.logger = logger

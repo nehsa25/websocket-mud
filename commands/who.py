@@ -6,7 +6,7 @@ from utility import Utility
 class Who(Utility):
     logger = None
     command = "who"
-    examples = []
+    examples = ["who"]
     description = "List all players in the game."
     type = Utility.Share.Commands.WHO
     def __init__(self, logger):

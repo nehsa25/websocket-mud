@@ -110,15 +110,20 @@ async def handler(websocket, path):
         message = await websocket.recv()
         await websocket.send(f"Received message: {message}")
 
-async def main():
+async def main(host):
     # start websocket server
     LogUtils.info(f"Starting websocket server", logger)
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
     ssl_context.load_cert_chain(
         "certificate.pem", "private.key"
     )
-    async with websockets.serve(m.main, host, port, max_size=9000000):
-        await asyncio.Future()  # Run forever
+
+    if host == None:
+        async with websockets.serve(m.main, host, port, max_size=9000000, ssl=ssl_context):
+            await asyncio.Future()  # Run forever
+    else:
+        async with websockets.serve(m.main, host, port, max_size=9000000):
+            await asyncio.Future()
 
 if __name__ == "__main__":
     try:
@@ -142,7 +147,7 @@ if __name__ == "__main__":
             logger,
         )
 
-        asyncio.run(main())
+        asyncio.run(main(host))
 
         # start listening loop
         loop = asyncio.get_event_loop()

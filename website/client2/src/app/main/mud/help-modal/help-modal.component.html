@@ -1,7 +1,7 @@
 <mat-card class="card">
     <mat-card-header>
         <mat-card-title>
-            <h1 data-testid="header-title">NehsaMUD Help</h1>
+            <h1 data-testid="header-title">Help!</h1>
         </mat-card-title>
         <mat-card-subtitle>
             <span class="subtitle">These are some commands to get you started. You can click the ? or type "help" at any
@@ -11,12 +11,33 @@
     </mat-card-header>
     <mat-card-content>
         <div class="topics">
-            <dl class="condensed" *ngFor="let dat of data.cmds">
-                <dt>
-                    {{dat.command}}
-                </dt>
-                <dd>{{dat.description}}</dd>
-            </dl>
+            <table>
+                <tr>
+                    <th>Need</th>
+                    <th>Command</th>
+                </tr>
+                <ng-template ngFor let-dat [ngForOf]="data.cmds">
+                    <tr>
+                        <td>{{ dat.description }}</td>
+                        <td>{{ dat.command }}</td>
+                    </tr>
+                    <tr *ngIf="dat.examples.length > 0">
+                        <td></td>
+                        <td>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>Example</mat-panel-title>
+                                </mat-expansion-panel-header>
+                                <ul>
+                                    <li *ngFor="let example of dat.examples">
+                                        {{ example }}
+                                    </li>
+                                </ul>
+                            </mat-expansion-panel>
+                        </td>
+                    </tr>
+                </ng-template>
+            </table>
         </div>
     </mat-card-content>
 </mat-card>

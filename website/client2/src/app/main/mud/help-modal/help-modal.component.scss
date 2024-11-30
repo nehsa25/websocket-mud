@@ -3,6 +3,14 @@
     max-height: 425px;
 }
 
+.scroll {
+    overflow-y: auto;
+}
+
 .subtitle {
     color: black !important;
+}
+
+dl {
+    width: 100%;
 }

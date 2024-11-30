@@ -5,8 +5,11 @@ from utility import Utility
 
 class System(Utility):
     logger = None
-    command = "system[sys] <subcommand> <args>"
-    examples = ["system name Hopper - change your name to Hopper"]
+    command = "system <subcommand> <args>"
+    examples = [
+        "system name Hopper - change your name to Hopper"
+        "sys name Kvothe"
+    ]
     description = "Perform a system command"
     type = Utility.Share.Commands.SYSTEM
     def __init__(self, logger):

@@ -52,12 +52,12 @@ class Drop(Utility):
             return player, world
 
     logger = None
-    description = "Drop an item from your inventory to the room floor."
-    command = "drop[dr,d] <target>"
+    description = "Drop something"
+    command = "drop <target>"
     examples = [
-        Example("d sword", "You drop the sword from your inventory."),
-        Example("dr sword", "You drop the sword from your inventory."),
-        Example("drop sword", "You drop the sword from your inventory."),
+        "d sword",
+        "dr sword",
+        "drop sword",
     ]
     drop_utility = None
     type = Utility.Share.Commands.DROP
