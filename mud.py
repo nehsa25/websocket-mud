@@ -110,7 +110,7 @@ async def handler(websocket, path):
         message = await websocket.recv()
         await websocket.send(f"Received message: {message}")
 
-async def main(host):
+async def start_websocket_server(host):
     # start websocket server
     LogUtils.info(f"Starting websocket server", logger)
     ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
@@ -119,10 +119,10 @@ async def main(host):
     )
 
     if host == None:
-        async with websockets.serve(m.main, host, port, max_size=9000000, ssl=ssl_context):
+        async with websockets.serve(mud.main, host, port, max_size=9000000, ssl=ssl_context):
             await asyncio.Future()  # Run forever
     else:
-        async with websockets.serve(m.main, host, port, max_size=9000000):
+        async with websockets.serve(mud.main, host, port, max_size=9000000):
             await asyncio.Future()
 
 if __name__ == "__main__":
@@ -131,10 +131,10 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.ERROR,
-            console_level=Level.DEBUG,
+            console_level=Level.ERROR,
             log_location="~/",
         )
-        m = Mud(logger)
+        mud = Mud(logger)
 
         # start websocket
         host = SysArgs.read_sys_args("--host=")
@@ -147,11 +147,13 @@ if __name__ == "__main__":
             logger,
         )
 
-        asyncio.run(main(host))
-
         # start listening loop
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(m.world_state.setup_world_events())
+        loop = asyncio.new_event_loop()
+        loop.run_until_complete(mud.world_state.setup_world_events())
+
+
+        asyncio.run(start_websocket_server(host))
+
         loop.run_forever()
 
         # if we got here the loop was cancelled, just quit
