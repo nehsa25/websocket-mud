@@ -6,7 +6,7 @@ from utility import Utility
 class Say(Utility):
     logger = None
     command = "say <message>"
-    examples = []
+    examples = ["say 'sup homies?"]
     description = "Say something to the room you're in."
     type = Utility.Share.Commands.SAY
     def __init__(self, logger):

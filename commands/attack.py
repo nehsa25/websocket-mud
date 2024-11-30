@@ -7,9 +7,13 @@ from utility import Utility
 
 class Attack(Utility):
     logger = None
-    description = "Attack a monster, player, or NPC. Hell, fight a tree."
-    command = "attack[a|att] <target>"
-    examples = []
+    description = "Attack something"
+    command = "attack <target>"
+    examples = [
+        "a skeleton",
+        "att skel",
+        "attack skeleton"
+    ]
     type = Utility.Share.Commands.ATTACK
     def __init__(self, logger):
         self.logger = logger

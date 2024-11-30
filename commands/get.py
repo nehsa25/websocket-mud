@@ -5,9 +5,11 @@ from utility import Utility
 
 class Get(Utility):
     logger = None
-    description = "Get an item from the room floor."
-    command = "get[g] <target>"
-    examples = []
+    description = "Get something"
+    command = "get <target>"
+    examples = [
+        "g sword - get a sword",
+    ]
     type = Utility.Share.Commands.GET
     def __init__(self, logger):
         self.logger = logger

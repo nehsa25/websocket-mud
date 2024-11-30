@@ -4,9 +4,13 @@ from utility import Utility
 
 class Inventory(Utility):
     logger = None
-    command = "inventory[inv,i]"
-    examples = []
-    description = "View the items in your inventory."
+    command = "inventory"
+    examples = [
+        "i",
+        "inv",
+        "inventory",
+    ]
+    description = "View inventory"
     type = Utility.Share.Commands.INVENTORY
     def __init__(self, logger):
         self.logger = logger

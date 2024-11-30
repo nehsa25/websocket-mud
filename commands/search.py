@@ -6,9 +6,12 @@ from utility import Utility
 
 class Search(Utility):
     logger = None
-    command = "search[sea] <target>"
-    examples = []
-    description = "Search the room for items."
+    command = "search"
+    examples = [
+        "search",
+        "sea"
+    ]
+    description = "Search area"
     type = Utility.Share.Commands.SEARCH
     def __init__(self, logger):
         self.logger = logger

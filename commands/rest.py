@@ -6,7 +6,7 @@ from utility import Utility
 class Rest(Utility):
     logger = None
     command = "rest"
-    examples = []
+    examples = ["rest"]
     description = "Rest and regain your health."
     type = Utility.Share.Commands.REST
     def __init__(self, logger):

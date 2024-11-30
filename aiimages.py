@@ -4,18 +4,18 @@ import json
 import os
 import jsonpickle
 import requests
-from dontcheckin import Secrets
+from dontcheckin import DevSettings, Secrets, WorldSettings
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
 
-class GeneratedFileType(Utility):
+# 
+class AIFile(Utility):
     description = None
     file_name = None
-    secrets = None
-    
+    logger = None
+
     def __init__(self, line, logger) -> None:
-        LogUtils.debug("Initializing GeneratedFileType() class", logger)
         item = json.loads(line)
         self.logger = logger
         self.description = item["description"]
@@ -36,11 +36,38 @@ class AIImages(Utility):
             LogUtils.debug("Initializing StabilityAIAPI() class", self.logger)            
             self.key = Secrets.StabilityAIKey
             self.seed = seed
-            
-        def create(self, seed, description, room_image_name):
-            return self.create_sd3_medium(seed, description, room_image_name)
-            
-        def create_sd3_medium(self, seed, description, room_image_name):
+
+        def create_room(self, seed, description, room_image_name):
+            path = f"{DevSettings.data_location}/mud-images/rooms"
+            prompt = WorldSettings.room_tone + description
+            name = f"{path}/{room_image_name}"
+            return self.create_sd3_medium(prompt, seed, path, name)
+        
+        def create_item(self, seed, description, image_name):
+            path = f"{DevSettings.data_location}/mud-images/items"
+            prompt = WorldSettings.item_tone + description
+            name = f"{path}/{image_name}"
+            return self.create_sd3_medium(prompt, seed, path, name)
+        
+        def create_player(self, seed, description, image_name):
+            path = f"{DevSettings.data_location}/mud-images/players"
+            prompt = WorldSettings.player_tone + description
+            name = f"{path}/{image_name}"
+            return self.create_sd3_medium(prompt, seed, path, name)
+        
+        def create_npc(self, seed, description, image_name):
+            path = f"{DevSettings.data_location}/mud-images/npcs"
+            prompt = WorldSettings.npc_tone + description
+            name = f"{path}/{image_name}"
+            return self.create_sd3_medium(prompt, seed, path, name)
+        
+        def create_monster(self, seed, description, image_name):
+            path = f"{DevSettings.data_location}/mud-images/monsters"
+            prompt = WorldSettings.monster_tone + description
+            name = f"{path}/{image_name}"
+            return self.create_sd3_medium(prompt, seed, path, name)
+        
+        def create_sd3_medium(self, prompt, seed, path, name):
             try:
                 method_name = inspect.currentframe().f_code.co_name
                 LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -57,18 +84,20 @@ class AIImages(Utility):
                     headers=headers,
                     files={"none": ''},
                     data={
-                        "prompt":  "pixelated,medieval,gothic,scary, and " + description,
+                        "prompt": prompt,
                         "seed": seed,
                         "model": "sd3-large-turbo",
                         "output_format": "png"
                     }
                 )            
                 if response.status_code == 200:
-                    self.path = f"d:/data/mud-images/rooms"
-                    full_path = f"{self.path}/{room_image_name}"   
+                    full_path = os.path.join(path, name)   
                     if os.path.exists(full_path):
                         os.remove(full_path)
                         
+                    # ensure path exists
+                    os.makedirs(os.path.dirname(full_path), exist_ok=True)
+
                     with open(full_path, "w+b") as f:
                         f.write(response.content)
                 elif response.status_code == 402:
@@ -82,41 +111,41 @@ class AIImages(Utility):
                 LogUtils.error(f"Error: {str(e)}", self.logger)
                 raise e
         
-        def create_ultra(self, seed, description, room_image_name):
-            method_name = inspect.currentframe().f_code.co_name
-            LogUtils.debug(f"{method_name}: enter", self.logger)
-            api_key = self.key
-            full_path = "" 
-            if api_key is None:
-                raise Exception("Missing Stability API key.")
-            headers={
-                    "authorization": f"Bearer {api_key}",
-                    "accept": "image/*"
-                }
-            response = requests.post(
-                f"https://api.stability.ai/v2beta/stable-image/generate/ultra",
-                headers=headers,
-                files={"none": ''},
-                data={
-                    "prompt":  "pixelated " + description,
-                    "seed": seed
-                }
-            )            
-            if response.status_code == 200:
-                self.path = f"c:/src/mud_images/rooms"
-                full_path = f"{self.path}/{room_image_name}"   
-                if os.path.exists(full_path):
-                    os.remove(full_path)
+        # def create_ultra(self, seed, description, room_image_name):
+        #     method_name = inspect.currentframe().f_code.co_name
+        #     LogUtils.debug(f"{method_name}: enter", self.logger)
+        #     api_key = self.key
+        #     full_path = "" 
+        #     if api_key is None:
+        #         raise Exception("Missing Stability API key.")
+        #     headers={
+        #             "authorization": f"Bearer {api_key}",
+        #             "accept": "image/*"
+        #         }
+        #     response = requests.post(
+        #         f"https://api.stability.ai/v2beta/stable-image/generate/ultra",
+        #         headers=headers,
+        #         files={"none": ''},
+        #         data={
+        #             "prompt":  "pixelated " + description,
+        #             "seed": seed
+        #         }
+        #     )            
+        #     if response.status_code == 200:
+        #         self.path = f"c:/src/mud_images/rooms"
+        #         full_path = f"{self.path}/{room_image_name}"   
+        #         if os.path.exists(full_path):
+        #             os.remove(full_path)
                     
-                with open(full_path, "wb") as f:
-                    f.write(response.content)
-            elif response.status_code == 402:
-                    LogUtils.warn(f"AI image could not be generated via {self.style}", self.logger)
-            else:
-                LogUtils.error(f"Non-200 response: {str(response.text)}", self.logger)   
+        #         with open(full_path, "wb") as f:
+        #             f.write(response.content)
+        #     elif response.status_code == 402:
+        #             LogUtils.warn(f"AI image could not be generated via {self.style}", self.logger)
+        #     else:
+        #         LogUtils.error(f"Non-200 response: {str(response.text)}", self.logger)   
                                   
-            LogUtils.debug(f"{method_name}: exit", self.logger)
-            return full_path
+        #     LogUtils.debug(f"{method_name}: exit", self.logger)
+        #     return full_path
             
     class LogEntry:
         file_name = None
@@ -172,17 +201,30 @@ class AIImages(Utility):
         LogUtils.info(f"{method_name}: found: {True if result is not None else False}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return result
+    
+    def santitize(self, file_name):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        file_name = file_name.replace(" ", "_")
+        file_name = file_name.replace(":", "")
+        file_name = file_name.replace(",", "")
+        file_name = file_name.replace("!", "")
+        file_name = file_name.replace("?", "")
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return file_name
+    
+    def get_data_file_name(self, type, tone):
+        return f"{type}_{self.santitize(tone)}.dat"
                 
     async def generate_image(self, item_name, item_description, player, world_state, inside=False, type=Utility.Share.ImageType.ROOM):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         image_name = ""        
         item_description = item_description.strip()
-        log_name = ""
-        
+        log_name = ""        
         
         if type == Utility.Share.ImageType.ROOM:
-            log_name = "ai_rooms.txt"
+            log_name = self.get_data_file_name(Utility.Share.ImageType.ROOM, WorldSettings.room_tone)
 
             # update rooms description with weather
             if not inside:
@@ -193,57 +235,67 @@ class AIImages(Utility):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
         elif type == Utility.Share.ImageType.ITEM:
-            log_name = "ai_items.txt"
+            log_name = self.get_data_file_name(Utility.Share.ImageType.ITEM, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
         elif type == Utility.Share.ImageType.PLAYER:
-            log_name = "ai_players.txt"
+            log_name = self.get_data_file_name(Utility.Share.ImageType.PLAYER, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
         elif type == Utility.Share.ImageType.NPC:
-            log_name = "ai_npcs.txt"
+            log_name = self.get_data_file_name(Utility.Share.ImageType.NPC, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
         elif type == Utility.Share.ImageType.MONSTER:
-            log_name = "ai_monsters.txt"
+            log_name = self.get_data_file_name(Utility.Share.ImageType.MONSTER, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
                     for line in contents:
-                        item = GeneratedFileType(line, self.logger)
+                        item = AIFile(line, self.logger)
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
                     
-        # only generate a room if one isn't already generated
+        # only generate a object if one isn't already generated
         if image_name == "":
             LogUtils.info("Cannot find image for description:", self.logger)
             LogUtils.info(item_description, self.logger)
             
-            path = self.generator.create(self.seed, item_description, item_name)
+            if type == Utility.Share.ImageType.ROOM:
+                path = self.generator.create_room(self.seed, item_description, item_name)
+            elif type == Utility.Share.ImageType.ITEM:
+                path = self.generator.create_item(self.seed, item_description, item_name)
+            elif type == Utility.Share.ImageType.PLAYER:
+                path = self.generator.create_player(self.seed, item_description, item_name)
+            elif type == Utility.Share.ImageType.NPC:
+                path = self.generator.create_npc(self.seed, item_description, item_name)
+            elif type == Utility.Share.ImageType.MONSTER:
+                path = self.generator.create_monster(self.seed, item_description, item_name)
+
             if path is not None and path != "":
                 # save the room image to the file 
                 self.add_log_entry(log_name, item_name, item_description)

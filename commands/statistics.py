@@ -5,9 +5,12 @@ from utility import Utility
 
 class Statistics(Utility):
     logger = None
-    command = "statistics[stat, stats, st]"
-    examples = []
-    description = "View statistics about your character."
+    command = "statistics"
+    examples = [
+        "stats",
+        "statistics"
+    ]
+    description = "View character statistics"
     type = Utility.Share.Commands.STATISTICS
     def __init__(self, logger):
         self.logger = logger

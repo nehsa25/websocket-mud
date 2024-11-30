@@ -8,9 +8,14 @@ from utility import Utility
 class Look(Utility):
     ai_images = None
     logger = None
-    command = "look[l], look[l] <target>"
-    examples = []
-    description = "Look around the room."
+    command = "look, look <target>"
+    examples = [
+        "l - look around the room",
+        "l sword - look at a sword",
+        "look bink - look at a player named Bink",
+        "l n - look north",
+    ]
+    description = "Look at something."
     running_image_threads = []
     type = Utility.Share.Commands.LOOK
     def __init__(self, logger):

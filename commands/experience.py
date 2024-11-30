@@ -5,9 +5,12 @@ from utility import Utility
 
 class Experience(Utility):
     logger = None
-    description = "Display how much experience you have and how much is needed to progress to next level."
+    description = "Show experience"
     command = "experience[exp]"
-    examples = []
+    examples = [
+        "exp",
+        "experience"
+    ]
     type = Utility.Share.Commands.EXPERIENCE
     def __init__(self, logger):
         self.logger = logger

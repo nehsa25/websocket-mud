@@ -5,9 +5,13 @@ from utility import Utility
 
 class Equip(Utility):
     logger = None
-    description = "Equip an item from your inventory."
-    command = "eq[wield] <target>"
-    examples = []
+    description = "Equip something"
+    command = "eq <target>"
+    examples = [
+        "eq sword",
+        "wield sword",
+        "equip sword"
+    ]
     type = Utility.Share.Commands.EQUIP
     def __init__(self, logger):
         self.logger = logger

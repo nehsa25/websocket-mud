@@ -1,8 +1,4 @@
 @media (min-width: 0) {
-  #status {
-    height: 371px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title"
@@ -10,10 +6,9 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
+      "aiimage";
     grid-template-columns: 1fr;
-    grid-template-rows: min-content 55svh repeat(5, min-content);
+    grid-template-rows: min-content 55svh repeat(4, min-content);
     height: 100svh !important;
   }
 
@@ -24,9 +19,8 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
-    grid-template-columns: min-content 55svh repeat(5, min-content);
+      "aiimage";
+    grid-template-columns: min-content 55svh repeat(4, min-content);
     grid-template-rows: min-content;
     height: 80svh !important;
   }
@@ -38,10 +32,9 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
+      "aiimage";
     grid-template-columns: 1fr;
-    grid-template-rows: min-content 55svh repeat(5, min-content);
+    grid-template-rows: min-content 55svh repeat(4, min-content);
     height: 100svh !important;
   }
 
@@ -52,10 +45,6 @@
 }
 
 @media (min-width: 576px) {
-  #status {
-    height: 371px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title"
@@ -63,10 +52,9 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
+      "aiimage";
     grid-template-columns: 1fr;
-    grid-template-rows: min-content 55svh repeat(5, min-content);
+    grid-template-rows: min-content 55svh repeat(4, min-content);
     height: 100svh !important;
   }
 
@@ -77,11 +65,10 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
+      "aiimage";
     grid-template-columns: 1fr;
-    grid-template-rows: min-content 55svh repeat(5, min-content);
-    height: 80svh !important;
+    grid-template-rows: min-content 55svh repeat(4, min-content);
+    height: 100svh !important;
   }
 
   .mudgrid-collapsed {
@@ -91,8 +78,7 @@
       "command"
       "status"
       "aiimage"
-      "helpsection"
-      "usersconnected";
+      "aiimage";
     grid-template-columns: 1fr;
     grid-template-rows: min-content;
     height: 100svh !important;
@@ -105,20 +91,15 @@
 }
 
 @media (min-width: 768px) {
-  #status {
-    height: 355px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
     height: 100svh !important;
 
   }
@@ -127,26 +108,29 @@
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh !important;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+  }
+
+  .room-image {
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 100%;
   }
 
   .mudgrid-collapsed {
     grid-template-areas:
       "title title status"
       "main main status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh !important;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .ticker-grid {
@@ -156,20 +140,15 @@
 }
 
 @media (min-width: 992px) {
-  #status {
-    height: 355px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
     height: 100svh !important;
 
   }
@@ -178,26 +157,22 @@
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .mudgrid-collapsed {
     grid-template-areas:
       "title title status"
       "main main status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .ticker-grid {
@@ -207,20 +182,15 @@
 }
 
 @media (min-width: 1200px) {
-  #status {
-    height: 355px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
     height: 100svh !important;
 
   }
@@ -229,26 +199,22 @@
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .mudgrid-collapsed {
     grid-template-areas:
       "title title status"
       "main main status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .ticker-grid {
@@ -258,20 +224,15 @@
 }
 
 @media (min-width: 1400px) {
-  #status {
-    height: 355px;
-  }
-
   .mudgrid-fullscreen {
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
     height: 100svh !important;
 
   }
@@ -280,26 +241,22 @@
     grid-template-areas:
       "title title status"
       "title title status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .mudgrid-collapsed {
     grid-template-areas:
       "title title status"
       "main main status"
+      "main main status"
       "main main aiimage"
-      "main main helpsection"
-      "command command helpsection"
-      "usersconnected usersconnected helpsection";
+      "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px 1fr 1fr 1fr 60px 30px;
-    height: 68svh;
+    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
   }
 
   .ticker-grid {
@@ -373,36 +330,34 @@ td {
   font-size: 2rem;
 }
 
-.mud-dark {
-  background-color: #4a4231 !important;
+.menu-background {
+  // background-color: #4a4231 !important;
+  // #00008B : darkblue
+  // #0047AB : royalblue
+  // #191970 : midnightblue
+  background-color: #0047AB !important;
 }
 
 .title-panel-expanded {
-  background-color: #999;
   height: 470px;
   overflow: hidden;
-}
-
-.title-panel-collapsed {
-  background-color: #999;
 }
 
 #title {
   grid-area: title;
   overflow: hidden;
   width: 100%;
-  background-color: #999;
   margin: 0;
   padding: 0;
 }
 
-#helpsection {
-  grid-area: helpsection;
+#aiimage {
+  grid-area: aiimage;
   overflow: auto;
   padding: 1em;
 }
 
-#helpsection span {
+#aiimage span {
   font-size: inherit;
   color: azure;
 }
@@ -414,16 +369,28 @@ td {
   overflow-y: scroll;
   padding: 1em;
   font-size: large;
-  font-family: monospace;
+  font-family: "JetBrains Mono", monospace;
   color: beige;
 }
 
 #aiimage {
   grid-area: aiimage;
   background-color: #999;
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
+}
+
+.mat-icon {
+  color: azure !important;
+  width: 32px !important;
+  height: 32px !important;
+}
+
+.mat-icon-small {
+  color: azure !important;
+  width: 24px !important;
+  height: 24px !important;
 }
 
 .aiimage-btn {
@@ -434,16 +401,8 @@ td {
   margin: 5px;
 }
 
-#usersconnected {
-  grid-area: usersconnected;
-  display: block;
-  padding-left: inherit;
-  text-align: center;
-}
-
 #command {
   grid-area: command;
-  background-color: #333;
   height: 60px;
   font-size: 2em;
   overflow: hidden;
@@ -451,13 +410,15 @@ td {
 
 #status {
   grid-area: status;
-  -webkit-border-radius: 10px;
-  -ms-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
   padding: 0;
   margin: 0;
   width: 100%;
+  height: 100%;
+}
+
+#status span {
+  font-size: 1.2rem;
+  font-variant: small-caps;
 }
 
 #status td {
@@ -506,7 +467,8 @@ td {
 #inventory {
   overflow: hidden;
   overflow-y: scroll;
-  height: 80px;
+  height: 220px;
+  background-color: #4a4231;
 }
 
 #inventory ul {
@@ -733,21 +695,20 @@ td {
 }
 
 .command-input {
-  width: 100%;
+  width: 90%;
   font-size: 1.5rem;
-  background-color: #333;
   color: #999 !important;
   border: 0;
   padding: 5px 25px;
   height: 40px;
   resize: none;
-  margin: 0;
+  margin: 0 0 0 1em;
   overflow: hidden;
 }
 
 .command-input:focus {
   color: #fff !important;
-  background-color: black;
+  background-color: azure;
 }
 
 .panel-description-grid {
@@ -757,11 +718,17 @@ td {
 }
 
 .title-btns {
-  padding: 10px;
-  color: black;
+  color: azure;
   border: 1px solid #333;
   width: auto;
   height: auto;
+}
+
+.title-text {
+  color: azure;
+  font-size: 2.5rem;
+  padding: 0 1em;
+  font-family: "JetBrains Mono", monospace;
 }
 
 .player-image,
@@ -791,15 +758,11 @@ td {
   height: 1em;
   line-height: 1em;
   font-size: .8rem;
-  color: seagreen !important;
-  background-color: #999 !important;
+  color: azure !important;
   margin: auto 0;
   white-space: nowrap;
   overflow: hidden;
-  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%);
-  /* Safari */
-  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%);
-  /* Standard browsers */
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 100%);
 }
 
 .ticker-text {
@@ -812,8 +775,11 @@ td {
   grid-template-columns: 1fr 50px 50px;
 }
 
+.main,
 .ticker-icon {
-  color: black;
+  color: azure;
+  scrollbar-width: thin;
+  scrollbar-color: #555 #222;
 }
 
 table {

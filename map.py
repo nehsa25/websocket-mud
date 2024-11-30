@@ -3,6 +3,7 @@ import inspect
 import os
 import re
 import pydot
+from dontcheckin import DevSettings
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -62,7 +63,7 @@ class Map(Utility):
             style="dotted"
         )
     
-        self.path = f"D:/data/mud-images"
+        self.path = f"{DevSettings.data_location}/mud-images"
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
 

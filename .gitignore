@@ -17,3 +17,4 @@ dontcheckin.py
 website/client2/.angular/cache/*
 website/client2/dist/*
 website/client2/node_modules/*
+website/wwwroot
