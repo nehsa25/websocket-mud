@@ -27,17 +27,17 @@ class Equip(Utility):
         for item in player.inventory.items:
             if item.name.lower() == wanted_item.lower():
                 await self.send_message(MudEvents.InfoEvent(f"You equip {item.name}."), player.websocket)
-                item.equiped = True
+                item.equipped = True
                 found_item = True
                 found_item = item
 
         # if you eq'd an item, deselect any previous items
         for item in player.inventory.items:
             if (
-                found_item.item_type == item.item_type and item.equiped == True
+                found_item.item_type == item.item_type and item.equipped == True
             ) and found_item.name != item.name:
                 await self.send_message(f"You unequip {item.name}.", "info", player.websocket)
-                item.equiped = False
+                item.equipped = False
         if found_item == None:
             await self.send_message(f"You cannot equip {wanted_item}.", "error", player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)

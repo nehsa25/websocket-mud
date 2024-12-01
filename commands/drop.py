@@ -78,16 +78,17 @@ class Drop(Utility):
             found_item = True
             item_obj = item_obj[0]
 
-        if found_item:
-            item_obj.equip(player, equip=False)
+        # if we found it and it's equipped, unequip it
+        if found_item and item_obj.equipped:
+            item_obj.equipped = False
             
-            # remove from inventory
-            player.inventory.items.remove(item_obj)
-            await self.world.self.world.utility.send_msg(
-                f"You dropped {item_obj.name}.", "info", player.websocket, self.logger
-            )
-            world_state.rooms.rooms[player.location].append(item_obj)
-        
+        # remove from inventory
+        player.inventory.items.remove(item_obj)
+        await self.world.self.world.utility.send_msg(
+            f"You dropped {item_obj.name}.", "info", player.websocket, self.logger
+        )
+        world_state.rooms.rooms[player.location].append(item_obj)
+    
         player, world_state = await self.drop_utility.drop_item(
             wanted_item, player, world_state
         )

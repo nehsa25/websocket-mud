@@ -12,8 +12,8 @@ class Item(Utility):
     item_type = None
     verb = None
     plural_verb = None
-    equiped = False
-    can_be_equiped = False
+    equipped = False
+    can_be_equipped = False
     description = None
     contents = None
 
@@ -58,21 +58,21 @@ class Item(Utility):
     async def equip(self, player, action_eq=True):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        if not self.can_be_equiped and action_eq == True:
+        if not self.can_be_equipped and action_eq == True:
             await self.world.self.world.utility.send_msg(
                 f"You cannot wield {self.name}.", "info", player.websocket, self.logger
             ) 
             return
             
-        if  action_eq == True and self.equiped == False:   
-            self.equiped = True                        
+        if  action_eq == True and self.equipped == False:   
+            self.equipped = True                        
             await self.world.self.world.utility.send_msg(
                 f"You wield {self.name}.", "info", player.websocket, self.logger
             )
             await player.room.alert(f"You notice {player.name} equip {self.name}.", exclude_player=True, player=player)
             
-        if  action_eq == False and self.equiped == True:   
-            self.equiped = False                        
+        if  action_eq == False and self.equipped == True:   
+            self.equipped = False                        
             await self.world.self.world.utility.send_msg(
                 f"You unequip {self.name}.", "info", player.websocket, self.logger
             )
