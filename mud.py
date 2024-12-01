@@ -131,15 +131,13 @@ if __name__ == "__main__":
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.ERROR,
-            console_level=Level.ERROR,
+            console_level=Level.DEBUG,
             log_location="~/",
         )
         mud = Mud(logger)
 
         # start websocket
         host = SysArgs.read_sys_args("--host=")
-        if host == None:
-            host = "127.0.0.1"
         port = SysArgs.read_sys_args("--port=")
         if port == None:
             port = 60049

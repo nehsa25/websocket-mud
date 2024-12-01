@@ -194,6 +194,22 @@ export class MudComponent implements OnInit, OnDestroy {
     this.sendCommand("help");
   }
 
+  launchInvalidName() {
+    const dialogRef = this.dupeDialog.open(InvalidNameComponent, {
+      data: {
+        name: this.userService.name
+      },
+      width: '400px',
+      height: '250px',
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.userService.name = result;
+      var resp = `{\"type\": ${MudEvents.USERNAME_ANSWER}, \"username\": \"${result}\"}`;
+      console.log("Server is requesting our name, sending back: " + resp);
+      this.socket.send(resp);
+    });
+  }
+
   launchSetName() {
     const dialogRef = this.dupeDialog.open(InvalidNameComponent, {
       data: {
@@ -392,7 +408,7 @@ export class MudComponent implements OnInit, OnDestroy {
         break;
       case MudEvents.INVALID_NAME:
         this.userService.name = "";
-        this.launchSetName();
+        this.launchInvalidName();
         break;
       case MudEvents.EVENT: // check if there's an event # breeze, silence, rain
         if (data.message != "") {

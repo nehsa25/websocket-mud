@@ -12,13 +12,21 @@
             "console": "integratedTerminal",
         },
         {
-            "name": "mud.py - start",
+            "name": "mud.py - localhost",
             "type": "debugpy",
             "request": "launch",
             "program": "mud.py",
             "args": [
                 " --host=localhost"
             ],
+            "console": "integratedTerminal",
+        },
+        {
+            "name": "mud.py - api.nehsa.net",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "mud.py",
+            "args": [],
             "console": "integratedTerminal",
         },
     ]
