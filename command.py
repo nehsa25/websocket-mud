@@ -19,7 +19,7 @@ from commands.telepath import Telepath
 from commands.statistics import Statistics
 from commands.system import System
 from commands.who import Who
-from inventory import Inventory
+from commands.inventory import Inventory
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
