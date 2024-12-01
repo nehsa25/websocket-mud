@@ -1,11 +1,9 @@
-import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
@@ -13,7 +11,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   selector: 'app-invalid-name',
   standalone: true,
   imports: [MatButtonModule,
-    NgIf,
     FormsModule,
     MatFormFieldModule,
     ReactiveFormsModule,
@@ -21,7 +18,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIcon,
     MatSnackBarModule],
   templateUrl: './invalid-name.component.html',
   styleUrl: './invalid-name.component.scss'
@@ -29,6 +25,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 export class InvalidNameComponent {
   @Output() emitService = new EventEmitter();
   name: string = "";
+  placeholderName: string = "Hink CoggleSmelt";
   formGroup = this._formBuilder.group({
     name: new FormControl(),
   });
@@ -38,14 +35,24 @@ export class InvalidNameComponent {
     @Inject(MAT_DIALOG_DATA) public data:
       {
         name: string
-      }) {}
-      
+      }) { }
+
   ngOnInit() {
     this.name = this.data.name;
   }
-  
+
+  onKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.submit();
+    }
+  }
+
   submit() {
-    this.emitService.emit(this.formGroup.get('name')?.value);
-    this.dialogRef.close();
+    this.name = this.formGroup.get('name')?.value
+    if (this.name == null || this.name == "") {
+      this.name = this.placeholderName;
+    }
+    this.dialogRef.close(this.name);
   }
 }

@@ -7,8 +7,9 @@ class System(Utility):
     logger = None
     command = "system <subcommand> <args>"
     examples = [
-        "system name Hopper - change your name to Hopper"
-        "sys name Kvothe"
+        "system name Hopper - change your name to Hopper",
+        "sys name Kvothe",
+        "sys name - open change name modal"
     ]
     description = "Perform a system command"
     type = Utility.Share.Commands.SYSTEM

@@ -1,12 +1,12 @@
 <div class="main">
     <div>
-        <h4>Please choose a name</h4><br>
+        <h4>What is the name of your adventurer?</h4><br>
     </div>
     <div>
-        <form [formGroup]="formGroup">
+        <form [formGroup]="formGroup" (keydown)="onKeydown($event)">
             <mat-form-field class="nameinput">
                 <mat-label>Name thy adventurer!</mat-label>
-                <input maxlength="10" matInput placeholder="Hink CoggleSmelt" formControlName="name" />
+                <input maxlength="10" matInput [placeholder]="placeholderName"  formControlName="name" />
             </mat-form-field>
         </form>
     </div>

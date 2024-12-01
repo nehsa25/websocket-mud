@@ -91,7 +91,7 @@ export class MudComponent implements OnInit, OnDestroy {
     const host = "api.nehsa.net";
     const port = 60049;
     this.fullAddress = `wss://${host}:${port}`;
-    
+
     this.socket = new WebSocket(this.fullAddress);
   }
 
@@ -194,7 +194,7 @@ export class MudComponent implements OnInit, OnDestroy {
     this.sendCommand("help");
   }
 
-  launchInvalidName() {
+  launchSetName() {
     const dialogRef = this.dupeDialog.open(InvalidNameComponent, {
       data: {
         name: this.userService.name
@@ -202,13 +202,9 @@ export class MudComponent implements OnInit, OnDestroy {
       width: '400px',
       height: '250px',
     });
-    dialogRef.componentInstance.emitService.subscribe((val: any) => {
-      this.userService.name = val;
-      var resp = `{\"type\": ${MudEvents.USERNAME_ANSWER}, \"username\": \"${val}\"}`;
-      console.log("Server is requesting our name, sending back: " + resp);
-      this.socket.send(resp);
-    });
     dialogRef.afterClosed().subscribe(result => {
+      this.userService.name = result;
+      this.sendCommand(`sys name ${result}`);
     });
   }
 
@@ -396,7 +392,7 @@ export class MudComponent implements OnInit, OnDestroy {
         break;
       case MudEvents.INVALID_NAME:
         this.userService.name = "";
-        this.launchInvalidName();
+        this.launchSetName();
         break;
       case MudEvents.EVENT: // check if there's an event # breeze, silence, rain
         if (data.message != "") {
@@ -628,6 +624,9 @@ export class MudComponent implements OnInit, OnDestroy {
     if (command === "map") {
       found = true;
       this.launchMap();
+    } else if (command === "sys name" || command === "system name") {
+      found = true;
+      this.launchSetName();
     }
     return found;
   }
@@ -650,8 +649,7 @@ export class MudComponent implements OnInit, OnDestroy {
             "name": this.userService.name
           }
         };
-        console.log("Sending: " + this.command);
-        console.log(full_cmd);
+        console.log("Sending: " + full_cmd);
         this.socket.send(JSON.stringify(full_cmd));
       } else {
         console.log("Websocket is closed..");

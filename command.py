@@ -113,7 +113,7 @@ class Commands(Utility):
                 player = await self.hide.execute(command, player, world_state)
             elif lowercase_cmd.startswith("eq ") or lowercase_cmd.startswith("equip ") or lowercase_cmd.startswith("wield "):  # eq
                 player = await self.equip.execute(command, player)
-            elif lowercase_cmd.startswith("system "):  # a system command like changing username
+            elif lowercase_cmd.startswith("system ") or lowercase_cmd.startswith("sys "):  # a system command like changing username
                 player = await self.system.execute(command, extra, player, world_state)
             elif lowercase_cmd == "stat" or lowercase_cmd == "stats" or lowercase_cmd == "statistics":  # stat
                 player = await self.statistics.execute(player)
