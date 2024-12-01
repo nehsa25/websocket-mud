@@ -29,4 +29,5 @@ export enum MudEvents {
     NPC_IMAGE = 26,
     ITEM_IMAGE = 27,
     INVALID_NAME = 28,
+    USERNAME_CHANGED = 29,
 }

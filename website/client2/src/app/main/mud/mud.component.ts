@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
-import { CommentComponent } from '../../shared-components/comment/comment.component';
 import { MudEvent } from '../../types/mudevent.type';
 import { NgClass, NgFor, NgIf, NgStyle } from '@angular/common';
-import { MatButton } from '@angular/material/button';
-import { MatError, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
@@ -46,6 +44,17 @@ export class MudComponent implements OnInit, OnDestroy {
   map_contents = "";
   mapImageName = "";
   roomImageName = "";
+  _name: string = "NehsaMUD";
+
+  // a get and set for the page name
+  get name() {
+    if (this._name == "") {
+      return this.userService.name;
+    } else {
+      return this._name;
+    }
+  }
+
   panelExpanded = false;
   fullAddress: string = "";
   inventory: string[] = [];
@@ -76,7 +85,7 @@ export class MudComponent implements OnInit, OnDestroy {
   soundtrackPosition: number = this.soundtrack.length * this.soundtrackPixelWiggle;
   eventsSubject: Subject<CommentType> = new Subject<CommentType>();
   private _page_name = "mud";
-
+  showIntro = true;
   constructor(
     public router: Router,
     public userService: UserService,
@@ -84,13 +93,13 @@ export class MudComponent implements OnInit, OnDestroy {
     public usernameCreateDialog: MatDialog,
     public mapDialog: MatDialog,
   ) {
-    // const host = "localhost";
-    // const port = 60049;
-    // this.fullAddress = `ws://${host}:${port}`;
-
-    const host = "api.nehsa.net";
+    const host = "localhost";
     const port = 60049;
-    this.fullAddress = `wss://${host}:${port}`;
+    this.fullAddress = `ws://${host}:${port}`;
+
+    // const host = "api.nehsa.net";
+    // const port = 60049;
+    // this.fullAddress = `wss://${host}:${port}`;
 
     this.socket = new WebSocket(this.fullAddress);
   }
@@ -113,6 +122,12 @@ export class MudComponent implements OnInit, OnDestroy {
 
     // soundtrack
     this.intervalId = setInterval(() => this.updateSoundtrackTicker(), 50);
+
+    // fade out title after 10 seconds
+    setTimeout(() => {
+      this._name = "";
+      this.showIntro = false;
+    }, 10000);
 
     //Listen to messages
     this.socket.addEventListener('message', o => {
@@ -143,7 +158,6 @@ export class MudComponent implements OnInit, OnDestroy {
       this.soundtrackPosition = this.soundtrack.length * this.soundtrackPixelWiggle;
     }
   }
-
 
   /** Adds a dashed border around the string */
   addBorder(message: string) {
@@ -197,9 +211,10 @@ export class MudComponent implements OnInit, OnDestroy {
   launchInvalidName() {
     const dialogRef = this.dupeDialog.open(InvalidNameComponent, {
       data: {
-        name: this.userService.name
+        name: this.userService.name,
+        purpose: "first"
       },
-      width: '400px',
+      width: '600px',
       height: '250px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -210,12 +225,13 @@ export class MudComponent implements OnInit, OnDestroy {
     });
   }
 
-  launchSetName() {
+  launchChangeName() {
     const dialogRef = this.dupeDialog.open(InvalidNameComponent, {
       data: {
-        name: this.userService.name
+        name: this.userService.name,
+        purpose: "change"
       },
-      width: '400px',
+      width: '600px',
       height: '250px',
     });
     dialogRef.afterClosed().subscribe(result => {
@@ -343,14 +359,7 @@ export class MudComponent implements OnInit, OnDestroy {
     return message;
   }
 
-  playerBoolean(val: boolean) {
-    if (val) {
-      return "Aye";
-    } else {
-      return "Nay";
-    }
-  }
-
+  // process events
   processEvent(data: MudEvent) {
     switch (data.type) {
       case MudEvents.WELCOME:
@@ -371,12 +380,15 @@ export class MudComponent implements OnInit, OnDestroy {
         welcome += ` <li>Various NPCs can interact with the real world, including scaping webpages, the weather, or other data, and return it in-game.</li>`;
         welcome += ` </ul>`;
         welcome += ` <br><br>Lastly, NehsaMUD is a side project.  We want to recreate an old game using modern technologies.  `;
-        welcome += ` Please understand that NehsaMUD is a side project. It's perpetually mostly broken, as we use it mainly as a creative environment.<br>`;
-        welcome += ` <h4 class="important">We hope you like it!</h4>`;
+        welcome += ` Please understand that NehsaMUD is a side project. It's perpetually mostly broken...<br>`;
+        welcome += ` <br><h4 class="important">We hope you like it!</h4>`;
         if (data.message != "") {
-          this.mudEvents += `${welcome}<br><br><span class=\"welcome-message\">${data.message}</span>`;
+          if (this.showIntro) {
+            this.mudEvents += `${welcome}<br><br><span class=\"welcome-message\">${data.message}</span>`;
+          } else {
+            this.mudEvents += `<br><span class=\"welcome-message\">${data.message}</span>`;
+          }
         }
-        this.userService.name = data.name;
 
         // look
         this.sendCommand(``);
@@ -598,6 +610,12 @@ export class MudComponent implements OnInit, OnDestroy {
           this.mudEvents += "<br><span class=\"environment-message\">" + data.message + "</span>";
         }
         break;
+      case MudEvents.USERNAME_CHANGED:
+        if (data.name != "") {
+          this.userService.name = data.name;
+          this.mudEvents += "<br><span class=\"info-message\">" + data.message + "</span>";
+        }
+        break;
       default:
         console.error("unsupported event: " + data.type.toString());
         break;
@@ -642,7 +660,7 @@ export class MudComponent implements OnInit, OnDestroy {
       this.launchMap();
     } else if (command === "sys name" || command === "system name") {
       found = true;
-      this.launchSetName();
+      this.launchChangeName();
     }
     return found;
   }
@@ -665,7 +683,8 @@ export class MudComponent implements OnInit, OnDestroy {
             "name": this.userService.name
           }
         };
-        console.log("Sending: " + full_cmd);
+        console.log("Sending: ");
+        console.log(full_cmd);
         this.socket.send(JSON.stringify(full_cmd));
       } else {
         console.log("Websocket is closed..");

@@ -1,19 +1,16 @@
-import { NgIf } from '@angular/common';
 import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { MatFormField, MatFormFieldModule, MatLabel } from '@angular/material/form-field';
-import { MatIcon } from '@angular/material/icon';
-import { MatInput, MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-dupe-name',
   standalone: true,
   imports: [MatButtonModule,
-    NgIf,
     FormsModule,
     MatFormFieldModule,
     ReactiveFormsModule,
@@ -21,7 +18,6 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     FormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatIcon,
     MatSnackBarModule],
   templateUrl: './dupe-name.component.html',
   styleUrl: './dupe-name.component.scss'

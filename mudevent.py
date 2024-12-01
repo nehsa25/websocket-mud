@@ -45,7 +45,8 @@ class MudEvents:
             PLAYER_IMAGE = 25
             NPC_IMAGE = 26
             ITEM_IMAGE = 27
-            INVALID_NAME = 28        
+            INVALID_NAME = 28
+            USERNAME_CHANGED = 29
 
         @staticmethod
         def get_event_type_id(event):
@@ -125,6 +126,21 @@ class MudEvents:
                 MudEvents.EventUtility.EventTypes.USERNAME_REQUEST
             )
             self.world_name = world_name
+
+        def to_json(self):
+            return jsonpickle.encode(self)
+        
+    class UsernameChangedEvent:
+        type = None
+        name = ""
+        message = ""
+
+        def __init__(self, message, name):
+            self.type = MudEvents.EventUtility.get_event_type_id(
+                MudEvents.EventUtility.EventTypes.USERNAME_CHANGED
+            )
+            self.name = name
+            self.message = message
 
         def to_json(self):
             return jsonpickle.encode(self)

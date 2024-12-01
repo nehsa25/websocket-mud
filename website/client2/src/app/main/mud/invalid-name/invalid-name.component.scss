@@ -11,7 +11,16 @@ mat-form-field {
     width: 100%;
 }
 
+.nameinput {
+    border: 1px solid #0047AB;
+}
+
 input {
     width: 100%;
-    margin: 1em;
+    margin: 10px;
+    font-size: 2.2rem !important;
+}
+
+.buttons {
+    font-size: 1.3rem !important;
 }

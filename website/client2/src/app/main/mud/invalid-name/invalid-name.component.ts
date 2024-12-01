@@ -25,6 +25,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 export class InvalidNameComponent {
   @Output() emitService = new EventEmitter();
   name: string = "";
+  public title: string = "";
   placeholderName: string = "Hink CoggleSmelt";
   formGroup = this._formBuilder.group({
     name: new FormControl(),
@@ -35,10 +36,16 @@ export class InvalidNameComponent {
     @Inject(MAT_DIALOG_DATA) public data:
       {
         name: string
+        purpose: string
       }) { }
 
   ngOnInit() {
     this.name = this.data.name;
+    if (this.data.purpose == "first") {
+      this.title = "Choose a name for your adventurer?";
+    } else {
+      this.title = "What do you want to change your name to?";
+    }
   }
 
   onKeydown(event: KeyboardEvent) {

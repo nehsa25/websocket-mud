@@ -40,6 +40,7 @@ from races.nyrriss import Nyrriss
 from player import Player
 from utility import Utility
 from wordsmith import Pronouns
+import re
 
 class Players(Utility):
     logger = None
@@ -52,14 +53,29 @@ class Players(Utility):
     async def check_valid_name(self, name):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
+
+        name = name.strip()
         
         problem_names = ["", "admin", "administrator", "moderator", "map", "help", "look", "inv", "inventory", 
                          "quit", "exit", "sys", "system", "god", "superuser", "super", "nehsa", 
                          "nehsamud", "nehsa_mud", "candie", "princess candie", "renkath", "cog", "frederick", "jaque", "maximus"]
  
         valid = True
-        if len(name) < 3 or len(name) > 15 or not name.isalnum():
+
+        # the name must:
+        # - be between 3 and 25 characters
+        # - not contain any special characters
+        # - not be a problem name
+        # - but can have spaces "Hink the Great"
+        if len(name) < 3 or len(name) > 25 or not re.match(r'^[a-zA-Z0-9\s]+$', name):
             valid = False
+
+        # tests:
+        # "Hink" - valid
+        # "hink" - valid
+        # "Hink the Great" - valid
+        # "" - invalid
+        # " Hink" - invalid
             
         if name.lower() in problem_names:
             valid = False            

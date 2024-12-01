@@ -1,14 +1,15 @@
 <div class="main">
     <div>
-        <h4>What is the name of your adventurer?</h4><br>
+        <h4>{{this.title}}</h4><br>
     </div>
     <div>
         <form [formGroup]="formGroup" (keydown)="onKeydown($event)">
             <mat-form-field class="nameinput">
-                <mat-label>Name thy adventurer!</mat-label>
-                <input maxlength="10" matInput [placeholder]="placeholderName"  formControlName="name" />
+                <input maxlength="25" matInput [(ngModel)]="placeholderName" formControlName="name" />
             </mat-form-field>
         </form>
     </div>
-    <div><button mat-button (click)="submit()">Begin</button></div>
+    <div mat-dialog-actions align="end">
+        <button class="buttons" mat-button (click)="submit()">To Adventure!</button>
+    </div>
 </div>
