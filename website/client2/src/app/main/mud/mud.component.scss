@@ -755,8 +755,6 @@ td {
 
 .soundtrack {
   width: 600px;
-  height: 1em;
-  line-height: 1em;
   font-size: .8rem;
   color: azure !important;
   margin: auto 0;
@@ -767,6 +765,7 @@ td {
 
 .ticker-text {
   display: inline-block;
+  padding: 2px 0;
   /* Allow for scrolling within the container */
 }
 
