@@ -61,7 +61,7 @@ class WorldState(Utility):
         change_weather_in_min = 120
         change_season_in_min = 120 * 8
         logger = None
-        room_description = None
+        weather_room_description = None
         weather = None
         dayornight = Utility.Share.DayOrNight.DAY
         dayornight_interval = 30
@@ -98,7 +98,8 @@ class WorldState(Utility):
         def add_weather_description(self, room_description):
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(f"{method_name}: enter", self.logger)
-            room_desc = f"{room_description} {self.room_description}"
+            if not room_description.endswith(self.weather_room_description):
+                room_desc = f"{room_description} {self.weather_room_description}"
             LogUtils.debug(f"{method_name}: exit", self.logger)
             return room_desc
 
@@ -109,55 +110,55 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.RAIN
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "There's currently a light drizzle."
+                self.weather_room_description = "There's currently a light drizzle."
                 self.start_description = "It's starting to rain."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.RAIN
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "It's raining."
+                self.weather_room_description = "It's raining."
                 self.start_description = "It's starting to rain hard."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.RAIN
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = "It's pouring rain."
+                self.weather_room_description = "It's pouring rain."
                 self.start_description = "It's starting to rain very hard."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.FOG
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "A small fog has settled in."
+                self.weather_room_description = "A small fog has settled in."
                 self.start_description = "A light fog begins to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.FOG
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "Fog has settled in."
+                self.weather_room_description = "Fog has settled in."
                 self.start_description = "A mild fog begins to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.FOG
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = "A thick fog has settled in. You can barely see your hand in front of your face."
+                self.weather_room_description = "A thick fog has settled in. You can barely see your hand in front of your face."
                 self.start_description = "A thick fog begins to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SNOW
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "Small flurry of snowflakes are falling."
+                self.weather_room_description = "Small flurry of snowflakes are falling."
                 self.start_description = "It begins to snow."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SNOW
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "It's snowing."
+                self.weather_room_description = "It's snowing."
                 self.start_description = "A decent snowfall abruptly begins."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SNOW
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = (
+                self.weather_room_description = (
                     "It's snowing heavily. You may want to find shelter."
                 )
                 self.start_description = "A heavy snowfall begins."
@@ -165,7 +166,7 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.THUNDER
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "It's pouring rain."
+                self.weather_room_description = "It's pouring rain."
                 self.start_description = (
                     "It's starting to rain very hard. The sky is beginning to darken."
                 )
@@ -173,7 +174,7 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.THUNDER
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "It's pouring rain and thundering."
+                self.weather_room_description = "It's pouring rain and thundering."
                 self.start_description = (
                     "A dilluge of rain begins. The sky is abuptly overcast."
                 )
@@ -181,25 +182,25 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.THUNDER
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = "Lightning is striking all around you. The sound of thunder is all-consuming."
+                self.weather_room_description = "Lightning is striking all around you. The sound of thunder is all-consuming."
                 self.start_description = "It's starting to rain very hard.  The sky is abuptly a dark gray overcast and lightning is beginning to strike."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SUN
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "The sun is shines down. It's pleasant."
+                self.weather_room_description = "The sun is shines down. It's pleasant."
                 self.start_description = "Sun breaks through the clouds."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SUN
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "The sun is shining brightly. You shade your eyes as you look around."
+                self.weather_room_description = "The sun is shining brightly. You shade your eyes as you look around."
                 self.start_description = "Sun breaks through the clouds."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.SUN
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = (
+                self.weather_room_description = (
                     "A cloudless blue sky extends in all directions."
                 )
                 self.start_description = "Sun breaks through the clouds."
@@ -207,19 +208,19 @@ class WorldState(Utility):
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
                 and self.weather_strength == Utility.Share.WeatherStrength.LIGHT
             ):
-                self.room_description = "Small patches of sun shine through the clouds."
+                self.weather_room_description = "Small patches of sun shine through the clouds."
                 self.start_description = "Clouds are starting to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
                 and self.weather_strength == Utility.Share.WeatherStrength.MEDIUM
             ):
-                self.room_description = "The sky is overcast."
+                self.weather_room_description = "The sky is overcast."
                 self.start_description = "Clouds are starting to form."
             elif (
                 self.weather_type == Utility.Share.WeatherTypes.OVERCAST
                 and self.weather_strength == Utility.Share.WeatherStrength.HEAVY
             ):
-                self.room_description = (
+                self.weather_room_description = (
                     "The sky is completely overcast. It looks like it may rain soon."
                 )
                 self.start_description = "A heavy overcast begins to form."

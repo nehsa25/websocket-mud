@@ -99,7 +99,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
     height: 100svh !important;
 
   }
@@ -112,7 +112,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .room-image {
@@ -130,7 +130,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .ticker-grid {
@@ -148,7 +148,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
     height: 100svh !important;
 
   }
@@ -161,7 +161,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .mudgrid-collapsed {
@@ -172,7 +172,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .ticker-grid {
@@ -190,7 +190,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
     height: 100svh !important;
 
   }
@@ -203,7 +203,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .mudgrid-collapsed {
@@ -214,7 +214,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .ticker-grid {
@@ -232,7 +232,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
     height: 100svh !important;
 
   }
@@ -245,7 +245,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .mudgrid-collapsed {
@@ -256,7 +256,7 @@
       "main main aiimage"
       "command command aiimage";
     grid-template-columns: 400px 1fr 325px;
-    grid-template-rows: 45px repeat(3, minmax(0, 1fr)) 60px;
+    grid-template-rows: 45px repeat(3, 24svh) 60px;
   }
 
   .ticker-grid {

@@ -390,6 +390,11 @@ export class MudComponent implements OnInit, OnDestroy {
           }
         }
 
+        // press enter after 3 seconds
+        setTimeout(() => {
+          this.sendCommand("look");
+        }, 3000);
+
         // look
         this.sendCommand(``);
 
