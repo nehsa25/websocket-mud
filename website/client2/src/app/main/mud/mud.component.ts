@@ -93,14 +93,14 @@ export class MudComponent implements OnInit, OnDestroy {
     public usernameCreateDialog: MatDialog,
     public mapDialog: MatDialog,
   ) {
-    const host = "localhost";
-    const port = 60049;
-    this.fullAddress = `ws://${host}:${port}`;
-
-    // const host = "api.nehsa.net";
+    // const host = "localhost";
     // const port = 60049;
-    // this.fullAddress = `wss://${host}:${port}`;
+    // this.fullAddress = `ws://${host}:${port}`;
 
+    const host = "api.nehsa.net";
+    const port = 60049;
+    this.fullAddress = `wss://${host}:${port}`;
+    console.log("Setting up websocket connection at " + this.fullAddress) 
     this.socket = new WebSocket(this.fullAddress);
   }
 

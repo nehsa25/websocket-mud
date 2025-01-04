@@ -139,18 +139,15 @@ if __name__ == "__main__":
         # start websocket
         host = SysArgs.read_sys_args("--host=")
         port = SysArgs.read_sys_args("--port=")
+
         if port == None:
             port = 60049
-
-        LogUtils.info(
-            f"Server started at {host}:{port}.  Waiting for client connections...",
-            logger,
-        )
 
         # start listening loop
         loop = asyncio.new_event_loop()
         loop.run_until_complete(mud.world_state.setup_world_events())
 
+        LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
 
         asyncio.run(start_websocket_server(host))
 
