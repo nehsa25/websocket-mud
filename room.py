@@ -149,7 +149,8 @@ class Room(Utility):
                     LogUtils.info(
                         f'{method_name}: alerting {p.name} of "{message}"', self.logger
                     )
-                    await self.send_message(event_type(message), p.websocket)
+                    eventObj = event_type(message)
+                    await self.send_message(eventObj, p.websocket)
             else:
                 await self.send_message(event_type(message), p.websocket)
                 

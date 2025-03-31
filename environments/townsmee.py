@@ -105,7 +105,7 @@ class TownSmee:
         self.townsquare = Room(
             name=f"{self.name} - Town Square",
             inside=False,
-            description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the foutain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
+            description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the fountain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
             items=[Items.helmet, Items.stick, Items.maul],
             monsters=[],
             npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],

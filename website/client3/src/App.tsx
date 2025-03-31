@@ -4,54 +4,11 @@ import { MudEvents } from './Types/MudEvents.ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
 import { MudStatuses, MudStatusIcons } from './Types/MudStatuses.ts';
-
-// Function to generate the welcome message HTML
-const generateWelcomeMessage = (worldName: string): string => {
-    const starTeal = <FontAwesomeIcon icon={faStar} className="teal" />;
-    const starPurple = <FontAwesomeIcon icon={faStar} className="purple" />;
-    const starRed = <FontAwesomeIcon icon={faStar} className="red" />;
-    const starYellow = <FontAwesomeIcon icon={faStar} className="yellow" />;
-    let welcome = "";
-    welcome += " Welcome to the NehsaMud and the world of ";
-    welcome += (
-        <>
-            {starTeal}
-            {starPurple}
-            {starRed}
-            {starYellow}
-        </>
-    );
-    welcome += `<span class="important">${worldName}</span>`;
-    welcome += (
-        <>
-            {starYellow}
-            {starRed}
-            {starPurple}
-            {starTeal}
-        </>
-    );
-    welcome += `<br/><br/>`;
-    welcome += ` My son, Ethan, and I are working on this project. It's not just a game but a platform for continuous learning and exploration. We use Python, React, TypeScript, Golang, C#, and various other libaries, tools, and AI within Illisurom, all aiming to create an engaging game and educational experience.`;
-    welcome += ` <br/><br/>Why a MUD?`;
-    welcome += ` <br/>It's a tribute to one of the most underappreciated types of game ever created: <span class="importantish">text-based multi-user dungeon (&quot;MUDs&quot;)</span>. MUDs were not just challenging and fast-paced, but also highly social and encouraging. In fact, I met my wife playing a MUD.`;
-    welcome += ` <br/><br/>Some of the features (all in various states of completion):`;
-    welcome += ` <ul class="condensed">`;
-    welcome += ` <li>All the images are created via AI. More information on that in the aimage">AI Image Generation</a></li>`;
-    welcome += ` <li>All NPC and monster dialog is AI provided via Gemini">Google Gemini</a>.</li>`;
-    welcome += ` <li>All maps are dynamically created based on the world and where the user is (using Dot and Pydot</a>).</li>`;
-    welcome += ` <li>Various NPCs can interact with the real world, including scaping webpages, the weather, or other data, and return it in-game.</li>`;
-    welcome += ` </ul>`;
-    welcome += ` <br/><br/>Lastly, NehsaMUD is a side project.  We want to recreate an old game using modern technologies.  `;
-    welcome += ` Please understand that NehsaMUD is a side project. It's perpetually mostly broken...<br/>`;
-    welcome += ` <br/><h4 class="important">We hope you like it!</h4>`;
-    return welcome;
-};
+import ReactDOMServer from 'react-dom/server';
 
 function App() {
     // State variables for dynamic data
     const [title, setCurrentRoomTitle] = useState<string>("Coggle");
-    const [lookMessage, setLookMessage] = useState<string>("");
-    const [welcomeMessage, setWelcomeMessage] = useState<string>("");
     const [roomDescription, setCurrentRoomDescription] = useState<string>("");
     const [npcs, setCurrentRoomNpcs] = useState<string>("");
     const [items, setCurrentRoomItems] = useState<string>("");
@@ -70,6 +27,7 @@ function App() {
     const [hungry, setHungry] = useState<JSX.Element>(<FontAwesomeIcon icon={faSmile} />);
     const [thirsty, setThirsty] = useState<JSX.Element>(<FontAwesomeIcon icon={faTint} />);
     const [mood, setMood] = useState<JSX.Element>(<FontAwesomeIcon icon={faSmile} />);
+    const [worldName, setWorldName] = useState<string>("NehsaMUD");
 
     // Modal state
     const [showUsernameModal, setShowUsernameModal] = useState<boolean>(false);
@@ -130,6 +88,50 @@ function App() {
         }
     }, [mudEvents]);
 
+    // Function to generate the welcome message HTML
+    const generateWelcomeMessage = (worldName: string): string => {
+        const starTeal = <FontAwesomeIcon icon={faStar} className="color-teal" />;
+        const starPurple = <FontAwesomeIcon icon={faStar} className="color-purple" />;
+        const starRed = <FontAwesomeIcon icon={faStar} className="color-red" />;
+        const starYellow = <FontAwesomeIcon icon={faStar} className="color-yellow" />;
+        let welcome = "";
+        welcome += " Welcome to the NehsaMud and the world of ";
+        welcome += convertReactElementToString(
+            <>
+                {starTeal}
+                {starPurple}
+                {starRed}
+                {starYellow}
+            </>
+        );
+        welcome += `<span class="important">${worldName}</span>`;
+        welcome += convertReactElementToString(
+            <>
+                {starYellow}
+                {starRed}
+                {starPurple}
+                {starTeal}
+            </>
+        );
+        welcome += `<br/><br/>`;
+        welcome += ` My son, Ethan, and I are working on this project. It's not just a game but a platform for continuous learning and exploration. We use Python, React, TypeScript, Golang, C#, and various other libaries, tools, and AI within Illisurom, all aiming to create an engaging game and educational experience.`;
+        welcome += ` <br/><br/>Why a MUD?`;
+        welcome += ` <br/>It's a tribute to one of the most underappreciated types of game ever created: <span class="importantish">text-based multi-user dungeon (&quot;MUDs&quot;)</span>. MUDs were not just challenging and fast-paced, but also highly social and encouraging. In fact, I met my wife playing a MUD.`;
+        welcome += ` <br/><br/>Some of the features (all in various states of completion):`;
+        welcome += ` <ul class="condensed">`;
+        welcome += ` <li>Client is built using React and TypeScript.</li>`;
+        welcome += ` <li>All the images are created via AI. More information on that in the aimage">AI Image Generation</a></li>`;
+        welcome += ` <li>All NPC and monster dialog is AI provided via Gemini">Google Gemini</a>.</li>`;
+        welcome += ` <li>All maps are dynamically created based on the world and where the user is (using Dot and Pydot</a>).</li>`;
+        welcome += ` <li>Various NPCs can interact with the real world, including scaping webpages, the weather, or other data, and return it in-game.</li>`;
+        welcome += ` </ul>`;
+        welcome += ` <br/><br/>Lastly, NehsaMUD is a side project.  We want to recreate an old game using modern technologies.  `;
+        welcome += ` Please understand that NehsaMUD is a side project. It's perpetually mostly broken...<br/>`;
+        welcome += ` <br/><h4 class="important">We hope you like it!</h4>`;
+
+        return welcome;
+    };
+
     // Function to colorize the message
     const colorizeMessage = (message: string): string => {
         const colors = ["red", "green", "blue", "white", "yellow", "cyan", "magenta", "black", "gray", "grey",
@@ -152,13 +154,13 @@ function App() {
         let desc = "";
         const descriptionLength = roomTitle.length;
         if (descriptionLength < 160) {
-            for (let i = 0; i < descriptionLength + 2; i++) {
+            for (let i = 0; i < descriptionLength + 4; i++) {
                 desc += '-';
             }
         } else {
             desc += "---------------------------------------------------------------------------------------------------------------------------------------------------------------";
         }
-        return `<hr class="hr-border" />${desc}<br/>|${roomTitle}|<br/>${desc}`;
+        return `<hr class="hr-border" /><span class="room-title">${desc}<br/>| ${roomTitle} |<br/>${desc}</span>`;
     };
 
     // Function to add a bar under the string
@@ -173,6 +175,23 @@ function App() {
             scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
         }
     }
+
+    const convertReactElementToString = (reactContent: React.JSX.Element): string => {
+        return ReactDOMServer.renderToString(reactContent);
+    };
+
+    // Combined effect for scrolling, triggers whenever mudEvents changes
+    useEffect(() => {
+        if (scrollMe.current) {
+            // Use setTimeout to ensure scroll happens after render commit
+            setTimeout(() => {
+                if (scrollMe.current) {
+                    scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
+                }
+            }, 0);
+        }
+    }, [mudEvents]);
+
 
     const pushRoomEvent = (data: any): void => {
         let roommessage = "";
@@ -210,7 +229,6 @@ function App() {
         setMudEvents(prevEvents => [...prevEvents, roommessage]);
     }
 
-
     const sendCommand = (cmd: string): void => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             const full_cmd = {
@@ -233,20 +251,22 @@ function App() {
     const processEvent = (data: any): void => {
         switch (data.type) {
             case MudEvents.WELCOME:
-                const welcomeMessageHtml = generateWelcomeMessage(data.world_name || "NehsaMUD");
-                pushGenericEvent(welcomeMessageHtml);
+                pushGenericEvent(data.message);
                 break;
             case MudEvents.BOOK:
                 pushGenericEvent(`<span class="book-message">${data.book?.title} by ${data.book?.author}</span>`);
                 break;
             case MudEvents.USERNAME_REQUEST:
+                setWorldName(data.world_name || "NehsaMUD");
                 setShowUsernameModal(true);
+                const welcomeMessageHtml = generateWelcomeMessage(data.world_name || "NehsaMUD");
+                pushGenericEvent(welcomeMessageHtml);
                 break;
             case MudEvents.DUPLICATE_NAME:
                 pushGenericEvent(`<span class="error-message">That username is already taken.</span>`);
                 break;
             case MudEvents.INVALID_NAME:
-                pushGenericEvent(`<span class="error-message">Invalid username. Please use only letters and numbers.</span>`);
+                pushGenericEvent(`<span class="error-message">Invalid username. Please use only letters and numbers. Name must be at least 3 characters long.</span>`);
                 break;
             case MudEvents.EVENT:
                 pushGenericEvent(`<span class="event-message">${data.message}</span>`);
@@ -289,7 +309,26 @@ function App() {
                 }
                 break;
             case MudEvents.HELP:
-                pushGenericEvent(`<span class="help-message">${data.message}</span>`);
+                // Handle help
+                let helpMessage = "";
+                if (Array.isArray(data.help_commands)) {
+                    helpMessage += "<span class=\"help-message\">Available commands:</span><ul>";
+                    data.help_commands.forEach((commandHelp: any) => {
+                        helpMessage += `<li><span class="help-command">${commandHelp.command}</span> - <span class="help-description">${commandHelp.description}</span>`;
+                        if (commandHelp.examples && commandHelp.examples.length > 0) {
+                            helpMessage += "<ul>Examples:";
+                            commandHelp.examples.forEach((example: string) => {
+                                helpMessage += `<li>${example}</li>`;
+                            });
+                            helpMessage += "</ul>";
+                        }
+                        helpMessage += "</li>";
+                    });
+                    helpMessage += "</ul>";
+                } else {
+                    helpMessage = `<span class="help-message">${data.message}</span>`;
+                }
+                pushGenericEvent(helpMessage);
                 break;
             case MudEvents.REST:
                 setIsResting(data.is_resting || false);
@@ -299,7 +338,6 @@ function App() {
                 setRoomImageName(data.room_image_name);
                 break;
             case MudEvents.ROOM:
-                setLookMessage(data.description || "");
                 setCurrentRoomTitle(data.name || "NehsaMud");
                 setCurrentRoomDescription(data.description || "");
                 setCurrentRoomNpcs(data.npcs || '');
@@ -365,7 +403,7 @@ function App() {
                         />
                     </div>
                 </div>
-                <div className="column2">
+                <div className="rightSideBar">
                     <div className="side-panel">
                         <div className="scrollable-content">
                             <div>
@@ -406,6 +444,11 @@ function App() {
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    handleUsernameSubmit();
+                                }
+                            }}
                         />
                         <button onClick={handleUsernameSubmit}>Submit</button>
                     </div>

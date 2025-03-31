@@ -134,7 +134,7 @@
 
 .main-grid {
     display: grid;
-    grid-template-columns: 2fr 1fr; /* Adjust column sizes as needed */
+    grid-template-columns: 2fr 250px; /* Adjust column sizes as needed */
     height: calc(100vh - 80px); /* Adjust 80px to match top-bar height + some padding */
 }
 
@@ -146,10 +146,15 @@
     overflow: auto; /* Enable scrolling for long content */
 }
 
-.column2 {
+.rightSideBar {
     /* Styles for the second column */
     padding: 10px;
     background-color: #eee;
+    max-width: 250px; /* Limit the maximum width of the column */
+}
+
+.rightSideBar img {
+  width: 100%;
 }
 
 .data {
@@ -251,4 +256,9 @@
 .scrollable-content {
     overflow-y: auto; /* Enable vertical scrolling */
     max-height: calc(100vh - 200px); /* Adjust the max-height as needed */
+}
+
+.room-title {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 16px;
 }

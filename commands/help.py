@@ -81,7 +81,7 @@ class Help(Utility):
 
         # alert the room
         # player.room.alert(f"You notice {player.name} equip {self.name}.", exclude_player=True, player=player)
-        await player.send_message(MudEvents.InfoEvent(f"You recall a small instructional pamphlet handed to you by the guard when you entered {Utility.Share.WORLD_NAME}. You pull it out and begin to read."), player.websocket)
+        await player.send_message(MudEvents.InfoEvent(f"You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read."), player.websocket)
         await player.room.alert(f"{player.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read.", exclude_player=True, player=player)
 
         commands = []
