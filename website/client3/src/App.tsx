@@ -8,7 +8,7 @@ import ReactDOMServer from 'react-dom/server';
 
 function App() {
     // State variables for dynamic data
-    const [title, setCurrentRoomTitle] = useState<string>("Coggle");
+    const [title, setCurrentRoomTitle] = useState<string>("");
     const [roomDescription, setCurrentRoomDescription] = useState<string>("");
     const [npcs, setCurrentRoomNpcs] = useState<string>("");
     const [items, setCurrentRoomItems] = useState<string>("");
@@ -235,7 +235,7 @@ function App() {
                 "type": MudEvents.COMMAND,
                 "cmd": cmd,
                 "extra": {
-                    "name": username.trim() || "Coggles",
+                    "name": username.trim() || "",
                 }
             };
             console.log("Sending: ");
@@ -312,7 +312,7 @@ function App() {
                 // Handle help
                 let helpMessage = "";
                 if (Array.isArray(data.help_commands)) {
-                    helpMessage += "<span class=\"help-message\">Available commands:</span><ul>";
+                    helpMessage += "<ul>";
                     data.help_commands.forEach((commandHelp: any) => {
                         helpMessage += `<li><span class="help-command">${commandHelp.command}</span> - <span class="help-description">${commandHelp.description}</span>`;
                         if (commandHelp.examples && commandHelp.examples.length > 0) {
@@ -338,7 +338,6 @@ function App() {
                 setRoomImageName(data.room_image_name);
                 break;
             case MudEvents.ROOM:
-                setCurrentRoomTitle(data.name || "NehsaMud");
                 setCurrentRoomDescription(data.description || "");
                 setCurrentRoomNpcs(data.npcs || '');
                 setCurrentRoomItems(data.items || '');
@@ -380,8 +379,7 @@ function App() {
     return (
         <div className="game-container">
             <div className="top-bar">
-                <div className="title">{title}</div>
-                <div className="health">HEALTH {health}</div>
+                top bar
             </div>
 
             <div className="main-grid">
@@ -406,8 +404,13 @@ function App() {
                 <div className="rightSideBar">
                     <div className="side-panel">
                         <div className="scrollable-content">
-                            <div>
+                            <div className="side-panel-grid">
+                                <div>
+                                    <div className="title">{title}</div>
+                                    <div className="health">HEALTH {health}</div>
+                                </div>
                                 <div className="status">
+
                                     <div>HUNGRY {hungry}</div>
                                     <div>THIRSTY {thirsty}</div>
                                     <div>

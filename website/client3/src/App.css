@@ -43,7 +43,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -51,7 +51,7 @@
 }
 
 .modal-content {
-  background-color: white;
+  background-color: brown;
   padding: 20px;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -115,19 +115,21 @@
 .hr-border {
     border: 0;
     border-bottom: 1px dashed #ccc;
-    background: #999;
+    background-color: #999;
 }
 
 /* Existing styles */
 .game-container {
     display: flex;
     flex-direction: column;
-    height: 100vh; /* Make sure the container takes up the full height */
+    height: 100vh;
+    background-color: brown;
 }
 
 .top-bar {
     /* Styles for the top bar */
-    background-color: #f0f0f0;
+    background-color: brown;
+    color: gold;
     padding: 10px;
     text-align: center;
 }
@@ -138,18 +140,22 @@
     height: calc(100vh - 80px); /* Adjust 80px to match top-bar height + some padding */
 }
 
-.column1 {
-    /* Styles for the first column */
+/* Styles for the first column */
+.column1 {    
     padding: 10px;
     display: flex;
     flex-direction: column;
-    overflow: auto; /* Enable scrolling for long content */
+    overflow: auto;
+    border-radius: 20px !important;
+    background-color: #282c34;
+    border: 1px solid #888;
+    height: 100%;
 }
 
 .rightSideBar {
     /* Styles for the second column */
     padding: 10px;
-    background-color: #eee;
+    background-color: brown;
     max-width: 250px; /* Limit the maximum width of the column */
 }
 
@@ -157,43 +163,51 @@
   width: 100%;
 }
 
+/* Main area where game data is displayed */
 .data {
-    /* Styles for the data section */
-    flex: 1; /* Allow the data section to grow and take up remaining space */
-    overflow-y: auto; /* Add a scrollbar if the content overflows */
+    background-color: #282c34;
+    color: #888;
+    flex: 1; 
+    overflow-y: auto; 
 }
 
-.command-input {
-    /* Styles for the command input */
+/* Styles for the command input */
+.command-input {    
     margin-top: 10px;
+    background-color: #282c34;
 }
+
+/* Command field */
+.input-field {
+  padding: 1em 0 1em 1em;
+  margin: 10px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+  border-bottom: 1px solid #ccc;
+  border-radius: 4px;
+  width: calc(100% - 1em);
+  font-family: 'Courier New', Courier, monospace; 
+  font-size: 16px;
+  background-color: brown;
+}
+
 
 .side-panel {
     display: flex;
     flex-direction: column;
-    height: 100%; /* Make the side panel take up the full height */
+    height: 100%;
 }
 
-.status {
-    /* Styles for the status section */
-    margin-bottom: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-}
-
-.inventory {
-    /* Styles for the inventory section */
-    margin-bottom: 10px;
+.status, .inventory, .health {
     padding: 10px;
     border: 1px solid #ccc;
 }
 
 .image-placeholder {
-    /* Styles for the image placeholder section */
     padding: 10px;
     border: 1px solid #ccc;
-    height: 200px; /* Adjust as needed */
-    margin-top: auto; /* Push the image placeholder to the bottom */
+    height: 200px;
+    margin-top: auto;
 }
 
 /* Basic Modal */
@@ -204,17 +218,15 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent background */
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    /* Ensure it's on top of everything */
 }
 
 /* Modal for username */
 .modal-content {
-    background-color: white;
+    background-color: brown;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
@@ -242,17 +254,6 @@
     background-color: #3e8e41;
 }
 
-/* Command field */
-.input-field {
-    padding: 2em 2px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    font-family: 'Courier New', Courier, monospace; 
-    font-size: 12px;
-}
-
 .scrollable-content {
     overflow-y: auto; /* Enable vertical scrolling */
     max-height: calc(100vh - 200px); /* Adjust the max-height as needed */
@@ -261,4 +262,20 @@
 .room-title {
   font-family: 'Courier New', Courier, monospace;
   font-size: 16px;
+}
+
+.side-panel-grid {
+  display: grid;
+  grid-gap: 1em;
+  grid-template-rows: repeat(3, auto); /* Three rows for status, inventory, and image placeholder */
+}
+
+.title {
+  font-family: 'fantasy', cursive;
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 0.5em; 
+  text-shadow: 2px 2px 4px #000000;
+  color: gold;
 }
