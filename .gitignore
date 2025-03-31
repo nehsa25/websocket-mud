@@ -18,3 +18,5 @@ website/client2/.angular/cache/*
 website/client2/dist/*
 website/client2/node_modules/*
 website/wwwroot
+node_modules/*
+website/client2/src/assets/mud-images/*

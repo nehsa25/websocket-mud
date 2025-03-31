@@ -140,6 +140,9 @@ if __name__ == "__main__":
         host = SysArgs.read_sys_args("--host=")
         port = SysArgs.read_sys_args("--port=")
 
+        if host == None:
+            host = "localhost"
+
         if port == None:
             port = 60049
 

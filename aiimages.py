@@ -37,40 +37,53 @@ class AIImages(Utility):
             self.key = Secrets.StabilityAIKey
             self.seed = seed
 
-        def create_room(self, seed, description, room_image_name):
+        def create_room(self, seed, description, image_name):
+            image_name = self.santitize_filename(image_name)
             path = f"{DevSettings.data_location}/mud-images/rooms"
             prompt = WorldSettings.room_tone + description
-            name = f"{path}/{room_image_name}"
-            return self.create_sd3_medium(prompt, seed, path, name)
+            return self.create_sd3_medium(prompt, seed, path, image_name)
         
         def create_item(self, seed, description, image_name):
+            image_name = self.santitize_filename(image_name)
             path = f"{DevSettings.data_location}/mud-images/items"
             prompt = WorldSettings.item_tone + description
-            name = f"{path}/{image_name}"
-            return self.create_sd3_medium(prompt, seed, path, name)
+            return self.create_sd3_medium(prompt, seed, path, image_name)
         
         def create_player(self, seed, description, image_name):
+            image_name = self.santitize_filename(image_name)
             path = f"{DevSettings.data_location}/mud-images/players"
             prompt = WorldSettings.player_tone + description
-            name = f"{path}/{image_name}"
-            return self.create_sd3_medium(prompt, seed, path, name)
+            return self.create_sd3_medium(prompt, seed, path, image_name)
         
         def create_npc(self, seed, description, image_name):
+            image_name = self.santitize_filename(image_name)
             path = f"{DevSettings.data_location}/mud-images/npcs"
             prompt = WorldSettings.npc_tone + description
-            name = f"{path}/{image_name}"
-            return self.create_sd3_medium(prompt, seed, path, name)
+            npc_name = self.create_sd3_medium(prompt, seed, path, image_name)
+            return npc_name
         
         def create_monster(self, seed, description, image_name):
+            image_name = self.santitize_filename(image_name)
             path = f"{DevSettings.data_location}/mud-images/monsters"
             prompt = WorldSettings.monster_tone + description
-            name = f"{path}/{image_name}"
-            return self.create_sd3_medium(prompt, seed, path, name)
+            return self.create_sd3_medium(prompt, seed, path, image_name)
+        
+        def santitize_filename(self, file_name):
+            method_name = inspect.currentframe().f_code.co_name
+            LogUtils.debug(f"{method_name}: enter", self.logger)
+            file_name = file_name.replace(" ", "_")
+            file_name = file_name.replace(":", "")
+            file_name = file_name.replace(",", "")
+            file_name = file_name.replace("!", "")
+            file_name = file_name.replace("?", "")
+            LogUtils.debug(f"{method_name}: exit", self.logger)
+            return file_name
         
         def create_sd3_medium(self, prompt, seed, path, name):
             try:
                 method_name = inspect.currentframe().f_code.co_name
                 LogUtils.debug(f"{method_name}: enter", self.logger)
+                name = self.santitize_filename(name)
                 api_key = self.key
                 full_path = "" 
                 if api_key is None:
@@ -216,7 +229,13 @@ class AIImages(Utility):
     def get_data_file_name(self, type, tone):
         return f"{type}_{self.santitize(tone)}.dat"
                 
-    async def generate_image(self, item_name, item_description, player, world_state, inside=False, type=Utility.Share.ImageType.ROOM):
+    async def generate_image(self, 
+                            item_name, 
+                            item_description, 
+                            player, 
+                            world_state, 
+                            inside=False, 
+                            type=Utility.Share.ImageType.ROOM):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         image_name = ""        

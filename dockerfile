@@ -7,7 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-VOLUME d:\data\mud-images
+VOLUME c:\data\mud-images
+VOLUME c:\data\certs
 
 EXPOSE 60049
 

@@ -90,9 +90,8 @@ export class AppComponent implements OnInit, OnDestroy {
     // Angular lifecycle hooks
     ngOnInit() {
         forkJoin(this.getQueries).subscribe(next => {
-            if (next == null) {
+            if (next == null)
                 return;
-            }
             this.names = next[0];
             this.userService.name = this.names[0].Name;
             this.userService.about = this.names[0].About

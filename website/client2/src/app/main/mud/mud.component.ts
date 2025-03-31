@@ -20,6 +20,7 @@ import { CommentType } from '../../types/comment.type';
 import { Router, RouterModule } from '@angular/router';
 import { InvalidNameComponent } from './invalid-name/invalid-name.component';
 import { MatTooltip } from '@angular/material/tooltip';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-mud',
@@ -97,9 +98,10 @@ export class MudComponent implements OnInit, OnDestroy {
     // const port = 60049;
     // this.fullAddress = `ws://${host}:${port}`;
 
-    const host = "api.nehsa.net";
+    //const host = "api.nehsa.net";
+    const host = "localhost";
     const port = 60049;
-    this.fullAddress = `wss://${host}:${port}`;
+    this.fullAddress = `ws://${host}:${port}`;
     console.log("Setting up websocket connection at " + this.fullAddress) 
     this.socket = new WebSocket(this.fullAddress);
   }
@@ -361,6 +363,7 @@ export class MudComponent implements OnInit, OnDestroy {
 
   // process events
   processEvent(data: MudEvent) {
+    const apiLocation = environment.apiUrl;
     switch (data.type) {
       case MudEvents.WELCOME:
         const star_teal = "<span class=\"material-icons teal\">star</span>";
@@ -587,23 +590,23 @@ export class MudComponent implements OnInit, OnDestroy {
       case MudEvents.MAP_EVENT:
         this.mapImageName = data.map_image_name;
         this.mapImageAvailable = true;
-        this.miniMap = `https://api.nehsa.net/${this.mapImageName}_small.svg`;
+        this.miniMap = `${apiLocation}/${this.mapImageName}_small.svg`;
         break;
       case MudEvents.ROOM_IMAGE:
-        this.roomImageName = `https://api.nehsa.net/rooms/${data.room_image_name}`;
+        this.roomImageName = `${apiLocation}/rooms/${data.room_image_name}`;
         this.roomImageAvailable = true;
         break;
       case MudEvents.PLAYER_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/players/${data.image_name}" alt="player image" class="player-image" />`;
+        this.mudEvents += `<br><img src="${apiLocation}/players/${data.image_name}" alt="player image" class="player-image" />`;
         break;
       case MudEvents.NPC_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/npcs/${data.image_name}" alt="npc image" class="npc-image" />`;
+        this.mudEvents += `<br><img src="${apiLocation}/npcs/${data.image_name}" alt="npc image" class="npc-image" />`;
         break;
       case MudEvents.ITEM_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/items/${data.image_name}" alt="item image" class="item-image" />`;
+        this.mudEvents += `<br><img src="${apiLocation}/items/${data.image_name}" alt="item image" class="item-image" />`;
         break;
       case MudEvents.MONSTER_IMAGE:
-        this.mudEvents += `<br><img src="https://api.nehsa.net/monsters/${data.image_name}" alt="monster image" class="monster-image" />`;
+        this.mudEvents += `<br><img src="${apiLocation}/monsters/${data.image_name}" alt="monster image" class="monster-image" />`;
         break;
       case MudEvents.DIRECTION:
         if (data.message != "") {

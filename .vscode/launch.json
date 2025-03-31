@@ -12,6 +12,16 @@
             "console": "integratedTerminal",
         },
         {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/src",
+            "sourceMapPathOverrides": {
+                "webpack:///./src/*": "${webRoot}/*"
+            }
+        },
+        {
             "name": "mud.py - localhost",
             "type": "debugpy",
             "request": "launch",

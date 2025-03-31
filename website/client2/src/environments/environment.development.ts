@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'https://api.nehsa.net',
+  apiUrl: 'http://localhost:4200',
   apiVersion: 'v1'
 };

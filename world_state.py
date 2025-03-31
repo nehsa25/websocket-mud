@@ -78,6 +78,9 @@ class WorldState(Utility):
         get_weather_season_event = None
         get_weather_event = None
         monster_respawn_event = None
+        is_raining = False
+        is_snowing = False
+        is_storming = False
 
         def __init__(self, logger):
             self.weather_type = random.choice(list(Utility.Share.WeatherTypes))
@@ -98,10 +101,20 @@ class WorldState(Utility):
         def add_weather_description(self, room_description):
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(f"{method_name}: enter", self.logger)
-            if not room_description.endswith(self.weather_room_description):
-                room_desc = f"{room_description} {self.weather_room_description}"
-            LogUtils.debug(f"{method_name}: exit", self.logger)
-            return room_desc
+
+            try:
+                room_desc = room_description
+                if self.is_raining:
+                    room_desc += " It is raining."
+                elif self.is_snowing:
+                    room_desc += " It is snowing."
+                elif self.is_storming:
+                    room_desc += " A storm rages."
+            except:
+                LogUtils.error(f"{method_name}: exception!!\n{traceback.format_exc()}", self.logger)
+            finally:
+                LogUtils.debug(f"{method_name}: exit", self.logger)
+                return room_desc
 
         def set_weather_descriptions(self):
             method_name = inspect.currentframe().f_code.co_name

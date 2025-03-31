@@ -63,16 +63,17 @@ class Look(Utility):
         LogUtils.debug("Executing Look command", self.logger)
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter, direction: {look_object}", self.logger)
-        
-        player.room = await world_state.get_room(player.room)
-        
+
+        player.room = await world_state.get_room(player.location_id) # Use player.location
+
         # do we just want to look around the room?
         if look_object == "" or look_object == "l" or look_object == "look":
             await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
             await world_state.show_room(player)
 
             # send message to any players in same room that you're being suspicious
-            await player.room.alert(f"You notice {player.name} gazing around the room.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
+            if player.room: # Check if player.room exists
+                await player.room.alert(f"You notice {player.name} gazing around the room.", exclude_player=True, player=player, event_type=MudEvents.InfoEvent)
         elif len(look_object.split(" ", 1)) > 1:
             found = False
             look_object = look_object.split(" ", 1)[1].lower()
@@ -87,7 +88,7 @@ class Look(Utility):
             if look_object in player.name.lower():
                 found = True
                 player_description = await player.get_player_description()
-                
+
                 self.running_image_threads.append(
                     asyncio.create_task(
                         self.ai_images.generate_image(
@@ -99,7 +100,7 @@ class Look(Utility):
                         )
                     )
                 )
-                
+
                 msg = await player.get_player_description()
                 await self.send_message(
                     MudEvents.RestEvent(msg, is_resting=False),
@@ -108,7 +109,7 @@ class Look(Utility):
                 if found: return
 
             # are we looking at a player?
-            if player.room.players != None and player.room.players != []:
+            if player.room and player.room.players != None and player.room.players != []: # Check if player.room exists
                 for p in player.room.players:
                     if look_object in p.name.lower():
                         found = True
@@ -127,9 +128,9 @@ class Look(Utility):
                         await self.send_message(MudEvents.InfoEvent(await p.get_player_description()), player.websocket)
                         break
                 if found: return
-                    
+
             # are we looking at a npc?
-            if player.room.npcs != None:
+            if player.room and player.room.npcs != None: # Check if player.room exists
                 for npc in player.room.npcs:
                     if look_object in npc.name.lower() or look_object in npc.title.lower():
                         found = True
@@ -147,9 +148,9 @@ class Look(Utility):
                         await self.send_message(MudEvents.InfoEvent(npc.description), player.websocket)
                         break
                 if found: return
-                    
+
             # are we looking at a monster?
-            if player.room.monsters != None:
+            if player.room and player.room.monsters != None: # Check if player.room exists
                 for monster in player.room.monsters:
                     if look_object in monster.name.lower():
                         found = True
@@ -167,9 +168,9 @@ class Look(Utility):
                         await self.send_message(MudEvents.InfoEvent(monster.description), player.websocket)
                         break
                 if found: return
-                
+
             # are we looking at a item?
-            if player.room.items != None:
+            if player.room and player.room.items != None: # Check if player.room exists
                 for item in player.room.items:
                     if look_object in item.name.lower():
                         found = True
