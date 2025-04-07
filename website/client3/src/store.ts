@@ -1,9 +1,6 @@
-// store.ts
 import { proxy } from 'valtio';
 import { MudStatuses } from './Types/MudStatuses';
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
 
 interface AppState {
     title: string;
