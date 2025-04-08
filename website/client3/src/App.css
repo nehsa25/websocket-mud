@@ -1,360 +1,360 @@
 .App {
-  text-align: center;
+    text-align: center;
 }
 
 .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+    height: 40vmin;
+    pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
-  color: #61dafb;
+    color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
+    from {
+        transform: rotate(0deg);
+    }
 
-  to {
-    transform: rotate(360deg);
-  }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  /* Ensure it's on top of everything */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    /* Ensure it's on top of everything */
 }
 
 .modal-content {
-  background-color: brown;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  text-align: center;
+    background-color: black;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
 }
 
 .modal-content input[type="text"] {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 200px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
 }
 
 .modal-content button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 1em;
 }
 
 .modal-content button:hover {
-  background-color: #3e8e41;
+    background-color: #3e8e41;
 }
 
 /* Add color styles */
 .color-red {
-  color: red;
+    color: red;
 }
 
 .color-green {
-  color: green;
+    color: green;
 }
 
 .color-blue {
-  color: blue;
+    color: blue;
 }
 
 .color-white {
-  color: white;
+    color: white;
 }
 
 .color-yellow {
-  color: yellow;
+    color: yellow;
 }
 
 .color-cyan {
-  color: cyan;
+    color: cyan;
 }
 
 .color-magenta {
-  color: magenta;
+    color: magenta;
 }
 
 .color-black {
-  color: black;
+    color: black;
 }
 
 .color-gray {
-  color: gray;
+    color: gray;
 }
 
 .color-grey {
-  color: grey;
+    color: grey;
 }
 
 .color-orange {
-  color: orange;
+    color: orange;
 }
 
 .color-teal {
-  color: teal;
+    color: teal;
 }
 
 .color-maroon {
-  color: maroon;
+    color: maroon;
 }
 
 .color-olive {
-  color: olive;
+    color: olive;
 }
 
 .color-navy {
-  color: navy;
+    color: navy;
 }
 
 .color-lime {
-  color: lime;
+    color: lime;
 }
 
 .color-aqua {
-  color: aqua;
+    color: aqua;
 }
 
 .color-silver {
-  color: silver;
+    color: silver;
 }
 
 .color-crimson {
-  color: crimson;
+    color: crimson;
 }
 
 .color-purple {
-  color: purple;
+    color: purple;
 }
 
 .color-brown {
-  color: brown;
+    color: brown;
 }
 
 .color-pink {
-  color: pink;
+    color: pink;
 }
 
 /* Add room message styles */
 .room-message {
-  font-weight: bold;
+    font-weight: bold;
 }
 
 .room-description-message {
-  margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 .hr-border {
-  border: 0;
-  border-bottom: 1px dashed #ccc;
-  background-color: #999;
+    border: 0;
+    border-bottom: 1px dashed #ccc;
+    background-color: #999;
 }
 
-/* Existing styles */
 .game-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: brown;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: black;
 }
 
 /* Styles for the top bar */
 .top-bar {
-  background-color: brown;
-  color: gold;
-  padding: 10px;
-  text-align: center;
-  font-size: 1.5em;
+    background-color: black;
+    color: gold;
+    padding: 10px;
+    text-align: center;
+    font-size: 1.5em;
 }
 
 .main-grid {
-  display: grid;
-  grid-template-columns: 2fr 250px;
-  height: calc(100vh - 80px);
+    display: grid;
+    grid-template-columns: 2fr 250px;
+    height: calc(100vh - 80px);
 }
 
 /* Styles for the first column */
 .column1 {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  border-radius: 20px !important;
-  background-color: #282c34;
-  border: 1px solid #888;
-  height: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    border-radius: 20px !important;
+    background-color: #282c34;
+    border: 1px solid #888;
 }
 
 /* Styles for the second column */
 .rightSideBar {
-  padding: 10px;
-  background-color: brown;
-  max-width: 250px;
+    padding: 10px;
+    background-color: black;
+    max-width: 250px;
 }
 
 .rightSideBar img {
-  width: 100%;
-  height: 100%;
+    width: 100%;
+    height: 100%;
 }
 
 /* Main area where game data is displayed */
 .data {
-  background-color: #282c34;
-  color: #888;
-  flex: 1;
-  overflow-y: auto;
+    background-color: #282c34;
+    color: #888;
+    flex: 1;
+    overflow-y: auto;
 }
 
 /* Styles for the command input */
 .command-input {
-  margin-top: 10px;
-  background-color: #282c34;
+    margin-top: 10px;
+    background-color: #282c34;
 }
 
 /* Command field */
 .input-field {
-  padding: 1em 0 1em 1em;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: calc(100% - 1em);
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
-  background-color: brown;
+    padding: 1em 0 1em 1em;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: calc(100% - 1em);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    background-color: #222;
 }
 
 .side-panel {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .status,
 .inventory,
 .health {
-  padding: 10px;
-  border: 1px solid #ccc;
+    padding: 10px;
+    border: 1px solid #ccc;
 }
 
 .image-placeholder {
-  padding: 10px;
-  border: 1px solid #ccc;
-  height: 200px;
-  margin-top: auto;
+    padding: 10px;
+    border: 1px solid #ccc;
+    height: 200px;
+    margin-top: auto;
 }
 
 /* Basic Modal */
 .modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 /* Modal for username */
 .modal-content {
-  background-color: brown;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  text-align: center;
+    background-color: black;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    color: gold;
 }
 
 .modal-content input[type="text"] {
-  padding: 10px;
-  margin: 10px 0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 200px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 200px;
 }
 
 .modal-content button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+    background-color: #333;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .modal-content button:hover {
-  background-color: #3e8e41;
+    background-color: #3e8e41;
 }
 
 .scrollable-content {
-  overflow-y: auto;
-  max-height: calc(100vh - 200px);
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
 }
 
 .room-title {
-  font-family: 'Courier New', Courier, monospace;
-  font-size: 16px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
 }
 
 .side-panel-grid {
-  display: grid;
-  grid-gap: 1em;
-  grid-template-rows: repeat(3, auto);
+    display: grid;
+    grid-gap: 1em;
+    grid-template-rows: repeat(3, auto);
 }
 
 .title {
-  font-family: 'fantasy', cursive;
-  font-size: 3em;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 0.5em;
-  text-shadow: 2px 2px 4px #000000;
-  color: gold;
-  text-transform: capitalize;
+    font-family: 'fantasy', cursive;
+    font-size: 3em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0.5em;
+    text-shadow: 2px 2px 4px #000000;
+    color: gold;
+    text-transform: capitalize;
 }
 
 .mud-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Courier New', Courier, monospace;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Courier New', Courier, monospace;
 }

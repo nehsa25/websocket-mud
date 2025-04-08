@@ -20,8 +20,9 @@ import { faStar, faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
 import { MudStatuses } from './Types/MudStatuses';
 import Game from './Game';
 import SidePanel from './SidePanel';
-import { appState } from './store'; // Import the Valtio store
-import { useSnapshot } from 'valtio'; // Import the useSnapshot hook
+import { appState } from './store'; 
+import { useSnapshot } from 'valtio';
+import { getUsername } from './utils/utils';
 
 function App() {
     const snap = useSnapshot(appState);
@@ -50,7 +51,7 @@ function App() {
 
     // Modal state
     const [showUsernameModal, setShowUsernameModal] = useState<boolean>(false);
-    const [username, setUsername] = useState<string>('');
+    const [username, setUsername] = useState<string>(getUsername());
 
     // WebSocket state
     const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -179,7 +180,7 @@ function App() {
             roommessage.push(
                 <>
                     <span className="exits1-message">Exits: </span>
-                    <span className="exits2-message">{data.exits}</span>
+                    <span className="people2-message">{data.exits}</span>
                 </>
             );
         }
@@ -467,7 +468,7 @@ function App() {
     // WebSocket connection setup
     useEffect(() => {
         //const ws = new WebSocket('wss://localhost:22009');
-        const ws = new WebSocket('wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com');
+        const ws = new WebSocket(import.meta.env.VITE_WSS_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com');
 
         ws.onopen = () => {
             console.log('Connected to WebSocket server');
@@ -549,7 +550,7 @@ function App() {
                                 }
                             }}
                         />
-                        <button onClick={handleUsernameSubmit} className="mud-button">To Adventure</button>
+                        <button onClick={handleUsernameSubmit} className="mud-button">To Adventure!</button>
                     </div>
                 </div>
             )}

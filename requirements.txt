@@ -3,3 +3,4 @@ websockets
 jsonpickle
 google-generativeai
 flask
+boto3

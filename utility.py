@@ -221,7 +221,7 @@ class Utility(MudEvents):
             WINTER = 4
 
         class AIGeneration(Enum):
-            StabilityAI = 1
+            OpenAI = 1
             GeminiAI = 2
 
         class EyeColors(Enum):

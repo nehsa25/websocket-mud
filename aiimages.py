@@ -8,6 +8,7 @@ from dontcheckin import DevSettings, Secrets, WorldSettings
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
+from utilities.aws import S3Utils
 
 # 
 class AIFile(Utility):
@@ -27,7 +28,7 @@ class AIImages(Utility):
     generator = None
     seed = None
        
-    class StabilityAPI:
+    class OpenAIAPI:
         logger = None
         key = None
         seed = None
@@ -169,7 +170,7 @@ class AIImages(Utility):
         def to_json(self):
             return jsonpickle.encode(self)
 
-    def __init__(self, logger,  style=Utility.Share.AIGeneration.StabilityAI) -> None:
+    def __init__(self, logger,  style=Utility.Share.AIGeneration.OpenAI) -> None:
         LogUtils.debug("Initializing AIImages() class", logger)
         self.logger = logger
         
@@ -178,8 +179,8 @@ class AIImages(Utility):
         
         if style == Utility.Share.AIGeneration.GeminiAI:
             self.generator = self.GeminiAPI(self.seed, logger)
-        elif style == Utility.Share.AIGeneration.StabilityAI:
-            self.generator = self.StabilityAPI(self.seed, logger)
+        elif style == Utility.Share.AIGeneration.OpenAI:
+            self.generator = self.OpenAIAPI(self.seed, logger)
         
     def create_seed(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -315,13 +316,24 @@ class AIImages(Utility):
             elif type == Utility.Share.ImageType.MONSTER:
                 path = self.generator.create_monster(self.seed, item_description, item_name)
 
-            if path is not None and path != "":
-                # save the room image to the file 
+            # a new image was created
+            if path is not None and path != "":   
+                # save the room image to the file              
                 self.add_log_entry(log_name, item_name, item_description)
-            else:
-                item_name = "noimage.jpg"
+
+                # upload s3
+
+        local_image_path = os.join(path, item_name)
+        s3_image_key = f"public/images/{str(type)}/{item_name}"
+        image_url = S3Utils.upload_image_to_s3(local_image_path, s3_image_key)
+
+        if image_url:
+            print(f"Image uploaded successfully. Public URL: {image_url}")
+            # Return this URL to your frontend
         else:
-            item_name = image_name
+            print("Image upload failed.")
+
+        #TODO - send image url to player
             
         # send room image event
         if type == Utility.Share.ImageType.ROOM:
