@@ -1,12 +1,13 @@
 import React, {
-    useState,
     useRef,
     useEffect,
     useCallback
 } from 'react';
+
 import {
-    Box
+    Box    
 } from "@chakra-ui/react";
+
 import {
     MudEvents
 } from './Types/MudEvents';
@@ -61,9 +62,6 @@ interface GameProps {
 import {
     MudStatuses
 } from './Types/MudStatuses';
-import {
-    FontAwesomeIcon
-} from '@fortawesome/react-fontawesome';
 
 const Game: React.FC<GameProps> = ({
     socket,
@@ -157,37 +155,37 @@ const Game: React.FC<GameProps> = ({
 
     return (
         <>
-          <div className="column1">
-            <div className="data" ref={scrollMe} onClick={handleDataClick}>
-              {mudEvents.map((event, index) => {
-                return (
-                  <Box key={index}>
-                    {React.isValidElement(event) ? (
-                      React.cloneElement(event, {
-                        style: {
-                          ...(event.props as any).style || {},
-                          display: 'inline', // Or 'block' depending on your layout needs
-                        },
-                      })
-                    ) : (
-                      event
-                    )}
-                  </Box>
-                );
-              })}
+            <div className="column1">
+                <div className="data" ref={scrollMe} onClick={handleDataClick}>
+                    {mudEvents.map((event, index) => {
+                        return (
+                            <Box key={index}>
+                                {React.isValidElement(event) ? (
+                                    React.cloneElement(event, {
+                                        style: {
+                                            ...(event.props as any).style || {},
+                                            display: 'inline', // Or 'block' depending on your layout needs
+                                        },
+                                    })
+                                ) : (
+                                    event
+                                )}
+                            </Box>
+                        );
+                    })}
+                </div>
+                <div className="command-input">
+                    <input
+                        ref={sendcommandarea}
+                        type="text"
+                        value={command}
+                        onChange={(e) => setCommand(e.target.value)}
+                        onKeyDown={sendKeyCommand}
+                        placeholder="Type a command here and press <ENTER>. (e.g. type 'say Hi'<ENTER> to say hello)"
+                        className="input-field"
+                    />
+                </div>
             </div>
-            <div className="command-input">
-              <input
-                ref={sendcommandarea}
-                type="text"
-                value={command}
-                onChange={(e) => setCommand(e.target.value)}
-                onKeyDown={sendKeyCommand}
-                placeholder="Type a command here and press <ENTER>. (e.g. type 'say Hi'<ENTER> to say hello)"
-                className="input-field"
-              />
-            </div>
-          </div>
         </>
     );
 };

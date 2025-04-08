@@ -11,9 +11,15 @@ from sysargs_utils import SysArgs
 from utility import Utility
 from world import World
 from world_state import WorldState
+from flask import Flask, jsonify
+import threading
 
+app = Flask(__name__)
+logger = None  # Initialize logger at the top
+mud = None     # Initialize mud instance at the top
 
 class Mud(Utility):
+
     logger = None
     world = None
     world_state = None
@@ -105,33 +111,47 @@ class Mud(Utility):
 
         LogUtils.debug(f"{method_name}: Done Done.", self.logger)
 
-async def handler(websocket, path):
+async def websocket_handler(websocket, path):
     while True:
         message = await websocket.recv()
         await websocket.send(f"Received message: {message}")
 
-async def start_websocket_server(host):
+async def start_websocket_server(host, port):
     # start websocket server
-    LogUtils.info(f"Starting websocket server", logger)
-    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
-    ssl_context.load_cert_chain(
-        "certificate.pem", "private.key"
-    )
+    LogUtils.info(f"Starting websocket server on port {port}", logger)
+    # ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    # ssl_context.load_cert_chain(
+    #     "certificate.pem", "private.key"
+    # )
 
     if host == None:
-        async with websockets.serve(mud.main, host, port, max_size=9000000, ssl=ssl_context):
+        # async with websockets.serve(mud.main, "localhost", port, max_size=9000000, ssl=ssl_context):
+        #     await asyncio.Future()  # Run forever
+        async with websockets.serve(mud.main, "localhost", int(port), max_size=9000000):
             await asyncio.Future()  # Run forever
     else:
-        async with websockets.serve(mud.main, host, port, max_size=9000000):
+        async with websockets.serve(mud.main, host, int(port), max_size=9000000):
             await asyncio.Future()
+
+@app.route("/health")
+def health_check():
+    service_healthy = True
+    # Add any specific health checks here if needed
+    if service_healthy:
+        return jsonify({"status": "healthy", "service": "ok"}), 200
+    else:
+        return jsonify({"status": "unhealthy", "service": "error" if not service_healthy else "ok"}), 503
+
+def start_flask_app(host, port):
+    LogUtils.info(f"Starting Flask app on port {port}", logger)
+    app.run(host=host, port=port, debug=False, use_reloader=False)
 
 if __name__ == "__main__":
     try:
-        # logger = LogUtils.get_logger(filename='mud.log', file_level=Level.DEBUG, console_level=Level.DEBUG, log_location="d:\\src\\mud", logger_name='websockets')
         logger = LogUtils.get_logger(
             filename="mud.log",
             file_level=Level.ERROR,
-            console_level=Level.DEBUG,
+            console_level=Level.ERROR,
             log_location="~/",
         )
         mud = Mud(logger)
@@ -141,27 +161,46 @@ if __name__ == "__main__":
         port = SysArgs.read_sys_args("--port=")
 
         if host == None:
-            host = "localhost"
+            host = "0.0.0.0"
 
         if port == None:
-            port = 60049
+            port = 22009
 
-        # start listening loop
+        # start listening loop for world events
         loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
         loop.run_until_complete(mud.world_state.setup_world_events())
 
         LogUtils.info(f"Server started at {host}:{port}.  Waiting for client connections...", logger)
 
-        asyncio.run(start_websocket_server(host))
+        # Run both the websocket server and the Flask app concurrently
+        websocket_task = loop.create_task(start_websocket_server(host, port))
 
-        loop.run_forever()
+        # Start Flask app in a separate thread
+        flask_thread = threading.Thread(target=start_flask_app, args=(host, 22010))
+        flask_thread.daemon = True
+        flask_thread.start()
 
-        # if we got here the loop was cancelled, just quit
+        # Wait for the websocket task to complete (it should run forever)
+        loop.run_until_complete(websocket_task)
+
+        # If the websocket task completes (which shouldn't happen in normal operation),
+        # we can add cleanup here if needed.
         LogUtils.info(f"Exiting...", logger)
         sys.exit()
     except KeyboardInterrupt:
-        loop.stop()
-    except:
+        LogUtils.info(f"Keyboard interrupt received. Shutting down...", logger)
+        if loop.is_running():
+            tasks = asyncio.all_tasks(loop)
+            for task in tasks:
+                task.cancel()
+            loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
+        if loop.is_running():
+            loop.stop()
+    except Exception:
         LogUtils.error(
-            f"An error occurred!\nException:\n{traceback.format_exc()}", logger
+            f"An error occurred during startup or runtime!\nException:\n{traceback.format_exc()}", logger
         )
+    finally:
+        if loop.is_running():
+            loop.close()

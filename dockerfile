@@ -7,9 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-VOLUME c:\data\mud-images
-VOLUME c:\data\certs
+EXPOSE 22009
+EXPOSE 22010
 
-EXPOSE 60049
-
-CMD [ "python", "./mud.py" ]
+CMD [ "python", "mud.py" ]

@@ -1,4 +1,4 @@
-import { LuCircleCheck, LuCircleDashed } from "react-icons/lu"
+import { LuCircleCheck } from "react-icons/lu"
 
 import {
     useColorModeValue,
@@ -9,7 +9,6 @@ import {
     Text,
     Box,
     List,
-    ListItem,
     Flex,
 } from "@chakra-ui/react";
 
@@ -18,7 +17,7 @@ import './App.css';
 import { MudEvents } from './Types/MudEvents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
-import { MudStatuses, MudStatusIcons } from './Types/MudStatuses';
+import { MudStatuses } from './Types/MudStatuses';
 import Game from './Game';
 import SidePanel from './SidePanel';
 import { appState } from './store'; // Import the Valtio store
@@ -467,7 +466,8 @@ function App() {
 
     // WebSocket connection setup
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:60049');
+        //const ws = new WebSocket('wss://localhost:22009');
+        const ws = new WebSocket('wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com');
 
         ws.onopen = () => {
             console.log('Connected to WebSocket server');
