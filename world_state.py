@@ -246,23 +246,53 @@ class WorldState(Utility):
             self.logger,
         )
 
-        if self.weather is None:
-            self.weather = self.Weather(logger)
-
+        LogUtils.debug(f"{method_name}: Checking if self.players is None", self.logger)
         if self.players is None:
+            LogUtils.info(f"{method_name}: self.players is None, initializing...", self.logger)
             self.players = Players(self.logger)
+            LogUtils.info(f"{method_name}: self.players initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.players is already initialized.", self.logger)
 
+        LogUtils.debug(f"{method_name}: Checking if self.weather is None", self.logger)
+        if self.weather is None:
+            LogUtils.info(f"{method_name}: self.weather is None, initializing...", self.logger)
+            self.weather = self.Weather(logger)
+            LogUtils.info(f"{method_name}: self.weather initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.weather is already initialized.", self.logger)
+
+        LogUtils.debug(f"{method_name}: Checking if self.monster_events is None", self.logger)
         if self.monster_events is None:
+            LogUtils.info(f"{method_name}: self.monster_events is None, initializing...", self.logger)
             self.monster = Monster(self.logger)
+            LogUtils.info(f"{method_name}: self.monster initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.monster_events is already initialized.", self.logger)
 
+        LogUtils.debug(f"{method_name}: Checking if self.ai_images is None", self.logger)
         if self.ai_images is None:
+            LogUtils.info(f"{method_name}: self.ai_images is None, initializing...", self.logger)
             self.ai_images = AIImages(self.logger)
+            LogUtils.info(f"{method_name}: self.ai_images initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.ai_images is already initialized.", self.logger)
 
+        LogUtils.debug(f"{method_name}: Checking if self.map is None", self.logger)
         if self.map is None:
+            LogUtils.info(f"{method_name}: self.map is None, initializing...", self.logger)
             self.map = Map(self.logger)
+            LogUtils.info(f"{method_name}: self.map initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.map is already initialized.", self.logger)
 
+        LogUtils.debug(f"{method_name}: Checking if self.environments is None", self.logger)
         if self.environments is None:
+            LogUtils.info(f"{method_name}: self.environments is None, initializing...", self.logger)
             self.environments = Environments(self.logger)
+            LogUtils.info(f"{method_name}: self.environments initialized.", self.logger)
+        else:
+            LogUtils.debug(f"{method_name}: self.environments is already initialized.", self.logger)
 
     # returns the name of the area based on the type
     def get_area_identifier(self, area):

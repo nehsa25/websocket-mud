@@ -130,6 +130,8 @@ class Players(Utility):
 
     # calls at the beginning of the connection.  websocket connection here is the real connection
     async def new_user(self, world_state, websocket, dupe=False, invalid_username=False):
+        player = None
+        
         try:
             method_name = inspect.currentframe().f_code.co_name
             LogUtils.debug(
@@ -290,7 +292,9 @@ class Players(Utility):
             LogUtils.debug(f"{method_name}: exit", self.logger)
             return world_state
         except ConnectionClosedOK:
-            LogUtils.warn(f"ConnectionClosedOK ({player.name} left).", self.logger)
+            if player:
+                await self.unregister(player, world_state)
+            LogUtils.warn(f"ConnectionClosedOK (player left).", self.logger)
         except Exception as e:
             raise Exception(f"An error occurred during new_user(): {e}")
 
@@ -303,13 +307,9 @@ class Players(Utility):
 
         # let folks know someone left
         if change_name:
-            await world_state.alert_world(
-                f"{player.name} is changing their name..", player=player
-            )
+            await world_state.alert_world(f"{player.name} is changing their name..", player=player)
         else:
-            await world_state.alert_world(
-                f"{player.name} left the game.", player=player
-            )
+            await world_state.alert_world(f"{player.name} left the game.", player=player)
 
         LogUtils.info(f"new player count: {len(self.players)}", self.logger)
         LogUtils.debug(f"register: exit", self.logger)

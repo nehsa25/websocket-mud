@@ -1,12 +1,10 @@
-import ssl
 import asyncio
 import websockets
-import json
 import traceback
 import sys
+import os
 import inspect
-from log_utils import LogUtils, Level
-from mudevent import MudEvents
+from log_utils import LogUtils
 from sysargs_utils import SysArgs
 from utility import Utility
 from world import World
@@ -15,8 +13,8 @@ from flask import Flask, jsonify
 import threading
 
 app = Flask(__name__)
-logger = None  # Initialize logger at the top
-mud = None     # Initialize mud instance at the top
+logger = None 
+mud = None
 
 class Mud(Utility):
 
@@ -35,6 +33,7 @@ class Mud(Utility):
 
     def __init__(self, logger) -> None:
         method_name = inspect.currentframe().f_code.co_name
+        super().__init__(logger)  # Call the superclass's __init__ method
         self.logger = logger
         LogUtils.debug(f"{method_name}: Initializing Mud() class", logger)
         self.world = World(self.logger)
@@ -58,58 +57,81 @@ class Mud(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
-        # register client websockets - runs onces each time a new person starts
-        self.world_state = await self.world_state.players.new_user(
-            self.world_state, websocket
-        )
-
-        player = None
         try:
-            # enter our player input loop
-            while True:
-                # get current user
-                player = await self.world_state.players.get_player(websocket)
+            # initialize world
+            LogUtils.debug(f"{method_name}: Checking if self.world_state is None", self.logger)
+            if self.world_state is None:
+                LogUtils.info(f"{method_name}: self.world_state is None, initializing...", self.logger)
+                self.world_state = WorldState(self.logger)
+                LogUtils.info(f"{method_name}: self.world_state initialized.", self.logger)
+            else:
+                LogUtils.debug(f"{method_name}: self.world_state is already initialized.", self.logger)
 
-                for p in self.world_state.players.players:
-                    # set inventory for refresh
-                    await p.send_inventory()
-
-                    # send updated hp
-                    await p.send_status()
-
-                # wait for a command to be sent
-                LogUtils.info(f"Waiting for command...", self.logger)
-                message = await websocket.recv()
-                msg_obj = json.loads(message)
-                extra_data = None
-
-                if msg_obj["type"] == MudEvents.EventUtility.get_event_type_id(
-                    MudEvents.EventUtility.EventTypes.COMMAND
-                ):
-                    LogUtils.debug(f"Received: " + json.dumps(msg_obj), self.logger)
-                    if msg_obj["extra"] != None:
-                        extra_data = msg_obj["extra"]
-
-                    await self.world.commands.run_command(
-                        msg_obj["cmd"], player, self.world_state, extra_data
-                    )
-                else:
-                    LogUtils.error(f"Received unknown message: {message}", self.logger)
-        except websockets.ConnectionClosedOK:
-            LogUtils.warn(f"Someone left. We're going to move on.", logger)
-        except KeyboardInterrupt:
-            loop.stop()
-        except:
-            LogUtils.error(
-                f"An error occurred!\nException:\n{traceback.format_exc()}", logger
+            LogUtils.debug(f"{method_name}: Awaiting self.world_state.players.new_user...", self.logger)
+            await self.world_state.players.new_user(
+                self.world_state, websocket
             )
-        finally:
-            if player is not None:
-                await self.world_state.players.unregister(
-                    player, self.world_state, False
-                )
+            LogUtils.debug(f"{method_name}: self.world_state.players.new_user completed.", self.logger)
 
-        LogUtils.debug(f"{method_name}: Done Done.", self.logger)
+            LogUtils.debug(f"{method_name}: Awaiting self.world_state.players.get_player...", self.logger)
+            player = await self.world_state.players.get_player(websocket)
+            LogUtils.debug(f"{method_name}: self.world_state.players.get_player completed, player: {player}", self.logger)
+
+            await self.handle_connection(player, websocket)
+
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"ConnectionClosedOK (client disconnected).", self.logger)
+        except Exception as e:
+            LogUtils.error(f"An error occurred!\nException: {e}", self.logger)
+            LogUtils.error(traceback.format_exc(), self.logger)
+        finally:
+            LogUtils.debug(f"{method_name}: finally block executed.", self.logger)
+
+    async def handle_connection(self, player, websocket):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter, player: {player}", self.logger)
+        try:
+            while True:
+                # Receive data from the client
+                message = await websocket.recv()
+                LogUtils.debug(f"{method_name}: Received message: {message}", self.logger)
+
+                # Process the message
+                await self.process_message(player, websocket, message)
+
+        except websockets.ConnectionClosedOK:
+            LogUtils.warn(f"ConnectionClosedOK (client disconnected).", self.logger)
+            await self.world_state.players.unregister(player, self.world_state)
+        except Exception as e:
+            LogUtils.error(f"An error occurred!\nException: {e}", self.logger)
+            LogUtils.error(traceback.format_exc(), self.logger)
+        finally:
+            LogUtils.debug(f"{method_name}: exit", self.logger)
+
+    async def process_message(self, player, websocket, message):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter, player: {player.name}, message: {message}", self.logger)
+        try:
+            # Parse the message as JSON
+            data = json.loads(message)
+            LogUtils.debug(f"{method_name}: Parsed JSON data: {data}", self.logger)
+
+            # Handle different message types
+            if data["type"] == MudEvents.COMMAND:
+                # Process command
+                command = data["cmd"]
+                LogUtils.info(f"{method_name}: Received command: {command}", self.logger)
+                await self.world.handle_command(player, command)
+            else:
+                LogUtils.warn(f"{method_name}: Unknown message type: {data['type']}", self.logger)
+
+        except json.JSONDecodeError:
+            LogUtils.error(f"{method_name}: Invalid JSON received: {message}", self.logger)
+        except Exception as e:
+            LogUtils.error(f"An error occurred!\nException: {e}", self.logger)
+            LogUtils.error(traceback.format_exc(), self.logger)
+        finally:
+            LogUtils.debug(f"{method_name}: exit", self.logger)
 
 async def websocket_handler(websocket, path):
     while True:
@@ -148,13 +170,30 @@ def start_flask_app(host, port):
 
 if __name__ == "__main__":
     try:
+        print("Attempting to get logger...")
+
+        # Determine the environment
+        development_mode = False
+        if len(sys.argv) > 1 and sys.argv[1] == "--development":
+            development_mode = True
+
+        if development_mode:
+            from dev_env.development import file_level, console_level
+            print("Using development environment")
+        else:
+            from dev_env.production import file_level, console_level
+            print("Using production environment")
+
         logger = LogUtils.get_logger(
             filename="mud.log",
-            file_level=Level.ERROR,
-            console_level=Level.ERROR,
-            log_location="~/",
+            file_level=file_level,
+            console_level=console_level,
+            log_location=os.getcwd()
         )
+        print(f"Logger obtained: {logger}")
+        print("Attempting to instantiate Mud...")
         mud = Mud(logger)
+        print(f"Mud instantiated: {mud}")
 
         # start websocket
         host = SysArgs.read_sys_args("--host=")

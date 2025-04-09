@@ -20,13 +20,14 @@ import { faStar, faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
 import { MudStatuses } from './Types/MudStatuses';
 import Game from './Game';
 import SidePanel from './SidePanel';
-import { appState } from './store'; 
+import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './utils/utils';
 
 function App() {
+    console.log("App: Entered");
     const snap = useSnapshot(appState);
-    
+
     // State variables for dynamic data
     const [title, setCurrentRoomTitle] = useState<string>("");
     const [roomDescription, setCurrentRoomDescription] = useState<string>("");
@@ -64,7 +65,11 @@ function App() {
     const importantColor = useColorModeValue("red.600", "red.400");
     const importantishColor = useColorModeValue("blue.600", "blue.400");
 
+    // ensure we only attempt to initalize the websocket once
+    let wsInstance: WebSocket | null = null;
+
     const colorizeMessage = useCallback((message: string): JSX.Element => {
+        console.log("colorizeMessage: Entered");
         const colors = ["red", "green", "blue", "white", "yellow", "cyan", "magenta", "black", "gray", "grey",
             "orange", "teal", "maroon", "olive", "navy", "lime", "aqua", "silver", "crimson", "purple", "brown", "pink"];
 
@@ -90,12 +95,13 @@ function App() {
             parts = newParts;
             newParts = [];
         });
-
+        console.log("colorizeMessage: Exited");
         return <>{parts}</>;
     }, []);
 
     // Function to add a dashed border around the string
     const addBorder = useCallback((message: string): JSX.Element => {
+        console.log("addBorder: Entered");
         let roomTitle = message;
         roomTitle = roomTitle.replace(/---\\d*/g, ' ');
         let desc = "";
@@ -107,6 +113,7 @@ function App() {
         } else {
             desc += "---------------------------------------------------------------------------------------------------------------------------------------------------------------";
         }
+        console.log("addBorder: Exited");
         return (
             <>
                 <hr className="hr-border" />
@@ -121,6 +128,8 @@ function App() {
 
     // Function to add a bar under the string
     const addBar = useCallback((message: string): JSX.Element => {
+        console.log("addBar: Entered");
+        console.log("addBar: Exited");
         return (
             <>
                 {message}
@@ -131,13 +140,16 @@ function App() {
 
     // Scroll to bottom after adding a new event
     const pushGenericEvent = useCallback((message: React.ReactNode): void => {
+        console.log("pushGenericEvent: Entered");
         setMudEvents(prevEvents => [...prevEvents, message]);
         if (scrollMe.current) {
             scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
         }
+        console.log("pushGenericEvent: Exited");
     }, [setMudEvents]);
 
     const pushRoomEvent = useCallback((data: any): void => {
+        console.log("pushRoomEvent: Entered");
         let roommessage: React.ReactNode[] = [];
 
         if (data.name !== "") {
@@ -186,9 +198,11 @@ function App() {
         }
 
         setMudEvents(prevEvents => [...prevEvents, ...roommessage]);
+        console.log("pushRoomEvent: Exited");
     }, [addBar, addBorder, colorizeMessage, setMudEvents]);
 
     const sendCommand = useCallback((cmd: string): void => {
+        console.log("sendCommand: Entered");
         if (socket && socket.readyState === WebSocket.OPEN) {
             const full_cmd = {
                 "type": MudEvents.COMMAND,
@@ -204,6 +218,7 @@ function App() {
         } else {
             console.log("Websocket not connected");
         }
+        console.log("sendCommand: Exited");
     }, [socket, username, setCommand]);
 
     // Function to generate the welcome message HTML
@@ -212,12 +227,13 @@ function App() {
         importantColor: string,
         importantishColor: string
     ): JSX.Element => {
+        console.log("generateWelcomeMessage: Entered");
         const starTeal = <FontAwesomeIcon icon={faStar} color="teal" />;
         const starPurple = <FontAwesomeIcon icon={faStar} color="purple" />;
         const starRed = <FontAwesomeIcon icon={faStar} color="red" />;
         const starYellow = <FontAwesomeIcon icon={faStar} color="yellow" />;
 
-        return (
+        const result = (
             <Box>
                 <Text as="span">
                     Welcome to the NehsaMud and the world of{" "}
@@ -315,10 +331,13 @@ function App() {
                 </Heading>
             </Box>
         );
+        console.log("generateWelcomeMessage: Exited");
+        return result;
     }, [importantColor, importantishColor]);
 
     // Function to process incoming events and update state
     const processEvent = useCallback((data: any): void => {
+        console.log("processEvent: Entered");
         switch (data.type) {
             case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
@@ -430,6 +449,7 @@ function App() {
                 console.error("unsupported event: " + data.type);
                 break;
         }
+        console.log("processEvent: Exited");
     }, [
         generateWelcomeMessage,
         pushGenericEvent,
@@ -453,6 +473,7 @@ function App() {
 
     // Function to handle username submission
     const handleUsernameSubmit = useCallback(() => {
+        console.log("handleUsernameSubmit: Entered");
         if (username.trim() !== '') {
             if (socket && socket.readyState === WebSocket.OPEN) {
                 const response = { type: MudEvents.USERNAME_ANSWER, username: username.trim() };
@@ -463,13 +484,20 @@ function App() {
                 console.log("Websocket not connected");
             }
         }
+        console.log("handleUsernameSubmit: Exited");
     }, [socket, username, setCurrentRoomTitle, setShowUsernameModal]);
 
     // WebSocket connection setup
     useEffect(() => {
-        //const ws = new WebSocket('wss://localhost:22009');
-        const ws = new WebSocket(import.meta.env.VITE_WSS_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com');
+        console.log("WebSocket useEffect: Entered");
 
+        if (wsInstance) {
+            console.log("WebSocket already initialized, skipping.");
+            return;
+        }
+
+        const ws = new WebSocket(import.meta.env.VITE_WSS_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com');
+        wsInstance = ws;
         ws.onopen = () => {
             console.log('Connected to WebSocket server');
         };
@@ -496,19 +524,30 @@ function App() {
         setSocket(ws);
 
         return () => {
-            ws.close();
+            console.log('Closing WebSocket connection on unmount');
+            if (ws.readyState === WebSocket.OPEN) {
+                try {
+                    ws.close();
+                } catch (error) {
+                    console.error('Error closing WebSocket:', error);
+                }
+            }
         };
-    }, [processEvent]);
+    }, []);
+    console.log("WebSocket useEffect: Exited");
 
     // Function to handle command input
     const sendKeyCommand = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        console.log("sendKeyCommand: Entered");
         if (event.key === 'Enter') {
             sendCommand(command);
         }
+        console.log("sendKeyCommand: Exited");
     };
 
     // Combined effect for scrolling, triggers whenever mudEvents changes
     useEffect(() => {
+        console.log("Scrolling useEffect: Entered");
         if (scrollMe.current) {
             // Use setTimeout to ensure scroll happens after render commit
             setTimeout(() => {
@@ -517,15 +556,19 @@ function App() {
                 }
             }, 0);
         }
+        console.log("Scrolling useEffect: Exited");
     }, [mudEvents]);
 
     const handleDataClick = () => {
+        console.log("handleDataClick: Entered");
         if (sendcommandarea.current) {
             sendcommandarea.current.focus();
         }
+        console.log("handleDataClick: Exited");
     };
 
-    return (
+    console.log("App: Rendering");
+    const result = (
         <div className="game-container">
             <div className="top-bar">
                 NehsaMUD
@@ -556,6 +599,8 @@ function App() {
             )}
         </div>
     );
+    console.log("App: Exited");
+    return result;
 }
 
 export default App;
