@@ -285,7 +285,7 @@ function App() {
                         <List.Indicator asChild color="green.500">
                             <LuCircleCheck />
                         </List.Indicator>
-                        Backend is Python 3, AsyncIO, Go, MariaDB, and C#
+                        Backend is Python3, AsyncIO, Go, MariaDB, and C#
                     </List.Item>
                     <List.Item>
                         <List.Indicator asChild color="green.500">
@@ -463,6 +463,9 @@ function App() {
                 break;
             case MudEvents.CLIENT_LIST:
                 pushGenericEvent(<span className="client-list-message">Users connected: {data.players}</span>);
+                break;
+            case MudEvents.MAP_EVENT:
+                setMapImageName(data.map_image_name);
                 break;
             default:
                 console.error("unsupported event: " + data.type);

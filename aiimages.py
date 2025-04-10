@@ -317,34 +317,33 @@ class AIImages(Utility):
                 path = self.generator.create_monster(self.seed, item_description, item_name)
 
             # a new image was created
-            if path is not None and path != "":   
-                # save the room image to the file              
-                self.add_log_entry(log_name, item_name, item_description)
+            if path is None or path == "":   
+                LogUtils.error("Image generation failed", self.logger)
+                raise Exception("Image generation failed")
+        
+            # save the room image to the file              
+            self.add_log_entry(log_name, item_name, item_description)
 
-                # upload s3
+            # upload s3
+            s3_key = f"public/images/{str(type)}/{image_name}"
+            image_url = S3Utils.upload_image_to_s3(path, s3_key)
 
-        local_image_path = os.join(path, item_name)
-        s3_image_key = f"public/images/{str(type)}/{item_name}"
-        image_url = S3Utils.upload_image_to_s3(local_image_path, s3_image_key)
-
-        if image_url:
-            print(f"Image uploaded successfully. Public URL: {image_url}")
-            # Return this URL to your frontend
-        else:
-            print("Image upload failed.")
-
-        #TODO - send image url to player
-            
-        # send room image event
-        if type == Utility.ImageType.ROOM:
-            await self.send_message(MudEvents.RoomImageEvent(item_name), player.websocket)
-        elif type == Utility.ImageType.ITEM:
-            await self.send_message(MudEvents.ItemImageEvent(item_name), player.websocket)
-        elif type == Utility.ImageType.PLAYER:
-            await self.send_message(MudEvents.PlayerImageEvent(item_name), player.websocket)
-        elif type == Utility.ImageType.NPC:
-            await self.send_message(MudEvents.NpcImageEvent(item_name), player.websocket)
-        elif type == Utility.ImageType.MONSTER:
-            await self.send_message(MudEvents.MonsterImageEvent(item_name), player.websocket)
-                    
+            if image_url:
+                print(f"Image uploaded successfully. Public URL: {image_url}")
+                # Return this URL to your frontend
+            else:
+                print("Image upload failed.")
+                
+            # send room image event
+            if type == Utility.ImageType.ROOM:
+                await self.send_message(MudEvents.RoomImageEvent(item_name), player.websocket)
+            elif type == Utility.ImageType.ITEM:
+                await self.send_message(MudEvents.ItemImageEvent(item_name), player.websocket)
+            elif type == Utility.ImageType.PLAYER:
+                await self.send_message(MudEvents.PlayerImageEvent(item_name), player.websocket)
+            elif type == Utility.ImageType.NPC:
+                await self.send_message(MudEvents.NpcImageEvent(item_name), player.websocket)
+            elif type == Utility.ImageType.MONSTER:
+                await self.send_message(MudEvents.MonsterImageEvent(item_name), player.websocket)
+                        
 

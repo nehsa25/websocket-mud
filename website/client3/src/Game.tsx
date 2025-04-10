@@ -158,6 +158,12 @@ const Game: React.FC<GameProps> = ({
     return (
         <>
             <div className="column1">
+                <div className="map-container">
+                    <img
+                        src={mapImageName}
+                        className="map"
+                    />
+                </div>
                 <div className="data" ref={scrollMe} onClick={handleDataClick}>
                     {mudEvents.map((event, index) => {
                         return (

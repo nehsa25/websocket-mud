@@ -932,6 +932,8 @@ class WorldState(Utility):
             room.name, description, items, exits, monsters, people, npcs
         )
         await self.send_message(room_event, player.websocket)
+
+        return room
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def update_item_in_room(self, room):

@@ -8,6 +8,7 @@ from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
 import os
+from utilities.aws import S3Utils
 
 class Map(Utility):
     class ImageSize(Enum):
@@ -25,10 +26,10 @@ class Map(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
 
-        if ImageSize == ImageSize.MINI:
+        if ImageSize == Map.ImageSize.MINI:
             map_output = re.sub('width="\d*pt"', 'width="1200pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)   
-        elif ImageSize == ImageSize.SMALL:
+        elif ImageSize == Map.ImageSize.SMALL:
             map_output = re.sub('width="\d*pt"', 'width="1600pt"', map_output)
             map_output = re.sub('height="\d*pt"', '', map_output)
         else:
@@ -67,7 +68,10 @@ class Map(Utility):
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
 
-        # felete file if it exists
+        # Ensure the directory exists
+        os.makedirs(self.path, exist_ok=True)
+
+        # delete file if it exists
         if os.path.exists(image_name):
             os.remove(image_name)
 
@@ -107,27 +111,38 @@ class Map(Utility):
         with open(full_path + extension, "w") as text_file:
             text_file.write(output_graphviz_svg.decode("utf-8"))
 
-        # clean it up
-        with open(full_path + extension, "r") as text_file:
-           
-            contents = text_file.read()
+        mini_image_url = None 
 
-            # mini-map
-            with open(f"{full_path}_mini{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.MINI)
-                final_text_file.write(main)
-                
-            # small
-            with open(f"{full_path}_small{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.SMALL)
-                final_text_file.write(main)
-                                      
-            # map
-            with open(f"{full_path}{extension}", "w") as final_text_file:
-                main = await self.sanitize_svg_output(contents, area_identifier, Map.ImageSize.LARGE)
-                final_text_file.write(main)              
+        # Upload different sizes to S3
+        for size in [Map.ImageSize.MINI, Map.ImageSize.SMALL, Map.ImageSize.LARGE]:
+            if size == Map.ImageSize.MINI:
+                suffix = "_mini"
+            elif size == Map.ImageSize.SMALL:
+                suffix = "_small"
+            else:
+                suffix = ""
+
+            # Sanitize SVG output
+            sanitized_svg = await self.sanitize_svg_output(output_graphviz_svg.decode("utf-8"), area_identifier, size)
+
+            # Save sanitized SVG to a temporary file
+            temp_image_path = f"{full_path}{suffix}{extension}"
+            with open(temp_image_path, "w") as temp_file:
+                temp_file.write(sanitized_svg)
+
+            # Upload to S3
+            s3_key = f"public/images/maps/{image_name}{suffix}{extension}"
+            image_url = S3Utils.upload_image_to_s3(temp_image_path, s3_key)
+
+            if not image_url:
+                LogUtils.error(f"{method_name}: Failed to upload {s3_key} to S3", self.logger)
+            else:
+                # Delete the temporary file
+                os.remove(temp_image_path)
+                if size == Map.ImageSize.MINI:
+                    mini_image_url = image_url 
 
         # send map event
-        map_event = MudEvents.MapEvent(image_name)
+        map_event = MudEvents.MapEvent(mini_image_url)
         await self.send_message(map_event, player.websocket)
         LogUtils.debug(f"{method_name}: exit", self.logger)

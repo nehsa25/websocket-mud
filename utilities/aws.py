@@ -1,10 +1,22 @@
 import boto3
+import os
 from botocore.exceptions import NoCredentialsError
 
 AWS_REGION = 'us-west-2'
 BUCKET_NAME = 'nehsa-storage'
 
-s3_client = boto3.client('s3', region_name=AWS_REGION)
+# Option 1: Configure credentials using environment variables
+s3_client = boto3.client('s3', region_name=AWS_REGION,
+                       aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
+                       aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
+
+# Option 2: Configure credentials directly (not recommended for production)
+# s3_client = boto3.client('s3', region_name=AWS_REGION,
+#                        aws_access_key_id='YOUR_ACCESS_KEY_ID',
+#                        aws_secret_access_key='YOUR_SECRET_ACCESS_KEY')
+
+# Option 3: Rely on IAM role (recommended for EC2 instances)
+# s3_client = boto3.client('s3', region_name=AWS_REGION)
 
 class S3Utils:
     @staticmethod
@@ -24,6 +36,8 @@ class S3Utils:
             extra_args = {}
             if make_public:
                 extra_args['ACL'] = 'public-read'
+            
+            extra_args['ContentType'] = 'image/svg+xml'
 
             s3_client.upload_file(image_path, BUCKET_NAME, s3_key, ExtraArgs=extra_args)
 

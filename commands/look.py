@@ -68,8 +68,20 @@ class Look(Utility):
 
         # do we just want to look around the room?
         if look_object == "" or look_object == "l" or look_object == "look":
+            room = await world_state.show_room(player)
+            self.running_image_threads.append(
+                asyncio.create_task(
+                    self.ai_images.generate_image(
+                        item_name=self.sanitize_filename(f"{player.room.name}_room") + ".png",
+                        item_description=room.description,
+                        player=player,
+                        world_state=world_state,
+                        type=Utility.ImageType.ROOM
+                    )
+                )
+            )
             await self.send_message(MudEvents.InfoEvent("You look around the room."), player.websocket)
-            await world_state.show_room(player)
+
 
             # send message to any players in same room that you're being suspicious
             if player.room: # Check if player.room exists
