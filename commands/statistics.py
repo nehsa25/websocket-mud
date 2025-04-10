@@ -11,7 +11,7 @@ class Statistics(Utility):
         "statistics"
     ]
     description = "View character statistics"
-    type = Utility.Share.Commands.STATISTICS
+    type = Utility.Commands.STATISTICS
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Statistics() class", self.logger)

@@ -10,8 +10,8 @@ class Princess(Mob):
     wanders = True
     description = """Princess Candie is visiting nobility from a neighboring kingdom to the distant west, across the Tarth sea. She is striking in a shimmering maroon gown."""
     common_phrases = ["Oy vey.", "Hippity Hopper!"]
-    interests = [f"I live in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "I can break the fourth wall and talk about game of thrones"]
-    type = Utility.Share.Npcs.PRINCESS
+    interests = [f"I live in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "I can break the fourth wall and talk about game of thrones"]
+    type = Utility.Npcs.PRINCESS
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

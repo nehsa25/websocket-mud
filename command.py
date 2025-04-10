@@ -77,70 +77,66 @@ class Commands(Utility):
         self.telepath = Telepath(logger)
         
     # main function that runs all the rest
-    async def run_command(self, command, player, world_state, extra = ""):
-        try:
-            method_name = inspect.currentframe().f_code.co_name
-            LogUtils.debug(f"{method_name}: enter", self.logger)
-            LogUtils.debug(f'Command: "{command}"', self.logger)
-            
-            command = command.strip()
-            lowercase_cmd = command.lower()
+    async def run_command(self, player, command, world_state, extra = ""):
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(f"{method_name}: enter", self.logger)
+        LogUtils.debug(f'Command: "{command}"', self.logger)
+        
+        command = command.strip()
+        lowercase_cmd = command.lower()
 
-            # send back the command we received as info - (this could just be printed client side and save the traffic cost)
-            await self.send_message(MudEvents.CommandEvent(command), player.websocket)
+        # send back the command we received as info - (this could just be printed client side and save the traffic cost)
+        await self.send_message(MudEvents.CommandEvent(command), player.websocket)
 
-            # if the player is dead, don't do anything..
-            if player.stats.current_hp <= 0:
-                return player
-
-            # process each command
-            if lowercase_cmd == "help":  # display help
-                player = await self.help.execute(player)
-            elif world_state.environments.dirs.is_valid_direction(command):  # process direction
-                player = await self.move.execute(command, player, world_state)
-            # a look command - could be at the room, a person, a monster, an item
-            elif command == "" or lowercase_cmd == "l" or lowercase_cmd == "look" or lowercase_cmd.startswith("l ") or lowercase_cmd.startswith("look "):
-                player = await self.look.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("g ") or command.startswith("get "):  # get
-                player, world_state = await self.get.execute(command, player, world_state)
-            elif lowercase_cmd == "i" or lowercase_cmd == "inv" or lowercase_cmd == "inventory":  # inv
-                player = await self.inventory.execute(player)
-            elif lowercase_cmd == "sea" or lowercase_cmd == "search":  # search
-                player = await self.search.execute(player, world_state)
-            elif lowercase_cmd.startswith("d ") or lowercase_cmd.startswith("dr ") or lowercase_cmd.startswith("drop "):  # drop
-                player = await self.drop.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("hide ") or lowercase_cmd.startswith("stash "):  # hide
-                player = await self.hide.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("eq ") or lowercase_cmd.startswith("equip ") or lowercase_cmd.startswith("wield "):  # eq
-                player = await self.equip.execute(command, player)
-            elif lowercase_cmd.startswith("system ") or lowercase_cmd.startswith("sys "):  # a system command like changing username
-                player = await self.system.execute(command, extra, player, world_state)
-            elif lowercase_cmd == "stat" or lowercase_cmd == "stats" or lowercase_cmd == "statistics":  # stat
-                player = await self.statistics.execute(player)
-            elif (lowercase_cmd.startswith("a ")  or lowercase_cmd.startswith("att ") or lowercase_cmd.startswith("attack ")):  # attack
-                item = await self.attack.execute(command, player, world_state)
-                print("commands.py, attack item: ", item) # this is the item that was attacked?
-            elif lowercase_cmd == ("exp") or lowercase_cmd == ("experience"):  # experience
-                player = await self.experience.execute(player)
-            elif lowercase_cmd.startswith("loot "):  # loot corpse
-                player = await self.loot.execute(command, player, world_state)
-            elif lowercase_cmd == ("who"):
-                player = await self.who.execute(player, world_state)
-            elif lowercase_cmd.startswith("yell "):
-                player = await self.yell.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("whisper "):
-                player = await self.whisper.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("say "):
-                player = await self.say.execute(command, player, world_state)
-            elif lowercase_cmd.startswith("telepath "):
-                player = await self.telepath.execute(command, player, world_state)
-            elif lowercase_cmd == "rest":
-                player, world_state = await self.rest.execute(player, world_state)
-            else:  # you're going to say it to the room..
-                await self.send_message(MudEvents.ErrorEvent(f'"{command}" is not a valid command.'), player.websocket)
-
-            LogUtils.debug(f"{method_name}: exit", self.logger)
+        # if the player is dead, don't do anything..
+        if player.stats.current_hp <= 0:
             return player
-        except:
-            LogUtils.error(f"{method_name}: An error occurred executing command: {command} from player {player.name}\n---------\n{traceback.format_exc()}", self.logger)
-            
+
+        # process each command
+        if lowercase_cmd == "help":  # display help
+            player = await self.help.execute(player)
+        elif world_state.environments.dirs.is_valid_direction(command):  # process direction
+            player = await self.move.execute(command, player, world_state)
+        # a look command - could be at the room, a person, a monster, an item
+        elif command == "" or lowercase_cmd == "l" or lowercase_cmd == "look" or lowercase_cmd.startswith("l ") or lowercase_cmd.startswith("look "):
+            player = await self.look.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("g ") or command.startswith("get "):  # get
+            player, world_state = await self.get.execute(command, player, world_state)
+        elif lowercase_cmd == "i" or lowercase_cmd == "inv" or lowercase_cmd == "inventory":  # inv
+            player = await self.inventory.execute(player)
+        elif lowercase_cmd == "sea" or lowercase_cmd == "search":  # search
+            player = await self.search.execute(player, world_state)
+        elif lowercase_cmd.startswith("d ") or lowercase_cmd.startswith("dr ") or lowercase_cmd.startswith("drop "):  # drop
+            player = await self.drop.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("hide ") or lowercase_cmd.startswith("stash "):  # hide
+            player = await self.hide.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("eq ") or lowercase_cmd.startswith("equip ") or lowercase_cmd.startswith("wield "):  # eq
+            player = await self.equip.execute(command, player)
+        elif lowercase_cmd.startswith("system ") or lowercase_cmd.startswith("sys "):  # a system command like changing username
+            player = await self.system.execute(command, extra, player, world_state)
+        elif lowercase_cmd == "stat" or lowercase_cmd == "stats" or lowercase_cmd == "statistics":  # stat
+            player = await self.statistics.execute(player)
+        elif (lowercase_cmd.startswith("a ")  or lowercase_cmd.startswith("att ") or lowercase_cmd.startswith("attack ")):  # attack
+            item = await self.attack.execute(command, player, world_state)
+            print("commands.py, attack item: ", item) # this is the item that was attacked?
+        elif lowercase_cmd == ("exp") or lowercase_cmd == ("experience"):  # experience
+            player = await self.experience.execute(player)
+        elif lowercase_cmd.startswith("loot "):  # loot corpse
+            player = await self.loot.execute(command, player, world_state)
+        elif lowercase_cmd == ("who"):
+            player = await self.who.execute(player, world_state)
+        elif lowercase_cmd.startswith("yell "):
+            player = await self.yell.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("whisper "):
+            player = await self.whisper.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("say "):
+            player = await self.say.execute(command, player, world_state)
+        elif lowercase_cmd.startswith("telepath "):
+            player = await self.telepath.execute(command, player, world_state)
+        elif lowercase_cmd == "rest":
+            player, world_state = await self.rest.execute(player, world_state)
+        else:  # you're going to say it to the room..
+            await self.send_message(MudEvents.ErrorEvent(f'"{command}" is not a valid command.'), player.websocket)
+
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return player

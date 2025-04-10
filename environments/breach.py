@@ -11,7 +11,7 @@ class Breach:
     units = None
     in_town = False
     name = "The Breach"
-    type = Utility.Share.EnvironmentTypes.BREACH
+    type = Utility.EnvironmentTypes.BREACH
 
     # rooms
     breach_portal = None

@@ -8,7 +8,7 @@ class Who(Utility):
     command = "who"
     examples = ["who"]
     description = "List all players in the game."
-    type = Utility.Share.Commands.WHO
+    type = Utility.Commands.WHO
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Who() class", self.logger)

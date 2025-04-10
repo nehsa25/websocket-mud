@@ -14,7 +14,7 @@ class Attack(Utility):
         "att skel",
         "attack skeleton"
     ]
-    type = Utility.Share.Commands.ATTACK
+    type = Utility.Commands.ATTACK
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Attack() class", self.logger)

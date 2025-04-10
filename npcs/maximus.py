@@ -8,8 +8,8 @@ class Maximus(Mob):
     name = "Maximus"
     wanders = True
     description = """Maximus is a overweight orange tabby cat with a white belly and paws.  He has a small white patch on his nose and a long tail.  He is friendly and will often follow you around and rub against your legs."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "cat treats", "cat foot"]
-    type = Utility.Share.Npcs.MAXIMUS
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "cat treats", "cat foot"]
+    type = Utility.Npcs.MAXIMUS
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

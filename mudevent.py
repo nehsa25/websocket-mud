@@ -8,50 +8,43 @@ class MudEvents:
     def __init__(self) -> None:
         pass
 
-    class EventUtility:
-        logger = None
-
-        def __init__(self, logger) -> None:
-            self.logger = logger
-            LogUtils.debug(f"Initializing Event() class", self.logger)
-
-        class EventTypes(Enum):
-            NONE = -1
-            DUPLICATE_NAME = 0
-            EVENT = 1
-            WELCOME = 2
-            ERROR = 3
-            INFO = 4
-            ROOM = 5
-            COMMAND = 6
-            USERNAME_REQUEST = 7
-            USERNAME_ANSWER = 8
-            BOOK = 9
-            TIME = 10
-            CHANGE_NAME = 11
-            YOU_ATTACK = 12
-            INVENTORY = 13
-            ATTACK = 14
-            HEALTH = 15
-            CLIENT_LIST = 16
-            MAP_EVENT = 17
-            ROOM_IMAGE = 18
-            DIRECTION = 19
-            ANNOUCEMENT = 20
-            ENVIRONMENT = 21
-            REST = 22
-            HELP = 23
-            MONSTER_IMAGE = 24
-            PLAYER_IMAGE = 25
-            NPC_IMAGE = 26
-            ITEM_IMAGE = 27
-            INVALID_NAME = 28
-            USERNAME_CHANGED = 29
+    class EventTypes(Enum):
+        NONE = -1
+        DUPLICATE_NAME = 0
+        EVENT = 1
+        WELCOME = 2
+        ERROR = 3
+        INFO = 4
+        ROOM = 5
+        COMMAND = 6
+        USERNAME_REQUEST = 7
+        USERNAME_ANSWER = 8
+        BOOK = 9
+        TIME = 10
+        CHANGE_NAME = 11
+        YOU_ATTACK = 12
+        INVENTORY = 13
+        ATTACK = 14
+        HEALTH = 15
+        CLIENT_LIST = 16
+        MAP_EVENT = 17
+        ROOM_IMAGE = 18
+        DIRECTION = 19
+        ANNOUCEMENT = 20
+        ENVIRONMENT = 21
+        REST = 22
+        HELP = 23
+        MONSTER_IMAGE = 24
+        PLAYER_IMAGE = 25
+        NPC_IMAGE = 26
+        ITEM_IMAGE = 27
+        INVALID_NAME = 28
+        USERNAME_CHANGED = 29
 
         @staticmethod
         def get_event_type_id(event):
             return event.value
-
+        
     class EventEvent:
         type = None
         message = ""
@@ -59,8 +52,8 @@ class MudEvents:
         extra = ""
 
         def __init__(self, type, message, extra):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.EVENT
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.EVENT
             )
             self.type = type
             self.message = message
@@ -80,8 +73,8 @@ class MudEvents:
         npcs = []
 
         def __init__(self, name, description, items, exits, monsters, players, npcs) -> None:
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ROOM
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ROOM
             )
             self.name = name
             self.description = description
@@ -94,13 +87,12 @@ class MudEvents:
         def to_json(self):
             return jsonpickle.encode(self)
         
-
     class DuplicateNameEvent:
         type = None
 
         def __init__(self):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.DUPLICATE_NAME
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.DUPLICATE_NAME
             )
 
         def to_json(self):
@@ -110,8 +102,8 @@ class MudEvents:
         type = None
 
         def __init__(self):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.INVALID_NAME
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.INVALID_NAME
             )
 
         def to_json(self):
@@ -122,8 +114,8 @@ class MudEvents:
         type = None
 
         def __init__(self, world_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.USERNAME_REQUEST
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.USERNAME_REQUEST
             )
             self.world_name = world_name
 
@@ -136,8 +128,8 @@ class MudEvents:
         message = ""
 
         def __init__(self, message, name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.USERNAME_CHANGED
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.USERNAME_CHANGED
             )
             self.name = name
             self.message = message
@@ -150,8 +142,8 @@ class MudEvents:
         races = None
 
         def __init__(self):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.USERNAME_REQUEST
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.USERNAME_REQUEST
             )
             # self.races = Races()
 
@@ -163,8 +155,8 @@ class MudEvents:
         players = None
 
         def __init__(self, number_players):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.CLIENT_LIST
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.CLIENT_LIST
             )
             self.players = number_players
 
@@ -177,8 +169,8 @@ class MudEvents:
         name = ""
 
         def __init__(self, message, name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.WELCOME
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.WELCOME
             )
             self.name = name
             self.message = message
@@ -191,8 +183,8 @@ class MudEvents:
         message = ""
 
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.TIME
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.TIME
             )
             self.message = message
 
@@ -208,8 +200,8 @@ class MudEvents:
         def __init__(self, message, rest_error = False, is_resting = False):
             self.rest_error = rest_error
             self.is_resting = is_resting
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.REST
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.REST
             )
             self.message = message
 
@@ -224,8 +216,8 @@ class MudEvents:
         statuses = []
 
         def __init__(self, name, statuses = []):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.HEALTH
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.HEALTH
             )
             self.name = name
             self.statuses = statuses
@@ -238,8 +230,8 @@ class MudEvents:
         help_commands = []
 
         def __init__(self, help_commands):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.HELP
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.HELP
             )
             self.help_commands = help_commands
 
@@ -251,8 +243,8 @@ class MudEvents:
         inventory = None
 
         def __init__(self, inventory):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.INVENTORY
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.INVENTORY
             )
             self.inventory = inventory
 
@@ -264,8 +256,8 @@ class MudEvents:
         message = ""
 
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.COMMAND
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.COMMAND
             )
             self.message = message
 
@@ -276,8 +268,8 @@ class MudEvents:
         type = None
         map_image_name = ""
         def __init__(self, map_image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.MAP_EVENT
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.MAP_EVENT
             )
             self.map_image_name = map_image_name
         def to_json(self):
@@ -287,8 +279,8 @@ class MudEvents:
         type = None
         room_image_name = ""
         def __init__(self, image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ROOM_IMAGE
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ROOM_IMAGE
             )
             self.room_image_name = image_name
         def to_json(self):
@@ -298,8 +290,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.MONSTER_IMAGE
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.MONSTER_IMAGE
             )
             self.image_name = image_name
         def to_json(self):
@@ -309,8 +301,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.PLAYER_IMAGE
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.PLAYER_IMAGE
             )
             self.image_name = image_name
         def to_json(self):
@@ -320,8 +312,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.NPC_IMAGE
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.NPC_IMAGE
             )
             self.image_name = image_name
         def to_json(self):
@@ -331,8 +323,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, image_name):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ITEM_IMAGE
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ITEM_IMAGE
             )
             self.image_name = image_name
         def to_json(self):
@@ -342,8 +334,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.DIRECTION
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.DIRECTION
             )
             self.message = message
         def to_json(self):
@@ -352,8 +344,8 @@ class MudEvents:
     class AttackEvent:
         type = None
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ATTACK
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ATTACK
             )
             self.message = message
         def to_json(self):
@@ -363,8 +355,8 @@ class MudEvents:
         type = None
         message = ""
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.INFO
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.INFO
             )
             self.message = message
         def to_json(self):
@@ -374,8 +366,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ANNOUCEMENT
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ANNOUCEMENT
             )
             self.message = message
         def to_json(self):
@@ -385,8 +377,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ENVIRONMENT
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ENVIRONMENT
             )
             self.message = message
         def to_json(self):
@@ -396,8 +388,8 @@ class MudEvents:
         type = None
         image_name = ""
         def __init__(self, message):
-            self.type = MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.ERROR
+            self.type = MudEvents.EventTypes.get_event_type_id(
+                MudEvents.EventTypes.ERROR
             )
             self.message = message
         def to_json(self):

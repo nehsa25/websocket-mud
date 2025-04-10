@@ -8,7 +8,7 @@ class Hide(Utility):
     command = "hide[hid,h], hide[hid,h] <item>, stash[st,s] <item>"
     examples = ["hide - hide yourself", "hide sword - hide an item", "stash coin - same as hide"]
     description = "Hide yourself or an item in the room."
-    type = Utility.Share.Commands.HIDE
+    type = Utility.Commands.HIDE
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Hide() class", self.logger)

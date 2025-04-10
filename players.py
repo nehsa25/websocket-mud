@@ -2,6 +2,7 @@ import inspect
 import json
 from random import randint
 import random
+import traceback
 from websockets import ConnectionClosedOK
 from player_classes.barbarian import Barbarian
 from player_classes.bard import Bard
@@ -87,9 +88,14 @@ class Players(Utility):
     async def update_website_users_online(self, world_state):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        get_client_event = world_state.players.GetClientEvent(len(self.players))
+        
+        # Send the number of connected players to each player
         for player in self.players:
-            await self.send_message(get_client_event, player.websocket)
+            try:
+                await self.send_message(MudEvents.GetClientEvent(len(self.players)), player.websocket)
+            except Exception as e:
+                LogUtils.error(f"{method_name}: Error sending client list to player {player.name}: {e}", self.logger)
+                LogUtils.error(traceback.format_exc(), self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def register(self, player, world_state):
@@ -131,172 +137,162 @@ class Players(Utility):
     # calls at the beginning of the connection.  websocket connection here is the real connection
     async def new_user(self, world_state, websocket, dupe=False, invalid_username=False):
         player = None
+        method_name = inspect.currentframe().f_code.co_name
+        LogUtils.debug(
+            f"{method_name}: enter, duplicate user flow: {dupe}, empty username flow: {invalid_username}", self.logger
+        )
+        LogUtils.info(f"{method_name}: {websocket.remote_address}", self.logger)
+        ip = websocket.remote_address[0]
+        LogUtils.info(
+            f"A new user has connected to NehsaMUD from {ip}", self.logger
+        )
+
+        # get the client hostname
+        LogUtils.info(f"Requesting username", self.logger)
+        if dupe:
+            await self.send_message(MudEvents.DuplicateNameEvent(), websocket)
+        elif invalid_username:
+            await self.send_message(MudEvents.InvalidNameEvent(), websocket)    
+        else:
+            await self.send_message(
+                MudEvents.UsernameRequestEvent(Utility.WORLD_NAME), websocket
+            )
+        LogUtils.info(f"Awaiting client name response from client..", self.logger)
+        msg = await websocket.recv()
+        LogUtils.info(f"Message received: {msg}", self.logger)
+        request = json.loads(msg)
+        player_race = random.choice(list(Utility.Races))
+        player_class = random.choice(list(Utility.Classes)).name
+        player_intelligence = randint(1, 50)
+        player_hp = randint(1, 50)
+        player_strength = randint(1, 50)
+        player_agility = randint(1, 50)
+        player_location = world_state.environments.rooms[0]
+        player_perception = randint(1, 50)
+        player_faith = randint(1, 50)
+        player_determination = randint(1, 50)
+        age = randint(1, 75)
+        level = randint(1, 75)
+        pronoun = random.choice(list(Pronouns))
         
-        try:
-            method_name = inspect.currentframe().f_code.co_name
-            LogUtils.debug(
-                f"{method_name}: enter, duplicate user flow: {dupe}, empty username flow: {invalid_username}", self.logger
-            )
-            LogUtils.info(f"{method_name}: {websocket.remote_address}", self.logger)
-            ip = websocket.remote_address[0]
-            LogUtils.info(
-                f"A new user has connected to NehsaMUD from {ip}", self.logger
-            )
+        if player_class == Utility.Classes.MAGE.name:
+            player_class = Mage(self.logger)
+        elif player_class == Utility.Classes.BATTLE_MAGE.name:
+            player_class = BattleMage(self.logger)
+        elif player_class == Utility.Classes.WARLOCK.name:
+            player_class = Warlock(self.logger)
+        elif player_class == Utility.Classes.WARRIOR.name:
+            player_class = Warrior(self.logger)
+        elif player_class == Utility.Classes.ROGUE.name:
+            player_class = Rogue(self.logger)
+        elif player_class == Utility.Classes.PALADIN.name:
+            player_class = Paladin(self.logger)
+        elif player_class == Utility.Classes.RANGER.name:
+            player_class = Ranger(self.logger)
+        elif player_class == Utility.Classes.BARD.name:
+            player_class = Bard(self.logger)
+        elif player_class == Utility.Classes.DRUID.name:
+            player_class = Druid(self.logger)
+        elif player_class == Utility.Classes.CLERIC.name:
+            player_class = Cleric(self.logger)
+        elif player_class == Utility.Classes.SORCERER.name:
+            player_class = Sorcorer(self.logger)
+        elif player_class == Utility.Classes.BARBARIAN.name:
+            player_class = Barbarian(self.logger)
+        elif player_class == Utility.Classes.MONK.name:
+            player_class = Monk(self.logger)
+        elif player_class == Utility.Classes.PALADIN.name:
+            player_class = Paladin(self.logger)
+        elif player_class == Utility.Classes.NECROMANCER.name:
+            player_class = Necromancer(self.logger)
+        elif player_class == Utility.Classes.ILLUSIONIST.name:
+            player_class = Illusionist(self.logger)
+        elif player_class == Utility.Classes.KNIGHT.name:
+            player_class = Knight(self.logger)
+        elif player_class == Utility.Classes.BOWMAN.name:
+            player_class = Bowman(self.logger)
+        elif player_class == Utility.Classes.BERSERKER.name:
+            player_class = Berserker(self.logger)
 
-            # get the client hostname
-            LogUtils.info(f"Requesting username", self.logger)
-            if dupe:
-                await self.send_message(MudEvents.DuplicateNameEvent(), websocket)
-            elif invalid_username:
-                await self.send_message(MudEvents.InvalidNameEvent(), websocket)    
-            else:
-                await self.send_message(
-                    MudEvents.UsernameRequestEvent(Utility.Share.WORLD_NAME), websocket
-                )
-            LogUtils.info(f"Awaiting client name response from client..", self.logger)
-            msg = await websocket.recv()
-            LogUtils.info(f"Message received: {msg}", self.logger)
-            request = json.loads(msg)
-            player_race = random.choice(list(Utility.Share.Races))
-            player_class = random.choice(list(Utility.Share.Classes)).name
-            player_intelligence = randint(1, 50)
-            player_hp = randint(1, 50)
-            player_strength = randint(1, 50)
-            player_agility = randint(1, 50)
-            player_location = world_state.environments.rooms[0]
-            # player_location = random.choice(world_state.environments.rooms)
-            # player_location = await world_state.environments.get_room_by_name("Town Smee - University - Courtyard")
-            player_perception = randint(1, 50)
-            player_faith = randint(1, 50)
-            player_determination = randint(1, 50)
-            age = randint(1, 75)
-            level = randint(1, 75)
-            pronoun = random.choice(list(Pronouns))
+        if player_race == Utility.Races.ARGUNA:
+            player_race = Arguna(self.logger)
+        elif player_race == Utility.Races.EAREA:
+            player_race = Earea(self.logger)
+        elif player_race == Utility.Races.HALFLING:
+            player_race = Halfing(self.logger)
+        elif player_race == Utility.Races.HUMAN:
+            player_race = Human(self.logger)
+        elif player_race == Utility.Races.NYRRISS:
+            player_race = Nyrriss(self.logger)
+        elif player_race == Utility.Races.ORC:
+            player_race = Orc(self.logger)
+        elif player_race == Utility.Races.KOBOLD:
+            player_race = Kobold(self.logger)
+        elif player_race == Utility.Races.ELF:
+            player_race = Elf(self.logger)
+        elif player_race == Utility.Races.FAE:
+            player_race = Fae(self.logger)
+        elif player_race == Utility.Races.HALFOGRE:
+            player_race = HalfOgre(self.logger)
+        elif player_race == Utility.Races.GOBLIN:
+            player_race = Goblin(self.logger) 
+
+        inventory = Inventory(
+            items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
+        )
+        
+        # random characteristics
+        eye_color = random.choice(list(Utility.EyeColors)).name
+        hair_color = random.choice(list(Utility.HairColors)).name
+        tattoes_placement = random.choice(list(Utility.TattooPlacements)).name
+        tattoes_severity = random.choice(list(Utility.TattooSeverities)).name
+        scars = random.choice(list(Utility.Scars)).name
+        hair_length = random.choice(list(Utility.HairLength)).name
+        
+        player = Player(
+            eye_color=eye_color,
+            hair_color=hair_color,
+            hair_length=hair_length,
+            tattoes_placement=tattoes_placement,
+            tattoes_severity=tattoes_severity,
+            scars=scars,
+            name=request["username"],
+            level = level,
+            race=player_race,
+            pronoun=pronoun,
+            age=age,
+            player_class=player_class,
+            intelligence=player_intelligence,
+            hp=player_hp,
+            strength=player_strength,
+            agility=player_agility,
+            location_id=player_location,
+            perception=player_perception,
+            determination=player_determination,
+            faith=player_faith,
+            inventory=inventory,
+            ip=ip,
+            websocket=websocket,
+            logger=self.logger,
+        )
+
+        if request["type"] == MudEvents.EventTypes.get_event_type_id(
+            MudEvents.EventTypes.USERNAME_ANSWER
+        ):
+            await self.register(player, world_state)
+
+            # move player to initial room
+            player, world_state = await world_state.move_room_player(
+                player.location_id, player
+            )
             
-            if player_class == Utility.Share.Classes.MAGE.name:
-                player_class = Mage(self.logger)
-            elif player_class == Utility.Share.Classes.BATTLE_MAGE.name:
-                player_class = BattleMage(self.logger)
-            elif player_class == Utility.Share.Classes.WARLOCK.name:
-                player_class = Warlock(self.logger)
-            elif player_class == Utility.Share.Classes.WARRIOR.name:
-                player_class = Warrior(self.logger)
-            elif player_class == Utility.Share.Classes.ROGUE.name:
-                player_class = Rogue(self.logger)
-            elif player_class == Utility.Share.Classes.PALADIN.name:
-                player_class = Paladin(self.logger)
-            elif player_class == Utility.Share.Classes.RANGER.name:
-                player_class = Ranger(self.logger)
-            elif player_class == Utility.Share.Classes.BARD.name:
-                player_class = Bard(self.logger)
-            elif player_class == Utility.Share.Classes.DRUID.name:
-                player_class = Druid(self.logger)
-            elif player_class == Utility.Share.Classes.CLERIC.name:
-                player_class = Cleric(self.logger)
-            elif player_class == Utility.Share.Classes.SORCERER.name:
-                player_class = Sorcorer(self.logger)
-            elif player_class == Utility.Share.Classes.BARBARIAN.name:
-                player_class = Barbarian(self.logger)
-            elif player_class == Utility.Share.Classes.MONK.name:
-                player_class = Monk(self.logger)
-            elif player_class == Utility.Share.Classes.PALADIN.name:
-                player_class = Paladin(self.logger)
-            elif player_class == Utility.Share.Classes.NECROMANCER.name:
-                player_class = Necromancer(self.logger)
-            elif player_class == Utility.Share.Classes.ILLUSIONIST.name:
-                player_class = Illusionist(self.logger)
-            elif player_class == Utility.Share.Classes.KNIGHT.name:
-                player_class = Knight(self.logger)
-            elif player_class == Utility.Share.Classes.BOWMAN.name:
-                player_class = Bowman(self.logger)
-            elif player_class == Utility.Share.Classes.BERSERKER.name:
-                player_class = Berserker(self.logger)
+            # send initial status
+            await player.send_status()
+        else:
+            raise Exception(f"Shananigans? received request: {request['type']}")
 
-            if player_race == Utility.Share.Races.ARGUNA:
-                player_race = Arguna(self.logger)
-            elif player_race == Utility.Share.Races.EAREA:
-                player_race = Earea(self.logger)
-            elif player_race == Utility.Share.Races.HALFLING:
-                player_race = Halfing(self.logger)
-            elif player_race == Utility.Share.Races.HUMAN:
-                player_race = Human(self.logger)
-            elif player_race == Utility.Share.Races.NYRRISS:
-                player_race = Nyrriss(self.logger)
-            elif player_race == Utility.Share.Races.ORC:
-                player_race = Orc(self.logger)
-            elif player_race == Utility.Share.Races.KOBOLD:
-                player_race = Kobold(self.logger)
-            elif player_race == Utility.Share.Races.ELF:
-                player_race = Elf(self.logger)
-            elif player_race == Utility.Share.Races.FAE:
-                player_race = Fae(self.logger)
-            elif player_race == Utility.Share.Races.HALFOGRE:
-                player_race = HalfOgre(self.logger)
-            elif player_race == Utility.Share.Races.GOBLIN:
-                player_race = Goblin(self.logger) 
-
-            inventory = Inventory(
-                items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
-            )
-            
-            # random characteristics
-            eye_color = random.choice(list(Utility.Share.EyeColors)).name
-            hair_color = random.choice(list(Utility.Share.HairColors)).name
-            tattoes_placement = random.choice(list(Utility.Share.TattooPlacements)).name
-            tattoes_severity = random.choice(list(Utility.Share.TattooSeverities)).name
-            scars = random.choice(list(Utility.Share.Scars)).name
-            hair_length = random.choice(list(Utility.Share.HairLength)).name
-            
-            player = Player(
-                eye_color=eye_color,
-                hair_color=hair_color,
-                hair_length=hair_length,
-                tattoes_placement=tattoes_placement,
-                tattoes_severity=tattoes_severity,
-                scars=scars,
-                name=request["username"],
-                level = level,
-                race=player_race,
-                pronoun=pronoun,
-                age=age,
-                player_class=player_class,
-                intelligence=player_intelligence,
-                hp=player_hp,
-                strength=player_strength,
-                agility=player_agility,
-                location_id=player_location,
-                perception=player_perception,
-                determination=player_determination,
-                faith=player_faith,
-                inventory=inventory,
-                ip=ip,
-                websocket=websocket,
-                logger=self.logger,
-            )
-
-            if request["type"] == MudEvents.EventUtility.get_event_type_id(
-                MudEvents.EventUtility.EventTypes.USERNAME_ANSWER
-            ):
-                await self.register(player, world_state)
-
-                # move player to initial room
-                player, world_state = await world_state.move_room_player(
-                    player.location_id, player
-                )
-                
-                # send initial status
-                await player.send_status()
-            else:
-                raise Exception(f"Shananigans? received request: {request['type']}")
-
-            LogUtils.debug(f"{method_name}: exit", self.logger)
-            return world_state
-        except ConnectionClosedOK:
-            if player:
-                await self.unregister(player, world_state)
-            LogUtils.warn(f"ConnectionClosedOK (player left).", self.logger)
-        except Exception as e:
-            raise Exception(f"An error occurred during new_user(): {e}")
+        LogUtils.debug(f"{method_name}: exit", self.logger)
+        return world_state
 
     # called when a client disconnects
     async def unregister(self, player, world_state, change_name=False):
@@ -342,5 +338,5 @@ class Players(Utility):
                 break
         LogUtils.debug(f"{method_name}: exit, returning: {player.name}", self.logger)
         return player
-        
-        
+
+

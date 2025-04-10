@@ -55,21 +55,21 @@ class Monster(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         monster = None
-        if monster_type == Utility.Share.Monsters.SKELETON:
+        if monster_type == Utility.Monsters.SKELETON:
             monster = Skeleton(self.logger)
-        if monster_type == Utility.Share.Monsters.WIGHT:
+        if monster_type == Utility.Monsters.WIGHT:
             monster = Wight(self.logger)
-        if monster_type == Utility.Share.Monsters.GHOUL:
+        if monster_type == Utility.Monsters.GHOUL:
             monster = Ghoul(self.logger)
-        if monster_type == Utility.Share.Monsters.SHADE:
+        if monster_type == Utility.Monsters.SHADE:
             monster = Shade(self.logger)
-        if monster_type == Utility.Share.Monsters.WRAITH:
+        if monster_type == Utility.Monsters.WRAITH:
             monster = Wraith(self.logger)
-        if monster_type == Utility.Share.Monsters.ZOMBIE:
+        if monster_type == Utility.Monsters.ZOMBIE:
             monster = Zombie(self.logger)
-        if monster_type == Utility.Share.Monsters.ZOMBIE_SURFER:
+        if monster_type == Utility.Monsters.ZOMBIE_SURFER:
             monster = ZombieSurfer(self.logger)
-        if monster_type == Utility.Share.Monsters.RITE:
+        if monster_type == Utility.Monsters.RITE:
             monster = Rite(self.logger)
         monster.generate(room_id)
         LogUtils.debug(f"{method_name}: exit", self.logger)

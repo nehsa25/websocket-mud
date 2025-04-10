@@ -12,7 +12,7 @@ class TownSmee:
     rooms = None
     in_town = True
     name = "Town Smee"
-    type = Utility.Share.EnvironmentTypes.TOWNSMEE
+    type = Utility.EnvironmentTypes.TOWNSMEE
 
     # rooms
     townsquare = None
@@ -108,7 +108,7 @@ class TownSmee:
             description="You are in the town square of the Town of Smee. It's a large open cobblestone area with a bronze water fountain. The fountain is in the shape of a large, ferocious dire wolf. Water jets from the fountain mouth in a small arc. There's a festive feeling to the area and people and wagons move with purpose in all directions.",
             items=[Items.helmet, Items.stick, Items.maul],
             monsters=[],
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
             environment=self.type,
             logger=logger,
         )
@@ -116,7 +116,7 @@ class TownSmee:
             name=f"{self.name} - Inn",
             inside=True,
             description="You find yourself within a majestic inn. A worn, well-kept fireplace burned softly in the corner. There's a shelf with a small assortment of books and a prized map of the town and surrounding area stands on display but it is sealed behind glass to prevent touching.",
-            npc_types=[Utility.Share.Npcs.INNKEEPER, Utility.Share.Npcs.PRINCESS, Utility.Share.Npcs.MAXIMUS],
+            npc_types=[Utility.Npcs.INNKEEPER, Utility.Npcs.PRINCESS, Utility.Npcs.MAXIMUS],
             environment=self.type,
             logger=logger,
         )
@@ -124,7 +124,7 @@ class TownSmee:
             name=f"{self.name} - Sheriff's Office",
             inside=True,
             description="You are in the sheriff's office. A locked cell is in the corner of the Room. Currently, it is empty and the cell door is slightly ajar. A young bestraught woman is pleading and gusticulating to someone in another room through a small window.",
-            npc_types=[Utility.Share.Npcs.SHERIFF],
+            npc_types=[Utility.Npcs.SHERIFF],
             environment=self.type,
             logger=logger,
         )
@@ -146,7 +146,7 @@ class TownSmee:
         self.blacksmith = Room(
             name=f"{self.name} - Blacksmith",
             inside=True,
-            npc_types=[Utility.Share.Npcs.BLACKSMITH],
+            npc_types=[Utility.Npcs.BLACKSMITH],
             description="You are in the blacksmith's shop. An assortment of the blacksmiths wares are on display.",
             environment=self.type,
             logger=logger,
@@ -162,7 +162,7 @@ class TownSmee:
             name=f"{self.name} - Market",
             inside=False,
             description="You are in the farmers market. Smells of exotic spices and searing meats are everywhere and loud vendors yell out their wares. The market is bustling with activity. Children and dogs are seen running everywhere with bright smiles. You even spot a Rite, a small azure and beige colored lizard two feet tall. Rites are harmless joyful creatures.",
-            npc_types=[Utility.Share.Npcs.MERCHANT, Utility.Share.Npcs.THIEF],
+            npc_types=[Utility.Npcs.MERCHANT, Utility.Npcs.THIEF],
             environment=self.type,
             logger=logger,
         )
@@ -170,57 +170,57 @@ class TownSmee:
             name=f"{self.name} - Armoury",
             inside=True,
             description="You are in the town armoury. A prominent case displays a beautifully crafted broadsword. The blade of the sword seems to glow slightly. It has a worn but well-kepted tightly-bound leather hilt. An assortment of other swords, shields, and armor are on display along the walls.",
-            npc_types=[Utility.Share.Npcs.ARMORER],
+            npc_types=[Utility.Npcs.ARMORER],
             environment=self.type,
             logger=logger,
         )
         self.moonroad_west1 = Room(
             name=f"{self.name} - Moon Road (West)---1",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.moonroad_east3 = Room(
             name=f"{self.name} - Moon Road (East)---3",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_north1 = Room(
             name=f"{self.name} - Sun Road (North)---1",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_south1 = Room(
             name=f"{self.name} - Sun Road (South)---1",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_south2 = Room(
             name=f"{self.name} - Sun Road (South)---2",
             inside=False,
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_south3 = Room(
             name=f"{self.name} - Sun Road (South)---3",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_south4 = Room(
             name=f"{self.name} - Sun Road (South)---4",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
@@ -228,7 +228,7 @@ class TownSmee:
             name=f"{self.name} - Gallows Road (East)---1",
             inside=False,
             description=f"The road is more an alley than main thoroughfare. The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
             environment=self.type,
             logger=logger,
         )
@@ -242,7 +242,7 @@ class TownSmee:
         self.gallows = Room(
             name=f"{self.name} - The Gallows",
             inside=False,
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
             description=f"The road widens into a large gathering area. Sets of gallow line the road. A sign reads 'Next service in 3 days'. Admission is free but donations are accepted.",
             environment=self.type,
             logger=logger,
@@ -335,7 +335,7 @@ class TownSmee:
             name=f"{self.name} - Gallows Road (East)---2",
             inside=False,
             description=f"The road is more an alley than main thoroughfare. The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
             environment=self.type,
             logger=logger,
         )
@@ -343,49 +343,49 @@ class TownSmee:
             name=f"{self.name} - Gallows Road (East)---3",
             inside=False,
             description=f"The road is more an alley than main thoroughfare. The road is narrow and the buildings are close together. Trash litters each wall and there's a sweet rot in the air, nearly visible to the eye.",
-            npc_types=[Utility.Share.Npcs.GUARD, Utility.Share.Npcs.GUARD],
+            npc_types=[Utility.Npcs.GUARD, Utility.Npcs.GUARD],
             environment=self.type,
             logger=logger,
         )
         self.sunroad_south5 = Room(
             name=f"{self.name} - Sun Road (South)---5",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.sunroad_north2 = Room(
             name=f"{self.name} - Sun Road (North)---2",
             inside=False,
-            description=f"You are on the main thoroughfare of {Utility.Share.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on the main thoroughfare of {Utility.WORLD_NAME} running North and South directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.moonroad_east1 = Room(
             name=f"{self.name} - Moon Road (East)---1",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.moonroad_east2 = Room(
             name=f"{self.name} - Moon Road (East)---2",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.moonroad_west2 = Room(
             name=f"{self.name} - Moon Road (West)---2",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )
         self.moonroad_west3 = Room(
             name=f"{self.name} - Moon Road (West)---3",
             inside=False,
-            description=f"You are on one of the main thoroughfare of {Utility.Share.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
+            description=f"You are on one of the main thoroughfare of {Utility.WORLD_NAME} running East and West directions. The street is broad, allowing for two wagons to pass each other.",
             environment=self.type,
             logger=logger,
         )

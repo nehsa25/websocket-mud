@@ -60,7 +60,7 @@ class Drop(Utility):
         "drop sword",
     ]
     drop_utility = None
-    type = Utility.Share.Commands.DROP
+    type = Utility.Commands.DROP
 
     def __init__(self, logger):
         self.logger = logger

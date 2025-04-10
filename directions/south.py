@@ -6,8 +6,8 @@ class South:
     variations = ["s", "south", "sou"]
     opposite = None
     name = "South"
-    type = Utility.Share.MudDirections.SOUTH
+    type = Utility.MudDirections.SOUTH
     def __init__(self, logger):
         self.logger = logger
-        self.opposite = Utility.Share.MudDirections.NORTH
+        self.opposite = Utility.MudDirections.NORTH
         LogUtils.debug("Initializing South() class", self.logger)

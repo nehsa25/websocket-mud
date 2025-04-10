@@ -8,7 +8,7 @@ class Telepath(Utility):
     command = "telepath[tele] <target> <message>"
     examples = []
     description = "Communicate to another another player who is not in the same room via your mind!"
-    type = Utility.Share.Commands.TELEPATHY
+    type = Utility.Commands.TELEPATHY
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Telepath() class", self.logger)

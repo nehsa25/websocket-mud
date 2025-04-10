@@ -65,7 +65,7 @@ class Player(Utility):
         ip,
         websocket,
         logger,
-        alignment = Utility.Share.Alignment.NEUTRAL
+        alignment = Utility.Alignment.NEUTRAL
     ):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
@@ -107,7 +107,7 @@ class Player(Utility):
         # if self.attack_task is None:
         #     self.attack_task = asyncio.create_task(self.check_combat())
 
-        self.alignment = Alignment(Utility.Share.Alignment.NEUTRAL, self.logger)
+        self.alignment = Alignment(Utility.Alignment.NEUTRAL, self.logger)
 
     async def can_telepath(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -122,39 +122,6 @@ class Player(Utility):
         while True:
             await asyncio.sleep(2)
             LogUtils.debug(f"{method_name}: {self.name} - checking combat", self.logger)
-        #     try:
-        #         # LogUtils.info(f"{method_name}: Checking: check_for_combat", self.logger)
-        #         # LogUtils.debug(f"{method_name}: FIX THIS:  THIS IS CERTAINLY NOT RIGHT IF MULTIPLE BATTLES ARE OCCURING.", self.logger)
-        #         # battle, self = await self.battles.run_combat_round(battle, self.players, world=self)
-        #         # if battle is not None and battle.state == battle.BattleState.COMPLETED:
-        #         #     self.battles.battles.append(await battle.stop_battle(battle, self))
-        #         #     battle.state = battle.BattleState.RECORDED
-
-        #         # check for new battles
-        #         new_battle = await self.battles.check_for_combat(
-        #             self.players, self.monsters, self.rooms
-        #         )
-        #         if new_battle is not None:
-        #             self.battles.active_battles(new_battle)
-
-        #         # iterate each battle in progress
-        #         for current_battle in self.battles.active_battles:
-        #             current_battle, self = await self.battles.run_combat_round(
-        #                 current_battle, self.players, world=self
-        #             )
-        #             if (
-        #                 current_battle is not None
-        #                 and current_battle.state
-        #                 == current_battle.BattleState.COMPLETED
-        #             ):
-        #                 await battle.stop_battle(battle, self)
-        #                 battle.state = battle.BattleState.RECORDED
-        #     except:
-        #         LogUtils.error(
-        #             f"{method_name}: {traceback.format_exc()}", self.logger
-        #         )
-
-        # LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def get_player_hitpoint_description(self):
         method_name = inspect.currentframe().f_code.co_name
@@ -440,7 +407,7 @@ class Player(Utility):
 
         while True:
             # Check resting every 2 seconds
-            await asyncio.sleep(Utility.Share.PLAYER_BASE_REST_WAIT_SECS)
+            await asyncio.sleep(Utility.PLAYER_BASE_REST_WAIT_SECS)
 
             if self.stats.is_resting == True:
                 LogUtils.debug("Checking if resting...", self.logger)

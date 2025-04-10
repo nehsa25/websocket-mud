@@ -11,7 +11,7 @@ class Beach:
     units = None
     in_town = False
     name = "Black Sands"
-    type = Utility.Share.EnvironmentTypes.BEACH
+    type = Utility.EnvironmentTypes.BEACH
 
     # rooms
     beach_entry = None

@@ -6,8 +6,8 @@ class Up:
     variations = ["u", "up"]
     opposite = None
     name = "Up"
-    type = Utility.Share.MudDirections.UP
+    type = Utility.MudDirections.UP
     def __init__(self, logger):
         self.logger = logger
-        self.opposite = Utility.Share.MudDirections.DOWN
+        self.opposite = Utility.MudDirections.DOWN
         LogUtils.debug("Initializing Up() class", self.logger)

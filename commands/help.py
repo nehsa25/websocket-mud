@@ -34,7 +34,7 @@ class Help(Utility):
     command = "help"
     examples = []
     description = "Display help information."
-    type = Utility.Share.Commands.HELP
+    type = Utility.Commands.HELP
 
     # commands
     attack = None

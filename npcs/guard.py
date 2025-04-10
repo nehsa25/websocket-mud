@@ -8,9 +8,9 @@ class Guard(Mob):
     name = "" # alas, guards are generic
     title = "Guard"
     description = """The guard stands alert. While in it's armor, you cannot tell many other details. The armour is standard issue but well-maintained hardened leather with metal plating."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "justice", "women", "cards"]
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "justice", "women", "cards"]
     wanders = True
-    type = Utility.Share.Npcs.GUARD
+    type = Utility.Npcs.GUARD
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

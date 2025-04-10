@@ -12,8 +12,8 @@ class Shade(Mob):
     logger = None
     name = "Shade"
     pronoun = "it"
-    type = Utility.Share.Monsters.SHADE
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.SHADE
+    alignment = Utility.Alignment.NEUTRAL
     description = "A shade"
     possible_adjectives = ["Floating"]
     adjective_chance = 70 # chance we'll get something like Nasty

@@ -58,7 +58,7 @@ class Directions:
         
     async def get_opposite_direction(self, direction):
         opp_direction = None
-        for directions in Utility.Share.MudDirections.opp_directions:
+        for directions in Utility.MudDirections.opp_directions:
             if direction in directions[0]:
                 opp_direction = directions[1]
                 break

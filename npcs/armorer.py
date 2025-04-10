@@ -10,8 +10,8 @@ class Armorer(Mob):
     description = """Geoff is a large, blond haired behemoth of a man. 
         He's nearly 8 feet tall with limbs the size of tree trunks. 
         He wears scalemail armor and looks ready for battle at any moment."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "armor", "weapons", "tools"]
-    type = Utility.Share.Npcs.ARMORER
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "armor", "weapons", "tools"]
+    type = Utility.Npcs.ARMORER
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

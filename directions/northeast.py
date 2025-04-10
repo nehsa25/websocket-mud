@@ -6,8 +6,8 @@ class NorthEast:
     variations = ["ne", "northeast", "northe"]
     opposite = None
     name = "Northeast"
-    type = Utility.Share.MudDirections.NORTHEAST
+    type = Utility.MudDirections.NORTHEAST
     def __init__(self, logger):
         self.logger = logger
-        self.opposite = Utility.Share.MudDirections.SOUTHWEST
+        self.opposite = Utility.MudDirections.SOUTHWEST
         LogUtils.debug("Initializing NorthEast() class", self.logger)

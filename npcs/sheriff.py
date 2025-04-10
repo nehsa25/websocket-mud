@@ -12,8 +12,8 @@ class Sheriff(Mob):
         The sheriff is wearing an unsightly but practical bear cloak across his shoulders to stave off the rain. 
         He has a menacing cudgel at his waist and smiles showing oddly white teeth when he notices you look at it."""
     common_phrases = ["Citizen."]
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "maintaining control", "intimidation", "investigation", "justice"]
-    type = Utility.Share.Npcs.SHERIFF
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "maintaining control", "intimidation", "investigation", "justice"]
+    type = Utility.Npcs.SHERIFF
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

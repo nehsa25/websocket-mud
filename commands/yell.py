@@ -8,7 +8,7 @@ class Yell(Utility):
     command = "yell <message>"
     examples = []
     description = "Speak loud enough for everyone to heard in adcacent rooms."
-    type = Utility.Share.Commands.YELL
+    type = Utility.Commands.YELL
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Yell() class", self.logger)

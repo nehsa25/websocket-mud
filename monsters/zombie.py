@@ -9,8 +9,8 @@ class Zombie(Mob):
     logger = None
     name = "Zombie"
     pronoun = "it"
-    type = Utility.Share.Monsters.ZOMBIE
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.ZOMBIE
+    alignment = Utility.Alignment.NEUTRAL
     description = "A rotting zombie"
     possible_adjectives = ["Decrepit", "Rotting", "Mad"]
     adjective_chance = 70 # chance we'll get something like Nasty

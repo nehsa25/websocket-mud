@@ -36,7 +36,7 @@ class Mob(Utility):
             
         self.title = title
         self.description = description
-        self.alignment = Alignment(Utility.Share.Alignment.GOOD, self.logger)
+        self.alignment = Alignment(Utility.Alignment.GOOD, self.logger)
         self.dialog = NpcDialog(self.logger)
         
     # announce we're here!
@@ -165,24 +165,24 @@ class Mob(Utility):
         current_time = time.time()
         if  self.last_check_combat is None:
             self.last_check_combat = current_time
-        LogUtils.info(f"{method_name}: Time between combat checks: {current_time - self.last_check_combat}", self.logger)
+        LogUtils.debug(f"{method_name}: Time between combat checks: {current_time - self.last_check_combat}", self.logger)
 
         # check players
         for p in self.room_id.players:
             if await self.alignment.is_opposing_alignment(self.name, p):
-                LogUtils.info(f"{method_name}: {self.name} is attacking {p.name}".upper(), self.logger)
+                LogUtils.debug(f"{method_name}: {self.name} is attacking {p.name}".upper(), self.logger)
                 self.room_id.alert(self.get_attack_phrase(p.name))
 
         # check npcs
         for n in self.room_id.npcs:
             if await self.alignment.is_opposing_alignment(self.name, n):
-                LogUtils.info(f"{method_name}: {self.name} is attacking {n.name}".upper(), self.logger)
+                LogUtils.debug(f"{method_name}: {self.name} is attacking {n.name}".upper(), self.logger)
                 self.room_id.alert(self.get_attack_phrase(n.name))
    
         # check for monsters
         for m in self.room_id.monsters:
             if await self.alignment.is_opposing_alignment(self.name, m):                
-                LogUtils.info(f"{method_name}: {self.name} is attacking {m.name}".upper(), self.logger)
+                LogUtils.debug(f"{method_name}: {self.name} is attacking {m.name}".upper(), self.logger)
                 if len(self.room_id.players) > 0:
                     await self.room_id.alert(self.get_attack_phrase(m.name))
             

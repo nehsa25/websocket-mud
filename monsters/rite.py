@@ -12,8 +12,8 @@ class Rite(Mob):
     logger = None
     name = "Rite"
     pronoun = "it"
-    type = Utility.Share.Monsters.RITE
-    alignment = Utility.Share.Alignment.GOOD
+    type = Utility.Monsters.RITE
+    alignment = Utility.Alignment.GOOD
     description = "A small azure and beige colored lizard two feet tall. It looks at you with adorable eyes."
     possible_adjectives = ["Joyful", "Happy"]
     adjective_chance = 20 # chance we'll get something like Nasty

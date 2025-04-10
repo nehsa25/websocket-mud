@@ -17,7 +17,7 @@ class Look(Utility):
     ]
     description = "Look at something."
     running_image_threads = []
-    type = Utility.Share.Commands.LOOK
+    type = Utility.Commands.LOOK
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Look() class", self.logger)
@@ -96,7 +96,7 @@ class Look(Utility):
                             item_description=player_description,
                             player=player,
                             world_state=world_state,
-                            type=Utility.Share.ImageType.PLAYER
+                            type=Utility.ImageType.PLAYER
                         )
                     )
                 )
@@ -121,7 +121,7 @@ class Look(Utility):
                                     item_description=description,
                                     player=player,
                                     world_state=world_state,
-                                    type=Utility.Share.ImageType.PLAYER
+                                    type=Utility.ImageType.PLAYER
                                 )
                             )
                         )
@@ -141,7 +141,7 @@ class Look(Utility):
                                     item_description=npc.description,
                                     player=player,
                                     world_state=world_state,
-                                    type=Utility.Share.ImageType.NPC
+                                    type=Utility.ImageType.NPC
                                 )
                             )
                         )
@@ -161,7 +161,7 @@ class Look(Utility):
                                     item_description=monster.description,
                                     player=player,
                                     world_state=world_state,
-                                    type=Utility.Share.ImageType.MONSTER
+                                    type=Utility.ImageType.MONSTER
                                 )
                             )
                         )
@@ -181,7 +181,7 @@ class Look(Utility):
                                     item_description=item.description,
                                     player=player,
                                     world_state=world_state,
-                                    type=Utility.Share.ImageType.ITEM
+                                    type=Utility.ImageType.ITEM
                                 )
                             )
                         )

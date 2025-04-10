@@ -6,7 +6,7 @@ class Quit(Utility):
     command = "quit"
     examples = []
     description = "Quit the game. :("
-    type = Utility.Share.Commands.QUIT
+    type = Utility.Commands.QUIT
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Quit() class", self.logger)

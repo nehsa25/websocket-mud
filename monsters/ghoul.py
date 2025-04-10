@@ -12,8 +12,8 @@ class Ghoul(Mob):
     logger = None
     name = "Ghoul"
     pronoun = "it"
-    type = Utility.Share.Monsters.GHOUL
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.GHOUL
+    alignment = Utility.Alignment.NEUTRAL
     description = "A eerie ghoul"
     possible_adjectives = ["Eerie"]
     adjective_chance = 70 # chance we'll get something like Nasty

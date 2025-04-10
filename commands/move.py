@@ -20,7 +20,7 @@ class Move(Utility):
         "southwest[sw,southw]"
     ]
     description = "Move in a direction."
-    type = Utility.Share.Commands.MOVE
+    type = Utility.Commands.MOVE
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Move() class", self.logger)

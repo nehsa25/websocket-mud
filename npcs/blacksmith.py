@@ -9,8 +9,8 @@ class Blacksmith(Mob):
     title = "Blacksmith"
     description = """Frederick is a large, balding man despite only just becoming an adult. He has serious Azure eyes and a oiled mustache. 
         Frederick is wearing a leather apron, a leather vest, and leather glove that reach past his elbows."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "metals", "weapons", "armor", "blacksmithing"]
-    type = Utility.Share.Npcs.BLACKSMITH
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "metals", "weapons", "armor", "blacksmithing"]
+    type = Utility.Npcs.BLACKSMITH
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

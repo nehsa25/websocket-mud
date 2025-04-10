@@ -12,7 +12,7 @@ class Equip(Utility):
         "wield sword",
         "equip sword"
     ]
-    type = Utility.Share.Commands.EQUIP
+    type = Utility.Commands.EQUIP
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Equip() class", self.logger)

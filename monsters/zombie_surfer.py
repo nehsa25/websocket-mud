@@ -9,8 +9,8 @@ class ZombieSurfer(Mob):
     logger = None
     name = "Zombie Surfer"
     pronoun = "it"
-    type = Utility.Share.Monsters.ZOMBIE_SURFER
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.ZOMBIE_SURFER
+    alignment = Utility.Alignment.NEUTRAL
     description = "A zombie wearing shorts"
     possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
     adjective_chance = 70 # chance we'll get something like Nasty

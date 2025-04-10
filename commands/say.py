@@ -8,7 +8,7 @@ class Say(Utility):
     command = "say <message>"
     examples = ["say 'sup homies?"]
     description = "Say something to the room you're in."
-    type = Utility.Share.Commands.SAY
+    type = Utility.Commands.SAY
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Say() class", self.logger)

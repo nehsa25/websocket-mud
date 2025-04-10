@@ -9,8 +9,8 @@ class Wraith(Mob):
     logger = None
     name = "Wraith"
     pronoun = "it"
-    type = Utility.Share.Monsters.WRAITH
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.WRAITH
+    alignment = Utility.Alignment.NEUTRAL
     description = "A eerie hovering wraith"
     possible_adjectives = ["Eerie", "Spooky", "Hovering"]
     adjective_chance = 70 # chance we'll get something like Nasty

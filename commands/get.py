@@ -10,7 +10,7 @@ class Get(Utility):
     examples = [
         "g sword - get a sword",
     ]
-    type = Utility.Share.Commands.GET
+    type = Utility.Commands.GET
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Get() class", self.logger)

@@ -12,7 +12,7 @@ class Jungle:
     rooms = None
     in_town = False
     name = "Jungle"
-    type = Utility.Share.EnvironmentTypes.JUNGLE
+    type = Utility.EnvironmentTypes.JUNGLE
     exits = None
 
     # rooms

@@ -8,7 +8,7 @@ class Whisper(Utility):
     command = "whisper <target> <message>"
     examples = []
     description = "Communicate to another another player in the same room privately."
-    type = Utility.Share.Commands.WHISPER
+    type = Utility.Commands.WHISPER
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Whisper() class", self.logger)

@@ -40,7 +40,7 @@ class Map(Utility):
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return map_output
 
-    async def generate_map(self, room, image_name, player, world_state, area_identifier, environment=Utility.Share.EnvironmentTypes.TOWNSMEE):
+    async def generate_map(self, room, image_name, player, world_state, area_identifier, environment=Utility.EnvironmentTypes.TOWNSMEE):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         self.graph = pydot.Dot(

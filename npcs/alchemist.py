@@ -8,8 +8,8 @@ class Alchemist(Mob):
     name = "Zofia"
     title = "Elder"
     description = """Zofia is a frail old woman. Sit remains seated in her chair and gestures for you to look around and get what you want."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "potions", "herbs", "alchemy", "I am old and tired.", "I am patronizing"]
-    type = Utility.Share.Npcs.ALCHEMIST
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "potions", "herbs", "alchemy", "I am old and tired.", "I am patronizing"]
+    type = Utility.Npcs.ALCHEMIST
     
     def __init__(self, room_id, logger):
         method_name = inspect.currentframe().f_code.co_name

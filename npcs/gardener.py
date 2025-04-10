@@ -9,8 +9,8 @@ class Gardener(Mob):
     title = "Gardener"
     description = """The gardener of the University. Jaque is an absolutely tiny boy, no wait, woman. Despite wearing only simple white robes or apparent effort, she emanates both power and grace. She welcomes you with a smile when she notices you. As a strict requirement for gardeners at the University, bright orange headgear and gloves are always worn."""
     common_phrases = ["Hello, I am Jaque the gardener (wink).", "I am the gardener for the University.", "YOU THOUGHT I WAS A BOY DIDN'T YOU?"]
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "spells", "I am secretly a evil wizard but I don't want anyone to know", "magic", "omens", "weather", "gardening"]
-    type = Utility.Share.Npcs.GARDENER
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "spells", "I am secretly a evil wizard but I don't want anyone to know", "magic", "omens", "weather", "gardening"]
+    type = Utility.Npcs.GARDENER
     wanders = False
     
     def __init__(self, logger):

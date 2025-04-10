@@ -14,7 +14,7 @@ class World(Utility):
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name
         self.logger = logger
-        LogUtils.info(f"{method_name}: Welcome to NehsaMUD.  {Utility.Share.WORLD_NAME} starting!", self.logger)
+        LogUtils.info(f"{method_name}: Welcome to NehsaMUD.  {Utility.WORLD_NAME} starting!", self.logger)
 
         if self.commands is None:
             self.commands = Commands(self.logger)

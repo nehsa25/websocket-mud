@@ -9,8 +9,8 @@ class Skeleton(Mob):
     logger = None
     name = "Skeleton"
     pronoun = "it"
-    type = Utility.Share.Monsters.SKELETON
-    alignment = Utility.Share.Alignment.NEUTRAL
+    type = Utility.Monsters.SKELETON
+    alignment = Utility.Alignment.NEUTRAL
     description = "A dusty old skeleton"
     possible_adjectives = ["Tottering", "Nasty", "Ravaged", "Rotting", "Dapper"]
     adjective_chance = 70 # chance we'll get something like Nasty

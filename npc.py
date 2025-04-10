@@ -28,31 +28,31 @@ class Npc(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)        
         npc = None
-        if npc_type == Utility.Share.Npcs.SHERIFF:
+        if npc_type == Utility.Npcs.SHERIFF:
             npc = Sheriff(self.logger)
-        if npc_type == Utility.Share.Npcs.ALCHEMIST:
+        if npc_type == Utility.Npcs.ALCHEMIST:
             npc = Alchemist(self.logger)
-        if npc_type == Utility.Share.Npcs.BLACKSMITH:
+        if npc_type == Utility.Npcs.BLACKSMITH:
             npc = Blacksmith(self.logger)
-        if npc_type == Utility.Share.Npcs.GUARD:
+        if npc_type == Utility.Npcs.GUARD:
             npc = Guard(self.logger)
-        if npc_type == Utility.Share.Npcs.HEALER:
+        if npc_type == Utility.Npcs.HEALER:
             npc = Healer(self.logger)
-        if npc_type == Utility.Share.Npcs.INNKEEPER:
+        if npc_type == Utility.Npcs.INNKEEPER:
             npc = InnKeeper(self.logger)
-        if npc_type == Utility.Share.Npcs.MERCHANT:
+        if npc_type == Utility.Npcs.MERCHANT:
             npc = Merchant(self.logger)
-        if npc_type == Utility.Share.Npcs.THIEF:
+        if npc_type == Utility.Npcs.THIEF:
             npc = Thief(self.logger)
-        if npc_type == Utility.Share.Npcs.WIZARD:
+        if npc_type == Utility.Npcs.WIZARD:
             npc = Wizard(self.logger)
-        if npc_type == Utility.Share.Npcs.ARMORER:
+        if npc_type == Utility.Npcs.ARMORER:
             npc = Armorer(self.logger)
-        if npc_type == Utility.Share.Npcs.PRINCESS:
+        if npc_type == Utility.Npcs.PRINCESS:
             npc = Princess(self.logger)
-        if npc_type == Utility.Share.Npcs.GARDENER:
+        if npc_type == Utility.Npcs.GARDENER:
             npc = Gardener(self.logger)
-        if npc_type == Utility.Share.Npcs.MAXIMUS:
+        if npc_type == Utility.Npcs.MAXIMUS:
             npc = Maximus(self.logger)
             
         npc = npc.generate(room_id)

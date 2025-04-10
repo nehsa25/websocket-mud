@@ -9,7 +9,7 @@ class Stats(Utility):
     is_dead = None
     is_resting = None
     is_posioned = None
-    feriocity = Utility.Share.Feriocity.NORMAL
+    feriocity = Utility.Feriocity.NORMAL
     posioned = False
     logger = None
     intelligence = 0

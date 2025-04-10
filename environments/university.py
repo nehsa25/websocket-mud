@@ -12,7 +12,7 @@ class University:
     rooms = None
     in_town = True
     name = "Town Smee - University"
-    type = Utility.Share.EnvironmentTypes.UNIVERSITY
+    type = Utility.EnvironmentTypes.UNIVERSITY
     
     # rooms
     university_entry = None
@@ -60,7 +60,7 @@ A sign reads:<br>
                 inside=False,
                 description="""The garden of the university is breath taking. Flowers, herbs, and trees of every shape and color imaginable are planted in precise rows. The air is filled with the sounds of bees and birds.""",
                 environment=self.type,
-                npc_types=[Utility.Share.Npcs.GARDENER],
+                npc_types=[Utility.Npcs.GARDENER],
                 logger=logger
             )
         
@@ -101,6 +101,6 @@ A sign reads:<br>
                 inside=True,
                 description="""The mirrology room is filled with magical mirrors of all shapes and sizes. Every mirror has moving images within it.""",
                 environment=self.type,
-                npc_types=[Utility.Share.Npcs.WIZARD],
+                npc_types=[Utility.Npcs.WIZARD],
                 logger=logger
             )

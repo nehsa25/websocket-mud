@@ -11,7 +11,7 @@ class Inventory(Utility):
         "inventory",
     ]
     description = "View inventory"
-    type = Utility.Share.Commands.INVENTORY
+    type = Utility.Commands.INVENTORY
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Inventory() class", self.logger)

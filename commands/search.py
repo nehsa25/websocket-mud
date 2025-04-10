@@ -12,7 +12,7 @@ class Search(Utility):
         "sea"
     ]
     description = "Search area"
-    type = Utility.Share.Commands.SEARCH
+    type = Utility.Commands.SEARCH
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Search() class", self.logger)

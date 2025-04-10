@@ -2,10 +2,224 @@ from enum import Enum
 import inspect
 import random
 import time
+import traceback
 from log_utils import LogUtils
 from mudevent import MudEvents
 
 class Utility(MudEvents):
+    WORLD_NAME = "Illisurom"
+    PLAYER_BASE_REST_WAIT_SECS = 2
+    EVENT_SPEED = PLAYER_BASE_REST_WAIT_SECS
+
+    class EnvironmentTypes(Enum):
+        TOWNSMEE = 1
+        BEACH = 2
+        FOREST = 3
+        JUNGLE = 4
+        BREACH = 5
+        GRAVEYARD = 6
+        UNIVERSITY = 7
+
+    class Races(Enum):
+        HUMAN = (0,)
+        KOBOLD = (1,)
+        GOBLIN = (2,)
+        HALFLING = (3,)
+        HALFOGRE = (4,)
+        ORC = (5,)
+        ELF = (6,)
+        FAE = (7,)
+        NYRRISS = (8,)
+        ARGUNA = (9,)
+        EAREA = 10
+
+    class Commands(Enum):
+        LOOK = 1
+        MOVE = 2
+        ATTACK = 3
+        GET = 4
+        INVENTORY = 5
+        DROP = 6
+        SEARCH = 7
+        HIDE = 8
+        STASH = HIDE
+        EQUIP = 10
+        STATISTICS = 11
+        EXPERIENCE = 12
+        LOOT = 13
+        WHO = 14
+        REST = 15
+        SAY = 16
+        SYSTEM = 17
+        HELP = 18
+        QUIT = 19
+        YELL = 20
+        TELEPATHY = 21
+        WHISPER = 22
+        
+    class Classes(Enum):
+        WARRIOR = (0,)
+        MAGE = (1,)
+        THIEF = (2,)
+        CLERIC = (3,)
+        RANGER = (4,)
+        DRUID = (5,)
+        BARD = (6,)
+        PALADIN = (7,)
+        MONK = (8,)
+        BARBARIAN = (9,)
+        WARLOCK = (10,)
+        SORCERER = (11,)
+        ROGUE = (12,)
+        BERSERKER = (13,)
+        BATTLE_MAGE = (14,)
+        BOWMAN = (15,)
+        KNIGHT = (16,)
+        NECROMANCER = (17,)
+        ILLUSIONIST = 18
+
+    class MudDirections(Enum):  # directions
+        UP = 0
+        DOWN = 1
+        NORTH = 2
+        SOUTH = 3
+        EAST = 4
+        WEST = 5
+        NORTHWEST = 6
+        NORTHEAST = 7
+        SOUTHEAST = 8
+        SOUTHWEST = 9
+
+    class DayOrNight(Enum):
+        DAY = 1
+        NIGHT = 2
+
+    class Coin(Enum):
+        Copper = 1
+        Silver = 2
+        Gold = 3
+
+    class ImageType(Enum):
+        ROOM = 0
+        ITEM = 1
+        PLAYER = 2
+        NPC = 3
+        MONSTER = 4
+
+    # how much is your blood pumping?
+    class Feriocity(Enum):
+        NORMAL = 1
+        MAD = 2
+        ENRAGED = 3
+        FRENZIED = 4
+        BERSERK = 5
+
+    class Monsters(Enum):
+        SKELETON = 1
+        ZOMBIE = 2
+        ZOMBIE_SURFER = 3
+        GHOUL = 4
+        SHADE = 5
+        WIGHT = 6
+        WRAITH = 7
+        RITE = 8
+
+    class Npcs(Enum):
+        SHERIFF = 1
+        INNKEEPER = 2
+        BLACKSMITH = 3
+        ALCHEMIST = 4
+        WIZARD = 5
+        HEALER = 6
+        MERCHANT = 7
+        GUARD = 8
+        THIEF = 9
+        ARMORER = 10
+        PRINCESS = 11
+        GARDENER = 12
+        MAXIMUS = 13
+
+    class Alignment(Enum):
+        GOOD = 1  # attacks evil players only
+        NEUTRAL = 2  # only attacks if attacked
+        EVIL = 3  # attacks good players only
+        CHOATIC = 4  # attacks all players
+
+    class WeatherTypes(Enum):
+        RAIN = 1
+        THUNDER = 2
+        SUN = 3
+        SNOW = 4
+        FOG = 5
+        OVERCAST = 6
+
+    class WeatherStrength(Enum):
+        LIGHT = 1
+        MEDIUM = 2
+        HEAVY = 3
+
+    class WeatherSeasons(Enum):
+        SPRING = 1
+        SUMMER = 2
+        FALL = 3
+        WINTER = 4
+
+    class AIGeneration(Enum):
+        OpenAI = 1
+        GeminiAI = 2
+
+    class EyeColors(Enum):
+        BLUE = 1
+        GREEN = 2
+        BROWN = 3
+        HAZEL = 4
+        GRAY = 5
+        AMBER = 6
+        RED = 7
+        VIOLET = 8
+        BLACK = 9
+        WHITE = 10
+        SILVER = 11
+        GOLD = 12
+        AQUA = 13
+        TEAL = 14
+        ORANGE = 15
+
+    class HairColors(Enum):
+        BLACK = 1
+        BROWN = 2
+        BLONDE = 3
+        RED = 4
+        GRAY = 5
+        WHITE = 6
+        SILVER = 7
+        BLUE = 8
+
+    class TattooPlacements(Enum):
+        FACE = 0
+        NECK = 1
+        ARM = 2
+
+    class TattooSeverities(Enum):
+        NONE = 0
+        LIGHT = 1
+        MEDIUM = 2
+        HEAVY = 3
+
+    class Scars(Enum):
+        NONE = 0
+        LIGHT = 1
+        MEDIUM = 2
+        HEAVY = 3
+        SEVERE = 4
+
+    class HairLength(Enum):
+        BALD = 0
+        SHORT = 1
+        MEDIUM = 2
+        LONG = 3
+        VERY_LONG = 4
+        
     common_names = [
         "William",
         "Olga",
@@ -62,220 +276,6 @@ class Utility(MudEvents):
         "the Swift",
     ]
 
-    class Share:
-        WORLD_NAME = "Illisurom"
-        PLAYER_BASE_REST_WAIT_SECS = 2
-        EVENT_SPEED = PLAYER_BASE_REST_WAIT_SECS
-
-        class EnvironmentTypes(Enum):
-            TOWNSMEE = 1
-            BEACH = 2
-            FOREST = 3
-            JUNGLE = 4
-            BREACH = 5
-            GRAVEYARD = 6
-            UNIVERSITY = 7
-
-        class Races(Enum):
-            HUMAN = (0,)
-            KOBOLD = (1,)
-            GOBLIN = (2,)
-            HALFLING = (3,)
-            HALFOGRE = (4,)
-            ORC = (5,)
-            ELF = (6,)
-            FAE = (7,)
-            NYRRISS = (8,)
-            ARGUNA = (9,)
-            EAREA = 10
-
-        class Commands(Enum):
-            LOOK = 1
-            MOVE = 2
-            ATTACK = 3
-            GET = 4
-            INVENTORY = 5
-            DROP = 6
-            SEARCH = 7
-            HIDE = 8
-            STASH = HIDE
-            EQUIP = 10
-            STATISTICS = 11
-            EXPERIENCE = 12
-            LOOT = 13
-            WHO = 14
-            REST = 15
-            SAY = 16
-            SYSTEM = 17
-            HELP = 18
-            QUIT = 19
-            YELL = 20
-            TELEPATHY = 21
-            WHISPER = 22
-            
-        class Classes(Enum):
-            WARRIOR = (0,)
-            MAGE = (1,)
-            THIEF = (2,)
-            CLERIC = (3,)
-            RANGER = (4,)
-            DRUID = (5,)
-            BARD = (6,)
-            PALADIN = (7,)
-            MONK = (8,)
-            BARBARIAN = (9,)
-            WARLOCK = (10,)
-            SORCERER = (11,)
-            ROGUE = (12,)
-            BERSERKER = (13,)
-            BATTLE_MAGE = (14,)
-            BOWMAN = (15,)
-            KNIGHT = (16,)
-            NECROMANCER = (17,)
-            ILLUSIONIST = 18
-
-        class MudDirections(Enum):  # directions
-            UP = 0
-            DOWN = 1
-            NORTH = 2
-            SOUTH = 3
-            EAST = 4
-            WEST = 5
-            NORTHWEST = 6
-            NORTHEAST = 7
-            SOUTHEAST = 8
-            SOUTHWEST = 9
-
-        class DayOrNight(Enum):
-            DAY = 1
-            NIGHT = 2
-
-        class Coin(Enum):
-            Copper = 1
-            Silver = 2
-            Gold = 3
-
-        class ImageType(Enum):
-            ROOM = 0
-            ITEM = 1
-            PLAYER = 2
-            NPC = 3
-            MONSTER = 4
-
-        # how much is your blood pumping?
-        class Feriocity(Enum):
-            NORMAL = 1
-            MAD = 2
-            ENRAGED = 3
-            FRENZIED = 4
-            BERSERK = 5
-
-        class Monsters(Enum):
-            SKELETON = 1
-            ZOMBIE = 2
-            ZOMBIE_SURFER = 3
-            GHOUL = 4
-            SHADE = 5
-            WIGHT = 6
-            WRAITH = 7
-            RITE = 8
-
-        class Npcs(Enum):
-            SHERIFF = 1
-            INNKEEPER = 2
-            BLACKSMITH = 3
-            ALCHEMIST = 4
-            WIZARD = 5
-            HEALER = 6
-            MERCHANT = 7
-            GUARD = 8
-            THIEF = 9
-            ARMORER = 10
-            PRINCESS = 11
-            GARDENER = 12
-            MAXIMUS = 13
-
-        class Alignment(Enum):
-            GOOD = 1  # attacks evil players only
-            NEUTRAL = 2  # only attacks if attacked
-            EVIL = 3  # attacks good players only
-            CHOATIC = 4  # attacks all players
-
-        class WeatherTypes(Enum):
-            RAIN = 1
-            THUNDER = 2
-            SUN = 3
-            SNOW = 4
-            FOG = 5
-            OVERCAST = 6
-
-        class WeatherStrength(Enum):
-            LIGHT = 1
-            MEDIUM = 2
-            HEAVY = 3
-
-        class WeatherSeasons(Enum):
-            SPRING = 1
-            SUMMER = 2
-            FALL = 3
-            WINTER = 4
-
-        class AIGeneration(Enum):
-            OpenAI = 1
-            GeminiAI = 2
-
-        class EyeColors(Enum):
-            BLUE = 1
-            GREEN = 2
-            BROWN = 3
-            HAZEL = 4
-            GRAY = 5
-            AMBER = 6
-            RED = 7
-            VIOLET = 8
-            BLACK = 9
-            WHITE = 10
-            SILVER = 11
-            GOLD = 12
-            AQUA = 13
-            TEAL = 14
-            ORANGE = 15
-
-        class HairColors(Enum):
-            BLACK = 1
-            BROWN = 2
-            BLONDE = 3
-            RED = 4
-            GRAY = 5
-            WHITE = 6
-            SILVER = 7
-            BLUE = 8
-
-        class TattooPlacements(Enum):
-            FACE = 0
-            NECK = 1
-            ARM = 2
-
-        class TattooSeverities(Enum):
-            NONE = 0
-            LIGHT = 1
-            MEDIUM = 2
-            HEAVY = 3
-
-        class Scars(Enum):
-            NONE = 0
-            LIGHT = 1
-            MEDIUM = 2
-            HEAVY = 3
-            SEVERE = 4
-
-        class HairLength(Enum):
-            BALD = 0
-            SHORT = 1
-            MEDIUM = 2
-            LONG = 3
-            VERY_LONG = 4
-
     logger = None
     # rooms = None <-- need this?
 
@@ -287,9 +287,13 @@ class Utility(MudEvents):
         method_name = inspect.currentframe().f_code.co_name
         msg = event_object.to_json()
         LogUtils.debug(f"{method_name}: enter, {msg}", self.logger)
-        LogUtils.info(f"{method_name}: Sending json: {msg}", self.logger)
+        LogUtils.debug(f"{method_name}: Sending json: {msg}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        await websocket.send(str(msg))
+        try:
+            await websocket.send(str(msg))
+        except Exception as e:
+            LogUtils.error(f"{method_name}: Error sending message: {e}", self.logger)
+            LogUtils.error(traceback.format_exc(), self.logger)
 
     def generate_location(self, rooms):
         method_name = inspect.currentframe().f_code.co_name

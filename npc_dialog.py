@@ -28,7 +28,7 @@ class NpcDialog:
         genai.configure(api_key=Secrets.GeminiAPIKey)            
         model = genai.GenerativeModel('gemini-1.5-flash',)
         msg = f"""You are a {npc.name} {npc.title}. More about you: {npc.description}.  You live in the world of 
-        {Utility.Share.WORLD_NAME} in the town of Smee. Your general interests are \"{npc.interests}\".  
+        {Utility.WORLD_NAME} in the town of Smee. Your general interests are \"{npc.interests}\".  
         You are in the room \"{room_description}\" and the following events are currently happening: \"{current_interests}\".  
         Pick only one thing to reply to and it shoud be something that is in your general interest if possible. Reply as if you were {npc.name}."""
         

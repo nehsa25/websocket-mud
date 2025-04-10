@@ -10,7 +10,7 @@ class Wizard(Mob):
     description = """The wizard of Town Smee. The wizard is powerfully built man with a foreboding beard and bald head.  Despite this, he emanates kindness when he notices you!"""
     common_phrases = ["Hello, I am Renkath the wizard.", "I am the wizard of Town Smee."]
     interests = [f"spells", "magic", "omens", "weather", "computer", "programming", "web design"]
-    type = Utility.Share.Npcs.WIZARD
+    type = Utility.Npcs.WIZARD
     wanders = True
     
     def __init__(self, logger):

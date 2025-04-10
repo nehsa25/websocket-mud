@@ -11,7 +11,7 @@ class Experience(Utility):
         "exp",
         "experience"
     ]
-    type = Utility.Share.Commands.EXPERIENCE
+    type = Utility.Commands.EXPERIENCE
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Experience() class", self.logger)

@@ -10,7 +10,7 @@ class Loot(Utility):
         "loot skeleton",
     ]
     description = "Loot from corpses"
-    type = Utility.Share.Commands.LOOT
+    type = Utility.Commands.LOOT
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Loot() class", self.logger)

@@ -8,8 +8,8 @@ class Merchant(Mob):
     name = "Roger"
     title = "Merchant"
     description = """Roger, the merchant of Town Smee. Roger is a stout man dressed in fine beige billowing robes. He has a loud high pitched yet friendly voice and is always yelling out to passerby's to come and see his wares."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "money", "buying items", "selling items"]
-    type = Utility.Share.Npcs.MERCHANT
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "money", "buying items", "selling items"]
+    type = Utility.Npcs.MERCHANT
     
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

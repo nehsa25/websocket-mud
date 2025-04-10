@@ -11,8 +11,8 @@ class InnKeeper(Mob):
         Jared is well beloved by the residents of town Smee, for his charming stories and friendly demeaner. 
         Jared is wearing a lime green button up shirt, old grey breeches with red patches, and a clean white apron. 
         Jared smiles at you welcomely when you look at him."""
-    interests = [f"I only exist in the fantasy world of {Utility.Share.WORLD_NAME}, in the town Smee", "cleaing", "checking on guests"]
-    type = Utility.Share.Npcs.INNKEEPER
+    interests = [f"I only exist in the fantasy world of {Utility.WORLD_NAME}, in the town Smee", "cleaing", "checking on guests"]
+    type = Utility.Npcs.INNKEEPER
 
     def __init__(self, logger):
         method_name = inspect.currentframe().f_code.co_name

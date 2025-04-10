@@ -12,7 +12,7 @@ class Graveyard:
     rooms = None
     in_town = False
     name = "Graveyard"
-    type = Utility.Share.EnvironmentTypes.GRAVEYARD
+    type = Utility.EnvironmentTypes.GRAVEYARD
     exits = None
 
     def __init__(self, logger):

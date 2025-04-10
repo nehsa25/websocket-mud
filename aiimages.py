@@ -170,16 +170,16 @@ class AIImages(Utility):
         def to_json(self):
             return jsonpickle.encode(self)
 
-    def __init__(self, logger,  style=Utility.Share.AIGeneration.OpenAI) -> None:
+    def __init__(self, logger,  style=Utility.AIGeneration.OpenAI) -> None:
         LogUtils.debug("Initializing AIImages() class", logger)
         self.logger = logger
         
         # super seed!
         self.seed = self.create_seed()        
         
-        if style == Utility.Share.AIGeneration.GeminiAI:
+        if style == Utility.AIGeneration.GeminiAI:
             self.generator = self.GeminiAPI(self.seed, logger)
-        elif style == Utility.Share.AIGeneration.OpenAI:
+        elif style == Utility.AIGeneration.OpenAI:
             self.generator = self.OpenAIAPI(self.seed, logger)
         
     def create_seed(self):
@@ -236,15 +236,15 @@ class AIImages(Utility):
                             player, 
                             world_state, 
                             inside=False, 
-                            type=Utility.Share.ImageType.ROOM):
+                            type=Utility.ImageType.ROOM):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         image_name = ""        
         item_description = item_description.strip()
         log_name = ""        
         
-        if type == Utility.Share.ImageType.ROOM:
-            log_name = self.get_data_file_name(Utility.Share.ImageType.ROOM, WorldSettings.room_tone)
+        if type == Utility.ImageType.ROOM:
+            log_name = self.get_data_file_name(Utility.ImageType.ROOM, WorldSettings.room_tone)
 
             # update rooms description with weather
             if not inside:
@@ -259,8 +259,8 @@ class AIImages(Utility):
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
-        elif type == Utility.Share.ImageType.ITEM:
-            log_name = self.get_data_file_name(Utility.Share.ImageType.ITEM, WorldSettings.player_tone)
+        elif type == Utility.ImageType.ITEM:
+            log_name = self.get_data_file_name(Utility.ImageType.ITEM, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
@@ -269,8 +269,8 @@ class AIImages(Utility):
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
-        elif type == Utility.Share.ImageType.PLAYER:
-            log_name = self.get_data_file_name(Utility.Share.ImageType.PLAYER, WorldSettings.player_tone)
+        elif type == Utility.ImageType.PLAYER:
+            log_name = self.get_data_file_name(Utility.ImageType.PLAYER, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
@@ -279,8 +279,8 @@ class AIImages(Utility):
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
-        elif type == Utility.Share.ImageType.NPC:
-            log_name = self.get_data_file_name(Utility.Share.ImageType.NPC, WorldSettings.player_tone)
+        elif type == Utility.ImageType.NPC:
+            log_name = self.get_data_file_name(Utility.ImageType.NPC, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
@@ -289,8 +289,8 @@ class AIImages(Utility):
                         if item.description.strip() == item_description:
                             image_name = item.file_name
                             break
-        elif type == Utility.Share.ImageType.MONSTER:
-            log_name = self.get_data_file_name(Utility.Share.ImageType.MONSTER, WorldSettings.player_tone)
+        elif type == Utility.ImageType.MONSTER:
+            log_name = self.get_data_file_name(Utility.ImageType.MONSTER, WorldSettings.player_tone)
             if os.path.exists(log_name):
                 with open(log_name, "r") as text_file:
                     contents = text_file.readlines()            
@@ -305,15 +305,15 @@ class AIImages(Utility):
             LogUtils.info("Cannot find image for description:", self.logger)
             LogUtils.info(item_description, self.logger)
             
-            if type == Utility.Share.ImageType.ROOM:
+            if type == Utility.ImageType.ROOM:
                 path = self.generator.create_room(self.seed, item_description, item_name)
-            elif type == Utility.Share.ImageType.ITEM:
+            elif type == Utility.ImageType.ITEM:
                 path = self.generator.create_item(self.seed, item_description, item_name)
-            elif type == Utility.Share.ImageType.PLAYER:
+            elif type == Utility.ImageType.PLAYER:
                 path = self.generator.create_player(self.seed, item_description, item_name)
-            elif type == Utility.Share.ImageType.NPC:
+            elif type == Utility.ImageType.NPC:
                 path = self.generator.create_npc(self.seed, item_description, item_name)
-            elif type == Utility.Share.ImageType.MONSTER:
+            elif type == Utility.ImageType.MONSTER:
                 path = self.generator.create_monster(self.seed, item_description, item_name)
 
             # a new image was created
@@ -336,15 +336,15 @@ class AIImages(Utility):
         #TODO - send image url to player
             
         # send room image event
-        if type == Utility.Share.ImageType.ROOM:
+        if type == Utility.ImageType.ROOM:
             await self.send_message(MudEvents.RoomImageEvent(item_name), player.websocket)
-        elif type == Utility.Share.ImageType.ITEM:
+        elif type == Utility.ImageType.ITEM:
             await self.send_message(MudEvents.ItemImageEvent(item_name), player.websocket)
-        elif type == Utility.Share.ImageType.PLAYER:
+        elif type == Utility.ImageType.PLAYER:
             await self.send_message(MudEvents.PlayerImageEvent(item_name), player.websocket)
-        elif type == Utility.Share.ImageType.NPC:
+        elif type == Utility.ImageType.NPC:
             await self.send_message(MudEvents.NpcImageEvent(item_name), player.websocket)
-        elif type == Utility.Share.ImageType.MONSTER:
+        elif type == Utility.ImageType.MONSTER:
             await self.send_message(MudEvents.MonsterImageEvent(item_name), player.websocket)
                     
 

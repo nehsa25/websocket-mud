@@ -8,7 +8,7 @@ class Rest(Utility):
     command = "rest"
     examples = ["rest"]
     description = "Rest and regain your health."
-    type = Utility.Share.Commands.REST
+    type = Utility.Commands.REST
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing Rest() class", self.logger)

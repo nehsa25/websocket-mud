@@ -12,7 +12,7 @@ class System(Utility):
         "sys name - open change name modal"
     ]
     description = "Perform a system command"
-    type = Utility.Share.Commands.SYSTEM
+    type = Utility.Commands.SYSTEM
     def __init__(self, logger):
         self.logger = logger
         LogUtils.debug("Initializing System() class", self.logger)

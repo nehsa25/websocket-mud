@@ -12,7 +12,7 @@ class Forest:
     rooms = None
     in_town = False
     name = "Green Woods"
-    type = Utility.Share.EnvironmentTypes.FOREST
+    type = Utility.EnvironmentTypes.FOREST
 
     # rooms
     forest_entry = None

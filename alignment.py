@@ -17,20 +17,20 @@ class Alignment:
         opposing = False
         
         # you're good but I'm bad
-        if mob.alignment == Utility.Share.Alignment.GOOD and self.alignment == Utility.Share.Alignment.EVIL:
+        if mob.alignment == Utility.Alignment.GOOD and self.alignment == Utility.Alignment.EVIL:
            opposing = True
            
         # you're bad but I'm good
-        elif mob.alignment  == Utility.Share.Alignment.EVIL and self.alignment == Utility.Share.Alignment.GOOD:
+        elif mob.alignment  == Utility.Alignment.EVIL and self.alignment == Utility.Alignment.GOOD:
             opposing = True
             
         # you're evil and I'm either good or neutral
-        elif mob.alignment  == Utility.Share.Alignment.EVIL and (
-            self.alignment == Utility.Share.Alignment.GOOD or self.alignment == Utility.Share.Alignment.NEUTRAL):
+        elif mob.alignment  == Utility.Alignment.EVIL and (
+            self.alignment == Utility.Alignment.GOOD or self.alignment == Utility.Alignment.NEUTRAL):
             opposing = True
         # you're fight anyone
-        elif mob.alignment  == Utility.Share.Alignment.CHOATIC:
+        elif mob.alignment  == Utility.Alignment.CHOATIC:
             opposing = True 
-        LogUtils.info(f"{method_name}: Is npc \"{npc}\" opposed to \"{mob.name}\": {opposing}", self.logger)
+        LogUtils.debug(f"{method_name}: Is npc \"{npc}\" opposed to \"{mob.name}\": {opposing}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         return opposing
