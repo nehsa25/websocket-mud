@@ -264,8 +264,7 @@
 }
 
 .status,
-.inventory,
-.health {
+.inventory {
     padding: 10px;
     border: 1px solid #ccc;
 }

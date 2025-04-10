@@ -1,0 +1,36 @@
+.health {
+    background-color: var(--health-color, red); /* Use CSS variable for color */
+    color: white;
+    width: 100%;
+    height: 20px;
+    font-size: 14px;
+    position: relative;
+    overflow: hidden;
+    text-align: center; /* Center the text */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    /* Add a gradient for a vial-like appearance */
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
+}
+
+.health::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--health-width, 0); /* Use CSS variable for width */
+    height: 100%;
+    background-color: var(--health-color, red); /* Use CSS variable for color */
+    transition: width 0.3s ease, background-color 0.3s ease; /* Add transition for color */
+    z-index: 0; /* Ensure the green bar is behind the text */
+    border-radius: 10px; /* Match rounded corners */
+    /* Add a slightly darker gradient to the fill */
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.2));
+}
+
+.health-text {
+    position: relative;
+    z-index: 1; /* Ensure text is above the bars */
+    color: white; /* Ensure text is white */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5); /* Add a text shadow for better readability */
+}

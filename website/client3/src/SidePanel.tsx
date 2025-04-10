@@ -1,10 +1,7 @@
-import React from 'react';
-import {
-    MudStatuses,
-    MudStatusIcons
-} from './Types/MudStatuses';
+import React, { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBed, faBoltLightning, faDrumstickBite, faFaceSmileBeam, faFaceTired, faSkullCrossbones, faTint } from '@fortawesome/free-solid-svg-icons';
+import { faBed, faBoltLightning, faDrumstickBite, faFaceSmileBeam, faSkullCrossbones, faTint } from '@fortawesome/free-solid-svg-icons';
+import './SidePanel.css';
 
 interface SidePanelProps {
     title: string;
@@ -31,6 +28,34 @@ const SidePanel: React.FC<SidePanelProps> = ({
     inventory,
     roomImageName
 }) => {
+    const healthDivRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function updateHealthBar(element: HTMLDivElement | null, health: string) {
+            if (!element) return;
+            console.log("Health string:", health); // Log the health string
+            const [current, max] = health.split('/').map(Number);
+            console.log("Current HP:", current, "Max HP:", max); // Log current and max HP
+            const percentage = (current / max) * 100;
+            console.log("Health percentage:", percentage); // Log the calculated percentage
+
+            let barColor = 'red';
+            if (percentage >= 80) {
+                barColor = 'green';
+            } else if (percentage >= 40) {
+                barColor = 'yellow';
+            }
+            console.log("Bar color:", barColor); // Log the determined bar color
+
+            element.style.setProperty('--health-width', `${percentage}%`);
+            element.style.setProperty('--health-color', barColor);
+        }
+
+        if (healthDivRef.current) {
+            updateHealthBar(healthDivRef.current, health);
+        }
+    }, [health]);
+
     return (
         <div className="rightSideBar">
             <div className="side-panel">
@@ -38,7 +63,9 @@ const SidePanel: React.FC<SidePanelProps> = ({
                     <div className="side-panel-grid">
                         <div>
                             <div className="title"> {title} </div>
-                            <div className="health"> HEALTH {health}</div>
+                            <div className="health" ref={healthDivRef}>
+                                <span className="health-text">HEALTH {health}</span>
+                            </div>
                         </div>
                         <div className="status">
                             <div> <FontAwesomeIcon icon={faDrumstickBite} /> </div><div>{hungry}</div>
