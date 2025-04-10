@@ -5,7 +5,7 @@ import React, {
 } from 'react';
 
 import {
-    Box    
+    Box
 } from "@chakra-ui/react";
 
 import {
@@ -43,12 +43,14 @@ interface GameProps {
     setRoomImageName: React.Dispatch<React.SetStateAction<string>>;
     miniMap: string;
     setMinMap: React.Dispatch<React.SetStateAction<string>>;
-    isResting: boolean;
-    setIsResting: React.Dispatch<React.SetStateAction<boolean>>;
-    statuses: MudStatuses[];
-    setStatuses: React.Dispatch<React.SetStateAction<MudStatuses[]>>;
+    isResting: React.ReactNode;
+    setIsResting: React.Dispatch<React.SetStateAction<React.ReactNode>>;
     hungry: React.ReactNode;
     setHungry: React.Dispatch<React.SetStateAction<React.ReactNode>>;
+    poisoned: React.ReactNode;
+    setPoisoned: React.Dispatch<React.SetStateAction<React.ReactNode>>;
+    sleepy: React.ReactNode;
+    setSleepy: React.Dispatch<React.SetStateAction<React.ReactNode>>;
     thirsty: React.ReactNode;
     setThirsty: React.Dispatch<React.SetStateAction<React.ReactNode>>;
     mood: React.ReactNode;

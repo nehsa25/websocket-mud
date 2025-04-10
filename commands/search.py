@@ -21,7 +21,7 @@ class Search(Utility):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
         rand = random()
-        success = rand < (player.stats.perception / 100)
+        success = rand < (player.attributes.perception / 100)
         if success == True:
             if len(world_state.rooms.rooms[player.room.id].hidden_items) > 0:
                 for item in world_state.rooms.rooms[player.room.id].hidden_items:

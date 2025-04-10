@@ -103,7 +103,7 @@ class Look(Utility):
 
                 msg = await player.get_player_description()
                 await self.send_message(
-                    MudEvents.RestEvent(msg, is_resting=False),
+                    MudEvents.InfoEvent(msg),
                     player.websocket,
                 )
                 if found: return

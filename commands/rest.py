@@ -18,14 +18,14 @@ class Rest(Utility):
         LogUtils.debug(f"{method_name}: enter", self.logger)
         monsters_in_room = len(player.room.monsters)
         if player.in_combat == True or monsters_in_room > 0:
-            player.stats.is_resting = False
+            player.statuses.is_resting = False
             await self.send_message(MudEvents.RestEvent("You cannot rest at this time.  You are in combat.", rest_error=True, is_resting=False), player.websocket)
         else:
             # message staying you're starting to rest
             await self.send_message(MudEvents.RestEvent("You settle to rest.", rest_error=False, is_resting=True), player.websocket)
 
             # set an attribute that we can use later
-            player.stats.is_resting = True
+            player.statuses.is_resting = True
 
         # press enter (refresh the room)
         await world_state.show_room(player)

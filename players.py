@@ -122,9 +122,8 @@ class Players(Utility):
         # send msg to everyone
         for p in self.players:
             if p.name == player.name:
-                await self.send_message(
-                    MudEvents.WelcomeEvent(f"Welcome {player.name}!", player.name), p.websocket
-                )
+                await self.send_message(MudEvents.WelcomeEvent(f"Welcome {player.name}!", player.name), p.websocket)
+                await self.send_message(MudEvents.InventoryEvent(player.inventory), p.websocket)
             else:
                 await self.send_message(
                     MudEvents.AnnouncementEvent(f"{player.name} joined the game!"),

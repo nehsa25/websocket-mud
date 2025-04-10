@@ -55,7 +55,7 @@ class Attack(Utility):
 
                     # for number of swings here
                     num_swings = 1
-                    num_swings += int(player.stats.agility / player.weapon.weight_class.value)
+                    num_swings += int(player.attributes.agility / player.weapon.weight_class.value)
 
                     LogUtils.debug(f"We're going to swing {num_swings} times!", self.logger)
 
@@ -69,7 +69,7 @@ class Attack(Utility):
                         dice = int(obj[0])  # 1
                         damage_potential = int(obj[1])  # 2
                         damage_multipler = randint(0, damage_potential)
-                        damage += dice * damage_multipler * player.stats.strength
+                        damage += dice * damage_multipler * player.attributes.strength
 
                     for p in world_state.rooms.rooms[player.room.id].players:
                         response = ""

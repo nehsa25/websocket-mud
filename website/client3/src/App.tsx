@@ -16,8 +16,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import './App.css';
 import { MudEvents } from './Types/MudEvents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faStar, faSmile, faTint } from '@fortawesome/free-solid-svg-icons';
-import { MudStatuses } from './Types/MudStatuses';
+import { faStar, faSmile, faTint, faFrown } from '@fortawesome/free-solid-svg-icons';
 import Game from './Game';
 import SidePanel from './SidePanel';
 import { appState } from './store';
@@ -43,10 +42,11 @@ function App() {
     const [mapImageName, setMapImageName] = useState<string>("");
     const [roomImageName, setRoomImageName] = useState<string>("");
     const [miniMap, setMiniMap] = useState<string>("");
-    const [isResting, setIsResting] = useState<boolean>(false);
-    const [statuses, setStatuses] = useState<MudStatuses[]>([]);
+    const [resting, setResting] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
     const [hungry, setHungry] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
-    const [thirsty, setThirsty] = useState<React.ReactNode>(<FontAwesomeIcon icon={faTint} />);
+    const [thirsty, setThirsty] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
+    const [poisoned, setPoisoned] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
+    const [sleepy, setSleepy] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
     const [mood, setMood] = useState<React.ReactNode>(<FontAwesomeIcon icon={faSmile} />);
     const [worldName, setWorldName] = useState<string>("NehsaMUD");
 
@@ -285,6 +285,12 @@ function App() {
                         <List.Indicator asChild color="green.500">
                             <LuCircleCheck />
                         </List.Indicator>
+                        Backend is Python 3, AsyncIO, Go, MariaDB, and C#
+                    </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
                         All the images are created via AI. More information on that in the <span style={{ paddingLeft: '5px' }}>
                             <Text as="a" target="_blank" href="https://www.nehsa.net/aiimage" color="blue.500">
                                 AI Image Generation
@@ -389,13 +395,26 @@ function App() {
                 pushGenericEvent(<span className="attack-message">{data.message}</span>);
                 break;
             case MudEvents.HEALTH:
-                setHealth(`${data.statuses?.current_hp}/${data.statuses?.max_hp}`);
-                setIsResting(data.is_resting || false);
-                if (Array.isArray(data.statuses)) {
-                    setStatuses(data.statuses);
-                } else {
-                    setStatuses([]);
-                }
+                console.log("health: " + data.current_hp + "/" + data.max_hp);
+                setHealth(`${data.current_hp}/${data.max_hp}`);
+
+                setResting(data.statuses.is_resting == false ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
+
+                setThirsty(data.statuses.is_thirsty == false ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
+
+                setHungry(data.statuses.is_hungry == false ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
+
+                setMood(data.statuses.mood.value ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
+
+                setPoisoned(data.statuses.is_poisoned == false ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
+
+                setSleepy(data.statuses.is_sleepy == false ?
+                    <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
                 break;
             case MudEvents.HELP:
                 // Handle help
@@ -415,12 +434,12 @@ function App() {
                     });
                     helpMessage += "</ul>";
                 } else {
-                    helpMessage = <span className="help-message">{data.message}</span>;
+                    helpMessage = `<span className="help-message">{data.message}</span>`;
                 }
                 pushGenericEvent(helpMessage);
                 break;
             case MudEvents.REST:
-                setIsResting(data.is_resting || false);
+                setResting(data.is_resting || false);
                 pushGenericEvent(<span className="rest-message">You are now resting.</span>);
                 break;
             case MudEvents.ROOM_IMAGE:
@@ -461,10 +480,11 @@ function App() {
         setHealth,
         setHungry,
         setInventory,
-        setIsResting,
+        setResting,
         setMood,
         setRoomImageName,
-        setStatuses,
+        setPoisoned,
+        setSleepy,
         setThirsty,
         worldName,
         importantColor,
@@ -574,8 +594,59 @@ function App() {
                 NehsaMUD
             </div>
             <div className="main-grid">
-                <Game socket={socket} username={username} title={title} setTitle={setCurrentRoomTitle} roomDescription={roomDescription} setRoomDescription={setCurrentRoomDescription} npcs={npcs} setNpcs={setCurrentRoomNpcs} items={items} setItems={setCurrentRoomItems} exits={exits} setExits={setCurrentRoomExits} extraLook={extraLook} setExtraLook={setExtraLook} health={health} setHealth={setHealth} inventory={inventory} setInventory={setInventory} command={command} setCommand={setCommand} mudEvents={mudEvents} setMudEvents={setMudEvents} usersConnected={usersConnected} setUsersConnected={setUsersConnected} mapImageName={mapImageName} setMapImageName={setMapImageName} roomImageName={roomImageName} setRoomImageName={setRoomImageName} miniMap={miniMap} setMinMap={setMiniMap} isResting={isResting} setIsResting={setIsResting} statuses={statuses} setStatuses={setStatuses} hungry={hungry} setHungry={setHungry} thirsty={thirsty} setThirsty={setThirsty} mood={mood} setMood={setMood} importantColor={importantColor} importantishColor={importantishColor} processEvent={processEvent} generateWelcomeMessage={generateWelcomeMessage} />
-                <SidePanel title={title} health={health} hungry={hungry} thirsty={thirsty} statuses={statuses} mood={mood} inventory={inventory} roomImageName={roomImageName} />
+                <Game 
+                    socket={socket} 
+                    username={username} 
+                    title={title} 
+                    setTitle={setCurrentRoomTitle} 
+                    roomDescription={roomDescription} 
+                    setRoomDescription={setCurrentRoomDescription} 
+                    npcs={npcs} setNpcs={setCurrentRoomNpcs} 
+                    items={items} 
+                    setItems={setCurrentRoomItems} 
+                    exits={exits} 
+                    setExits={setCurrentRoomExits} 
+                    extraLook={extraLook} 
+                    setExtraLook={setExtraLook} 
+                    health={health} 
+                    setHealth={setHealth} 
+                    inventory={inventory} 
+                    setInventory={setInventory} 
+                    command={command} 
+                    setCommand={setCommand} 
+                    mudEvents={mudEvents}
+                    setMudEvents={setMudEvents}
+                    usersConnected={usersConnected} 
+                    setUsersConnected={setUsersConnected} 
+                    mapImageName={mapImageName} 
+                    setMapImageName={setMapImageName}
+                    roomImageName={roomImageName} 
+                    setRoomImageName={setRoomImageName} 
+                    miniMap={miniMap} 
+                    setMinMap={setMiniMap} 
+                    isResting={resting}
+                    setIsResting={setResting}
+                    hungry={hungry}
+                    setHungry={setHungry}
+                    thirsty={thirsty}
+                    setThirsty={setThirsty}
+                    mood={mood}
+                    setMood={setMood}
+                    importantColor={importantColor}
+                    importantishColor={importantishColor}
+                    processEvent={processEvent}
+                    generateWelcomeMessage={generateWelcomeMessage} />
+                <SidePanel 
+                    title={title} 
+                    health={health} 
+                    hungry={hungry} 
+                    thirsty={thirsty} 
+                    poisoned={poisoned} 
+                    sleepy={sleepy} 
+                    resting={resting}
+                    mood={mood} 
+                    inventory={inventory} 
+                    roomImageName={roomImageName} />
             </div>
 
             {/* Basic Modal */}

@@ -506,7 +506,7 @@ export class MudComponent implements OnInit, OnDestroy {
 
         // add status effects
         this.is_resting = data.is_resting;
-        this.poisioned = data.is_posioned;
+        this.poisioned = data.is_poisoned;
         this.statuses = data.statuses;
 
         if (data.is_resting) {

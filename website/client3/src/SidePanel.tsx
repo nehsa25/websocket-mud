@@ -3,13 +3,17 @@ import {
     MudStatuses,
     MudStatusIcons
 } from './Types/MudStatuses';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBed, faBoltLightning, faDrumstickBite, faFaceSmileBeam, faFaceTired, faSkullCrossbones, faTint } from '@fortawesome/free-solid-svg-icons';
 
 interface SidePanelProps {
     title: string;
     health: string;
     hungry: React.ReactNode;
     thirsty: React.ReactNode;
-    statuses: MudStatuses[];
+    poisoned: React.ReactNode;
+    sleepy: React.ReactNode;
+    resting: React.ReactNode;
     mood: React.ReactNode;
     inventory: string[];
     roomImageName: string;
@@ -20,7 +24,9 @@ const SidePanel: React.FC<SidePanelProps> = ({
     health,
     hungry,
     thirsty,
-    statuses,
+    poisoned,
+    sleepy,
+    resting,
     mood,
     inventory,
     roomImageName
@@ -35,19 +41,12 @@ const SidePanel: React.FC<SidePanelProps> = ({
                             <div className="health"> HEALTH {health}</div>
                         </div>
                         <div className="status">
-                            <div> HUNGRY {hungry}</div>
-                            <div> THIRSTY {thirsty} </div>
-                            <div> STATUSES {
-                                Array.isArray(statuses) && statuses.map((status, index) => (<
-                                    React.Fragment key={
-                                        index
-                                    } > {
-                                        MudStatusIcons[status]
-                                    } </React.Fragment>
-                                ))
-                            }
-                            </div>
-                            <div>MOOD {mood}</div>
+                            <div> <FontAwesomeIcon icon={faDrumstickBite} /> </div><div>{hungry}</div>
+                            <div> <FontAwesomeIcon icon={faTint} /> </div><div>{thirsty}</div>
+                            <div> <FontAwesomeIcon icon={faSkullCrossbones} /> </div><div>{poisoned}</div>
+                            <div> <FontAwesomeIcon icon={faBoltLightning} /> </div><div>{sleepy}</div>
+                            <div> <FontAwesomeIcon icon={faBed} /> </div><div>{resting}</div>
+                            <div> <FontAwesomeIcon icon={faFaceSmileBeam} /> </div><div>{mood}</div>
                         </div>
                         <div className="inventory">
                             INVENTORY

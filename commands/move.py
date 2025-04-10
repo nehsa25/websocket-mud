@@ -44,7 +44,7 @@ class Move(Utility):
 
         if will_travel:
             # stop resting
-            if player.stats.is_resting:
+            if player.statuses.is_resting:
                 await player.set_rest(False)
 
             # update you

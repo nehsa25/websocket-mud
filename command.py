@@ -89,7 +89,7 @@ class Commands(Utility):
         await self.send_message(MudEvents.CommandEvent(command), player.websocket)
 
         # if the player is dead, don't do anything..
-        if player.stats.current_hp <= 0:
+        if player.current_hp <= 0:
             return player
 
         # process each command

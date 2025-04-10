@@ -29,17 +29,17 @@ class Statistics(Utility):
         Class: {player.player_class.name}<br>
         **************************************************<br>
         You have the following attributes:<br>
-        * Health {player.stats.current_hp} of {player.stats.max_hp}<br>
-        * Strength {player.stats.strength}<br>
-        * Agility {player.stats.agility}<br>
-        * Determination {player.stats.determination}<br>
-        * Faith {player.stats.faith}<br>
-        * Intelligence {player.stats.intelligence}<br>
-        * Perception {player.stats.perception}<br>
+        * Health {player.current_hp} of {player.max_hp}<br>
+        * Strength {player.attributes.strength}<br>
+        * Agility {player.attributes.agility}<br>
+        * Determination {player.attributes.determination}<br>
+        * Faith {player.attributes.faith}<br>
+        * Intelligence {player.attributes.intelligence}<br>
+        * Perception {player.attributes.perception}<br>
         Current Conditions and Aielments:<br>
-        * Feriocity {player.stats.feriocity.name.capitalize()}<br>
-        * Resting {player.stats.is_resting}<br>
-        * Poisoned {player.stats.is_posioned}<br>
+        * Mood {player.statuses.mood.name.capitalize()}<br>
+        * Resting {player.statuses.is_resting}<br>
+        * Poisoned {player.statuses.is_poisoned}<br>
         **************************************************<br>
         """
         await self.send_message(MudEvents.InfoEvent(player_stats), player.websocket)

@@ -18,7 +18,7 @@ export class MudEvent {
     players: string = "";
     num_players: number = -1;
     is_resting: boolean = false;
-    is_posioned: boolean = false;
+    is_poisoned: boolean = false;
     world_name: string = "";
     help_commands: HelpEvent = new HelpEvent();
     inventory: InventoryEvent = new InventoryEvent();

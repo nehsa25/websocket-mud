@@ -270,6 +270,31 @@
     border: 1px solid #ccc;
 }
 
+.status {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+.status > div {
+    font-size: .9em;
+    background-color: #111;
+}
+
+.status > div:nth-child(odd) { 
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+    padding: .5em 1em;
+    font-size: .9em;
+}
+
+.status > div:nth-child(even) { 
+    display: flex;
+    justify-content: center;
+    align-items: center;  
+}
+
 .image-placeholder {
     padding: 10px;
     border: 1px solid #ccc;

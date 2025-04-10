@@ -107,7 +107,7 @@ class Utility(MudEvents):
         MONSTER = 4
 
     # how much is your blood pumping?
-    class Feriocity(Enum):
+    class Mood(Enum):
         NORMAL = 1
         MAD = 2
         ENRAGED = 3
