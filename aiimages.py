@@ -239,111 +239,115 @@ class AIImages(Utility):
                             type=Utility.ImageType.ROOM):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        image_name = ""        
-        item_description = item_description.strip()
-        log_name = ""        
-        
-        if type == Utility.ImageType.ROOM:
-            log_name = self.get_data_file_name(Utility.ImageType.ROOM, WorldSettings.room_tone)
 
-            # update rooms description with weather
-            if not inside:
-                item_description = world_state.weather.add_weather_description(item_description)
-                
-            # get already generated rooms
-            if os.path.exists(log_name):
-                with open(log_name, "r") as text_file:
-                    contents = text_file.readlines()            
-                    for line in contents:
-                        item = AIFile(line, self.logger)
-                        if item.description.strip() == item_description:
-                            image_name = item.file_name
-                            break
-        elif type == Utility.ImageType.ITEM:
-            log_name = self.get_data_file_name(Utility.ImageType.ITEM, WorldSettings.player_tone)
-            if os.path.exists(log_name):
-                with open(log_name, "r") as text_file:
-                    contents = text_file.readlines()            
-                    for line in contents:
-                        item = AIFile(line, self.logger)
-                        if item.description.strip() == item_description:
-                            image_name = item.file_name
-                            break
-        elif type == Utility.ImageType.PLAYER:
-            log_name = self.get_data_file_name(Utility.ImageType.PLAYER, WorldSettings.player_tone)
-            if os.path.exists(log_name):
-                with open(log_name, "r") as text_file:
-                    contents = text_file.readlines()            
-                    for line in contents:
-                        item = AIFile(line, self.logger)
-                        if item.description.strip() == item_description:
-                            image_name = item.file_name
-                            break
-        elif type == Utility.ImageType.NPC:
-            log_name = self.get_data_file_name(Utility.ImageType.NPC, WorldSettings.player_tone)
-            if os.path.exists(log_name):
-                with open(log_name, "r") as text_file:
-                    contents = text_file.readlines()            
-                    for line in contents:
-                        item = AIFile(line, self.logger)
-                        if item.description.strip() == item_description:
-                            image_name = item.file_name
-                            break
-        elif type == Utility.ImageType.MONSTER:
-            log_name = self.get_data_file_name(Utility.ImageType.MONSTER, WorldSettings.player_tone)
-            if os.path.exists(log_name):
-                with open(log_name, "r") as text_file:
-                    contents = text_file.readlines()            
-                    for line in contents:
-                        item = AIFile(line, self.logger)
-                        if item.description.strip() == item_description:
-                            image_name = item.file_name
-                            break
-                    
-        # only generate a object if one isn't already generated
-        if image_name == "":
-            LogUtils.info("Cannot find image for description:", self.logger)
-            LogUtils.info(item_description, self.logger)
+        try:
+            image_name = ""        
+            item_description = item_description.strip()
+            log_name = ""        
             
             if type == Utility.ImageType.ROOM:
-                path = self.generator.create_room(self.seed, item_description, item_name)
+                log_name = self.get_data_file_name(Utility.ImageType.ROOM, WorldSettings.room_tone)
+
+                # update rooms description with weather
+                if not inside:
+                    item_description = world_state.weather.add_weather_description(item_description)
+                    
+                # get already generated rooms
+                if os.path.exists(log_name):
+                    with open(log_name, "r") as text_file:
+                        contents = text_file.readlines()            
+                        for line in contents:
+                            item = AIFile(line, self.logger)
+                            if item.description.strip() == item_description:
+                                image_name = item.file_name
+                                break
             elif type == Utility.ImageType.ITEM:
-                path = self.generator.create_item(self.seed, item_description, item_name)
+                log_name = self.get_data_file_name(Utility.ImageType.ITEM, WorldSettings.player_tone)
+                if os.path.exists(log_name):
+                    with open(log_name, "r") as text_file:
+                        contents = text_file.readlines()            
+                        for line in contents:
+                            item = AIFile(line, self.logger)
+                            if item.description.strip() == item_description:
+                                image_name = item.file_name
+                                break
             elif type == Utility.ImageType.PLAYER:
-                path = self.generator.create_player(self.seed, item_description, item_name)
+                log_name = self.get_data_file_name(Utility.ImageType.PLAYER, WorldSettings.player_tone)
+                if os.path.exists(log_name):
+                    with open(log_name, "r") as text_file:
+                        contents = text_file.readlines()            
+                        for line in contents:
+                            item = AIFile(line, self.logger)
+                            if item.description.strip() == item_description:
+                                image_name = item.file_name
+                                break
             elif type == Utility.ImageType.NPC:
-                path = self.generator.create_npc(self.seed, item_description, item_name)
+                log_name = self.get_data_file_name(Utility.ImageType.NPC, WorldSettings.player_tone)
+                if os.path.exists(log_name):
+                    with open(log_name, "r") as text_file:
+                        contents = text_file.readlines()            
+                        for line in contents:
+                            item = AIFile(line, self.logger)
+                            if item.description.strip() == item_description:
+                                image_name = item.file_name
+                                break
             elif type == Utility.ImageType.MONSTER:
-                path = self.generator.create_monster(self.seed, item_description, item_name)
-
-            # a new image was created
-            if path is None or path == "":   
-                LogUtils.error("Image generation failed", self.logger)
-                raise Exception("Image generation failed")
-        
-            # save the room image to the file              
-            self.add_log_entry(log_name, item_name, item_description)
-
-            # upload s3
-            s3_key = f"public/images/{str(type)}/{image_name}"
-            image_url = S3Utils.upload_image_to_s3(path, s3_key)
-
-            if image_url:
-                print(f"Image uploaded successfully. Public URL: {image_url}")
-                # Return this URL to your frontend
-            else:
-                print("Image upload failed.")
-                
-            # send room image event
-            if type == Utility.ImageType.ROOM:
-                await self.send_message(MudEvents.RoomImageEvent(item_name), player.websocket)
-            elif type == Utility.ImageType.ITEM:
-                await self.send_message(MudEvents.ItemImageEvent(item_name), player.websocket)
-            elif type == Utility.ImageType.PLAYER:
-                await self.send_message(MudEvents.PlayerImageEvent(item_name), player.websocket)
-            elif type == Utility.ImageType.NPC:
-                await self.send_message(MudEvents.NpcImageEvent(item_name), player.websocket)
-            elif type == Utility.ImageType.MONSTER:
-                await self.send_message(MudEvents.MonsterImageEvent(item_name), player.websocket)
+                log_name = self.get_data_file_name(Utility.ImageType.MONSTER, WorldSettings.player_tone)
+                if os.path.exists(log_name):
+                    with open(log_name, "r") as text_file:
+                        contents = text_file.readlines()            
+                        for line in contents:
+                            item = AIFile(line, self.logger)
+                            if item.description.strip() == item_description:
+                                image_name = item.file_name
+                                break
                         
+            # only generate a object if one isn't already generated
+            if image_name == "":
+                LogUtils.info("Cannot find image for description:", self.logger)
+                LogUtils.info(item_description, self.logger)
+                
+                if type == Utility.ImageType.ROOM:
+                    path = self.generator.create_room(self.seed, item_description, item_name)
+                elif type == Utility.ImageType.ITEM:
+                    path = self.generator.create_item(self.seed, item_description, item_name)
+                elif type == Utility.ImageType.PLAYER:
+                    path = self.generator.create_player(self.seed, item_description, item_name)
+                elif type == Utility.ImageType.NPC:
+                    path = self.generator.create_npc(self.seed, item_description, item_name)
+                elif type == Utility.ImageType.MONSTER:
+                    path = self.generator.create_monster(self.seed, item_description, item_name)
+
+                # a new image was created
+                if path is None or path == "":   
+                    LogUtils.error("Image generation failed", self.logger)
+                    raise Exception("Image generation failed")
+            
+                # save the room image to the file              
+                self.add_log_entry(log_name, item_name, item_description)
+
+                # upload s3
+                s3_key = f"public/images/{str(type)}/{image_name}"
+                image_url = S3Utils.upload_image_to_s3(path, s3_key)
+
+                if image_url:
+                    print(f"Image uploaded successfully. Public URL: {image_url}")
+                    # Return this URL to your frontend
+                else:
+                    print("Image upload failed.")
+                    
+                # send room image event
+                if type == Utility.ImageType.ROOM:
+                    await self.send_message(MudEvents.RoomImageEvent(item_name), player.websocket)
+                elif type == Utility.ImageType.ITEM:
+                    await self.send_message(MudEvents.ItemImageEvent(item_name), player.websocket)
+                elif type == Utility.ImageType.PLAYER:
+                    await self.send_message(MudEvents.PlayerImageEvent(item_name), player.websocket)
+                elif type == Utility.ImageType.NPC:
+                    await self.send_message(MudEvents.NpcImageEvent(item_name), player.websocket)
+                elif type == Utility.ImageType.MONSTER:
+                    await self.send_message(MudEvents.MonsterImageEvent(item_name), player.websocket)
+        except Exception as e:
+            LogUtils.error(f"Error: {str(e)}", self.logger)
+                            
 

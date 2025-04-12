@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import './App.css';
+import './App.scss';
 import { MudEvents } from './Types/MudEvents';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar, faSmile, faTint, faFrown } from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +21,7 @@ import Game from './Game';
 import SidePanel from './SidePanel';
 import { appState } from './store';
 import { useSnapshot } from 'valtio';
-import { getUsername } from './utils/utils';
+import { getUsername } from './Utils/utils';
 
 function App() {
     console.log("App: Entered");
@@ -465,7 +465,7 @@ function App() {
                 pushGenericEvent(<span className="client-list-message">Users connected: {data.players}</span>);
                 break;
             case MudEvents.MAP_EVENT:
-                setMapImageName(data.map_image_name);
+                setMapImageName(data.map_image_name_mini);
                 break;
             default:
                 console.error("unsupported event: " + data.type);

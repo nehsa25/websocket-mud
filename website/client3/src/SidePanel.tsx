@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBed, faBoltLightning, faDrumstickBite, faFaceSmileBeam, faSkullCrossbones, faTint } from '@fortawesome/free-solid-svg-icons';
-import './SidePanel.css';
+import './SidePanel.scss';
 
 interface SidePanelProps {
     title: string;

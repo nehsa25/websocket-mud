@@ -1,7 +1,10 @@
+import './Game.scss';
+
 import React, {
     useRef,
     useEffect,
-    useCallback
+    useCallback,
+    useState
 } from 'react';
 
 import {
@@ -11,6 +14,8 @@ import {
 import {
     MudEvents
 } from './Types/MudEvents';
+
+import MapComponent from './Widgets/MapComponent';
 
 interface GameProps {
     socket: WebSocket | null;
@@ -121,7 +126,7 @@ const Game: React.FC<GameProps> = ({
                 if (scrollMe.current) {
                     scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
                 }
-            }, 0);
+            }, [mudEvents]);
         }
     }, [mudEvents]);
 
@@ -158,12 +163,7 @@ const Game: React.FC<GameProps> = ({
     return (
         <>
             <div className="column1">
-                <div className="map-container">
-                    <img
-                        src={mapImageName}
-                        className="map"
-                    />
-                </div>
+                <MapComponent mapImageName={mapImageName} />
                 <div className="data" ref={scrollMe} onClick={handleDataClick}>
                     {mudEvents.map((event, index) => {
                         return (

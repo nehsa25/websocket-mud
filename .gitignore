@@ -21,3 +21,4 @@ website/wwwroot
 node_modules/*
 website/client2/src/assets/mud-images/*
 website/client3_unused/*
+website/client3/public/mud-images/*
