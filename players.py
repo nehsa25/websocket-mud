@@ -237,7 +237,9 @@ class Players(Utility):
             player_race = Goblin(self.logger) 
 
         inventory = Inventory(
-            items=[Items.club, Items.book, Items.cloth_pants], money=Money(1000001)
+            items=[Items.club, Items.book, Items.cloth_pants], 
+            money=Money(1000001),
+            logger=self.logger,
         )
         
         # random characteristics
