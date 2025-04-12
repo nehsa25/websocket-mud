@@ -131,21 +131,6 @@
     color: pink;
 }
 
-/* Add room message styles */
-.room-message {
-    font-weight: bold;
-}
-
-.room-description-message {
-    margin-bottom: 10px;
-}
-
-.hr-border {
-    border: 0;
-    border-bottom: 1px dashed #ccc;
-    background-color: #999;
-}
-
 .game-container {
     display: flex;
     flex-direction: column;

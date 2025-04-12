@@ -171,21 +171,6 @@
     color: pink;
 }
 
-/* Add room message styles */
-.room-message {
-    font-weight: bold;
-}
-
-.room-description-message {
-    margin-bottom: 10px;
-}
-
-.hr-border {
-    border: 0;
-    border-bottom: 1px dashed #ccc;
-    background-color: #999;
-}
-
 .game-container {
     display: flex;
     flex-direction: column;
@@ -274,11 +259,6 @@
 .scrollable-content {
     overflow-y: auto;
     max-height: calc(100vh - 200px);
-}
-
-.room-title {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
 }
 
 .side-panel-grid {

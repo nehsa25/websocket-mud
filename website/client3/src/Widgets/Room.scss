@@ -1,0 +1,49 @@
+/* Add room message styles */
+$room-border: #555;
+$sep: #777;
+$dk-text: #888;
+$dk-barrel-brown: inherit;
+$room-shade-color2: black;
+$room-shade-color1: #555;
+
+.room {
+    border: 1px groove $room-border;
+    padding: 5px;
+}
+
+.room-title {
+    font-family: "Old English Text MT", "Goudy Old Style", "serif";
+    font-size: 1em;
+    color: $dk-text;
+    padding: 5px;
+    font-weight: bolder;
+    text-shadow: $room-shade-color1 1px 1px 1px, $room-shade-color2 2px 2px 0; 
+    letter-spacing: 0.1em; /* More spacing for titles */
+}
+
+.room-description-message {
+    font-family: "Georgia", "Times New Roman", "serif";
+    font-size: 1em;
+    padding: 5px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    line-height: 1.4; 
+    color: $dk-text;
+    text-shadow: $room-shade-color1 1px 1px 1px, $room-shade-color2 2px 2px 0; 
+}
+
+.hr-border {
+    border: 0;
+    border-bottom: 1px solid $sep;
+    background-color: transparent;
+    margin: 5px 0;
+}
+
+.room-section-title {
+    font-family: "Baskerville", "Libre Baskerville", "serif";
+    font-size: 0.9em; /* Slightly larger than before */
+    color: $dk-text;
+    text-shadow: $room-shade-color1 1px 1px 1px, $room-shade-color2 2px 2px 0; 
+    margin-right: 5px;
+    line-height: 1.2;
+}

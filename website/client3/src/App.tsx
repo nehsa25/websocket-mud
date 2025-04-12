@@ -22,6 +22,7 @@ import SidePanel from './SidePanel';
 import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './Utils/utils';
+import Room from './Widgets/Room'; // Import the Room component
 
 function App() {
     console.log("App: Entered");
@@ -148,59 +149,6 @@ function App() {
         console.log("pushGenericEvent: Exited");
     }, [setMudEvents]);
 
-    const pushRoomEvent = useCallback((data: any): void => {
-        console.log("pushRoomEvent: Entered");
-        let roommessage: React.ReactNode[] = [];
-
-        if (data.name !== "") {
-            roommessage.push(<div className="room-message">{addBorder(data.name)}</div>);
-        }
-
-        // check if there's a room description
-        if (data.description !== "") {
-            let description = colorizeMessage(addBar(data.description));
-            roommessage.push(<div className="room-description-message">{description}</div>);
-        }
-
-        // check for people
-        if (data.players !== "") {
-            roommessage.push(
-                <>
-                    <span className="people1-message">People: </span>
-                    <span className="people2-message">{data.players}</span>
-                </>
-            );
-        }
-
-        // check for monsters
-        if (data.npcs !== "") {
-            roommessage.push(<div className="npcs1-message">{data.npcs}</div>);
-        }
-
-        // check for items
-        if (data.items !== "") {
-            roommessage.push(
-                <>
-                    <span className="items1-message">You see: </span>
-                    <span className="items2-message">{data.items}</span>
-                </>
-            );
-        }
-
-        // check for available exits
-        if (data.exits !== "") {
-            roommessage.push(
-                <>
-                    <span className="exits1-message">Exits: </span>
-                    <span className="people2-message">{data.exits}</span>
-                </>
-            );
-        }
-
-        setMudEvents(prevEvents => [...prevEvents, ...roommessage]);
-        console.log("pushRoomEvent: Exited");
-    }, [addBar, addBorder, colorizeMessage, setMudEvents]);
-
     const sendCommand = useCallback((cmd: string): void => {
         console.log("sendCommand: Entered");
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -265,7 +213,7 @@ function App() {
                     It's a tribute to one of the most underappreciated types of game ever
                     created:{" "}
                     <Box as="a" target="_blank" href="https://en.wikipedia.org/wiki/Multi-user_dungeon" fontWeight="semibold" color={importantishColor}>
-                        text-based multi-user dungeon ("MUDs")
+                        text-based multi-user_dungeon ("MUDs")
                     </Box>
                     . MUDs were not just challenging and fast-paced, but also highly social
                     and encouraging. In fact, I met my wife playing a MUD.
@@ -343,7 +291,7 @@ function App() {
 
     // Function to process incoming events and update state
     const processEvent = useCallback((data: any): void => {
-        console.log("processEvent: Entered");
+        console.log("processEvent: Enter for event: " + data.type);
         switch (data.type) {
             case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
@@ -446,11 +394,8 @@ function App() {
                 setRoomImageName(data.room_image_name);
                 break;
             case MudEvents.ROOM:
-                setCurrentRoomDescription(data.description || "");
-                setCurrentRoomNpcs(data.npcs || '');
-                setCurrentRoomItems(data.items || '');
-                setCurrentRoomExits(data.exits || '');
-                pushRoomEvent(data);
+                console.log("Room: " + data.room);
+                pushGenericEvent(<Room data={data} />);
                 break;
             case MudEvents.HUNGER:
                 setHungry(data.hunger || <FontAwesomeIcon icon={faSmile} />);
@@ -475,7 +420,6 @@ function App() {
     }, [
         generateWelcomeMessage,
         pushGenericEvent,
-        pushRoomEvent,
         setCurrentRoomDescription,
         setCurrentRoomExits,
         setCurrentRoomItems,
@@ -608,7 +552,6 @@ function App() {
                     items={items} 
                     setItems={setCurrentRoomItems} 
                     exits={exits} 
-                    setExits={setCurrentRoomExits} 
                     extraLook={extraLook} 
                     setExtraLook={setExtraLook} 
                     health={health} 
