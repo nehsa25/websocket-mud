@@ -6,6 +6,7 @@ import os
 import inspect
 import json
 from log_utils import LogUtils
+from settings.exception import ExceptionUtils
 from sysargs_utils import SysArgs
 from utility import Utility, MudEvents
 from world import World
@@ -13,6 +14,7 @@ from world_state import WorldState
 from flask import Flask, jsonify
 import threading
 from utilities.connection import ConnectionHandler, start_websocket_server  # Import ConnectionHandler and start_websocket_server
+from settings.settings import MudSettings
 
 app = Flask(__name__)
 logger = None 
@@ -94,17 +96,10 @@ if __name__ == "__main__":
         if len(sys.argv) > 1 and sys.argv[1] == "--development":
             development_mode = True
 
-        if development_mode:
-            from dev_env.development import file_level, console_level
-            print("Using development environment")
-        else:
-            from dev_env.production import file_level, console_level
-            print("Using production environment")
-
         logger = LogUtils.get_logger(
             filename="mud.log",
-            file_level=file_level,
-            console_level=console_level,
+            file_level=MudSettings.file_level,
+            console_level=MudSettings.console_level,
             log_location=os.getcwd()
         )
         print(f"Logger obtained: {logger}")
@@ -153,10 +148,8 @@ if __name__ == "__main__":
             loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
         if loop and loop.is_running():
             loop.stop()
-    except Exception:
-        LogUtils.error(
-            f"An error occurred during startup or runtime!\nException:\n{traceback.format_exc()}", logger
-        )
+    except Exception as e:
+        LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", logger)
     finally:
         if loop and loop.is_running():
             loop.close()

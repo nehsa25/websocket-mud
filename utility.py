@@ -5,6 +5,7 @@ import time
 import traceback
 from log_utils import LogUtils
 from mudevent import MudEvents
+from settings.exception import ExceptionUtils
 
 class Utility(MudEvents):
     WORLD_NAME = "Illisurom"
@@ -292,8 +293,7 @@ class Utility(MudEvents):
         try:
             await websocket.send(str(msg))
         except Exception as e:
-            LogUtils.error(f"{method_name}: Error sending message: {e}", self.logger)
-            LogUtils.error(traceback.format_exc(), self.logger)
+            LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
 
     def generate_location(self, rooms):
         method_name = inspect.currentframe().f_code.co_name

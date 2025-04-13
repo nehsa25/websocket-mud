@@ -1,6 +1,6 @@
 import asyncio
 import inspect
-from aiimages import AIImages
+from ai.image import AIImages
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility

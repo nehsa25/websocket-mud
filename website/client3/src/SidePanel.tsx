@@ -86,10 +86,7 @@ const SidePanel: React.FC<SidePanelProps> = ({
                     </div>
                 </div>
                 <div className="image-placeholder"> {
-                    roomImageName && < img src={
-                        `../mud-images/rooms/${roomImageName}`
-                    }
-                        alt="Room" />
+                    roomImageName && < img src={roomImageName} alt="Room" />
                 }
                 </div>
             </div>

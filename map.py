@@ -3,7 +3,8 @@ import inspect
 import os
 import re
 import pydot
-from dontcheckin import DevSettings
+from settings.exception import ExceptionUtils
+from settings.settings import MudSettings
 from log_utils import LogUtils
 from mudevent import MudEvents
 from utility import Utility
@@ -57,7 +58,7 @@ class Map(Utility):
             style="dotted"
         )
     
-        self.path = f"{DevSettings.data_location}/mud-images"
+        self.path = f"{MudSettings.data_location}/mud-images"
         extension = ".svg"
         full_path = f"{self.path}/{image_name}"
 
@@ -97,7 +98,7 @@ class Map(Utility):
         try:
             output_graphviz_svg = self.graph.create_svg()
         except Exception as e:
-            LogUtils.error(f"{method_name}: {e}", self.logger)
+            LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
             return
 
         # write original to file
@@ -149,7 +150,7 @@ class Map(Utility):
             style="dotted"
         )
     
-        self.path = f"{DevSettings.data_location}/mud-images"
+        self.path = f"{MudSettings.data_location}/mud-images"
         extension = ".svg"
         suffix = "_mini"
         full_path = f"{self.path}/{image_name}"
@@ -191,7 +192,7 @@ class Map(Utility):
         try:
             output_graphviz_svg = self.graph.create_svg()
         except Exception as e:
-            LogUtils.error(f"{method_name}: {e}", self.logger)
+            LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
             return
 
         # write original to file

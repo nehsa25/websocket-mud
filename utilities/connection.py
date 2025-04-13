@@ -2,6 +2,7 @@ import inspect
 import websockets
 import traceback
 from log_utils import LogUtils
+from settings.exception import ExceptionUtils
 from utility import MudEvents
 import asyncio
 import json
@@ -30,8 +31,7 @@ class ConnectionHandler:
             LogUtils.warn(f"ConnectionClosedOK (client disconnected).", self.logger)
             await self.world_state.players.unregister(player, self.world_state)
         except Exception as e:
-            LogUtils.error(f"An error occurred!\nException: {e}", self.logger)
-            LogUtils.error(traceback.format_exc(), self.logger)
+            LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
         finally:
             LogUtils.debug(f"{method_name}: exit", self.logger)
 

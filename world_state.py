@@ -8,7 +8,7 @@ import time
 import traceback
 
 import websockets
-from aiimages import AIImages
+from ai.image import AIImages
 from environment import Environments
 from locks import NpcLock
 from map import Map

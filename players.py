@@ -39,6 +39,7 @@ from money import Money
 from mudevent import MudEvents
 from races.nyrriss import Nyrriss
 from player import Player
+from settings.exception import ExceptionUtils
 from utility import Utility
 from wordsmith import Pronouns
 import re
@@ -94,8 +95,7 @@ class Players(Utility):
             try:
                 await self.send_message(MudEvents.GetClientEvent(len(self.players)), player.websocket)
             except Exception as e:
-                LogUtils.error(f"{method_name}: Error sending client list to player {player.name}: {e}", self.logger)
-                LogUtils.error(traceback.format_exc(), self.logger)
+                LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
 
     async def register(self, player, world_state):

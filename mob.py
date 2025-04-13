@@ -5,7 +5,7 @@ import time
 from alignment import Alignment
 from log_utils import LogUtils
 from mudevent import MudEvents
-from npc_dialog import NpcDialog
+from ai.dialog import NpcDialog
 from utility import Utility
 
 
