@@ -1,118 +1,97 @@
 import logging
-import logging.handlers
 import os
+import inspect
 from enum import Enum
 
+from opentelemetry import trace, context
+from opentelemetry.trace import get_current_span, Span
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
 
 class Level(Enum):
-	DEBUG = 'debug'
-	INFO = 'info'
-	WARN = 'warning'
-	WARNING = 'warning'
-	ERROR = 'error'
-	CRITICAL = 'critical'
+    NOTSET = logging.NOTSET
+    DEBUG = logging.DEBUG
+    INFO = logging.INFO
+    WARNING = logging.WARNING
+    ERROR = logging.ERROR
+    CRITICAL = logging.CRITICAL
 
 class LogUtils:
-	@staticmethod
-	def get_logger(filename, file_level, console_level=None, log_location="C:\\Tests", logger_name=None, log_size_bytes=5000000, backup_count=3):
-		# create our directory if it doesn't exist
-		if os.path.exists(log_location) != True:
-			os.makedirs(log_location)
-		
-		# setup our logger
-		if logger_name == None:
-			logger = logging.getLogger(__name__)
-		else: 
-			logger = logging.getLogger(logger_name)
-			
-		logger_format = logging.Formatter("%(asctime)s [%(threadName)s] [%(levelname)s]  %(message)s")
+    @staticmethod
+    def get_logger(filename, file_level, console_level, log_location, tracer=None):
+        """Creates and configures a logger with file and console handlers.
 
-		# for console
-		console_handler = logging.StreamHandler()	
-		console_handler.setFormatter(logger_format)
+        Args:
+            filename (str): The name of the log file.
+            file_level (Level): The logging level for the file handler (e.g., Level.DEBUG, Level.INFO).
+            console_level (Level): The logging level for the console handler (e.g., Level.DEBUG, Level.INFO).
+            log_location (str): The directory where the log file should be created.
+            tracer: The OpenTelemetry tracer object.
 
-		# for log file
-		file_handler = logging.handlers.RotatingFileHandler(os.path.join(log_location, filename), maxBytes=log_size_bytes, backupCount=backup_count)
-		file_handler.setFormatter(logger_format)
+        Returns:
+            logging.Logger: The configured logger object.
+        """
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.DEBUG)  # Set the lowest level to DEBUG
 
-		# if no steamwriter_level is passed, default to same as file_level
-		if console_level == None:
-			console_level = file_level
+        # Create file handler
+        log_file_path = os.path.join(log_location, filename)
+        file_handler = logging.FileHandler(log_file_path)
+        file_handler.setLevel(file_level.value)
 
-		# set the file log level
-		if file_level.value == 'critical':
-			file_handler.setLevel(logging.CRITICAL)
-		elif file_level.value == 'error':
-			file_handler.setLevel(logging.ERROR)
-		elif file_level.value == 'warn' or file_level.value == 'warning':
-			file_handler.setLevel(logging.WARN)
-		elif file_level.value == 'info':
-			file_handler.setLevel(logging.INFO)
-		elif file_level.value == 'debug':
-			file_handler.setLevel(logging.DEBUG)
+        # Create console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(console_level.value)
 
-		# set the console log level
-		if console_level.value == 'critical':
-			console_handler.setLevel(logging.CRITICAL)
-		elif console_level.value == 'error':
-			console_handler.setLevel(logging.ERROR)
-		elif console_level.value == 'warn' or console_level.value == 'warning':
-			console_handler.setLevel(logging.WARN)
-		elif console_level.value == 'info':
-			console_handler.setLevel(logging.INFO)
-		elif console_level.value == 'debug':
-			console_handler.setLevel(logging.DEBUG)
+        # Create formatter and set it for handlers
+        formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
 
-		# add the handlers to the logger object
-		logger.addHandler(console_handler)
-		logger.addHandler(file_handler)
+        # Add handlers to the logger
+        logger.addHandler(file_handler)
+        logger.addHandler(console_handler)
 
-		# allow all messages into the log (they're filtered by the handlers)
-		logger.setLevel(logging.DEBUG)
-		logger.propagate = False
-		LogUtils.debug("logger started", logger)
-		return logger
+        return logger
 
-	@staticmethod
-	def log_msg(msg, logger=None, level=None):
-		if logger == None:
-			# if logger not set, just print every message to screen
-			print(msg + ' (logger == None)')
-		elif level == logging.CRITICAL:
-			logger.critical(msg)
-		elif level == logging.ERROR:
-			logger.error(msg)
-		elif level == logging.WARNING:
-			logger.warning(msg)
-		elif level == logging.INFO:
-			logger.info(msg)
-		elif level == logging.DEBUG:
-			logger.debug(msg)
+    @staticmethod
+    def debug(message, logger):
+        """Logs a debug message with OpenTelemetry tracing."""
+        LogUtils._log(message, logger, logging.DEBUG)
 
-	@staticmethod
-	def critical(msg, logger=None):
-		LogUtils.log_msg(msg, logger, logging.CRITICAL)
+    @staticmethod
+    def info(message, logger):
+        """Logs an info message with OpenTelemetry tracing."""
+        LogUtils._log(message, logger, logging.INFO)
 
-	@staticmethod
-	def error(msg, logger=None):
-		LogUtils.log_msg(msg, logger, logging.ERROR)
+    @staticmethod
+    def warn(message, logger):
+        """Logs a warning message with OpenTelemetry tracing."""
+        LogUtils._log(message, logger, logging.WARNING)
 
-	@staticmethod
-	def warn(msg, logger=None):
-		LogUtils.log_msg(msg, logger, logging.WARNING)
+    @staticmethod
+    def error(message, logger):
+        """Logs an error message with OpenTelemetry tracing."""
+        LogUtils._log(message, logger, logging.ERROR)
 
-	@staticmethod
-	def info(msg, logger=None):
-		LogUtils.log_msg(msg, logger, logging.INFO)
+    @staticmethod
+    def critical(message, logger):
+        """Logs a critical message with OpenTelemetry tracing."""
+        LogUtils._log(message, logger, logging.CRITICAL)
 
-	@staticmethod
-	def debug(msg, logger=None):
-		LogUtils.log_msg(msg, logger, logging.DEBUG)
+    @staticmethod
+    def _log(message, logger, level):
+        """Logs a message with OpenTelemetry tracing."""
+        if logger:
+            tracer = trace.get_tracer(__name__)
+            current_context = context.get_current()
 
-	@staticmethod
-	def close(logger):
-		LogUtils.debug("Closing logger", logger)
-		handlers = logger.handlers[:]
-		for handler in handlers:
-			handler.close()
-			logger.removeHandler(handler)
+            # Create span
+            with tracer.start_as_current_span(message, context=current_context) as current_span:
+                if current_span is not trace.INVALID_SPAN:
+                    current_span.set_attribute("log.message", message)
+                logger.log(level, message)

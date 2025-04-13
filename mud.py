@@ -5,6 +5,7 @@ import sys
 import os
 import inspect
 import json
+from dontcheckin import Secrets
 from log_utils import LogUtils
 from settings.exception import ExceptionUtils
 from sysargs_utils import SysArgs
@@ -16,12 +17,26 @@ import threading
 from utilities.connection import ConnectionHandler, start_websocket_server  # Import ConnectionHandler and start_websocket_server
 from settings.settings import MudSettings
 
+# OpenTelemetry imports
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.semconv.resource import ResourceAttributes
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter
+
+import requests  # Import the requests library
+from opentelemetry.proto.common.v1 import common_pb2
+from opentelemetry.proto.logs.v1 import logs_pb2
+from opentelemetry.proto.resource.v1 import resource_pb2
+
 app = Flask(__name__)
-logger = None 
+logger = None
 mud = None
 
-class Mud(Utility):
 
+class Mud(Utility):
     logger = None
     world = None
     world_state = None
@@ -68,9 +83,11 @@ class Mud(Utility):
 
         LogUtils.debug(f"{method_name}: Awaiting self.world_state.players.get_player...", self.logger)
         player = await self.world_state.players.get_player(websocket)
-        LogUtils.debug(f"{method_name}: self.world_state.players.get_player completed, player: {player}", self.logger)
+        LogUtils.debug(f"{method_name}: self.world_state.players.get_player completed, player: {player}",
+                       self.logger)
 
         await self.connection_handler.handle_connection(player, websocket)  # Use the ConnectionHandler
+
 
 @app.route("/health")
 def health_check():
@@ -81,6 +98,7 @@ def health_check():
     else:
         return jsonify({"status": "unhealthy", "service": "error" if not service_healthy else "ok"}), 503
 
+
 def start_flask_app(host, port):
     LogUtils.info(f"Starting Flask app on port {port}", logger)
     app.run(host=host, port=port, debug=False, use_reloader=False)
@@ -88,21 +106,64 @@ def start_flask_app(host, port):
 if __name__ == "__main__":
     # Define loop outside the try block
     loop = None
+    tracer_provider = None
     try:
-        print("Attempting to get logger...")
-
         # Determine the environment
         development_mode = False
         if len(sys.argv) > 1 and sys.argv[1] == "--development":
             development_mode = True
 
-        logger = LogUtils.get_logger(
-            filename="mud.log",
-            file_level=MudSettings.file_level,
-            console_level=MudSettings.console_level,
-            log_location=os.getcwd()
-        )
-        print(f"Logger obtained: {logger}")
+        # Initialize OpenTelemetry
+        resource = Resource.create({
+            ResourceAttributes.SERVICE_NAME: "websocket-mud",
+            ResourceAttributes.SERVICE_VERSION: "0.1.0"
+        })
+
+        seq_api_key = Secrets.SeqAPIKey
+        headers = {"X-Seq-ApiKey": seq_api_key,
+                   "Content-Type": "application/x-protobuf"}
+        try:
+            otlp_exporter = OTLPSpanExporter(
+                endpoint="http://util.nehsa.net:5341/ingest/otlp/v1/traces",
+                headers=headers
+            )
+
+        except Exception as e:
+            LogUtils.error(f"Error initializing OTLP Exporter: {e}", logger)
+            otlp_exporter = None
+
+        if otlp_exporter:
+            tracer_provider = TracerProvider(resource=resource)
+
+            # Add ConsoleSpanExporter to see spans in the console
+            tracer_provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+            tracer_provider.add_span_processor(BatchSpanProcessor(ConsoleSpanExporter()))
+            trace.set_tracer_provider(tracer_provider)
+            tracer = trace.get_tracer(__name__)
+
+            logger = LogUtils.get_logger(
+                filename="mud.log",
+                file_level=MudSettings.file_level,
+                console_level=MudSettings.console_level,
+                log_location=os.getcwd(),
+                tracer=tracer
+            )
+        else:
+            LogUtils.warn("OTLP Exporter not initialized, tracing will not be enabled.", logger)
+            tracer = None
+            logger = LogUtils.get_logger(
+                filename="mud.log",
+                file_level=MudSettings.file_level,
+                console_level=MudSettings.console_level,
+                log_location=os.getcwd(),
+                tracer=tracer
+            )
+
+        # Create a dummy span and log an event to force the OTLP exporter to send data
+        if tracer:
+            with tracer.start_as_current_span("dummy_span") as span:
+                logger.info("Creating a dummy span to force OTLP export.")
+
         print("Attempting to instantiate Mud...")
         mud = Mud(logger)
         print(f"Mud instantiated: {mud}")
@@ -153,3 +214,7 @@ if __name__ == "__main__":
     finally:
         if loop and loop.is_running():
             loop.close()
+
+        # Shutdown OpenTelemetry
+        if tracer_provider:
+            tracer_provider.shutdown()

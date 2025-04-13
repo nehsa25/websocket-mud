@@ -4,3 +4,7 @@ jsonpickle
 google-generativeai
 flask
 boto3
+opentelemetry-sdk 
+opentelemetry-api 
+opentelemetry-semantic-conventions
+opentelemetry-exporter-otlp-proto-http
