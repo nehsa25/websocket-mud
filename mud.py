@@ -1,15 +1,12 @@
 import asyncio
-import websockets
-import traceback
 import sys
 import os
 import inspect
-import json
 from dontcheckin import Secrets
 from log_utils import LogUtils
 from settings.exception import ExceptionUtils
 from sysargs_utils import SysArgs
-from utility import Utility, MudEvents
+from utility import Utility
 from world import World
 from world_state import WorldState
 from flask import Flask, jsonify
@@ -25,11 +22,6 @@ from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExport
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.semconv.resource import ResourceAttributes
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter
-
-import requests  # Import the requests library
-from opentelemetry.proto.common.v1 import common_pb2
-from opentelemetry.proto.logs.v1 import logs_pb2
-from opentelemetry.proto.resource.v1 import resource_pb2
 
 app = Flask(__name__)
 logger = None
