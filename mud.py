@@ -152,11 +152,10 @@ if __name__ == "__main__":
             )
 
         # Create a dummy span and log an event to force the OTLP exporter to send data
-        if tracer:
-            with tracer.start_as_current_span("dummy_span") as span:
-                logger.info("Creating a dummy span to force OTLP export.")
+        # if tracer:
+        #     with tracer.start_as_current_span("dummy_span") as span:
+        #         logger.info("Creating a dummy span to force OTLP export.")
 
-        print("Attempting to instantiate Mud...")
         mud = Mud(logger)
         print(f"Mud instantiated: {mud}")
 
