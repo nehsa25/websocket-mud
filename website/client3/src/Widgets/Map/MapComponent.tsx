@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './MapComponent.scss';
 
 interface MapComponentProps {
@@ -7,6 +7,7 @@ interface MapComponentProps {
 
 const MapComponent: React.FC<MapComponentProps> = ({ mapImageName }) => {
     const [isClicked, setIsClicked] = useState(false);
+    const [svgContent, setSvgContent] = useState<string | null>(null);
 
     const handleClick = () => {
         setIsClicked(!isClicked);
@@ -22,7 +23,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ mapImageName }) => {
         <div 
             className={`map-container ${isClicked ? 'map-container-hover' : 'map-container-mini'}`} 
             onClick={handleClick}>
-            <img src={mapImageSource} alt="Mini Map" className="map" />
+            {<img src={mapImageSource} alt="Mini Map" className="map-svg" />}
         </div>
     );
 };

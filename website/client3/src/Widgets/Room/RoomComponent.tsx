@@ -1,4 +1,4 @@
-import './Room.scss';
+import './RoomComponent.scss';
 
 import React, {
     useCallback,
@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import {
     useColorModeValue
-} from "../components/ui/color-mode";
+} from "../../components/ui/color-mode";
 
 interface RoomProps {
     data: any;

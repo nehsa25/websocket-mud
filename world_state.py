@@ -109,7 +109,7 @@ class WorldState(Utility):
         while True:
             await asyncio.sleep(self.weather.change_weather_in_min * 60)
             LogUtils.info(f"{method_name}: Changing weather...", self.logger)
-            self.weather.weather_type = random.choice(list(Utility.WeatherType))
+            self.weather.weather_type = random.choice(list(Utility.WeatherTypes))
             LogUtils.info(f"{method_name}: Weather changed to {self.weather.weather_type}", self.logger)
 
     async def change_season(self):

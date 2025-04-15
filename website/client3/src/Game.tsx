@@ -15,7 +15,7 @@ import {
     MudEvents
 } from './Types/MudEvents';
 
-import MapComponent from './Widgets/MapComponent';
+import MapComponent from './Widgets/Map/MapComponent';
 
 interface GameProps {
     socket: WebSocket | null;
@@ -162,7 +162,7 @@ const Game: React.FC<GameProps> = ({
 
     return (
         <>
-            <div className="column1">
+            <div className="game-column">
                 <MapComponent mapImageName={mapImageName} />
                 <div className="data" ref={scrollMe} onClick={handleDataClick}>
                     {mudEvents.map((event, index) => {
@@ -172,7 +172,7 @@ const Game: React.FC<GameProps> = ({
                                     React.cloneElement(event, {
                                         style: {
                                             ...(event.props as any).style || {},
-                                            display: 'inline', // Or 'block' depending on your layout needs
+                                            display: 'inline',
                                         },
                                     })
                                 ) : (

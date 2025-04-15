@@ -40,7 +40,7 @@ class AIImages(Utility):
             self.generator = GeminiAPI(self.seed, logger)
         elif style == Utility.AIGeneration.OpenAI:
             self.generator = OpenAIAPI(self.seed, logger)
-        
+     
     def create_seed(self):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
@@ -187,7 +187,12 @@ class AIImages(Utility):
         
                 # upload s3
                 s3_key = f"public/images/rooms/{item_name}"
-                image_url = S3Utils.upload_image_to_s3(path, s3_key, True, 'image/png', self.logger)
+                S3Utils.upload_image_to_s3(path, s3_key, 
+                                                       make_public=True, 
+                                                         content_type='image/png', 
+                                                         logger=self.logger)
+                
+                image_url = S3Utils.generate_public_url(s3_key)
 
                 if image_url:
                     print(f"Image uploaded successfully. Public URL: {image_url}")          
@@ -206,6 +211,22 @@ class AIImages(Utility):
                     await self.send_message(MudEvents.NpcImageEvent(image_url), player.websocket)
                 elif type == Utility.ImageType.MONSTER:
                     await self.send_message(MudEvents.MonsterImageEvent(image_url), player.websocket)
+
+            else:
+                LogUtils.info("Image already exists:", self.logger)
+                LogUtils.info(image_name, self.logger)
+                image_url = S3Utils.generate_public_url(image_name)
+                if type == Utility.ImageType.ROOM:
+                    await self.send_message(MudEvents.RoomImageEvent(image_url), player.websocket)
+                elif type == Utility.ImageType.ITEM:
+                    await self.send_message(MudEvents.ItemImageEvent(image_url), player.websocket)
+                elif type == Utility.ImageType.PLAYER:
+                    await self.send_message(MudEvents.PlayerImageEvent(image_url), player.websocket)
+                elif type == Utility.ImageType.NPC:
+                    await self.send_message(MudEvents.NpcImageEvent(image_url), player.websocket)
+                elif type == Utility.ImageType.MONSTER:
+                    await self.send_message(MudEvents.MonsterImageEvent(image_url), player.websocket)
+        
         except Exception as e:
             LogUtils.error(f"Error: {ExceptionUtils.print_exception(e)}", self.logger)
 

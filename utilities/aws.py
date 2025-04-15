@@ -2,6 +2,7 @@ import inspect
 import boto3
 import os
 from botocore.exceptions import NoCredentialsError
+from dontcheckin import Secrets
 
 from log_utils import LogUtils
 from settings.exception import ExceptionUtils
@@ -24,6 +25,10 @@ s3_client = boto3.client('s3', region_name=AWS_REGION,
 
 class S3Utils:
     @staticmethod
+    def generate_public_url(file_name):
+        return f"{Secrets.S3Url}{file_name}"
+
+    @staticmethod
     def upload_image_to_s3(image_path, s3_key, make_public=True, content_type = 'image/svg+xml', logger=None):
         try:
             method_name = inspect.currentframe().f_code.co_name
@@ -37,9 +42,7 @@ class S3Utils:
 
             s3_client.upload_file(image_path, BUCKET_NAME, s3_key, ExtraArgs=extra_args)
 
-            public_url = f"https://{BUCKET_NAME}.s3.{AWS_REGION}.amazonaws.com/{s3_key}"
-            LogUtils.info(f"{method_name}: exit, public_url: {public_url}", logger)
-            return public_url
+            LogUtils.info(f"{method_name}: exit", logger)
 
         except FileNotFoundError:
             LogUtils.error(f"Error: File not found at {image_path}")

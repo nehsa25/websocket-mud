@@ -22,7 +22,7 @@ import SidePanel from './SidePanel';
 import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './Utils/utils';
-import Room from './Widgets/Room'; // Import the Room component
+import Room from './Widgets/Room/RoomComponent'; 
 
 function App() {
     console.log("App: Entered");
@@ -534,42 +534,47 @@ function App() {
         console.log("handleDataClick: Exited");
     };
 
+    // State to manage whether the side panel is collapsed
+    const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState(false);
+
+    // Function to toggle the side panel collapse state
+    const toggleSidePanel = () => {
+        setIsSidePanelCollapsed(!isSidePanelCollapsed);
+    };
+
     console.log("App: Rendering");
     const result = (
         <div className="game-container">
-            <div className="top-bar">
-                NehsaMUD
-            </div>
-            <div className="main-grid">
-                <Game 
-                    socket={socket} 
-                    username={username} 
-                    title={title} 
-                    setTitle={setCurrentRoomTitle} 
-                    roomDescription={roomDescription} 
-                    setRoomDescription={setCurrentRoomDescription} 
-                    npcs={npcs} setNpcs={setCurrentRoomNpcs} 
-                    items={items} 
-                    setItems={setCurrentRoomItems} 
-                    exits={exits} 
-                    extraLook={extraLook} 
-                    setExtraLook={setExtraLook} 
-                    health={health} 
-                    setHealth={setHealth} 
-                    inventory={inventory} 
-                    setInventory={setInventory} 
-                    command={command} 
-                    setCommand={setCommand} 
+            <div className="main-grid" style={{ gridTemplateColumns: isSidePanelCollapsed ? '1fr auto' : '3fr 1fr' }}>
+                <Game
+                    socket={socket}
+                    username={username}
+                    title={title}
+                    setTitle={setCurrentRoomTitle}
+                    roomDescription={roomDescription}
+                    setRoomDescription={setCurrentRoomDescription}
+                    npcs={npcs} setNpcs={setCurrentRoomNpcs}
+                    items={items}
+                    setItems={setCurrentRoomItems}
+                    exits={exits}
+                    extraLook={extraLook}
+                    setExtraLook={setExtraLook}
+                    health={health}
+                    setHealth={setHealth}
+                    inventory={inventory}
+                    setInventory={setInventory}
+                    command={command}
+                    setCommand={setCommand}
                     mudEvents={mudEvents}
                     setMudEvents={setMudEvents}
-                    usersConnected={usersConnected} 
-                    setUsersConnected={setUsersConnected} 
-                    mapImageName={mapImageName} 
+                    usersConnected={usersConnected}
+                    setUsersConnected={setUsersConnected}
+                    mapImageName={mapImageName}
                     setMapImageName={setMapImageName}
-                    roomImageName={roomImageName} 
-                    setRoomImageName={setRoomImageName} 
-                    miniMap={miniMap} 
-                    setMinMap={setMiniMap} 
+                    roomImageName={roomImageName}
+                    setRoomImageName={setRoomImageName}
+                    miniMap={miniMap}
+                    setMinMap={setMiniMap}
                     isResting={resting}
                     setIsResting={setResting}
                     hungry={hungry}
@@ -581,18 +586,23 @@ function App() {
                     importantColor={importantColor}
                     importantishColor={importantishColor}
                     processEvent={processEvent}
-                    generateWelcomeMessage={generateWelcomeMessage} />
-                <SidePanel 
-                    title={title} 
-                    health={health} 
-                    hungry={hungry} 
-                    thirsty={thirsty} 
-                    poisoned={poisoned} 
-                    sleepy={sleepy} 
+                    generateWelcomeMessage={generateWelcomeMessage}
+                    isSidePanelCollapsed={isSidePanelCollapsed}
+                />
+                <SidePanel
+                    title={title}
+                    health={health}
+                    hungry={hungry}
+                    thirsty={thirsty}
+                    poisoned={poisoned}
+                    sleepy={sleepy}
                     resting={resting}
-                    mood={mood} 
-                    inventory={inventory} 
-                    roomImageName={roomImageName} />
+                    mood={mood}
+                    inventory={inventory}
+                    roomImageName={roomImageName}
+                    isCollapsed={isSidePanelCollapsed} // Pass the collapse state
+                    toggleCollapse={toggleSidePanel} // Pass the toggle function
+                />
             </div>
 
             {/* Basic Modal */}

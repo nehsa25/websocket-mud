@@ -7,16 +7,17 @@ class ExceptionUtils:
         exc_type, exc_obj, exc_tb = sys.exc_info()
         filename = exc_tb.tb_frame.f_code.co_filename
         lineno = exc_tb.tb_lineno
-        print(f"Exception Type: {exc_type}")
-        print(f"File Name: {filename}")
-        print(f"Line Number: {lineno}")
-        print(f"Exception: {e}")
+        error_message = f"Exception Type: {exc_type}\n"
+        error_message += f"File Name: {filename}\n"
+        error_message += f"Line Number: {lineno}\n"
+        error_message += f"Exception: {e}\n"
 
         if isinstance(exc_obj, OSError):
-            print(f"OSError Errno: {exc_obj.errno}")
-            print(f"OSError Filename: {exc_obj.filename}")
-            print(f"OSError Strerror: {exc_obj.strerror}")
+            error_message += f"OSError Errno: {exc_obj.errno}\n"
+            error_message += f"OSError Filename: {exc_obj.filename}\n"
+            error_message += f"OSError Strerror: {exc_obj.strerror}\n"
         elif isinstance(exc_obj, AttributeError):
-            print(f"AttributeError Name: {exc_obj.name}")
+            error_message += f"AttributeError Name: {getattr(exc_obj, 'name', 'N/A')}\n"
 
-        traceback.print_exc() 
+        error_message += traceback.format_exc()
+        return error_message

@@ -1,0 +1,41 @@
+.status {
+    display: flex;
+    flex-direction: row;
+    grid-gap: 10px;
+    margin: 0 auto;
+}
+
+.status>div {
+    font-size: .9em;
+    background-color: #111;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5em 1em;
+}
+
+.status>div:nth-child(odd) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: .5em 1em;
+    font-size: .9em;
+}
+
+.status>div:nth-child(even) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.status-good {
+    color: green;
+}
+
+.status-bad {
+    color: red;
+}
+
+.status-neutral {
+    color: tomato;
+}
