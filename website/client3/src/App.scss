@@ -1,44 +1,29 @@
 .App {
     text-align: center;
-}
-
-.App-logo {
-    height: 40vmin;
+  }
+  
+  .App-logo {
+    height: 20vmin;
     pointer-events: none;
-}
+  }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
-}
-
-.App-header {
+  .App-header {
     background-color: #282c34;
-    min-height: 100vh;
+    min-height: auto;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
+    justify-content: flex-start;
+    font-size: calc(10px + 1vmin); 
     color: white;
-}
-
-.App-link {
+  }
+  
+  .App-link {
     color: #61dafb;
-}
+  }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.modal {
+  .modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -49,85 +34,88 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    /* Ensure it's on top of everything */
-}
-
-.modal-content {
+  }
+  
+  .modal-content {
     background-color: black;
-    padding: 20px;
+    padding: 15px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     text-align: center;
-}
-
-.modal-content input[type="text"] {
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+    width: 90%;
+  }
+  
+  .modal-content input[type="text"] {
+    padding: 8px;
+    margin: 8px 0;
+    border: 1px solid #333;
     border-radius: 4px;
-    width: 200px;
-}
-
-.modal-content button {
+    width: 100%;
+  }
+  
+  .modal-content button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 1em;
-}
-
-.modal-content button:hover {
+    margin-left: 0;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  .modal-content button:hover {
     background-color: #3e8e41;
-}
-
-.game-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
+  }
+  
+  .game-container {
+    height: 100svh;
     background-color: black;
-    overflow: hidden; 
-}
-
-/* Styles for the top bar */
-.top-bar {
+    overflow: hidden;
+  }
+  
+  .top-bar {
     background-color: black;
     color: gold;
     padding: 10px;
     text-align: center;
-    font-size: 1.5em;
-}
-
-.main-grid {
+    font-size: 1.2em;
+  }
+  
+  .main-grid {
     display: grid;
-    grid-template-columns: 2fr 250px;
-    height: 100svh;
-}
+    grid-template-areas:
+        "game-component"
+        "sidepanel-component";
+    grid-template-columns: 1fr;
+    min-height: 100vh; 
+  }
 
-.side-panel {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
+  .game-component {
+    grid-area: game-component;
+  }
 
-.title {
-    font-family: 'fantasy', cursive;
-    font-size: 3em;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 0.5em;
-    text-shadow: 2px 2px 4px #000000;
-    color: gold;
-    text-transform: capitalize;
-}
+  .sidepanel-component {
+    grid-area: sidepanel-component;
+  }
 
-.mud-button {
+  /* Media query for larger screens */
+  @media (min-width: 768px) {
+    .main-grid {
+        grid-template-columns: 2fr 1fr; 
+        grid-template-areas: "game-component sidepanel-component";
+    }
+  }
+
+  .mud-button {
     background-color: #4CAF50;
     color: white;
-    padding: 10px 20px;
+    padding: 8px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-family: 'Courier New', Courier, monospace;
-}
+    width: 100%;
+    margin-bottom: 0.5em;
+  }

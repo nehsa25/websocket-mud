@@ -22,7 +22,7 @@ import SidePanel from './SidePanel';
 import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './Utils/utils';
-import Room from './Widgets/Room/RoomComponent'; 
+import Room from './Widgets/Room/RoomComponent';
 
 function App() {
     console.log("App: Entered");
@@ -68,76 +68,6 @@ function App() {
 
     // ensure we only attempt to initalize the websocket once
     let wsInstance: WebSocket | null = null;
-
-    const colorizeMessage = useCallback((message: string): JSX.Element => {
-        console.log("colorizeMessage: Entered");
-        const colors = ["red", "green", "blue", "white", "yellow", "cyan", "magenta", "black", "gray", "grey",
-            "orange", "teal", "maroon", "olive", "navy", "lime", "aqua", "silver", "crimson", "purple", "brown", "pink"];
-
-        let parts: React.ReactNode[] = [message];
-        let newParts: React.ReactNode[] = [];
-
-        colors.forEach(color => {
-            parts.forEach((part, index) => {
-                if (typeof part === 'string') {
-                    const regex = new RegExp(`(\\s${color}\\s|\\s${color}(?=\\S*['-])([a-zA-Z'-]+))`, 'gi');
-                    const split = (part as string).split(regex);
-                    for (let i = 0; i < split.length; i++) {
-                        if (i % 2 === 1) {
-                            newParts.push(<span key={`${index}-${i}`} className={`color-${color}`}>{split[i]}</span>);
-                        } else {
-                            newParts.push(split[i]);
-                        }
-                    }
-                } else {
-                    newParts.push(part);
-                }
-            });
-            parts = newParts;
-            newParts = [];
-        });
-        console.log("colorizeMessage: Exited");
-        return <>{parts}</>;
-    }, []);
-
-    // Function to add a dashed border around the string
-    const addBorder = useCallback((message: string): JSX.Element => {
-        console.log("addBorder: Entered");
-        let roomTitle = message;
-        roomTitle = roomTitle.replace(/---\\d*/g, ' ');
-        let desc = "";
-        const descriptionLength = roomTitle.length;
-        if (descriptionLength < 160) {
-            for (let i = 0; i < descriptionLength + 4; i++) {
-                desc += '-';
-            }
-        } else {
-            desc += "---------------------------------------------------------------------------------------------------------------------------------------------------------------";
-        }
-        console.log("addBorder: Exited");
-        return (
-            <>
-                <hr className="hr-border" />
-                <span className="room-title">
-                    {desc}
-                    <br />| {roomTitle} |<br />
-                    {desc}
-                </span>
-            </>
-        );
-    }, []);
-
-    // Function to add a bar under the string
-    const addBar = useCallback((message: string): JSX.Element => {
-        console.log("addBar: Entered");
-        console.log("addBar: Exited");
-        return (
-            <>
-                {message}
-                <hr className="hr-border" />
-            </>
-        );
-    }, []);
 
     // Scroll to bottom after adding a new event
     const pushGenericEvent = useCallback((message: React.ReactNode): void => {
@@ -503,15 +433,6 @@ function App() {
     }, []);
     console.log("WebSocket useEffect: Exited");
 
-    // Function to handle command input
-    const sendKeyCommand = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        console.log("sendKeyCommand: Entered");
-        if (event.key === 'Enter') {
-            sendCommand(command);
-        }
-        console.log("sendKeyCommand: Exited");
-    };
-
     // Combined effect for scrolling, triggers whenever mudEvents changes
     useEffect(() => {
         console.log("Scrolling useEffect: Entered");
@@ -526,14 +447,6 @@ function App() {
         console.log("Scrolling useEffect: Exited");
     }, [mudEvents]);
 
-    const handleDataClick = () => {
-        console.log("handleDataClick: Entered");
-        if (sendcommandarea.current) {
-            sendcommandarea.current.focus();
-        }
-        console.log("handleDataClick: Exited");
-    };
-
     // State to manage whether the side panel is collapsed
     const [isSidePanelCollapsed, setIsSidePanelCollapsed] = useState(false);
 
@@ -546,63 +459,67 @@ function App() {
     const result = (
         <div className="game-container">
             <div className="main-grid" style={{ gridTemplateColumns: isSidePanelCollapsed ? '1fr auto' : '3fr 1fr' }}>
-                <Game
-                    socket={socket}
-                    username={username}
-                    title={title}
-                    setTitle={setCurrentRoomTitle}
-                    roomDescription={roomDescription}
-                    setRoomDescription={setCurrentRoomDescription}
-                    npcs={npcs} setNpcs={setCurrentRoomNpcs}
-                    items={items}
-                    setItems={setCurrentRoomItems}
-                    exits={exits}
-                    extraLook={extraLook}
-                    setExtraLook={setExtraLook}
-                    health={health}
-                    setHealth={setHealth}
-                    inventory={inventory}
-                    setInventory={setInventory}
-                    command={command}
-                    setCommand={setCommand}
-                    mudEvents={mudEvents}
-                    setMudEvents={setMudEvents}
-                    usersConnected={usersConnected}
-                    setUsersConnected={setUsersConnected}
-                    mapImageName={mapImageName}
-                    setMapImageName={setMapImageName}
-                    roomImageName={roomImageName}
-                    setRoomImageName={setRoomImageName}
-                    miniMap={miniMap}
-                    setMinMap={setMiniMap}
-                    isResting={resting}
-                    setIsResting={setResting}
-                    hungry={hungry}
-                    setHungry={setHungry}
-                    thirsty={thirsty}
-                    setThirsty={setThirsty}
-                    mood={mood}
-                    setMood={setMood}
-                    importantColor={importantColor}
-                    importantishColor={importantishColor}
-                    processEvent={processEvent}
-                    generateWelcomeMessage={generateWelcomeMessage}
-                    isSidePanelCollapsed={isSidePanelCollapsed}
-                />
-                <SidePanel
-                    title={title}
-                    health={health}
-                    hungry={hungry}
-                    thirsty={thirsty}
-                    poisoned={poisoned}
-                    sleepy={sleepy}
-                    resting={resting}
-                    mood={mood}
-                    inventory={inventory}
-                    roomImageName={roomImageName}
-                    isCollapsed={isSidePanelCollapsed} // Pass the collapse state
-                    toggleCollapse={toggleSidePanel} // Pass the toggle function
-                />
+                <div className="game-component">
+                    <Game
+                        socket={socket}
+                        username={username}
+                        title={title}
+                        setTitle={setCurrentRoomTitle}
+                        roomDescription={roomDescription}
+                        setRoomDescription={setCurrentRoomDescription}
+                        npcs={npcs} setNpcs={setCurrentRoomNpcs}
+                        items={items}
+                        setItems={setCurrentRoomItems}
+                        exits={exits}
+                        extraLook={extraLook}
+                        setExtraLook={setExtraLook}
+                        health={health}
+                        setHealth={setHealth}
+                        inventory={inventory}
+                        setInventory={setInventory}
+                        command={command}
+                        setCommand={setCommand}
+                        mudEvents={mudEvents}
+                        setMudEvents={setMudEvents}
+                        usersConnected={usersConnected}
+                        setUsersConnected={setUsersConnected}
+                        mapImageName={mapImageName}
+                        setMapImageName={setMapImageName}
+                        roomImageName={roomImageName}
+                        setRoomImageName={setRoomImageName}
+                        miniMap={miniMap}
+                        setMinMap={setMiniMap}
+                        isResting={resting}
+                        setIsResting={setResting}
+                        hungry={hungry}
+                        setHungry={setHungry}
+                        thirsty={thirsty}
+                        setThirsty={setThirsty}
+                        mood={mood}
+                        setMood={setMood}
+                        importantColor={importantColor}
+                        importantishColor={importantishColor}
+                        processEvent={processEvent}
+                        generateWelcomeMessage={generateWelcomeMessage}
+                        isSidePanelCollapsed={isSidePanelCollapsed}
+                    />
+                </div>
+                <div className="sidepanel-component">
+                    <SidePanel
+                        title={title}
+                        health={health}
+                        hungry={hungry}
+                        thirsty={thirsty}
+                        poisoned={poisoned}
+                        sleepy={sleepy}
+                        resting={resting}
+                        mood={mood}
+                        inventory={inventory}
+                        roomImageName={roomImageName}
+                        isCollapsed={isSidePanelCollapsed} // Pass the collapse state
+                        toggleCollapse={toggleSidePanel} // Pass the toggle function
+                    />
+                </div>
             </div>
 
             {/* Basic Modal */}

@@ -1,26 +1,19 @@
 
 .map-container {
-    position: absolute;
-    top: 0;
-    right: 0;
-    float: right;
-    border: 3px solid black;
-    margin: 1em;
-    padding: 0;
+    border: 2px solid #333;
     border-radius: 4px;
-    background-color: #999;
+    padding: 0;
+    background-color: #14161A;
     transition: width 0.5s, height 0.5s;
-    align-items: first baseline;
-    vertical-align: top;
-    justify-content: start;
     width: 100%;
     height: auto;
     overflow: auto;
+    margin: auto 0;
 }
 
 .map-container-hover {
     border-radius: 4px;
-    background-color: #999;
+    background-color: #14161A;
     overflow: auto;
     width: 90%;
     height: 90%;

@@ -36,20 +36,25 @@ const SidePanel: React.FC<SidePanelProps> = ({
             <div className="side-panel">
                 <div className="scrollable-content">
                     <div className="sidepanel-grid">
-                        <div>
-                            <div className="title"> {title} </div>
+                        <div className="username"> {title} </div>
+                        <div className="healthbar-component">
                             <HealthBarComponent health={health} />
                         </div>
-                        <RoomImageComponent roomImageName={roomImageName} />
-                        <StatusComponent
-                            hungry={hungry}
-                            thirsty={thirsty}
-                            poisoned={poisoned}
-                            sleepy={sleepy}
-                            resting={resting}
-                            mood={mood}
-                        />
-                        <InventoryComponent inventory={inventory} />
+                        <div className="roomimage-component">
+                            <RoomImageComponent roomImageName={roomImageName} />
+                        </div>
+                        <div className="status-component">
+                            <StatusComponent hungry={hungry}
+                                thirsty={thirsty}
+                                poisoned={poisoned}
+                                sleepy={sleepy}
+                                resting={resting}
+                                mood={mood}
+                            />
+                        </div>
+                        <div className="inventory-component">
+                            <InventoryComponent inventory={inventory} />
+                        </div>
                     </div>
                 </div>
             </div>

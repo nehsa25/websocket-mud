@@ -2,9 +2,7 @@ import './Game.scss';
 
 import React, {
     useRef,
-    useEffect,
-    useCallback,
-    useState
+    useEffect
 } from 'react';
 
 import {
@@ -16,6 +14,7 @@ import {
 } from './Types/MudEvents';
 
 import MapComponent from './Widgets/Map/MapComponent';
+import CommandInputComponent from './Widgets/CommandInput/CommandInputComponent';
 
 interface GameProps {
     socket: WebSocket | null;
@@ -117,7 +116,6 @@ const Game: React.FC<GameProps> = ({
     generateWelcomeMessage
 }) => {
     const scrollMe = useRef<HTMLDivElement>(null);
-    const sendcommandarea = useRef<HTMLInputElement>(null);
 
     // Scrolling effect
     useEffect(() => {
@@ -130,41 +128,13 @@ const Game: React.FC<GameProps> = ({
         }
     }, [mudEvents]);
 
-    const sendCommand = useCallback((cmd: string): void => {
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const full_cmd = {
-                "type": MudEvents.COMMAND,
-                "cmd": cmd,
-                "extra": {
-                    "name": username.trim() || "",
-                }
-            };
-            console.log("Sending: ");
-            console.log(full_cmd);
-            socket.send(JSON.stringify(full_cmd));
-            setCommand(""); // Clear the input after sending
-        } else {
-            console.log("Websocket not connected");
-        }
-    }, [socket, username, setCommand]);
-
-    const sendKeyCommand = (event: React.KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Enter') {
-            sendCommand(command);
-        }
-    };
-
-    const handleDataClick = () => {
-        if (sendcommandarea.current) {
-            sendcommandarea.current.focus();
-        }
-    };
-
     return (
         <>
             <div className="game-column">
-                <MapComponent mapImageName={mapImageName} />
-                <div className="data" ref={scrollMe} onClick={handleDataClick}>
+                <div className="game-map">
+                    <MapComponent mapImageName={mapImageName} />
+                </div>
+                <div className="data" ref={scrollMe}>
                     {mudEvents.map((event, index) => {
                         return (
                             <Box key={index}>
@@ -182,17 +152,12 @@ const Game: React.FC<GameProps> = ({
                         );
                     })}
                 </div>
-                <div className="command-input">
-                    <input
-                        ref={sendcommandarea}
-                        type="text"
-                        value={command}
-                        onChange={(e) => setCommand(e.target.value)}
-                        onKeyDown={sendKeyCommand}
-                        placeholder="Type a command here and press <ENTER>. (e.g. type 'say Hi'<ENTER> to say hello)"
-                        className="input-field"
-                    />
-                </div>
+                <CommandInputComponent
+                    socket={socket}
+                    username={username}
+                    command={command}
+                    setCommand={setCommand}
+                />
             </div>
         </>
     );

@@ -9,11 +9,13 @@ const InventoryComponent: React.FC<InventoryComponentProps> = ({ inventory }) =>
     return (
         <div className="inventory-container">
             <div className="inventory-title"> INVENTORY </div>
-            <ul className="inventory-list">{
-                inventory.map((item, index) => (
-                    <li key={index} > {item} </li>))
-            }
-            </ul>
+            <div className="inventory-list">
+                {inventory.map((item, index) => (
+                    <div key={index} className="inventory-item">
+                        {item}
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };

@@ -10,24 +10,15 @@ from settings.exception import ExceptionUtils
 AWS_REGION = 'us-west-2'
 BUCKET_NAME = 'nehsa-storage'
 
-# Option 1: Configure credentials using environment variables
 s3_client = boto3.client('s3', region_name=AWS_REGION,
                        aws_access_key_id=os.environ.get('AWS_ACCESS_KEY_ID'),
                        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS_KEY'))
-
-# Option 2: Configure credentials directly (not recommended for production)
-# s3_client = boto3.client('s3', region_name=AWS_REGION,
-#                        aws_access_key_id='YOUR_ACCESS_KEY_ID',
-#                        aws_secret_access_key='YOUR_SECRET_ACCESS_KEY')
-
-# Option 3: Rely on IAM role (recommended for EC2 instances)
-# s3_client = boto3.client('s3', region_name=AWS_REGION)
 
 class S3Utils:
     @staticmethod
     def generate_public_url(file_name):
         return f"{Secrets.S3Url}{file_name}"
-
+    
     @staticmethod
     def upload_image_to_s3(image_path, s3_key, make_public=True, content_type = 'image/svg+xml', logger=None):
         try:

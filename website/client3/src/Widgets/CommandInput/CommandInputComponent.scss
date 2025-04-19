@@ -1,0 +1,16 @@
+.command-input {
+    order: -1;
+    background-color: #14161A;
+    place-content: center;
+    text-align: center;
+}
+
+.input-field {
+    padding: 1em 0 1em 1em;
+    border: 1px solid #333;
+    border-radius: 4px;
+    width: calc(100% - 1em);
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 16px;
+    background-color: #14161A;
+}

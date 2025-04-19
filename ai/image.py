@@ -1,4 +1,5 @@
 import inspect
+import json
 import os
 import jsonpickle
 from ai.file import AIFile
@@ -78,17 +79,20 @@ class AIImages(Utility):
     def clean_file_name(self, tone_description):
         method_name = inspect.currentframe().f_code.co_name
         LogUtils.debug(f"{method_name}: enter", self.logger)
-        file_name = ', '.join(tone_description)
-        file_name = file_name.replace(" ", "_")
-        file_name = file_name.replace(":", "")
-        file_name = file_name.replace(",", "")
-        file_name = file_name.replace("!", "")
-        file_name = file_name.replace("?", "")
+        tone_description = ', '.join(tone_description)
+        tone_description = tone_description.replace(" ", "_")
+        tone_description = tone_description.replace(":", "")
+        tone_description = tone_description.replace(",", "")
+        tone_description = tone_description.replace("[", "")
+        tone_description = tone_description.replace("]", "")
+        tone_description = tone_description.replace("'", "")
+        tone_description = tone_description.replace("!", "")
+        tone_description = tone_description.replace("?", "")
         LogUtils.debug(f"{method_name}: exit", self.logger)
-        return file_name
+        return tone_description
     
     def get_data_file_name(self, type, tone):
-        file = f"{type}_{self.clean_file_name(tone)}.dat"
+        file = f"{type}_{self.clean_file_name(tone["style"])}.dat"
         LogUtils.debug(f"Returning filename: {file}", self.logger)
         return file
                 
@@ -193,7 +197,6 @@ class AIImages(Utility):
                                                          logger=self.logger)
                 
                 image_url = S3Utils.generate_public_url(s3_key)
-
                 if image_url:
                     print(f"Image uploaded successfully. Public URL: {image_url}")          
                     self.add_log_entry(log_name, s3_key, item_description)

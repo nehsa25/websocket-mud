@@ -92,21 +92,29 @@ class Map(Utility):
                 if current_room.name == active_room.name:
                     node = pydot.Node(current_room.name, fillcolor = "springgreen", fontcolor="black")
                     self.graph.add_node(node)
+                    LogUtils.debug(f"{method_name}: add_rooms_recursive added active node: {current_room.name}", self.logger)
                 else:
                     node = pydot.Node(current_room.name)
                     self.graph.add_node(node)
+                    LogUtils.debug(f"{method_name}: add_rooms_recursive added node: {current_room.name}", self.logger)
 
+                LogUtils.debug(f"{method_name}: add_rooms_recursive current_room.exits: {current_room.exits}", self.logger)
                 for exit in current_room.exits:
+                    LogUtils.debug(f"{method_name}: add_rooms_recursive processing exit: {exit}", self.logger)
                     if exit != []:
                         exit_room = exit["id"]
                         exit_direction = exit["direction"].name
 
                         edge = pydot.Edge(current_room.name, exit_room.name, label=exit_direction)
                         self.graph.add_edge(edge)
+                        LogUtils.debug(f"{method_name}: add_rooms_recursive added edge from: {current_room.name} to {exit_room.name} with label: {exit_direction}", self.logger)
 
                         await add_rooms_recursive(exit_room, depth - 1, active_room, visited_rooms)
+                    else:
+                        LogUtils.warning(f"{method_name}: add_rooms_recursive exit is empty", self.logger)
             # Start with the player's current room
             current_room = player.room
+            LogUtils.debug(f"{method_name}: add_rooms_recursive starting with current_room: {current_room.name}", self.logger)
             await add_rooms_recursive(current_room, 1, current_room)
         else:
             # generate map
@@ -159,15 +167,15 @@ class Map(Utility):
         s3_key = f"public/images/maps/{image_name}{suffix}{extension}"
         LogUtils.debug(f"{method_name}: Uploading to S3 with key: {s3_key}", self.logger)
         S3Utils.upload_image_to_s3(temp_image_path, 
-                                                s3_key, 
-                                                make_public=True, 
-                                                content_type='image/svg+xml', 
-                                                logger=self.logger)
+                                    s3_key, 
+                                    make_public=True, 
+                                    content_type='image/svg+xml', 
+                                    logger=self.logger)
         
         image_url = S3Utils.generate_public_url(s3_key)
         LogUtils.debug(f"{method_name}: Image URL from S3: {image_url}", self.logger)
 
-        LogUtils.debug(f"{method_name}: exit with image_url: {image_url}", self.logger)
+        LogUtils.debug(f"{method_name}", self.logger)
         return image_url
 
     async def generate_full_map(self, room, image_name, player, world_state, area_identifier, environment=Utility.EnvironmentTypes.TOWNSMEE):

@@ -17,60 +17,59 @@
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     text-align: center;
+    color: gold;
 }
 
 .modal-content input[type="text"] {
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #ccc;
+    border: 1px solid #333;
     border-radius: 4px;
     width: 200px;
 }
 
 .modal-content button {
-    background-color: #4CAF50;
+    background-color: #333;
     color: white;
-    padding: 10px 20px;
+    padding: 5px 15px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    margin-left: 1em;
 }
 
 .modal-content button:hover {
     background-color: #3e8e41;
 }
 
-.data {
-    background-color: #14161A;
-    color: #888;
-    flex: 1;
-    overflow-y: auto;
-}
-
 .game-column {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    background-color: #14161A;
-    position: relative;
-}
+    display: grid;
+    grid-template-areas:
+        "game-map"
+        "data"
+        "command-input";
+    grid-template-rows: auto auto 120px;
 
-.input-field {
-    padding: 1em 0 1em 1em;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: calc(100% - 1em);
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-    background-color: #222;
-}
 
-.command-input {
-    margin-top: 10px;
-    background-color: #282c34;
+    .data {
+        grid-area: data;
+        background-color: #14161A;
+        color: #888;
+        overflow-y: auto;
+        width: 100%;
+        height: calc(100vh - 200px);
+        padding: 1em 2em;        
+        border: 2px solid #333;
+        border-radius: 4px;
+    }
+
+    .command-input {
+        grid-area: command-input;
+    }
+
+    .game-map {
+        grid-area: game-map;
+        width: 100%;
+    }
 }
 
 .color-red {
@@ -169,13 +168,13 @@
     font-size: 1.5em;
 }
 
-
 $top-bar-height: 200px;
+
 .game-grid {
     display: grid;
-    grid-template-columns: 3fr 1fr; 
-    grid-template-rows: 1fr;
-    height: calc(100vh - #{$top-bar-height}); 
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: calc(100vh - #{$top-bar-height});
     width: 100%;
     overflow: hidden;
 }
@@ -183,6 +182,7 @@ $top-bar-height: 200px;
 .rightSideBar {
     padding: 10px;
     background-color: #14161A;
+    border-top: 1px solid #333;
 }
 
 .rightSideBar img {
@@ -190,97 +190,21 @@ $top-bar-height: 200px;
     height: 100%;
 }
 
-/* Main area where game data is displayed */
-.data {
-    background-color: #14161A;
-    color: #888;
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* Styles for the command input */
-.command-input {
-    margin-top: 10px;
-    background-color: #14161A;
-}
-
-/* Command field */
-.input-field {
-    padding: 1em 0 1em 1em;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: calc(100% - 1em);
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-    background-color: #222;
-}
-
-/* Basic Modal */
-.modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: #14161A;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-/* Modal for username */
-.modal-content {
-    background-color: black;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    color: gold;
-}
-
-.modal-content input[type="text"] {
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 200px;
-}
-
-.modal-content button {
-    background-color: #333;
-    color: white;
-    padding: 5px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.modal-content button:hover {
-    background-color: #3e8e41;
-}
-
 .room-title {
     font-family: 'Courier New', Courier, monospace;
     font-size: 16px;
 }
 
-.side-panel-grid {
-    display: grid;
-    grid-gap: 1em;
-    grid-template-rows: repeat(3, auto);
-}
-
 .title {
     font-family: 'fantasy', cursive;
-    font-size: 3em;
+    font-size: 2em;
     font-weight: bold;
     text-align: center;
     margin-bottom: 0.5em;
     text-shadow: 2px 2px 4px #000000;
     color: gold;
     text-transform: capitalize;
+    order: 2;
 }
 
 .mud-button {
@@ -293,90 +217,52 @@ $top-bar-height: 200px;
     font-family: 'Courier New', Courier, monospace;
 }
 
-.color-red {
-    color: red;
+.room-image {
+    order: 1;
 }
 
-.color-green {
-    color: green;
+.health {
+    order: 3;
 }
 
-.color-blue {
-    color: blue;
+@media (max-width: 768px) {
+    .game-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+
+    .rightSideBar {
+        border-top: 1px solid #333;
+    }
+
+    .command-input {
+        order: -1;
+    }
+
+    .input-field {
+        width: calc(100% - 1em);
+    }
+
+    .title {
+        font-size: 2em;
+    }
 }
 
-.color-white {
-    color: white;
-}
+@media (min-width: 769px) {
+    .game-grid {
+        grid-template-columns: 3fr 1fr;
+        grid-template-rows: 1fr;
+    }
 
-.color-yellow {
-    color: yellow;
-}
+    .rightSideBar {
+        border-top: none;
+    }
 
-.color-cyan {
-    color: cyan;
-}
+    .command-input {
+        order: 0;
+    }
 
-.color-magenta {
-    color: magenta;
-}
-
-.color-black {
-    color: black;
-}
-
-.color-gray {
-    color: gray;
-}
-
-.color-grey {
-    color: grey;
-}
-
-.color-orange {
-    color: orange;
-}
-
-.color-teal {
-    color: teal;
-}
-
-.color-maroon {
-    color: maroon;
-}
-
-.color-olive {
-    color: olive;
-}
-
-.color-navy {
-    color: navy;
-}
-
-.color-lime {
-    color: lime;
-}
-
-.color-aqua {
-    color: aqua;
-}
-
-.color-silver {
-    color: silver;
-}
-
-.color-crimson {
-    color: crimson;
-}
-
-.color-purple {
-    color: purple;
-}
-
-.color-brown {
-    color: brown;
-}
-
-.color-pink {
-    color: pink;
+    .title {
+        font-size: 3em;
+    }
 }

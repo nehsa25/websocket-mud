@@ -287,7 +287,7 @@ class Utility(MudEvents):
     async def send_message(self, event_object, websocket):
         method_name = inspect.currentframe().f_code.co_name
         msg = event_object.to_json()
-        LogUtils.debug(f"{method_name}: enter, {msg}", self.logger)
+        LogUtils.debug(f"{method_name}: enter", self.logger)
         LogUtils.debug(f"{method_name}: Sending json: {msg}", self.logger)
         LogUtils.debug(f"{method_name}: exit", self.logger)
         try:
