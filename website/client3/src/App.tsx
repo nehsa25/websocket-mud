@@ -10,6 +10,7 @@ import {
     Box,
     List,
     Flex,
+    Stack
 } from "@chakra-ui/react";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -72,32 +73,18 @@ function App() {
     // Scroll to bottom after adding a new event
     const pushGenericEvent = useCallback((message: React.ReactNode): void => {
         console.log("pushGenericEvent: Entered");
-        setMudEvents(prevEvents => [...prevEvents, message]);
+
+        const styledMessage = (
+            <Text className="latest-message">
+              {message}
+            </Text>
+          );
+        setMudEvents(prevEvents => [...prevEvents, styledMessage]);
         if (scrollMe.current) {
             scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
         }
         console.log("pushGenericEvent: Exited");
     }, [setMudEvents]);
-
-    const sendCommand = useCallback((cmd: string): void => {
-        console.log("sendCommand: Entered");
-        if (socket && socket.readyState === WebSocket.OPEN) {
-            const full_cmd = {
-                "type": MudEvents.COMMAND,
-                "cmd": cmd,
-                "extra": {
-                    "name": username.trim() || "",
-                }
-            };
-            console.log("Sending: ");
-            console.log(full_cmd);
-            socket.send(JSON.stringify(full_cmd));
-            setCommand(""); // Clear the input after sending
-        } else {
-            console.log("Websocket not connected");
-        }
-        console.log("sendCommand: Exited");
-    }, [socket, username, setCommand]);
 
     // Function to generate the welcome message HTML
     const generateWelcomeMessage = useCallback((

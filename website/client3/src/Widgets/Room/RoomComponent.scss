@@ -22,7 +22,6 @@ $room-shade-color1: #555;
 }
 
 .room-description-message {
-    font-family: "Georgia", "Times New Roman", "serif";
     font-size: 1em;
     padding: 5px;
     border-radius: 3px;
@@ -36,12 +35,12 @@ $room-shade-color1: #555;
     border: 0;
     border-bottom: 1px solid $sep;
     background-color: transparent;
-    margin: 5px 0;
+    margin: 5px 0;    
 }
 
 .room-section-title {
-    font-family: "Baskerville", "Libre Baskerville", "serif";
-    font-size: 0.9em; /* Slightly larger than before */
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9em;
     color: $dk-text;
     text-shadow: $room-shade-color1 1px 1px 1px, $room-shade-color2 2px 2px 0; 
     margin-right: 5px;

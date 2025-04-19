@@ -111,7 +111,7 @@ class Map(Utility):
 
                         await add_rooms_recursive(exit_room, depth - 1, active_room, visited_rooms)
                     else:
-                        LogUtils.warning(f"{method_name}: add_rooms_recursive exit is empty", self.logger)
+                        LogUtils.debug(f"{method_name}: add_rooms_recursive exit is empty", self.logger)
             # Start with the player's current room
             current_room = player.room
             LogUtils.debug(f"{method_name}: add_rooms_recursive starting with current_room: {current_room.name}", self.logger)

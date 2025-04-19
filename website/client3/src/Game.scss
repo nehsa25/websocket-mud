@@ -47,7 +47,7 @@
         "game-map"
         "data"
         "command-input";
-    grid-template-rows: auto auto 120px;
+    grid-template-rows: 120px auto 120px;
 
 
     .data {
@@ -56,7 +56,7 @@
         color: #888;
         overflow-y: auto;
         width: 100%;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 240px);
         padding: 1em 2em;        
         border: 2px solid #333;
         border-radius: 4px;
@@ -190,11 +190,6 @@ $top-bar-height: 200px;
     height: 100%;
 }
 
-.room-title {
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 16px;
-}
-
 .title {
     font-family: 'fantasy', cursive;
     font-size: 2em;
@@ -205,16 +200,6 @@ $top-bar-height: 200px;
     color: gold;
     text-transform: capitalize;
     order: 2;
-}
-
-.mud-button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Courier New', Courier, monospace;
 }
 
 .room-image {
