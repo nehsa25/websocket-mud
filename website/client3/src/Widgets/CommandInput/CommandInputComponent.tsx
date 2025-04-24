@@ -26,7 +26,7 @@ const CommandInputComponent: React.FC<CommandInputProps> = ({
     const sendCommand = useCallback((cmd: string): void => {
         if (socket && socket.readyState === WebSocket.OPEN) {
             const full_cmd = {
-                "type": MudEvents.COMMAND,
+                "type": EventUtility.COMMAND,
                 "cmd": cmd,
                 "extra": {
                     "name": username.trim() || "",

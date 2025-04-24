@@ -1,0 +1,4 @@
+class WorldSettings:
+    WORLD_NAME = "Illisurom"
+    PLAYER_BASE_REST_WAIT_SECS = 2
+    EVENT_SPEED = PLAYER_BASE_REST_WAIT_SECS

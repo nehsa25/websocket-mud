@@ -1,20 +1,29 @@
 import React from 'react';
 import './InventoryComponent.scss';
+import { ItemIcons, ItemType } from '../../Types/ItemTypes';
 
-interface InventoryComponentProps {
-    inventory: string[];
+interface InventoryProps {
+    items: {
+        name: string;
+        item_type: ItemType;
+    }[];
 }
 
-const InventoryComponent: React.FC<InventoryComponentProps> = ({ inventory }) => {
+const InventoryComponent: React.FC<InventoryProps> = ({ items }) => {
     return (
         <div className="inventory-container">
-            <div className="inventory-title"> INVENTORY </div>
+            <div className="inventory-title">Inventory</div>
             <div className="inventory-list">
-                {inventory.map((item, index) => (
-                    <div key={index} className="inventory-item">
-                        {item}
-                    </div>
-                ))}
+                {items.map((item, index) => {
+                    const itemTypeString = ItemType[item.item_type];
+                    const icon = (ItemIcons as any)[itemTypeString] as string || '';
+                    return (
+                        <div key={index} className="inventory-item">
+                            <span className="icon">{icon}</span>
+                            {item.name}
+                        </div>
+                    );
+                })}
             </div>
         </div>
     );

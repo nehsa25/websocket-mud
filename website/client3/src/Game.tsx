@@ -135,7 +135,7 @@ const Game: React.FC<GameProps> = ({
                     <MapComponent mapImageName={mapImageName} />
                 </div>
                 <div className="data" ref={scrollMe}>
-                    {mudEvents.map((event, index) => {
+                    {EventUtility.map((event, index) => {
                         return (
                             <Box key={index}>
                                 {React.isValidElement(event) ? (

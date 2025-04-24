@@ -11,7 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MapComponent } from './map/map.component';
 import { MatIconModule } from '@angular/material/icon';
 import { DupeNameComponent } from './dupe-name/dupe-name.component';
-import { MudEvents } from '../../types/mudevents.type';
+import { MudEvents } from '../../types/EventUtility.type';
 import { AiImageComponent } from './ai-image/ai-image.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { HelpModalComponent } from './help-modal/help-modal.component';
@@ -221,7 +221,7 @@ export class MudComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed().subscribe(result => {
       this.userService.name = result;
-      var resp = `{\"type\": ${MudEvents.USERNAME_ANSWER}, \"username\": \"${result}\"}`;
+      var resp = `{\"type\": ${EventUtility.USERNAME_ANSWER}, \"username\": \"${result}\"}`;
       console.log("Server is requesting our name, sending back: " + resp);
       this.socket.send(resp);
     });
@@ -252,7 +252,7 @@ export class MudComponent implements OnInit, OnDestroy {
     });
     dialogRef.componentInstance.emitService.subscribe((val: any) => {
       this.userService.name = val;
-      var resp = `{\"type\": ${MudEvents.USERNAME_ANSWER}, \"username\": \"${val}\"}`;
+      var resp = `{\"type\": ${EventUtility.USERNAME_ANSWER}, \"username\": \"${val}\"}`;
       console.log("Server is requesting our name, sending back: " + resp);
       this.socket.send(resp);
     });
@@ -365,7 +365,7 @@ export class MudComponent implements OnInit, OnDestroy {
   processEvent(data: MudEvent) {
     const apiLocation = environment.apiUrl;
     switch (data.type) {
-      case MudEvents.WELCOME:
+      case EventUtility.WELCOME:
         const star_teal = "<span class=\"material-icons teal\">star</span>";
         const star_purple = "<span class=\"material-icons purple\">star</span>";
         const star_red = "<span class=\"material-icons red\">star</span>";
@@ -406,51 +406,51 @@ export class MudComponent implements OnInit, OnDestroy {
 
 
         break;
-      case MudEvents.BOOK:
+      case EventUtility.BOOK:
         console.log("book: " + data.message);
         if (data.message != "") {
           this.mudEvents += `<br><span class=\"book-message\">${data.message.replace("<", "&lt;").replace(">", "&gt;")}</span>`;
         }
         break
-      case MudEvents.USERNAME_REQUEST:
+      case EventUtility.USERNAME_REQUEST:
         //this.createUser();
         if (data.world_name != "") {
           this.world_name = data.world_name;
         }
         var name = this.userService.name;
-        var resp = `{\"type\": ${MudEvents.USERNAME_ANSWER}, \"username\": \"${name}\"}`;
+        var resp = `{\"type\": ${EventUtility.USERNAME_ANSWER}, \"username\": \"${name}\"}`;
         console.log("Server is requesting our name, sending back: " + resp);
         this.socket.send(resp);
         break;
-      case MudEvents.DUPLICATE_NAME:
+      case EventUtility.DUPLICATE_NAME:
         this.userService.name = "";
         this.launchDupe();
         break;
-      case MudEvents.INVALID_NAME:
+      case EventUtility.INVALID_NAME:
         this.userService.name = "";
         this.launchInvalidName();
         break;
-      case MudEvents.EVENT: // check if there's an event # breeze, silence, rain
+      case EventUtility.EVENT: // check if there's an event # breeze, silence, rain
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"event-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.INFO:
+      case EventUtility.INFO:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"info-message\">" + this.colorizeMessage(data.message) + "</span>";
         }
         break;
-      case MudEvents.ANNOUCEMENT:
+      case EventUtility.ANNOUCEMENT:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"announcement-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.TIME:
+      case EventUtility.TIME:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"time-message\">[" + data.message + "]</span>";
         }
         break;
-      case MudEvents.CHANGE_NAME:
+      case EventUtility.CHANGE_NAME:
         if (data.message != "") {
           const name = data.extra;
           this.userService.name = name;
@@ -458,29 +458,29 @@ export class MudComponent implements OnInit, OnDestroy {
           this.mudEvents += "<br><span class=\"changename-message\">[SYSTEM " + data.message + "]</span>";
         }
         break;
-      case MudEvents.COMMAND:
+      case EventUtility.COMMAND:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"input-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.YOU_ATTACK:
+      case EventUtility.YOU_ATTACK:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"you-attack-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.INVENTORY:
+      case EventUtility.INVENTORY:
         var inventoryList = new Array<string>();
         data.inventory.items.forEach(o => {
           inventoryList.push(o.name);
         });
         this.inventory = inventoryList;
         break;
-      case MudEvents.ERROR:
+      case EventUtility.ERROR:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"error-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.ATTACK:
+      case EventUtility.ATTACK:
         if (data.message != "") {
           const attack_txt = data.message.split('! ')
           this.mudEvents += "<br><span class=\"attack1-message\">"
@@ -488,7 +488,7 @@ export class MudComponent implements OnInit, OnDestroy {
             + "</span>";
         }
         break;
-      case MudEvents.HEALTH:
+      case EventUtility.HEALTH:
         const hitpoints = parseInt(data.statuses.current_hp);
         const max_hitpoints = parseInt(data.statuses.max_hp);
 
@@ -513,10 +513,10 @@ export class MudComponent implements OnInit, OnDestroy {
           this.is_resting = true;
         }
         break;
-      case MudEvents.HELP:
+      case EventUtility.HELP:
         this.launchHelp(data.help_commands);
         break;
-      case MudEvents.REST:
+      case EventUtility.REST:
         if (data.message != "") {
           if (data.is_resting) {
             this.is_resting = true;
@@ -529,7 +529,7 @@ export class MudComponent implements OnInit, OnDestroy {
         }
         this.is_resting = data.is_resting
         break;
-      case MudEvents.ROOM:
+      case EventUtility.ROOM:
         this.room_description = data.description;
         if (data.name != "") {
           this.mudEvents += "<br><span class=\"room-message\">" + this.addBorder(data.name) + "</span>";
@@ -583,42 +583,42 @@ export class MudComponent implements OnInit, OnDestroy {
           this.mudEvents += "<br><span class=\"exits1-message\">Exits: </span><span class=\"exits2-message\">" + data.exits + "</span>";
         }
         break;
-      case MudEvents.CLIENT_LIST:
+      case EventUtility.CLIENT_LIST:
         console.log("Inside get_clients switch");
         this.usersConnected = data.num_players;
         break;
-      case MudEvents.MAP_EVENT:
+      case EventUtility.MAP_EVENT:
         this.mapImageName = data.map_image_name;
         this.mapImageAvailable = true;
         this.miniMap = `${apiLocation}/${this.mapImageName}_small.svg`;
         break;
-      case MudEvents.ROOM_IMAGE:
+      case EventUtility.ROOM_IMAGE:
         this.roomImageName = `${apiLocation}/rooms/${data.room_image_name}`;
         this.roomImageAvailable = true;
         break;
-      case MudEvents.PLAYER_IMAGE:
+      case EventUtility.PLAYER_IMAGE:
         this.mudEvents += `<br><img src="${apiLocation}/players/${data.image_name}" alt="player image" class="player-image" />`;
         break;
-      case MudEvents.NPC_IMAGE:
+      case EventUtility.NPC_IMAGE:
         this.mudEvents += `<br><img src="${apiLocation}/npcs/${data.image_name}" alt="npc image" class="npc-image" />`;
         break;
-      case MudEvents.ITEM_IMAGE:
+      case EventUtility.ITEM_IMAGE:
         this.mudEvents += `<br><img src="${apiLocation}/items/${data.image_name}" alt="item image" class="item-image" />`;
         break;
-      case MudEvents.MONSTER_IMAGE:
+      case EventUtility.MONSTER_IMAGE:
         this.mudEvents += `<br><img src="${apiLocation}/monsters/${data.image_name}" alt="monster image" class="monster-image" />`;
         break;
-      case MudEvents.DIRECTION:
+      case EventUtility.DIRECTION:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"direction-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.ENVIRONMENT:
+      case EventUtility.ENVIRONMENT:
         if (data.message != "") {
           this.mudEvents += "<br><span class=\"environment-message\">" + data.message + "</span>";
         }
         break;
-      case MudEvents.USERNAME_CHANGED:
+      case EventUtility.USERNAME_CHANGED:
         if (data.name != "") {
           this.userService.name = data.name;
           this.mudEvents += "<br><span class=\"info-message\">" + data.message + "</span>";
@@ -633,7 +633,7 @@ export class MudComponent implements OnInit, OnDestroy {
 
   trimHtml() {
     this.mudEvents = this.mudEvents + "";
-    const lines = this.mudEvents.split('<br>');
+    const lines = this.EventUtility.split('<br>');
     if (lines.length > 100) {
       this.mudEvents = lines.slice(Math.max(lines.length - 100, 0)).join('<br>')
     }
@@ -685,7 +685,7 @@ export class MudComponent implements OnInit, OnDestroy {
           extra = this.userService.name;
         }
         var full_cmd = {
-          "type": MudEvents.COMMAND,
+          "type": EventUtility.COMMAND,
           "cmd": cmd,
           "extra": {
             "name": this.userService.name

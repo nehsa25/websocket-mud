@@ -1,8 +1,8 @@
 <div class="comments">
     <div class="topics grid">
         <div *ngIf="userService.name != null && userService.name != ''">
-            <div class="add-comment" *ngIf="addComment == false" (click)="addcomment()">Click to add comment</div>
-            <div *ngIf="addComment == true">
+            <div class="add-comment" *ngIf="addComment is False" (click)="addcomment()">Click to add comment</div>
+            <div *ngIf="addComment is True">
                 <div class="addcommentgrid">
                     <div>
                         <form [formGroup]="commentform">

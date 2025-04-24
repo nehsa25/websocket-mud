@@ -1,0 +1,12 @@
+[flake8]
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    website
+
+max-line-length = 500
+
+ignore =
+    W291,
+    W293
