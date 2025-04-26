@@ -6,7 +6,7 @@ from settings.global_settings import GlobalSettings
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
 from utilities.system import SystemUtility
-from world_state import WorldState
+from core.world_state import WorldState
 from flask import Flask, jsonify
 import threading
 from connections import (

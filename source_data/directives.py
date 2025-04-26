@@ -1,7 +1,7 @@
-from class_types.directive_type import DirectiveType
-from game.enums.directive_types import DirectiveTypes
-from game.enums.directives import Directives
-from game.interfaces.source_data import SourceInterface
+from core.data.directive_data import DirectiveData
+from core.enums.directive_types import DirectiveTypeEnum
+from core.enums.directives import DirectiveEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class DirectivesSource(SourceInterface):
@@ -12,8 +12,8 @@ class DirectivesSource(SourceInterface):
 
     def get_data(self):
         return [
-            DirectiveType(
-                directive_type=DirectiveTypes.BEHAVIOR.value,
-                value=Directives.LOW_THIEF.value,
+            DirectiveData(
+                directive_type=DirectiveTypeEnum.BEHAVIOR.value,
+                value=DirectiveEnum.LOW_THIEF.value,
             ),
         ]

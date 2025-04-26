@@ -1,6 +1,7 @@
-from game.enums.npcs import Npcs
-from game.interfaces.source_data import SourceInterface
-from game.npc import Npc
+from core.data.npc_data import NpcData
+from core.enums.npcs import NpcEnum
+from core.interfaces.source_data import SourceInterface
+from core.npc import Npc
 from settings.world_settings import WorldSettings
 
 
@@ -12,7 +13,7 @@ class NpcSource(SourceInterface):
 
     def get_data(self):
         return [
-            Npc(
+            NpcData(
                 name="Zofia",
                 title="Elder Alchemist",
                 description="Zofia is a frail old woman, seated in her chair, gesturing for you to look around her shop in Smee.",
@@ -24,10 +25,10 @@ class NpcSource(SourceInterface):
                     "I am old and tired.",
                     "I am patronizing",
                 ],
-                type=Npcs.ALCHEMIST,
+                type=NpcEnum.ALCHEMIST,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Geoff",
                 title="Master Armorer",
                 description="Geoff is a large, blond haired behemoth of a man. He's nearly 8 feet tall with limbs the size of tree trunks.  He wears scalemail armor and looks ready for battle at any moment.",
@@ -37,10 +38,10 @@ class NpcSource(SourceInterface):
                     "weapons",
                     "tools",
                 ],
-                type=Npcs.ARMORER,
+                type=NpcEnum.ARMORER,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Frederick",
                 title="Blacksmith",
                 description="Frederick is a large, balding man despite only just becoming an adult. He has serious Azure eyes and a oiled mustache. Frederick is wearing a leather apron, a leather vest, and leather glove that reach past his elbows.",
@@ -51,10 +52,10 @@ class NpcSource(SourceInterface):
                     "armor",
                     "blacksmithing",
                 ],
-                type=Npcs.BLACKSMITH,
+                type=NpcEnum.BLACKSMITH,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Jaque",
                 title="Gardener",
                 description="The gardener of the University. Jaque is an absolutely tiny boy, no wait, woman. Despite wearing only simple white robes or apparent effort, she emanates both power and grace. She welcomes you with a smile when she notices you. As a strict requirement for gardeners at the University, bright orange headgear and gloves are always worn.",
@@ -71,10 +72,10 @@ class NpcSource(SourceInterface):
                     "weather",
                     "gardening",
                 ],
-                type=Npcs.GARDENER,
+                type=NpcEnum.GARDENER,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="",
                 title="Guard",
                 description="The guard stands alert. While in it's armor, you cannot tell many other details. The armour is standard issue but well-maintained hardened leather with metal plating.",
@@ -85,9 +86,9 @@ class NpcSource(SourceInterface):
                     "cards",
                 ],
                 wanders=True,
-                type=Npcs.GUARD,
+                type=NpcEnum.GUARD,
             ),
-            Npc(
+            NpcData(
                 name="Agnes",
                 title="Healer",
                 description="Agnes is a kind woman, tending to the sick and injured.",
@@ -99,18 +100,18 @@ class NpcSource(SourceInterface):
                     "I am always compassionate.",
                     "I am always helpful.",
                 ],
-                type=Npcs.HEALER,
+                type=NpcEnum.HEALER,
                 wanders=True,
             ),
-            Npc(
+            NpcData(
                 name="Maximus",
                 title="Tabby Cat",
                 description="Maximus is a wise appearing orange tabby cat.",
                 interests=["mice"],
-                type=Npcs.MAXIMUS,
+                type=NpcEnum.MAXIMUS,
                 wanders=True,
             ),
-            Npc(
+            NpcData(
                 name="Jenny",
                 title="Barkeep",
                 description="Jenny is a shrewd woman, trading goods and wares in her bustling shop in Dustwind.",
@@ -122,10 +123,10 @@ class NpcSource(SourceInterface):
                     "I love a good deal.",
                     "I am always fair.",
                 ],
-                type=Npcs.MERCHANT,
+                type=NpcEnum.MERCHANT,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Candie",
                 title="Princess",
                 description="Princess Candie is a beautiful noble, attending to royal duties in the grand castle of Brighthelm.",
@@ -137,10 +138,10 @@ class NpcSource(SourceInterface):
                     "I am always regal.",
                     "I am always concerned.",
                 ],
-                type=Npcs.PRINCESS,
+                type=NpcEnum.PRINCESS,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Stone",
                 title="Sheriff",
                 description="Sheriff Stone is a grizzled man, upholding the law in the wild west town of Redemption.",
@@ -152,10 +153,10 @@ class NpcSource(SourceInterface):
                     "I am always stern.",
                     "I am always fair.",
                 ],
-                type=Npcs.SHERIFF,
+                type=NpcEnum.SHERIFF,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Got",
                 title="Armourer",
                 description="Got is a average Fae male of a race you're unsure of. His ears roll back and forth as he speaks. He is wearing a simple tunic and trousers, with a leather apron over it.",
@@ -163,10 +164,10 @@ class NpcSource(SourceInterface):
                     "I hide the fact that I'm a thief and act like a vendor.",
                     "change from purchases will be short changed in 30 percent of my transactions",
                 ],
-                type=Npcs.THIEF,
+                type=NpcEnum.THIEF,
                 wanders=False,
             ),
-            Npc(
+            NpcData(
                 name="Renkath",
                 title="Archmage",
                 description="Renkath is a powerful wizard.",
@@ -179,7 +180,7 @@ class NpcSource(SourceInterface):
                     ""
                     "I am always powerful.",
                 ],
-                type=Npcs.WIZARD,
+                type=NpcEnum.WIZARD,
                 wanders=True,
             ),
         ]

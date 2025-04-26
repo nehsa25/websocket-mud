@@ -1,7 +1,7 @@
-from game.enums.defence_effects import DefenceEffects
-from game.enums.items import Items
-from game.interfaces.source_data import SourceInterface
-from class_types.item_armor_type import ItemTypeArmor
+from core.data.item_armor_data import ItemArmorData
+from core.enums.armor_types import ArmorTypeEnum
+from core.enums.items import ItemEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class ArmorSource(SourceInterface):
@@ -12,15 +12,15 @@ class ArmorSource(SourceInterface):
 
     def get_data(self):
         return [
-            ItemTypeArmor(
+            ItemArmorData(
                 name="Kite Shield",
-                item_type=Items.ARMOR_SHIELD.value,
+                item_type=ItemEnum.ARMOR.value,
                 weight=10,
                 verb="thunk",
                 plural_verb="thunks",
                 description="A tall, kite-shaped shield.",
-                defences=[
-                    DefenceEffects.SHIELD_BONUS1.value
-                ],
+                quality=100,
+                armor_type=ArmorTypeEnum.SHIELD.value,
+                effects=[],
             )
         ]

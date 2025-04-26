@@ -1,10 +1,10 @@
-from class_types.effects_type import EffectsType
-from game.enums.effects import Effects
-from game.enums.effects_armor import EffectsArmor
-from game.enums.effects_lightsource import EffectsLightsource
-from game.enums.effects_weapon import EffectsWeapon
-from game.enums.effects_food import EffectsFood
-from game.interfaces.source_data import SourceInterface
+from core.data.effects_data import EffectsData
+from core.enums.effects import EffectEnum
+from core.enums.effects_armor import EffectsArmorEnum
+from core.enums.effects_lightsources import EffectsLightsourceEnum
+from core.enums.effects_weapons import EffectsWeaponEnum
+from core.enums.effects_foods import EffectsFoodEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class EffectSource(SourceInterface):
@@ -15,48 +15,48 @@ class EffectSource(SourceInterface):
 
     def get_data(self):
         return [
-            EffectsType(keyword=EffectsFood.CURE_POISON.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.HEALING1.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.HEALING2.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.MANA_POTION.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.POISON1.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.POISON2.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.STAMINA_POTION.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsFood.STRENGTH_POTION.value, type=Effects.FOOD.value),
-            EffectsType(keyword=EffectsWeapon.ACID.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.COLD.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.LIGHTNING.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.FIRE.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.HOLY.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.PIERCE.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.SLASH.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.UNHOLY.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.BLUNT.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsWeapon.POISON.value, type=Effects.WEAPON.value),
-            EffectsType(keyword=EffectsLightsource.BRIGHTNESS1.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsLightsource.BRIGHTNESS2.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsLightsource.BRIGHTNESS3.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsLightsource.BRIGHTNESS4.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsLightsource.BRIGHTNESS5.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsLightsource.CAN_SEE_INVISIBLE.value, type=Effects.LIGHTSOURCE.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE1.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE2.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE3.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE4.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE5.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE6.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE7.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE8.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE9.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.DEFENCE10.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_ACID.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_COLD.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_LIGHTNING.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_FIRE.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_HOLY.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_UNHOLY.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_POISON.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_SLASH.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_PIERCE.value, type=Effects.ARMOR.value),
-            EffectsType(keyword=EffectsArmor.STRONG_BLUNT.value, type=Effects.ARMOR.value),
+            EffectsData(keyword=EffectsFoodEnum.CURE_POISON.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.HEALING1.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.HEALING2.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.MANA_POTION.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.POISON1.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.POISON2.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.STAMINA_POTION.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsFoodEnum.STRENGTH_POTION.value, type=EffectEnum.FOOD.value),
+            EffectsData(keyword=EffectsWeaponEnum.ACID.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.COLD.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.LIGHTNING.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.FIRE.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.HOLY.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.PIERCE.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.SLASH.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.UNHOLY.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.BLUNT.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsWeaponEnum.POISON.value, type=EffectEnum.WEAPON.value),
+            EffectsData(keyword=EffectsLightsourceEnum.BRIGHTNESS1.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsLightsourceEnum.BRIGHTNESS2.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsLightsourceEnum.BRIGHTNESS3.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsLightsourceEnum.BRIGHTNESS4.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsLightsourceEnum.BRIGHTNESS5.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsLightsourceEnum.CAN_SEE_INVISIBLE.value, type=EffectEnum.LIGHTSOURCE.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE1.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE2.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE3.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE4.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE5.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE6.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE7.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE8.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE9.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.DEFENCE10.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_ACID.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_COLD.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_LIGHTNING.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_FIRE.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_HOLY.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_UNHOLY.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_POISON.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_SLASH.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_PIERCE.value, type=EffectEnum.ARMOR.value),
+            EffectsData(keyword=EffectsArmorEnum.STRONG_BLUNT.value, type=EffectEnum.ARMOR.value),
         ]

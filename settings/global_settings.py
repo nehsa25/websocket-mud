@@ -1,7 +1,7 @@
 import os
 
-from game.enums.ai_generation_services import AIGeneration
-from game.enums.level import Level
+from enums.ai_generation_services import AIGeneration
+from enums.level import Level
 
 
 class GlobalSettings:

@@ -1,8 +1,8 @@
 
 
-from game.enums.items import Items
-from game.interfaces.source_data import SourceInterface
-from class_types.item_light_type import ItemLightType
+from core.data.item_light_data import ItemLightData
+from core.enums.items import ItemEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class LightsourceSource(SourceInterface):
@@ -13,9 +13,9 @@ class LightsourceSource(SourceInterface):
 
     def get_data(self):
         return [
-            ItemLightType(
+            ItemLightData(
                 name="Torch",
-                item_type=Items.LIGHTSOURCE.value,
+                item_type=ItemEnum.LIGHTSOURCE.value,
                 damage=None,
                 weight=1,
                 verb="flicker",

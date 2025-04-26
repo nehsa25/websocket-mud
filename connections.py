@@ -2,20 +2,18 @@ import re
 from tkinter import EventType
 import websockets
 from random import randint, choice
-from game.enums.classes import Classes
-from game.enums.eye_colors import EyeColors
-from game.enums.hair_colors import HairColors
-from game.enums.hair_lengths import HairLength
-from game.enums.races import Races
-from game.enums.scars import Scars
-from game.enums.tattoo_placements import TattooPlacements
-from game.enums.tattoo_severitities import TattooSeverities
-from game.events.announcement import AnnouncementEvent
-from game.events.get_client import GetClientEvent
-from game.events.inventory import InventoryEvent
-from game.events.welcome import WelcomeEvent
-from game.inventory import Inventory
-from game.player import Player
+from core.enums.player_classes import PlayerClassEnum
+from core.enums.eye_colors import EyeColorEnum
+from core.enums.hair_colors import HairColorEnum
+from core.enums.hair_lengths import HairLengthEnum
+from core.enums.races import RaceEnum
+from core.enums.scars import ScarEnum
+from core.enums.tattoo_placements import TattooPlacementEnum
+from core.enums.tattoo_severitities import TattooSeverityEnum
+from core.events.announcement import AnnouncementEvent
+from core.events.get_client import GetClientEvent
+from core.events.inventory import InventoryEvent
+from core.events.welcome import WelcomeEvent
 from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
@@ -219,8 +217,8 @@ class Connection:
         msg = await websocket.recv()
         self.logger.info("Message received: {msg}")
         request = json.loads(msg)
-        player_race = choice(list(Races))
-        player_class = choice(list(Classes)).name
+        player_race = choice(list(RaceEnum))
+        player_class = choice(list(PlayerClassEnum)).name
         player_intelligence = randint(1, 50)
         player_hp = randint(1, 50)
         player_strength = randint(1, 50)
@@ -240,12 +238,12 @@ class Connection:
         )
 
         # random characteristics
-        eye_color = choice(list(EyeColors)).name
-        hair_color = choice(list(HairColors)).name
-        tattoes_placement = choice(list(TattooPlacements)).name
-        tattoes_severity = choice(list(TattooSeverities)).name
-        scars = choice(list(Scars)).name
-        hair_length = choice(list(HairLength)).name
+        eye_color = choice(list(EyeColorEnum)).name
+        hair_color = choice(list(HairColorEnum)).name
+        tattoes_placement = choice(list(TattooPlacementEnum)).name
+        tattoes_severity = choice(list(TattooSeverityEnum)).name
+        scars = choice(list(ScarEnum)).name
+        hair_length = choice(list(HairLengthEnum)).name
 
         player = Player(
             eye_color=eye_color,

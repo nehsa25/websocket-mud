@@ -1,6 +1,6 @@
-from game.interfaces.source_data import SourceInterface
+from core.data.room_data import RoomData
+from core.interfaces.source_data import SourceInterface
 from settings.world_settings import WorldSettings
-from class_types.room_type import RoomType
 
 
 class RoomSource(SourceInterface):
@@ -11,7 +11,7 @@ class RoomSource(SourceInterface):
 
     def get_data(self):
         return [
-            RoomType(
+            RoomData(
                 name=f"{WorldSettings.WORLD_NAME} - Town Square",
                 description="You are in the town square...",
                 monsters=[],
@@ -21,7 +21,7 @@ class RoomSource(SourceInterface):
                 exits=[],
                 inside=False,
             ),
-            RoomType(
+            RoomData(
                 name=f"{WorldSettings.WORLD_NAME} - Inn",
                 description="You find yourself within a majestic inn...",
                 monsters=[],
@@ -31,7 +31,7 @@ class RoomSource(SourceInterface):
                 exits=[],
                 inside=True,
             ),
-            RoomType(
+            RoomData(
                 name=f"{WorldSettings.WORLD_NAME} - Sheriff's Office",
                 description="You are in the sheriff's office.",
                 monsters=[],

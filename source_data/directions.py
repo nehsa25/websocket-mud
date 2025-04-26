@@ -1,5 +1,5 @@
-from game.interfaces.source_data import SourceInterface
-from class_types.direction_type import DirectionType
+from core.data.direction_data import DirectionData
+from core.interfaces.source_data import SourceInterface
 
 
 class DirectionsSource(SourceInterface):
@@ -9,57 +9,57 @@ class DirectionsSource(SourceInterface):
     """
 
     def get_data(self):
-        up = DirectionType(
+        up = DirectionData(
             name="Up",
             variations=[("up", "u")],
             opposite=None,
         )
-        down = DirectionType(
+        down = DirectionData(
             name="Down",
             variations=[("down", "d")],
             opposite=up,
         )
         down.opposite = up
-        east = DirectionType(
+        east = DirectionData(
             name="East",
             variations=[("east", "e")],
             opposite=None,
         )
-        west = DirectionType(
+        west = DirectionData(
             name="West",
             variations=[("west", "w")],
             opposite=east,
         )
         east.opposite = west
 
-        north = DirectionType(
+        north = DirectionData(
             name="North",
             variations=[("north", "n")],
             opposite=None,
         )
-        south = DirectionType(
+        south = DirectionData(
             name="South",
             variations=[("south", "s")],
             opposite=north,
         )
         north.opposite = south
-        northeast = DirectionType(
+        northeast = DirectionData(
             name="Northeast",
             variations=[("northeast", "ne")],
             opposite=None,
         )
-        northwest = DirectionType(
+        northwest = DirectionData(
             name="Northwest",
             variations=[("northwest", "nw")],
             opposite=northeast,
         )
         northeast.opposite = northwest
-        southeast = DirectionType(
+        southeast = DirectionData(
             name="Southeast",
             variations=[("southeast", "se")],
             opposite=None,
         )
-        southwest = DirectionType(
+        southwest = DirectionData(
             name="Southwest",
             variations=[("southwest", "sw")],
             opposite=southeast,

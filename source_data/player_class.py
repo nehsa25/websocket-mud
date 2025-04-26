@@ -1,6 +1,6 @@
-from game.enums.class_abilities import ClassAbilities
-from game.interfaces.source_data import SourceInterface
-from class_types.player_class_type import PlayerClassType
+from core.data.player_class_data import PlayerClassData
+from core.enums.player_class_abilities import PlayerClassAbilityEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class PlayerClassSource(SourceInterface):
@@ -11,76 +11,76 @@ class PlayerClassSource(SourceInterface):
 
     def get_data(self):
         return [
-            PlayerClassType(
+            PlayerClassData(
                 "Barbarian",
                 "A fierce warrior relying on brute strength and rage.",
-                [ClassAbilities.MARTIAL_PROWESS],
+                [PlayerClassAbilityEnum.MARTIAL_PROWESS],
                 base_experience_adjustment=350,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Bard",
                 "A charismatic musician and storyteller, skilled in both combat and magic.",
                 [
-                    ClassAbilities.CHARM,
-                    ClassAbilities.SUPPORT_MAGIC,
-                    ClassAbilities.PLAY_MUSIC,
-                    ClassAbilities.PERFORMANCE,
-                    ClassAbilities.ILLUSION_MAGIC,
+                    PlayerClassAbilityEnum.CHARM,
+                    PlayerClassAbilityEnum.SUPPORT_MAGIC,
+                    PlayerClassAbilityEnum.PLAY_MUSIC,
+                    PlayerClassAbilityEnum.PERFORMANCE,
+                    PlayerClassAbilityEnum.ILLUSION_MAGIC,
                 ],
                 base_experience_adjustment=250,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Berserker",
                 "An uncontrollable warrior filled with rage and bloodlust.",
-                [ClassAbilities.FRENZY, ClassAbilities.MARTIAL_PROWESS],
+                [PlayerClassAbilityEnum.FRENZY, PlayerClassAbilityEnum.MARTIAL_PROWESS],
                 base_experience_adjustment=400,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Cleric",
                 "A divine caster, channeling the power of their deity.",
-                [ClassAbilities.HEALING, ClassAbilities.DIVINE_MAGIC],
+                [PlayerClassAbilityEnum.HEALING, PlayerClassAbilityEnum.DIVINE_MAGIC],
                 base_experience_adjustment=200,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Druid",
                 "A nature-attuned caster, commanding the forces of the wild.",
-                [ClassAbilities.NATURE_MAGIC, ClassAbilities.SHAPE_SHIFTING],
+                [PlayerClassAbilityEnum.NATURE_MAGIC, PlayerClassAbilityEnum.SHAPE_SHIFTING],
                 base_experience_adjustment=220,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Knight",
                 "A heavily armored warrior, sworn to protect the realm.",
-                [ClassAbilities.DEFENSE, ClassAbilities.MARTIAL_PROWESS],
+                [PlayerClassAbilityEnum.DEFENSE, PlayerClassAbilityEnum.MARTIAL_PROWESS],
                 base_experience_adjustment=320,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Mage",
                 "A scholarly caster, wielding arcane power with precision.",
-                [ClassAbilities.MAGIC],
+                [PlayerClassAbilityEnum.MAGIC],
                 base_experience_adjustment=180,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Ranger",
                 "A skilled tracker and survivalist, at home in the wilderness.",
-                [ClassAbilities.TRACKING, ClassAbilities.SURVIVAL],
+                [PlayerClassAbilityEnum.TRACKING, PlayerClassAbilityEnum.SURVIVAL],
                 base_experience_adjustment=310,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Rogue",
                 "A stealthy trickster, skilled in deception and subterfuge.",
-                [ClassAbilities.STEALTH, ClassAbilities.TRICKERY],
+                [PlayerClassAbilityEnum.STEALTH, PlayerClassAbilityEnum.TRICKERY],
                 base_experience_adjustment=330,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Thief",
                 "A nimble rogue, specializing in larceny and stealth.",
-                [ClassAbilities.STEALTH, ClassAbilities.LOCKPICKING],
+                [PlayerClassAbilityEnum.STEALTH, PlayerClassAbilityEnum.LOCKPICKING],
                 base_experience_adjustment=340,
             ),
-            PlayerClassType(
+            PlayerClassData(
                 "Warrior",
                 "A stalwart fighter, skilled in all forms of combat.",
-                [ClassAbilities.MARTIAL_PROWESS, ClassAbilities.WEAPON_MASTERY],
+                [PlayerClassAbilityEnum.MARTIAL_PROWESS, PlayerClassAbilityEnum.WEAPON_MASTERY],
                 base_experience_adjustment=300,
             ),
         ]

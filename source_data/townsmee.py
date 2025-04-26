@@ -2,7 +2,7 @@ from models.items import Items
 from enums.environments import Environments
 from enums.npcs import Npcs
 from utilities.log_telemetry import LogTelemetryUtility
-from game.room import Room
+from core.room import Room
 
 
 class TownSmee:

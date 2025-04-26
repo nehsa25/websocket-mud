@@ -1,6 +1,5 @@
 from sqlalchemy import Boolean, Column, Integer, String, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
-import sqlalchemy as sa
 from sqlalchemy import MetaData
 from models.base import Base
 

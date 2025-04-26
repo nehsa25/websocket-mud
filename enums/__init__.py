@@ -1,0 +1,1 @@
+# named constants related to application

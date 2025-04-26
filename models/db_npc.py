@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 import sqlalchemy as sa
 
-from game.enums.npcs import Npcs
+from core.enums.npcs import NpcEnum
 from models.base import Base
 
 
@@ -14,7 +14,7 @@ class DBNpc(Base):
     title = Column(String)
     description = Column(String)
     interests = Column(sa.JSON)
-    npc_type = Column(sa.Enum(Npcs), nullable=False)
+    npc_type = Column(sa.Enum(NpcEnum), nullable=False)
     wanders = Column(Boolean)
     room_name = Column(String, ForeignKey("rooms.name"), nullable=False)
     room = relationship("DBRoom", back_populates="npcs")

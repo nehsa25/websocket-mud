@@ -30,3 +30,11 @@ game/events/__pycache__/*
 game/commands/directions/__pycache__/*
 game/ai/services/__pycache__/*
 *.txt
+core/ai/__pycache__/*
+core/ai/services/__pycache__/*
+core/commands/__pycache__/*
+core/commands/directions/__pycache__/*
+core/data/__pycache__/*
+core/enums/__pycache__/*
+core/events/__pycache__/*
+core/interfaces/__pycache__/*

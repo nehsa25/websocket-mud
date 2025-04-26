@@ -1307,3 +1307,275 @@ AttributeError: 'NoneType' object has no attribute 'run_until_complete'
 2025-04-24 11:12:45,646 - utilities.log_telemetry - DEBUG - Initializing Database() class
 2025-04-24 11:12:45,646 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
 2025-04-24 11:12:45,647 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:32:10,908 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:32:10,909 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:32:10,910 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:32:56,730 - utilities.log_telemetry - ERROR - Error populating database: ItemTypeArmor.__init__() missing 1 required positional argument: 'quality'
+2025-04-24 11:38:32,347 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:38:32,347 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:38:32,348 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:38:57,178 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:38:57,178 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:38:57,179 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:39:28,689 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'ItemTypeArmor' object is not subscriptable
+2025-04-24 11:42:52,272 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:42:52,273 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:42:52,273 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:42:57,106 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'ItemTypeArmor' object is not subscriptable
+2025-04-24 11:43:13,982 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:43:13,982 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:43:13,983 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:43:19,384 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'ItemTypeArmor' object is not subscriptable
+2025-04-24 11:43:19,385 - utilities.log_telemetry - ERROR - Error populating database: type object 'EffectsFood' has no attribute 'ALLEVIATE_HUNGER'
+2025-04-24 11:43:41,656 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 11:43:41,656 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 11:43:41,657 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 11:43:52,710 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'ItemTypeArmor' object is not subscriptable
+2025-04-24 11:43:52,711 - utilities.log_telemetry - ERROR - Error populating database: type object 'EffectsFood' has no attribute 'ALLEVIATE_HUNGER'
+2025-04-24 12:51:31,501 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:51:31,502 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:51:31,503 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:51:35,869 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:51:35,871 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:51:35,871 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:52:42,989 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:52:42,990 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:52:42,990 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:52:43,296 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:52:43,296 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:52:43,297 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'item_type'
+2025-04-24 12:53:50,088 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:53:50,088 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:53:50,089 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:53:50,518 - utilities.log_telemetry - ERROR - Error populating database: 'ItemTypeArmor' object has no attribute 'to_dict'
+2025-04-24 12:54:07,110 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:54:07,111 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:54:07,111 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:54:07,435 - utilities.log_telemetry - ERROR - Error populating database: 'ItemTypeArmor' object has no attribute 'to_dict'
+2025-04-24 12:54:20,507 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:54:20,507 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:54:20,508 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:59:10,494 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 12:59:10,494 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 12:59:10,495 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 12:59:54,498 - utilities.log_telemetry - ERROR - Error populating database: 'int' object has no attribute 'name'
+2025-04-24 13:00:35,678 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 13:00:35,678 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 13:00:35,679 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 13:00:36,000 - utilities.log_telemetry - ERROR - Error populating database: 'int' object has no attribute 'name'
+2025-04-24 13:02:10,454 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 13:02:10,454 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 13:02:10,456 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 13:06:26,154 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 13:06:26,154 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 13:06:26,155 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 13:45:15,484 - utilities.log_telemetry - ERROR - Error populating database: 'int' object has no attribute 'name'
+2025-04-24 13:58:08,087 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 13:58:08,087 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 13:58:08,088 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 13:58:08,401 - utilities.log_telemetry - ERROR - Error populating database: ItemTypeArmor.__init__() got an unexpected keyword argument 'armor_type'
+2025-04-24 13:58:14,599 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 13:58:14,600 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 13:58:14,600 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 13:58:14,904 - utilities.log_telemetry - ERROR - Error populating database: ItemTypeArmor.__init__() got an unexpected keyword argument 'armor_type'
+2025-04-24 14:06:19,723 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 14:06:19,723 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 14:06:19,724 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 14:06:20,023 - utilities.log_telemetry - ERROR - Error populating database: ItemTypeArmor.__init__() missing 1 required positional argument: 'effects'
+2025-04-24 16:14:23,054 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 16:14:23,055 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 16:14:23,055 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 16:14:30,081 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'room_name'
+2025-04-24 16:14:42,607 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 16:14:42,607 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 16:14:42,608 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 16:17:30,775 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 16:17:30,775 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 16:17:30,776 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 16:17:35,191 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'room_name'
+2025-04-24 16:20:04,640 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 16:20:04,640 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 16:20:04,641 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 16:20:13,381 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'name' is an invalid keyword argument for DBArmor
+2025-04-24 18:11:12,741 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-24 18:11:12,742 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-24 18:11:12,742 - utilities.log_telemetry - DEBUG - enter
+2025-04-24 18:11:13,059 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'name' is an invalid keyword argument for DBArmor
+2025-04-25 06:52:00,147 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 06:52:00,148 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 06:52:00,148 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 06:52:00,484 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 8}
+2025-04-25 06:52:48,476 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 06:52:48,476 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 06:52:48,477 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 06:52:48,768 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 8}
+2025-04-25 06:54:12,120 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 06:54:12,121 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 06:54:12,121 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 06:54:12,413 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 8}
+2025-04-25 06:54:32,263 - utilities.log_telemetry - ERROR - Error populating database: ItemFoodType.__init__() got an unexpected keyword argument 'foodeffects'
+2025-04-25 06:54:48,527 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 06:54:48,527 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 06:54:48,528 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 06:54:48,805 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 8}
+2025-04-25 07:27:11,065 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 07:27:11,065 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 07:27:11,066 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 07:27:11,347 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,347 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,347 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,348 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,348 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,348 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,349 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,349 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,350 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,350 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,350 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,351 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,351 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,351 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,352 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,352 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,352 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,353 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,353 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,354 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,354 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,354 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,355 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,355 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,355 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,356 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,356 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,356 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,357 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,357 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,357 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,358 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,358 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,358 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,359 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,359 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,360 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,360 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,361 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,361 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,361 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,362 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,362 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:27:11,362 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'keyword' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:28:03,842 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 07:28:03,843 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 07:28:03,843 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 07:28:22,521 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 'shield'}
+2025-04-25 07:28:22,524 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'str' object has no attribute '_sa_instance_state'
+2025-04-25 07:51:59,688 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 07:51:59,689 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 07:51:59,690 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 07:51:59,978 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,979 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,979 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,980 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,980 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,981 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,981 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,981 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,981 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: 'armor_type_id' is an invalid keyword argument for DBArmorTypes
+2025-04-25 07:51:59,995 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 7}
+2025-04-25 07:51:59,997 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'int' object has no attribute '_sa_instance_state'
+2025-04-25 14:07:15,342 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:07:15,342 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:07:15,343 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:07:15,679 - utilities.log_telemetry - ERROR - Error populating database: ArmorType.__init__() got an unexpected keyword argument 'name'
+2025-04-25 14:07:39,402 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:07:39,402 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:07:39,404 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:07:39,726 - utilities.log_telemetry - ERROR - Error populating database: ArmorType.__init__() got an unexpected keyword argument 'name'
+2025-04-25 14:09:33,923 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:09:33,924 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:09:33,924 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:09:34,220 - utilities.log_telemetry - ERROR - Error populating database: ArmorType.__init__() got an unexpected keyword argument 'name'
+2025-04-25 14:09:44,707 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:09:44,708 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:09:44,708 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:09:45,016 - utilities.log_telemetry - ERROR - Error populating database: ArmorType.__init__() got an unexpected keyword argument 'name'
+2025-04-25 14:09:50,957 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:09:50,957 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:09:50,958 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:09:51,270 - utilities.log_telemetry - ERROR - Error populating database: ArmorType.__init__() got an unexpected keyword argument 'name'
+2025-04-25 14:10:03,564 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:10:03,568 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:10:03,569 - utilities.log_telemetry - DEBUG - enter
+2025-04-25 14:11:22,906 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-25 14:11:22,906 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-25 14:11:22,907 - utilities.log_telemetry - DEBUG - enter
+2025-04-26 07:51:10,303 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-26 07:51:10,304 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-26 07:51:10,304 - utilities.log_telemetry - DEBUG - enter
+2025-04-26 07:51:10,682 - utilities.log_telemetry - DEBUG - Inserting DBArmor with fields: {'armor_type': 'Shield'}
+2025-04-26 07:51:10,684 - utilities.log_telemetry - ERROR - Error inserting data into armor: 'str' object has no attribute '_sa_instance_state'
+2025-04-26 07:51:24,118 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-26 07:51:24,119 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-26 07:51:24,119 - utilities.log_telemetry - DEBUG - enter
+2025-04-26 12:15:40,750 - utilities.log_telemetry - DEBUG - Initializing Database() class
+2025-04-26 12:15:40,751 - utilities.log_telemetry - INFO - Database path: sqlite+aiosqlite:///game_data.db
+2025-04-26 12:15:40,751 - utilities.log_telemetry - DEBUG - enter
+2025-04-26 12:15:40,903 - utilities.log_telemetry - ERROR - Error inserting data into effects: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,904 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,904 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,905 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,905 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,906 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,906 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,906 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,907 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,907 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,907 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,908 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,908 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,909 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,909 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,910 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,910 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,911 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,911 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,911 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,912 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,912 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,913 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,913 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,914 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,914 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,915 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,915 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,916 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,917 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,917 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,918 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,918 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,919 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,919 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,920 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,920 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,921 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,921 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,922 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,922 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,922 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,923 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,923 - utilities.log_telemetry - ERROR - Error inserting data into effects: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,924 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,924 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,925 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,925 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,926 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,927 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,927 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,928 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,928 - utilities.log_telemetry - ERROR - Error inserting data into armor_types: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,929 - utilities.log_telemetry - ERROR - Error inserting data into rooms: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,929 - utilities.log_telemetry - ERROR - Error inserting data into rooms: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,930 - utilities.log_telemetry - ERROR - Error inserting data into rooms: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,931 - utilities.log_telemetry - ERROR - Error inserting data into armor: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[DBRoom(rooms)]'. Original exception was: When initializing mapper Mapper[DBRoom(rooms)], expression 'DBPlayer' failed to locate a name ('DBPlayer'). If this is a class name, consider adding this relationship() to the <class 'models.db_room.DBRoom'> class after both dependent classes have been defined.
+2025-04-26 12:15:40,931 - utilities.log_telemetry - ERROR - Error populating database: ItemFoodData.__init__() got an unexpected keyword argument 'foodeffects'

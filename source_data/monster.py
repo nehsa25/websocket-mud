@@ -1,6 +1,6 @@
 
-from game.interfaces.source_data import SourceInterface
-from class_types.monster_type import MonsterType
+from core.data.monster_data import MonsterData
+from core.interfaces.source_data import SourceInterface
 
 
 class MonsterSource(SourceInterface):
@@ -11,7 +11,7 @@ class MonsterSource(SourceInterface):
 
     def get_data(self):
         return [
-            MonsterType(
+            MonsterData(
                 name="Ghoul",
                 pronoun="it",
                 type="GHOUL",

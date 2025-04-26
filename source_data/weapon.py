@@ -1,6 +1,6 @@
-from game.enums.items import Items
-from game.interfaces.source_data import SourceInterface
-from class_types.item_weapon_type import ItemWeaponType
+from core.data.item_weapon_data import ItemWeaponData
+from core.enums.items import ItemEnum
+from core.interfaces.source_data import SourceInterface
 
 
 class WeaponSource(SourceInterface):
@@ -11,9 +11,9 @@ class WeaponSource(SourceInterface):
 
     def get_data(self):
         return [
-            ItemWeaponType(
+            ItemWeaponData(
                 name="Falchion",
-                item_type=Items.WEAPON.value,
+                item_type=ItemEnum.WEAPON.value,
                 damage="1d6",
                 weight=4,
                 verb="swing",
