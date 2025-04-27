@@ -38,3 +38,4 @@ core/data/__pycache__/*
 core/enums/__pycache__/*
 core/events/__pycache__/*
 core/interfaces/__pycache__/*
+game_data.db
