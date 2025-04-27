@@ -21,7 +21,6 @@ class LightsourceSource(SourceInterface):
                 verb="flicker",
                 plural_verb="flickers",
                 description="A wooden torch that provides light.",
-                quality=100,
                 brightness=30,
             )
         ]

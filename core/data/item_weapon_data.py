@@ -6,6 +6,7 @@ from core.data.item_data import ItemData
 class ItemWeaponData(ItemData):
     effects = List[str]
     damage = str  # this is a 1d6 type string
+    quality = int
 
     def __init__(
         self,
@@ -15,9 +16,9 @@ class ItemWeaponData(ItemData):
         verb,
         plural_verb,
         description,
-        quality,
         effects: List[str],
         damage,
+        quality: int,
     ):
         super().__init__(
             name,
@@ -26,11 +27,11 @@ class ItemWeaponData(ItemData):
             weight,
             verb,
             plural_verb,
-            description,
-            quality            
+            description,         
         )
         self.effects = effects
         self.damage = damage
+        self.quality = quality
 
     def __str__(self):
         return self.name

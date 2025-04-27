@@ -3,6 +3,10 @@ from sqlalchemy import inspect
 # models
 from models.base import Base
 from models.association_tables import DBAssociations
+from models.db_directives_classes import DBDirectivesClasses
+from models.db_directives_monsters import DBDirectivesMonsters
+from models.db_directives_npcs import DBDirectivesNpcs
+from models.db_directives_races import DBDirectivesRaces
 from models.db_mob_types import DBMOBType
 from models.db_player_class import DBPlayerClass
 from models.db_player_race import DBPlayerRace
@@ -23,12 +27,18 @@ from models.db_environment import DBEnvironment
 from models.db_directives import DBDirectives
 from models.world_database import WorldDatabase
 from models.db_effects import DBEffect
+from source_data.directives_classes import DirectivesClassesSource
+from source_data.directives_monsters import DirectivesMonsterSource
+from source_data.directives_npcs import DirectivesNpcSource
 from . import relationships 
 
 from settings.global_settings import GlobalSettings
 from source_data.armor import ArmorSource
 from source_data.directions import DirectionsSource
-from source_data.directives import DirectivesSource
+from source_data.directives_race import DirectivesRacesSource
+from source_data.directives_classes import DirectivesClassesSource
+from source_data.directives_monsters import DirectivesMonsterSource
+from source_data.directives_npcs import DirectivesNpcSource
 from source_data.food import FoodSource
 from source_data.effects import EffectSource
 from source_data.lightsource import LightsourceSource
@@ -84,13 +94,36 @@ class InitializeDatabase:
             armor_dicts = [armor.to_dict() for armor in armor_data]
             await self.populate_item_and_related_tables(DBArmor, armor_dicts, world_db.async_session)
 
+            # directives data - npc
+            directives_data = DirectivesNpcSource().get_data()
+            directives_dicts = [dir.to_dict() for dir in directives_data]
+            await self.populate_table(DBDirectivesNpcs, directives_dicts, world_db.async_session)
+
+            # directives data - monster
+            directives_data = DirectivesMonsterSource().get_data()
+            directives_dicts = [dir.to_dict() for dir in directives_data]
+            await self.populate_table(DBDirectivesMonsters, directives_dicts, world_db.async_session)
+
+            # directives data - race
+            directives_data = DirectivesRacesSource().get_data()
+            directives_dicts = [dir.to_dict() for dir in directives_data]
+            await self.populate_table(DBDirectivesRaces, directives_dicts, world_db.async_session)
+
+            # directives data - class
+            directives_data = DirectivesClassesSource().get_data()
+            directives_dicts = [dir.to_dict() for dir in directives_data]
+            await self.populate_table(DBDirectivesClasses, directives_dicts, world_db.async_session)
+
             # food data
-            await self.populate_item_and_related_tables(DBFood, FoodSource().get_data(), world_db.async_session)
+            food_data = FoodSource().get_data()
+            food_dicts = [f.to_dict() for f in food_data]
+            await self.populate_item_and_related_tables(DBFood, food_dicts, world_db.async_session)
+
+
             await self.populate_item_and_related_tables(
                 DBLightsource, LightsourceSource().get_data(), world_db.async_session
             )
             await self.populate_item_and_related_tables(DBWeapon, WeaponSource().get_data(), world_db.async_session)
-            await self.populate_table(DBDirectives, DirectivesSource().get_data(), world_db.async_session)
             await self.populate_table(DBDirection, DirectionsSource().get_data(), world_db.async_session)
             #await self.populate_table(DBMonster, MonsterSource().get_data(), world_db.async_session)
             #await self.populate_table(DBPlayerClass, PlayerClassSource().get_data(), world_db.async_session)

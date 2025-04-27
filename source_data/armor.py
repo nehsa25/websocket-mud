@@ -19,7 +19,6 @@ class ArmorSource(SourceInterface):
                 verb="thunk",
                 plural_verb="thunks",
                 description="A tall, kite-shaped shield.",
-                quality=100,
                 armor_type=ArmorTypeEnum.SHIELD.value,
                 effects=[],
             )

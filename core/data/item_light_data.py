@@ -13,7 +13,6 @@ class ItemLightData(ItemData):
         verb,
         plural_verb,
         description,
-        quality,
         effects,
     ):
         super().__init__(
@@ -23,7 +22,6 @@ class ItemLightData(ItemData):
             verb,
             plural_verb,
             description,
-            quality,
         )
         self.effects = effects
 
@@ -39,7 +37,6 @@ class ItemLightData(ItemData):
             "verb": self.verb,
             "plural_verb": self.plural_verb,
             "description": self.description,
-            "quality": self.quality,
             "effects": [effect.name for effect in self.effects],
         }
 

@@ -10,7 +10,7 @@ class DBEffect(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     keyword: Mapped[str] = mapped_column(String, nullable=False, unique=True)
-    type: Mapped[Optional[str]] = mapped_column(String)
+    description: Mapped[Optional[str]] = mapped_column(String)
     items = None
 
     def __repr__(self) -> str:

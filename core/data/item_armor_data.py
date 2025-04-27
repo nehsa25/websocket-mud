@@ -7,8 +7,8 @@ from core.data.item_data import ItemData
 class ItemArmorData(ItemData):
     effects = List[str]
 
-    def __init__(self, name, item_type, weight, verb, plural_verb, description, quality, armor_type, effects):
-        super().__init__(name, item_type, weight, verb, plural_verb, description, quality)
+    def __init__(self, name, item_type, weight, verb, plural_verb, description, armor_type, effects):
+        super().__init__(name, item_type, weight, verb, plural_verb, description)
         self.armor_type = armor_type
         self.effects = effects
 
@@ -24,7 +24,6 @@ class ItemArmorData(ItemData):
             "verb": self.verb,
             "plural_verb": self.plural_verb,
             "description": self.description,
-            "quality": self.quality,
             "armor_type": self.armor_type,
             "effects": [effect.name for effect in self.effects]
         }

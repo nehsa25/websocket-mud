@@ -62,7 +62,13 @@ def define_relationships():
     DBMob.player_race = relationship("DBPlayerRace", back_populates="mobs")
     DBMob.player_class = relationship("DBPlayerClass", back_populates="mobs")
     DBMob.mob_type = relationship("DBMOBType", back_populates="mobs")
-    DBNpc.room = relationship("DBRoom", back_populates="npcs")
+    DBMob.room = relationship("DBRoom", back_populates="npcs")
+    DBMob.directives = relationship(
+        "DBDirectives",
+        primaryjoin=(DBMob.id == DBNpc.mob_id) | (DBMob.id == DBMonster.mob_id) | (DBMob.player_race_id == DBPlayerRace.id) | (DBMob.player_class_id == DBPlayerClass.id),
+        secondaryjoin=(DBDirectives.npc_directives_id == DBNpc.id) | (DBDirectives.monster_directives_id == DBMonster.id) | (DBDirectives.race_directives_id == DBPlayerRace.id) | (DBDirectives.class_directives_id == DBPlayerClass.id),
+        viewonly=True,
+    )
 
     # Npc
     DBNpc.mob = relationship("DBMob", back_populates="npc")    
@@ -80,4 +86,7 @@ def define_relationships():
     DBPlayerClass.mobs = relationship("DBMob", back_populates="player_classes")
 
     # Directives
-    DBDirectives.mobs = relationship("DBMob", secondary="mob_directives", back_populates="directives")
+    DBDirectives.npc_directives = relationship("DBNpc", back_populates="directives")
+    DBDirectives.monster_directives = relationship("DBMonster", back_populates="directives")
+    DBDirectives.race_directives = relationship("DBPlayerRace", back_populates="directives")
+    DBDirectives.class_directives = relationship("DBPlayerClass", back_populates="directives")

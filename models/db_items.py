@@ -1,5 +1,5 @@
 # models/db_item.py
-from typing import Optional
+from typing import List, Optional
 from sqlalchemy import String, Float, ForeignKey
 from models.base import Base
 from sqlalchemy.orm import Mapped
@@ -17,12 +17,12 @@ class DBItem(Base):
     plural_verb: Mapped[Optional[str]]
     description: Mapped[Optional[str]]
     room_name: Mapped[Optional[str]] = mapped_column(ForeignKey("rooms.name"))
+    effects = None
     room = None
     armor = None
     food = None
     lightsource = None
     weapon = None
-    effects = None
 
     def __repr__(self) -> str:
         return f"DBItem(id={self.id!r}, name={self.name!r}, item_type={self.item_type!r})"

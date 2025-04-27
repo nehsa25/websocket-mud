@@ -1,17 +1,16 @@
-# models/db_directives.py
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
-from sqlalchemy.orm import relationship
+from typing import Optional
+
+from sqlalchemy import ForeignKey
 from models.base import Base
-from models.association_tables import DBAssociations
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+
 
 class DBDirectives(Base):
     __tablename__ = "directives"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    summary = Column(Text)
-    directive_type = Column(String)
-    value = Column(String)
     mobs = None
 
-    def __repr__(self):
-        return f"<DBDirectives(id={self.id}, type='{self.directive_type}')>"
+    def __repr__(self) -> str:
+        return f"DBDirectives(id={self.id!r}, type={self.directive_type!r})"

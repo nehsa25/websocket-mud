@@ -14,79 +14,73 @@ class FoodSource(SourceInterface):
     def get_data(self):
         return [
             ItemFoodData(
-                name="Apple",
-                item_type=ItemEnum.FOOD.value,
-                weight=0.1,
-                verb="crunch",
-                plural_verb="crunches",
-                description="A crisp, red apple.",
-                quality=None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                "Apple",
+                ItemEnum.FOOD.value,
+                0.1,
+                "crunch",
+                "crunches",
+                "A crisp, red apple.",
+                [EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                100
             ),
             ItemFoodData(
                 "Loaf of Bread",
                 ItemEnum.FOOD.value,
-                None,
                 0.1,
                 "break",
                 "breaks",
                 "A crusty loaf of bread.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                effects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                freshness=100                
             ),
             ItemFoodData(
                 "Berries",
                 ItemEnum.FOOD.value,
-                None,
                 0.1,
                 "squish",
                 "squishes",
                 "A handful of wild berries.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                effects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                freshness=100
             ),
             ItemFoodData(
                 "Cooked Meat",
                 ItemEnum.FOOD.value,
-                None,
                 0.3,
                 "chew",
                 "chews",
                 "A piece of roasted meat.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                effects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                freshness=100
             ),
             ItemFoodData(
                 "Cheese Wedge",
                 ItemEnum.FOOD.value,
-                None,
                 0.2,
                 "smell",
                 "smells",
                 "A wedge of aged cheese.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                effects=[EffectsFoodEnum.ALLEVIATE_HUNGER.value],
+                freshness=100
             ),
-                ItemFoodData(
+            ItemFoodData(
                 "Water Flask",
                 ItemEnum.DRINK.value,
-                None,
                 0.5,
                 "drink",
                 "drinks",
                 "A small flask containing drinkable water.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_THIRST.value, EffectsFoodEnum.POISON.value],
+                effects=[EffectsFoodEnum.ALLEVIATE_THIRST.value, EffectsFoodEnum.POISON1.value],
+                freshness=100
             ),
             ItemFoodData(
                 "Small Green Bottle",
                 ItemEnum.DRINK.value,
-                None,
                 0.5,
                 "drink",
                 "drinks",
                 "A small drink bottle with a greenish liquid inside. It does not smell pleasant.",
-                None,
-                foodeffects=[EffectsFoodEnum.ALLEVIATE_THIRST.value, EffectsFoodEnum.POISON.value],
-            ),
+                effects=[EffectsFoodEnum.ALLEVIATE_THIRST.value, EffectsFoodEnum.POISON1.value],
+                freshness=100
+            )
         ]

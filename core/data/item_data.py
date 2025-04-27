@@ -1,3 +1,6 @@
+from typing import List
+
+
 class ItemData:
     def __init__(
         self,
@@ -7,7 +10,7 @@ class ItemData:
         verb,
         plural_verb,
         description,
-        quality,
+        effects: List[str] = None,
     ):
         self.name = name
         self.item_type = item_type
@@ -15,4 +18,4 @@ class ItemData:
         self.verb = verb
         self.plural_verb = plural_verb
         self.description = description
-        self.quality = quality
+        self.effects = effects if effects is not None else []

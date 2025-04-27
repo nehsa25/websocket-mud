@@ -4,7 +4,7 @@ from core.enums.directives import DirectiveEnum
 from core.interfaces.source_data import SourceInterface
 
 
-class DirectivesSource(SourceInterface):
+class DirectivesMonsterSource(SourceInterface):
     """
     This class is used to represent the source data for npc and monster behavior directives for
     initalization of the database.
@@ -13,7 +13,7 @@ class DirectivesSource(SourceInterface):
     def get_data(self):
         return [
             DirectiveData(
-                directive_type=DirectiveTypeEnum.BEHAVIOR.value,
-                value=DirectiveEnum.LOW_THIEF.value,
+                directive=DirectiveEnum.LOW_THIEF.value,
+                directive_type=DirectiveTypeEnum.BEHAVIOR.value
             ),
         ]

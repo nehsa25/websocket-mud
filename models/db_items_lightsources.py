@@ -10,7 +10,6 @@ class DBLightsource(Base):
     __tablename__ = "lightsource_items"
 
     id: Mapped[int] = mapped_column(ForeignKey("items.id"), primary_key=True)
-    quality: Mapped[Optional[int]]
     brightness: Mapped[Optional[int]]
     item = None
 
