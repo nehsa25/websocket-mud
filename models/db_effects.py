@@ -1,14 +1,17 @@
-# models/db_effect.py
-from sqlalchemy import Column, Integer, String
+from typing import Optional
+from sqlalchemy import String
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+
 from models.base import Base
 
 class DBEffect(Base):
     __tablename__ = "effects"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    keyword = Column(String, nullable=False, unique=True)
-    description = Column(String)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    keyword: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    type: Mapped[Optional[str]] = mapped_column(String)
     items = None
 
-    def __repr__(self):
-        return f"<DBEffect(keyword='{self.keyword}')>"
+    def __repr__(self) -> str:
+        return f"DBEffect(id={self.id!r}, keyword={self.keyword!r})"
