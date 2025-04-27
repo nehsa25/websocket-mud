@@ -9,10 +9,11 @@ from utilities.system import SystemUtility
 from core.world_state import WorldState
 from flask import Flask, jsonify
 import threading
+
 from connections import (
     Connection,
     start_websocket_server,
-) 
+)
 
 app = Flask(__name__)
 logger = None
@@ -60,13 +61,9 @@ class Mud:
 
         self.logger.debug("Awaiting self.world_state.players.get_player...")
         player = await self.world_state.players.get_player(websocket)
-        self.logger.debug(
-            f"self.world_state.players.get_player completed, player: {player}"
-        )
+        self.logger.debug(f"self.world_state.players.get_player completed, player: {player}")
 
-        await self.connection_handler.handle_connection(
-            player, websocket
-        )
+        await self.connection_handler.handle_connection(player, websocket)
 
 
 @app.route("/health")
@@ -76,9 +73,7 @@ def health_check():
     if service_healthy:
         return jsonify({"status": "healthy", "service": "ok"}), 200
     else:
-        return jsonify(
-            {"status": "unhealthy", "service": "error" if not service_healthy else "ok"}
-        ), 503
+        return jsonify({"status": "unhealthy", "service": "error" if not service_healthy else "ok"}), 503
 
 
 def start_flask_app(host, port):
@@ -127,13 +122,10 @@ if __name__ == "__main__":
         if port is None:
             port = 22009
 
-
         asyncio.set_event_loop(loop)
         loop.run_until_complete(mud.world_state.setup_world_events())
 
-        logger.info(
-            f"Server started at {host}:{port}.  Waiting for client connections..."
-        )
+        logger.info(f"Server started at {host}:{port}.  Waiting for client connections...")
 
         # Run both the websocket server and the Flask app concurrently
         websocket_task = loop.create_task(start_websocket_server(mud, host, port))

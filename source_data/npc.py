@@ -1,7 +1,6 @@
 from core.data.npc_data import NpcData
 from core.enums.npcs import NpcEnum
 from core.interfaces.source_data import SourceInterface
-from core.npc import Npc
 from settings.world_settings import WorldSettings
 
 
@@ -173,12 +172,9 @@ class NpcSource(SourceInterface):
                 description="Renkath is a powerful wizard.",
                 interests=[
                     f"I study magic in {WorldSettings.WORLD_NAME}",
-                    "magic",
-                    "arcana",
-                    "knowledge",
-                    "I am always wise.",
-                    ""
-                    "I am always powerful.",
+                    "I am stern but fair",
+                    "magic is always the answer",
+                    "I think I'm smarter than you",
                 ],
                 type=NpcEnum.WIZARD,
                 wanders=True,

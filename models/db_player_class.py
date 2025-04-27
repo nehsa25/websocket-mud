@@ -1,16 +1,20 @@
-from sqlalchemy import Column, String, Integer
-
+# models/db_player_class.py
+from typing import Optional
+from sqlalchemy import String
 from models.base import Base
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 
 class DBPlayerClass(Base):
-    __tablename__ = "player_class"
+    __tablename__ = "player_classes"
 
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False, unique=True)
-    description = Column(String)
-    abilities = Column(String)
-    base_experience_adjustment = Column(Integer)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    description: Mapped[Optional[str]] = mapped_column(String)
+    abilities: Mapped[Optional[str]] = mapped_column(String)
+    base_experience_adjustment: Mapped[Optional[int]]
+    mobs = None
 
-    def __repr__(self):
-        return f"<DBPlayerClass(name='{self.name}')>"
+    def __repr__(self) -> str:
+        return f"DBPlayerClass(id={self.id!r}, name={self.name!r})"

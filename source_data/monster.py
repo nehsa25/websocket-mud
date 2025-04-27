@@ -31,7 +31,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Ghoul makes no emotion.",
                 flee_cry="Ghoul flees in terror.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Zombie",
                 pronoun="it",
                 type="ZOMBIE",
@@ -51,7 +51,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Zombie groans.",
                 flee_cry="Zombie shambles away.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Skeleton",
                 pronoun="it",
                 type="SKELETON",
@@ -71,7 +71,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Skeleton clatters.",
                 flee_cry="Skeleton rattles away.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Vampire",
                 pronoun="he",
                 type="VAMPIRE",
@@ -91,7 +91,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Vampire smiles wickedly.",
                 flee_cry="Vampire vanishes into the shadows.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Werewolf",
                 pronoun="he",
                 type="WEREWOLF",
@@ -111,7 +111,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Werewolf growls triumphantly.",
                 flee_cry="Werewolf retreats into the forest.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Ghost",
                 pronoun="it",
                 type="GHOST",
@@ -131,7 +131,7 @@ class MonsterSource(SourceInterface):
                 victory_cry="The Ghost wails mournfully.",
                 flee_cry="Ghost vanishes into thin air.",
             ),
-            MonsterType(
+            MonsterData(
                 name="Mummy",
                 pronoun="it",
                 type="MUMMY",

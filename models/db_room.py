@@ -1,18 +1,22 @@
+# models/db_room.py
+from typing import Optional
 from models.base import Base
-from sqlalchemy import Column, String, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
 
 
 class DBRoom(Base):
     __tablename__ = "rooms"
-    name = Column(String, primary_key=True)
-    description = Column(String)
-    inside = Column(Boolean)
-    npcs = relationship("DBNpc", back_populates="room")
-    monsters = relationship("DBMonster", back_populates="room")
-    items = relationship("DBItem", back_populates="room")
-    players = relationship("DBPlayer", back_populates="room")
-    exits = relationship("DBExit", foreign_keys="[DBExit.from_room_name]", back_populates="from_room")
 
-    def __repr__(self):
-        return f"<DBRoom(name='{self.name}')>"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str]
+    description: Mapped[Optional[str]]
+    inside: Mapped[Optional[bool]]
+    npcs = None
+    monsters = None
+    items = None
+    players = None
+    exits = None
+
+    def __repr__(self) -> str:
+        return f"DBRoom(name={self.name!r})"

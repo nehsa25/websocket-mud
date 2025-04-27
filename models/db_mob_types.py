@@ -1,19 +1,17 @@
-# models/db_player_race.py
 from typing import Optional
 from sqlalchemy import String
-from models.base import Base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
+from models.base import Base
 
-class DBPlayerRace(Base):
-    __tablename__ = "player_races"
+class DBMOBType(Base):
+    __tablename__ = "mob_types"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    race_name: Mapped[Optional[str]] = mapped_column(String)
+    type: Mapped[str] = mapped_column(String)
     description: Mapped[Optional[str]]
-    abilities: Mapped[Optional[str]]
     mobs = None
 
     def __repr__(self) -> str:
-        return f"DBPlayerRace(id={self.id!r}, race_name={self.race_name!r})"
+        return f"DBMOBType(id={self.id!r}, type={self.type!r})"

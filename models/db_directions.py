@@ -11,12 +11,7 @@ class DBDirection(Base):
     name = Column(String, nullable=False, unique=True)
     variations = Column(String)
     opposite_id = Column(Integer, ForeignKey("directions.id"), nullable=True)  # Foreign key to self
-    opposite = relationship(
-        "DBDirection",
-        remote_side=[id],
-        foreign_keys=[opposite_id],
-        uselist=False,
-    )
+    opposite = None
 
     def __repr__(self):
         return f"<DBDirection(name='{self.name}')>"
