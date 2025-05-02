@@ -210,78 +210,78 @@ function App() {
     const processEvent = useCallback((data: any): void => {
         console.log("processEvent: Enter for event: " + data.type);
         switch (data.type) {
-            case EventUtility.WELCOME:
+            case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
                 break;
-            case EventUtility.BOOK:
+            case MudEvents.BOOK:
                 pushGenericEvent(<span className="book-message">{data.book?.title} by {data.book?.author}</span>);
                 break;
-            case EventUtility.USERNAME_REQUEST:
+            case MudEvents.USERNAME_REQUEST:
                 setWorldName(data.world_name || "NehsaMUD");
                 const welcomeMessage = generateWelcomeMessage(worldName, importantColor, importantishColor);
                 pushGenericEvent(welcomeMessage);
                 setShowUsernameModal(true);
                 break;
-            case EventUtility.DUPLICATE_NAME:
+            case MudEvents.DUPLICATE_NAME:
                 pushGenericEvent(<span className="error-message">That username is already taken.</span>);
                 break;
-            case EventUtility.INVALID_NAME:
+            case MudEvents.INVALID_NAME:
                 pushGenericEvent(<span className="error-message">Invalid username. Please use only letters and numbers. Name must be at least 3 characters long.</span>);
                 break;
-            case EventUtility.EVENT:
+            case MudEvents.EVENT:
                 pushGenericEvent(<span className="event-message">{data.message}</span>);
                 break;
-            case EventUtility.INFO:
+            case MudEvents.INFO:
                 pushGenericEvent(<span className="info-message">{data.message}</span>);
                 break;
-            case EventUtility.ANNOUCEMENT:
+            case MudEvents.ANNOUCEMENT:
                 pushGenericEvent(<span className="announcement-message">{data.message}</span>);
                 break;
-            case EventUtility.TIME:
+            case MudEvents.TIME:
                 pushGenericEvent(<span className="time-message">{data.time}</span>);
                 break;
-            case EventUtility.CHANGE_NAME:
+            case MudEvents.CHANGE_NAME:
                 setCurrentRoomTitle(data.name);
                 pushGenericEvent(<span className="info-message">Your name has been changed to {data.name}.</span>);
                 break;
-            case EventUtility.COMMAND:
+            case MudEvents.COMMAND:
                 pushGenericEvent(<span className="command-message">{data.message}</span>);
                 break;
-            case EventUtility.YOU_ATTACK:
+            case MudEvents.YOU_ATTACK:
                 pushGenericEvent(<span className="attack-message">{data.message}</span>);
                 break;
-            case EventUtility.INVENTORY:
+            case MudEvents.INVENTORY:
                 setInventory(data.inventory?.items?.map((item: any) => item.name) || []);
                 break;
-            case EventUtility.ERROR:
+            case MudEvents.ERROR:
                 pushGenericEvent(<span className="error-message">{data.message}</span>);
                 break;
-            case EventUtility.ATTACK:
+            case MudEvents.ATTACK:
                 pushGenericEvent(<span className="attack-message">{data.message}</span>);
                 break;
-            case EventUtility.HEALTH:
+            case MudEvents.HEALTH:
                 console.log("health: " + data.current_hp + "/" + data.max_hp);
                 setHealth(`${data.current_hp}/${data.max_hp}`);
 
-                setResting(data.statuses.is_resting is False ?
+                setResting(data.statuses.is_resting == false ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
 
-                setThirsty(data.statuses.is_thirsty is False ?
+                setThirsty(data.statuses.is_thirsty == false ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
 
-                setHungry(data.statuses.is_hungry is False ?
+                setHungry(data.statuses.is_hungry == false ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
 
                 setMood(data.statuses.mood.value ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
 
-                setPoisoned(data.statuses.is_poisoned is False ?
+                setPoisoned(data.statuses.is_poisoned == false ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
 
-                setSleepy(data.statuses.is_sleepy is False ?
+                setSleepy(data.statuses.is_sleepy == false ?
                     <FontAwesomeIcon icon={faSmile} /> : <FontAwesomeIcon icon={faFrown} />);
                 break;
-            case EventUtility.HELP:
+            case MudEvents.HELP:
                 // Handle help
                 let helpMessage = "";
                 if (Array.isArray(data.help_commands)) {
@@ -303,30 +303,30 @@ function App() {
                 }
                 pushGenericEvent(helpMessage);
                 break;
-            case EventUtility.REST:
+            case MudEvents.REST:
                 setResting(data.is_resting || false);
                 pushGenericEvent(<span className="rest-message">You are now resting.</span>);
                 break;
-            case EventUtility.ROOM_IMAGE:
+            case MudEvents.ROOM_IMAGE:
                 setRoomImageName(data.room_image_name);
                 break;
-            case EventUtility.ROOM:
+            case MudEvents.ROOM:
                 console.log("Room: " + data.room);
                 pushGenericEvent(<Room data={data} />);
                 break;
-            case EventUtility.HUNGER:
+            case MudEvents.HUNGER:
                 setHungry(data.hunger || <FontAwesomeIcon icon={faSmile} />);
                 break;
-            case EventUtility.THIRST:
+            case MudEvents.THIRST:
                 setThirsty(data.thirst || <FontAwesomeIcon icon={faTint} />);
                 break;
-            case EventUtility.MOOD_CHANGED:
+            case MudEvents.MOOD_CHANGED:
                 setMood(data.mood || <FontAwesomeIcon icon={faSmile} />);
                 break;
-            case EventUtility.CLIENT_LIST:
+            case MudEvents.CLIENT_LIST:
                 pushGenericEvent(<span className="client-list-message">Users connected: {data.players}</span>);
                 break;
-            case EventUtility.MAP_EVENT:
+            case MudEvents.MAP_EVENT:
                 setMapImageName(data.map_image_name_mini);
                 break;
             default:
@@ -360,7 +360,7 @@ function App() {
         console.log("handleUsernameSubmit: Entered");
         if (username.trim() !== '') {
             if (socket && socket.readyState === WebSocket.OPEN) {
-                const response = { type: EventUtility.USERNAME_ANSWER, username: username.trim() };
+                const response = { type: MudEvents.USERNAME_ANSWER, username: username.trim() };
                 socket.send(JSON.stringify(response));
                 setCurrentRoomTitle(username.trim()); // Update the title state
                 setShowUsernameModal(false); // Close the modal
