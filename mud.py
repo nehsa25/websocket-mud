@@ -10,6 +10,7 @@ from utilities.system import SystemUtility
 from core.world import World
 from flask import Flask, jsonify
 import threading
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 app = Flask(__name__)
 logger = None

@@ -2,7 +2,9 @@ import asyncio
 import json
 from random import randint
 from core.enums.events import EventEnum
+from core.events.duplicate_name import DuplicateNameEvent
 from core.events.get_client import GetClientEvent
+from core.events.invalid_name import InvalidNameEvent
 from core.events.username_request import UsernameRequestEvent
 from core.locks import NpcLock
 from core.objects.player import Player
@@ -64,6 +66,63 @@ class World:
     async def find_player_by_websocket(self, websocket):
         return next((p for p in self.players if p.websocket == websocket), None)
     
+    async def check_valid_name(self, name):
+        self.logger.debug("enter")
+
+        name = name.strip()
+
+        problem_names = [
+            "",
+            "admin",
+            "administrator",
+            "moderator",
+            "map",
+            "help",
+            "look",
+            "inv",
+            "inventory",
+            "quit",
+            "exit",
+            "sys",
+            "system",
+            "god",
+            "superuser",
+            "super",
+            "nehsa",
+            "nehsamud",
+            "nehsa_mud",
+            "candie",
+            "princess candie",
+            "renkath",
+            "cog",
+            "frederick",
+            "jaque",
+            "maximus",
+        ]
+
+        valid = True
+
+        # the name must:
+        # - be between 3 and 25 characters
+        # - not contain any special characters
+        # - not be a problem name
+        # - but can have spaces "Hink the Great"
+        if len(name) < 3 or len(name) > 25 or not re.match(r"^[a-zA-Z0-9\s]+$", name):
+            valid = False
+
+        # tests:
+        # "Hink" - valid
+        # "hink" - valid
+        # "Hink the Great" - valid
+        # "" - invalid
+        # " Hink" - invalid
+
+        if name.lower() in problem_names:
+            valid = False
+
+        self.logger.debug(f"exit, returning: {valid}")
+        return valid
+
     async def process_connections_queue(self):
         while True:
             self.logger.debug("process_connections_queue waiting for message")
@@ -85,8 +144,29 @@ class World:
                 # get the real message
                 json_msg = json.loads(message.message)
                 if player and json_msg["type"] == EventEnum.USERNAME_ANSWER.value:
+                    # validate name ok
+                    is_ok = self.check_valid_name(json_msg["username"])
+                    if not is_ok:
+                        self.logger.debug(f"Invalid name: {json_msg['username']}")
+                        await EventUtility.send_message(
+                            InvalidNameEvent(json_msg["username"]), player.websocket
+                        )
+                        continue
+
+                    # check for duplicate name
+                    ps = [p for p in self.players if p.name == json_msg["username"]]
+                    if len(ps) > 0:
+                        self.logger.debug(f"Duplicate name: {json_msg['username']}")
+                        await EventUtility.send_message(
+                            DuplicateNameEvent(json_msg["username"]), player.websocket
+                        )
+                        continue
+
                     player.name = json_msg["username"]      
-                    self.logger.info(f"Player {player.name} connected. Total players: {len(self.players)}")          
+                    self.logger.info(f"Player {player.name} connected. Total players: {len(self.players)}")
+
+                    # update player in db
+                    # await db.update_player()          
                 
                     # send the player
                     await EventUtility.send_message(GetClientEvent(len(self.players)), player.websocket)

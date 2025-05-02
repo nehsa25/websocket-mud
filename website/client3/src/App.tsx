@@ -189,7 +189,13 @@ function App() {
                         <List.Indicator asChild color="green.500">
                             <LuCircleCheck />
                         </List.Indicator>
-                        Events between the websocket server and world state are handled via RabbitMQ messaging and asyncio queues.
+                        Events between the websocket server and world state are handled asyncio message queues.
+                    </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
+                        LocalStorage and JWT tokens are used for session management.
                     </List.Item>
                 </List.Root>
 

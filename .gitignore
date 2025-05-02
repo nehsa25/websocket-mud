@@ -39,3 +39,4 @@ core/enums/__pycache__/*
 core/events/__pycache__/*
 core/interfaces/__pycache__/*
 game_data.db
+core/objects/__pycache__/*
