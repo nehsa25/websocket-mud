@@ -46,11 +46,11 @@ class World:
                 )
         self.logger.debug("exit")
 
-    async def process_message(self, player, message):
-        self.logger.debug(f"enter, player: {player.name}, message: {message}")
+    async def process_command(self, player, message):
+        self.logger.debug(f"enter, message: {message}")
 
         # Parse the message as JSON
-        data = json.loads(message["message"]) # this is the actual event from the client
+        data = json.loads(message.message) # this is the actual event from the client
         self.logger.debug(f"Parsed JSON data: {data}")
 
         # Handle different message types
@@ -62,7 +62,7 @@ class World:
             LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
 
     async def find_player_by_websocket(self, websocket):
-        return [a for a in self.players if a.websocket == websocket]
+        return next((p for p in self.players if p.websocket == websocket), None)
     
     async def process_connections_queue(self):
         while True:
@@ -81,9 +81,18 @@ class World:
                 await EventUtility.send_message(
                     UsernameRequestEvent(WorldSettings.WORLD_NAME), player.websocket
                 )
-            else:     
-                # Process the message
-                await self.process_message(player, message)
+            else:
+                # get the real message
+                json_msg = json.loads(message.message)
+                if player and json_msg["type"] == EventEnum.USERNAME_ANSWER.value:
+                    player.name = json_msg["username"]      
+                    self.logger.info(f"Player {player.name} connected. Total players: {len(self.players)}")          
+                
+                    # send the player
+                    await EventUtility.send_message(GetClientEvent(len(self.players)), player.websocket)
+                else:
+                    # Process a generic command
+                    await self.process_command(player, message)
 
             self.to_world_queue.task_done()
 
