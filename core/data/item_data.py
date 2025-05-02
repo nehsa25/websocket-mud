@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 
 class ItemData:
@@ -19,3 +19,19 @@ class ItemData:
         self.plural_verb = plural_verb
         self.description = description
         self.effects = effects if effects is not None else []
+
+    def __str__(self):
+        return self.name
+
+    def to_dict(self) -> Dict:
+        """Helper method to convert Class to a dictionary."""
+        return {
+            "name": self.name,
+            "item_type": self.item_type,
+            "weight": self.weight,
+            "verb": self.verb,
+            "plural_verb": self.plural_verb,
+            "description": self.description,
+            "effects": [effect for effect in self.effects],
+        }
+    

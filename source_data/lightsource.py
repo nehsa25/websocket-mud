@@ -1,6 +1,6 @@
 
 
-from core.data.item_light_data import ItemLightData
+from core.data.item_lightsource_data import ItemLightsourceData
 from core.enums.items import ItemEnum
 from core.interfaces.source_data import SourceInterface
 
@@ -13,14 +13,14 @@ class LightsourceSource(SourceInterface):
 
     def get_data(self):
         return [
-            ItemLightData(
+            ItemLightsourceData(
                 name="Torch",
                 item_type=ItemEnum.LIGHTSOURCE.value,
-                damage=None,
                 weight=1,
                 verb="flicker",
                 plural_verb="flickers",
                 description="A wooden torch that provides light.",
+                effects=[],
                 brightness=30,
             )
         ]

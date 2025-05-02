@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class MonsterEnum(Enum):
+class MonsterClassEnum(Enum):
     SKELETON = "skeleton"
     ZOMBIE = "zombie"
     ZOMBIE_SURFER = "zombie_surfer"
@@ -13,4 +13,7 @@ class MonsterEnum(Enum):
     GHOST = "ghost"
     SPECTER = "specter"
     SPECTER_WRAITH = "specter_wraith"
+    VAMPIRE = "vampire"
+    WEREWOLF = "werewolf"
+    MUMMY = "mummy"
 

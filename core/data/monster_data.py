@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Optional
 
 
@@ -6,18 +7,19 @@ class MonsterData:
         self,
         name: str,
         pronoun: str,
-        type: str,  # e.g., "SKELETON"
         alignment: str,  # e.g., "NEUTRAL"
         description: str,
         possible_adjectives: List[str],
         adjective_chance: int,
         respawn_rate_secs: Optional[int],
-        dead_epoch: Optional[int],
+        room_id: Optional[int],
+        race_name: str,
+        class_name: str,
         wanders: bool,
-        hitpoints: int,
-        damage_potential: str,
         experience: int,
         money: int,
+        attributes,
+        directives: List[str],
         death_cry: str,
         entrance_cry: str,
         victory_cry: str,
@@ -31,10 +33,12 @@ class MonsterData:
         self.possible_adjectives = possible_adjectives
         self.adjective_chance = adjective_chance
         self.respawn_rate_secs = respawn_rate_secs
-        self.dead_epoch = dead_epoch
+        self.room_id = room_id
+        self.race_name = race_name
+        self.class_name = class_name
         self.wanders = wanders
-        self.hitpoints = hitpoints
-        self.damage_potential = damage_potential
+        self.attributes = attributes
+        self.directives = directives
         self.experience = experience
         self.money = money
         self.death_cry = death_cry
@@ -46,20 +50,21 @@ class MonsterData:
         return self.name
 
     def to_dict(self) -> Dict:
-        """Helper method to convert MonsterType to a dictionary."""
         return {
             "name": self.name,
             "pronoun": self.pronoun,
             "type": self.type,
             "alignment": self.alignment,
             "description": self.description,
-            "possible_adjectives": self.possible_adjectives,
+            "possible_adjectives": json.dumps(self.possible_adjectives),
             "adjective_chance": self.adjective_chance,
             "respawn_rate_secs": self.respawn_rate_secs,
-            "dead_epoch": self.dead_epoch,
+            "room_id": self.room_id,
+            "race_name": self.race_name,
+            "class_name": self.class_name,
             "wanders": self.wanders,
-            "hitpoints": self.hitpoints,
-            "damage_potential": self.damage_potential,
+            "attributes": self.attributes.to_dict() if self.attributes else None,
+            "directives": self.directives,
             "experience": self.experience,
             "money": self.money,
             "death_cry": self.death_cry,
@@ -67,3 +72,4 @@ class MonsterData:
             "victory_cry": self.victory_cry,
             "flee_cry": self.flee_cry,
         }
+    

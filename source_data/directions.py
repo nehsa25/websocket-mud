@@ -11,57 +11,58 @@ class DirectionsSource(SourceInterface):
     def get_data(self):
         up = DirectionData(
             name="Up",
-            variations=[("up", "u")],
+            variations=["up", "u"],
             opposite=None,
         )
         down = DirectionData(
             name="Down",
-            variations=[("down", "d")],
+            variations=["down", "d"],
             opposite=up,
         )
-        down.opposite = up
+        up.opposite = down # update our up direction to point to down
+
         east = DirectionData(
             name="East",
-            variations=[("east", "e")],
+            variations=["east", "e"],
             opposite=None,
         )
         west = DirectionData(
             name="West",
-            variations=[("west", "w")],
+            variations=["west", "w"],
             opposite=east,
         )
         east.opposite = west
 
         north = DirectionData(
             name="North",
-            variations=[("north", "n")],
+            variations=["north", "n"],
             opposite=None,
         )
         south = DirectionData(
             name="South",
-            variations=[("south", "s")],
+            variations=["south", "s"],
             opposite=north,
         )
         north.opposite = south
         northeast = DirectionData(
             name="Northeast",
-            variations=[("northeast", "ne")],
+            variations=["northeast", "ne"],
             opposite=None,
         )
         northwest = DirectionData(
             name="Northwest",
-            variations=[("northwest", "nw")],
+            variations=["northwest", "nw"],
             opposite=northeast,
         )
         northeast.opposite = northwest
         southeast = DirectionData(
             name="Southeast",
-            variations=[("southeast", "se")],
+            variations=["southeast", "se"],
             opposite=None,
         )
         southwest = DirectionData(
             name="Southwest",
-            variations=[("southwest", "sw")],
+            variations=["southwest", "sw"],
             opposite=southeast,
         )
         southeast.opposite = southwest

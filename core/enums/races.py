@@ -13,3 +13,5 @@ class RaceEnum(Enum):
     NYRRISS = "nyrriss"
     ARGUNA = "arguna"
     EAREA = "earea"
+    UNDEAD = "undead"
+    WEREWOLF = "wolf"

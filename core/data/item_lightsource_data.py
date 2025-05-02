@@ -2,7 +2,7 @@ from typing import Dict, List
 from core.data.item_data import ItemData
 
 
-class ItemLightData(ItemData):
+class ItemLightsourceData(ItemData):
     effects = List[str]
 
     def __init__(
@@ -14,6 +14,7 @@ class ItemLightData(ItemData):
         plural_verb,
         description,
         effects,
+        brightness
     ):
         super().__init__(
             name,
@@ -22,8 +23,9 @@ class ItemLightData(ItemData):
             verb,
             plural_verb,
             description,
+            effects
         )
-        self.effects = effects
+        self.brightness = brightness
 
     def __str__(self):
         return self.name

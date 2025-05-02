@@ -27,7 +27,7 @@ class FoodItem(GameItem):
         contents=None,
     ):
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing Item() class")
+        self.logger.debug("Initializing FoodItem() class")
         self.name = name
         self.damage_potential = damage_potential
         self.weight_class = weight_class

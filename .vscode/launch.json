@@ -28,8 +28,7 @@
             "request": "launch",
             "program": "mud.py",
             "args": [
-                "--development",
-                "--reset"
+                "--development"
             ],
             "console": "integratedTerminal",
         },

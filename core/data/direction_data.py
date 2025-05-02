@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Optional
 
 
@@ -19,6 +20,6 @@ class DirectionData:
         """Helper method to convert Direction to a dictionary."""
         return {
             "name": self.name,
-            "variations": self.variations,
+            "variations": json.dumps(self.variations),
             "opposite": self.opposite,
         }

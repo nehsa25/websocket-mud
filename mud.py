@@ -1,19 +1,15 @@
 import asyncio
 import os
 import sys
+from connections import Connections
 from models.init_database import InitializeDatabase
 from settings.global_settings import GlobalSettings
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
 from utilities.system import SystemUtility
-from core.world_state import WorldState
+from core.world import World
 from flask import Flask, jsonify
 import threading
-
-from connections import (
-    Connection,
-    start_websocket_server,
-)
 
 app = Flask(__name__)
 logger = None
@@ -21,49 +17,32 @@ mud = None
 
 
 class Mud:
-    logger = None
-    world = None
-    world_state = None
-    admin = None
-    command = None
-    utility = None
     COMBAT_WAIT_SECS = 3.5
     CHECK_FOR_MONSTERS_SECS = 2
     DEATH_RESPAWN_ROOM = 5
     REST_WAIT_SECS = 7
-    monsters = []
-    total_monsters = 0
 
     def __init__(self) -> None:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Mud() class")
 
+        # create our queues and pass them into both World and Connections so the two classes can communicate
+
+        # Create a queue for messages from the world to connections
+        self.to_connections_queue = asyncio.Queue()
+        # Create a queue for messages from connections to the world
+        self.from_connections_queue = asyncio.Queue()
+        
         # session state
-        self.world_state = WorldState()
-        self.connection_handler = Connection(self.world, self.world_state)
+        self.world = World(self.from_connections_queue, self.to_connections_queue)
+
+        # websocket connections
+        self.connections = Connections(self.to_connections_queue, self.from_connections_queue)
 
     # main loop when client connects
     async def main(self, websocket):
-        self.logger.debug("enter")
-
-        # initialize world
-        self.logger.debug("Checking if self.world_state is None")
-        if self.world_state is None:
-            self.logger.info("self.world_state is None, initializing...")
-            self.world_state = WorldState(self.logger)
-            self.logger.info("self.world_state initialized.")
-        else:
-            self.logger.debug("self.world_state is already initialized.")
-
-        self.logger.debug("Awaiting self.world_state.players.new_user...")
-        await self.world_state.players.new_user(self.world_state, websocket)
-        self.logger.debug("self.world_state.players.new_user completed.")
-
-        self.logger.debug("Awaiting self.world_state.players.get_player...")
-        player = await self.world_state.players.get_player(websocket)
-        self.logger.debug(f"self.world_state.players.get_player completed, player: {player}")
-
-        await self.connection_handler.handle_connection(player, websocket)
+        self.logger.debug("A connection was made!")
+        await self.world.connections.connection_loop(websocket)
 
 
 @app.route("/health")
@@ -123,20 +102,25 @@ if __name__ == "__main__":
             port = 22009
 
         asyncio.set_event_loop(loop)
-        loop.run_until_complete(mud.world_state.setup_world_events())
+
+        # Start the queue processing task
+        loop.create_task(mud.world.process_connections_queue())
+
+        # the world needs to run independently of the websocket server
+        loop.run_until_complete(mud.world.setup_world())
 
         logger.info(f"Server started at {host}:{port}.  Waiting for client connections...")
 
         # Run both the websocket server and the Flask app concurrently
-        websocket_task = loop.create_task(start_websocket_server(mud, host, port))
+        websocket_task = loop.create_task(mud.connections.start_websocket_server(mud, host, port))
+
+        # Wait for the websocket task to complete (it should run forever)
+        loop.run_until_complete(websocket_task)
 
         # Start Flask app in a separate thread
         flask_thread = threading.Thread(target=start_flask_app, args=(host, 22010))
         flask_thread.daemon = True
         flask_thread.start()
-
-        # Wait for the websocket task to complete (it should run forever)
-        loop.run_until_complete(websocket_task)
 
         # If the websocket task completes (which shouldn't happen in normal operation),
         # we can add cleanup here if needed.

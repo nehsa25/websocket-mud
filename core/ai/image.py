@@ -43,7 +43,7 @@ class AIImages:
         # super seed!
         self.seed = self.create_seed()
 
-        style = GlobalSettings.IMAGE_GENERATION_SERVICE
+        style = GlobalSettings.IMAGE_GENERATION_TECHNOLOGY
         if style == AIGeneration.GeminiAI:
             self.generator = GeminiAPI(self.seed)
         elif style == AIGeneration.OpenAI:

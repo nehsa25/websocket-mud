@@ -22,6 +22,6 @@ class EnvironmentData:
         return {
             "name": self.name,
             "description": self.description,
-            "spawn_monster": self.spawn_monsters,
+            "spawn_monsters": self.spawn_monsters,
             "spawn_guards": self.spawn_guards,
         }

@@ -1,7 +1,5 @@
 from models.db_armor import DBArmor
 from models.db_directions import DBDirection
-from models.db_directives import DBDirectives
-from models.db_exit import DBExit
 from models.db_items import DBItem
 from models.db_items_food import DBFood
 from models.db_items_lightsources import DBLightsource
@@ -9,7 +7,7 @@ from models.db_items_weapons import DBWeapon
 from models.db_mobs import DBMob
 from models.db_mobs_monsters import DBMonster
 from models.db_mobs_npcs import DBNpc
-from models.db_mobs_players import DBPlayer
+from models.db_players import DBPlayer
 from models.db_player_class import DBPlayerClass
 from models.db_player_race import DBPlayerRace
 from models.db_room import DBRoom
@@ -56,37 +54,37 @@ def define_relationships():
 
     # Mobs
     DBMob.npc = relationship("DBNpc", back_populates="mob", uselist=False)
-    DBMob.player = relationship("DBPlayer", back_populates="mob", uselist=False)
     DBMob.monster = relationship("DBMonster", back_populates="mob", uselist=False)
     DBMob.directives = relationship("DBDirectives", secondary="mob_directives", back_populates="directives")
     DBMob.player_race = relationship("DBPlayerRace", back_populates="mobs")
     DBMob.player_class = relationship("DBPlayerClass", back_populates="mobs")
     DBMob.mob_type = relationship("DBMOBType", back_populates="mobs")
     DBMob.room = relationship("DBRoom", back_populates="npcs")
-    DBMob.directives = relationship(
-        "DBDirectives",
-        primaryjoin=(DBMob.id == DBNpc.mob_id) | (DBMob.id == DBMonster.mob_id) | (DBMob.player_race_id == DBPlayerRace.id) | (DBMob.player_class_id == DBPlayerClass.id),
-        secondaryjoin=(DBDirectives.npc_directives_id == DBNpc.id) | (DBDirectives.monster_directives_id == DBMonster.id) | (DBDirectives.race_directives_id == DBPlayerRace.id) | (DBDirectives.class_directives_id == DBPlayerClass.id),
-        viewonly=True,
-    )
+    DBPlayer.attributes = relationship("DBAttribute", back_populates="attributes")
 
     # Npc
     DBNpc.mob = relationship("DBMob", back_populates="npc")    
+    DBNpc.directives = relationship("DBDirectivesNpcs", back_populates="npc")
 
     # Monster
     DBMonster.mob = relationship("DBMob", back_populates="monster")
+    DBMonster.directives = relationship("DBDirectivesMonsters", back_populates="monster")
 
     # Player
-    DBPlayer.mob = relationship("DBMob", back_populates="player")
+    DBPlayer.attributes = relationship("DBAttribute", back_populates="attributes")
+    DBPlayer.race = relationship("DBPlayerRace", back_populates="players")
+    DBPlayer.player_class = relationship("DBPlayerClass", back_populates="players")
 
     # PlayerRace
-    DBPlayerRace.mobs = relationship("DBMob", back_populates="player_racees")
+    DBPlayerRace.mobs = relationship("DBMob", back_populates="player_races")
+    DBPlayerRace.directives = relationship("DBDirectivesRaces", back_populates="player_races")
 
     # PlayerClass
     DBPlayerClass.mobs = relationship("DBMob", back_populates="player_classes")
+    DBPlayerRace.directives = relationship("DBDirectivesClasses", back_populates="player_classes")
 
-    # Directives
-    DBDirectives.npc_directives = relationship("DBNpc", back_populates="directives")
-    DBDirectives.monster_directives = relationship("DBMonster", back_populates="directives")
-    DBDirectives.race_directives = relationship("DBPlayerRace", back_populates="directives")
-    DBDirectives.class_directives = relationship("DBPlayerClass", back_populates="directives")
+    # # Directives
+    # DBDirectives.npc_directives = relationship("DBNpc", back_populates="directives")
+    # DBDirectives.monster_directives = relationship("DBMonster", back_populates="directives")
+    # DBDirectives.race_directives = relationship("DBPlayerRace", back_populates="directives")
+    # DBDirectives.class_directives = relationship("DBPlayerClass", back_populates="directives")

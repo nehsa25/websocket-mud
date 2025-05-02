@@ -7,7 +7,6 @@ from core.events.rest import RestEvent
 from core.interfaces.player import PlayerInterface
 from helper.mob import MOBHelper
 from settings.world_settings import WorldSettings
-from core.data.attributes_data import AttributesType
 from core.data.statuses_data import StatusesData
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility

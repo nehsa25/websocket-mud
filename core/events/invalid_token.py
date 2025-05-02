@@ -1,0 +1,13 @@
+import jsonpickle
+from core.enums.events import EventEnum
+from utilities.events import EventUtility
+
+
+class InvalidTokenEvent:
+    type = None
+
+    def __init__(self):
+        self.type = EventUtility.get_event_type_id(EventEnum.INVALID_TOKEN)
+
+    def to_json(self):
+        return jsonpickle.encode(self)

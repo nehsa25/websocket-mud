@@ -1,5 +1,5 @@
 # models/db_item.py
-from typing import List, Optional
+from typing import Optional
 from sqlalchemy import String, Float, ForeignKey
 from models.base import Base
 from sqlalchemy.orm import Mapped

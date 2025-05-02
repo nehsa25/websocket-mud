@@ -76,9 +76,9 @@ function App() {
 
         const styledMessage = (
             <Text className="latest-message">
-              {message}
+                {message}
             </Text>
-          );
+        );
         setMudEvents(prevEvents => [...prevEvents, styledMessage]);
         if (scrollMe.current) {
             scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
@@ -185,6 +185,12 @@ function App() {
                         Various NPCs can interact with the real world, including scraping
                         webpages, the weather, or other data, and return it in-game.
                     </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
+                        Events between the websocket server and world state are handled via RabbitMQ messaging and asyncio queues.
+                    </List.Item>
                 </List.Root>
 
                 <Heading size="md" mt={4}>
@@ -220,8 +226,34 @@ function App() {
                 setWorldName(data.world_name || "NehsaMUD");
                 const welcomeMessage = generateWelcomeMessage(worldName, importantColor, importantishColor);
                 pushGenericEvent(welcomeMessage);
-                setShowUsernameModal(true);
-                break;
+
+                // check local storage for nehsamud object
+                const nehsamud = localStorage.getItem("nehsamud");
+                if (nehsamud) {
+                    try {
+                        const parsedNehsamud = JSON.parse(nehsamud);
+                        if (parsedNehsamud.username) {
+                            setUsername(parsedNehsamud.username);
+                            const response = {
+                                type: MudEvents.USERNAME_ANSWER,
+                                username: parsedNehsamud.username,
+                                jwt_token: parsedNehsamud.jwt_token,
+                            };
+                            socket?.send(JSON.stringify(response));
+                            setCurrentRoomTitle(parsedNehsamud.username);
+                        } else {
+                            throw new Error("Username not found in stored data");
+                        }
+                    } catch (error) {
+                        console.error('Error parsing stored user data:', error);
+                        //  Handle the error (e.g., clear the local storage, prompt for login)
+                        localStorage.removeItem('nehsaUser');
+                        setShowUsernameModal(true);
+                        break;
+                    }
+                } else {
+                    setShowUsernameModal(true);
+                }
             case MudEvents.DUPLICATE_NAME:
                 pushGenericEvent(<span className="error-message">That username is already taken.</span>);
                 break;
@@ -234,7 +266,7 @@ function App() {
             case MudEvents.INFO:
                 pushGenericEvent(<span className="info-message">{data.message}</span>);
                 break;
-            case MudEvents.ANNOUCEMENT:
+            case MudEvents.ANNOUNCEMENT:
                 pushGenericEvent(<span className="announcement-message">{data.message}</span>);
                 break;
             case MudEvents.TIME:

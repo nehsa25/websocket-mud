@@ -9,9 +9,12 @@ class DBRoom(Base):
     __tablename__ = "rooms"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    room_id: Mapped[int] = mapped_column(unique=True, nullable=False)
     name: Mapped[str]
+    environment_id: Mapped[Optional[int]]
     description: Mapped[Optional[str]]
     inside: Mapped[Optional[bool]]
+    exits_id: Mapped[Optional[int]]
     npcs = None
     monsters = None
     items = None

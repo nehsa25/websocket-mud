@@ -2,6 +2,7 @@ import re
 from tkinter import EventType
 import websockets
 from random import randint, choice
+from core.enums.events import EventEnum
 from core.enums.player_classes import PlayerClassEnum
 from core.enums.eye_colors import EyeColorEnum
 from core.enums.hair_colors import HairColorEnum
@@ -11,10 +12,19 @@ from core.enums.scars import ScarEnum
 from core.enums.tattoo_placements import TattooPlacementEnum
 from core.enums.tattoo_severitities import TattooSeverityEnum
 from core.events.announcement import AnnouncementEvent
+from core.events.connection import ConnectionEvent
+from core.events.duplicate_name import DuplicateNameEvent
 from core.events.get_client import GetClientEvent
+from core.events.invalid_name import InvalidNameEvent
+from core.events.invalid_token import InvalidTokenEvent
 from core.events.inventory import InventoryEvent
+from core.events.map import MapEvent
+from core.events.username_request import UsernameRequestEvent
 from core.events.welcome import WelcomeEvent
+from core.objects.inventory import Inventory
+from core.objects.player import Player
 from settings.world_settings import WorldSettings
+from utilities.auth import Auth
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
@@ -25,12 +35,41 @@ import json
 from utilities.command import Command
 
 
-class Connection:
-    def __init__(self, world, world_state):
+class Connections:
+    connections = []
+
+    def __init__(self, from_world_queue, to_world_queue):
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.world = world
-        self.world_state = world_state
         self.command = Command()
+        from_world_queue: asyncio.Queue = from_world_queue
+        to_world_queue: asyncio.Queue = to_world_queue
+
+    async def connection_loop(self, websocket):
+        self.logger.debug("connection_loop started")
+        try:
+            # Example: Send a message to the world
+            message = {"type": "connection", "message": "New connection established", "ws": websocket.remote_address}
+            json_message = json.dumps(message)
+            self.logger.debug(f"About to put message into from_world_queue: {json_message}")
+            await self.to_world_queue.put(json_message)
+            self.logger.debug("Message put into from_world_queue")
+
+            while True:
+                # Listen for messages from the client
+                client_message = await websocket.recv()
+                self.logger.debug(f"Received message from client: {client_message}")
+
+                # Example: Send a message to the world based on client input
+                world_message = {"type": "client_message", "message": f"Client said: {client_message}", "ws": websocket}
+                json_world_message = json.dumps(world_message)
+                self.logger.debug(f"About to put message into from_world_queue: {json_world_message}")
+                await self.to_world_queue.put(json_world_message)
+                self.logger.debug("Message put into from_world_queue")
+
+        except Exception as e:
+            self.logger.error(f"Error in connection loop: {e}")
+        finally:
+            self.logger.info("Connection ended.")
 
     async def handle_connection(self, player, websocket):
         self.logger.debug(f"enter, player: {player}")
@@ -45,31 +84,11 @@ class Connection:
 
         except websockets.ConnectionClosedOK:
             LogTelemetryUtility.warn("ConnectionClosedOK (client disconnected).")
-            await self.world_state.players.unregister(player, self.world_state)
+            await self.unregister(player, self.world_state)
         except Exception as e:
             self.logger.error(f"Error: {ExceptionUtility.get_exception_information(e)}")
         finally:
             self.logger.debug("exit")
-
-    async def process_message(self, player, message):
-        self.logger.debug(f"enter, player: {player.name}, message: {message}")
-
-        # Parse the message as JSON
-        data = json.loads(message)
-        self.logger.debug(f"Parsed JSON data: {data}")
-
-        # Handle different message types
-        if data["type"] == EventUtility.get_event_type_id(EventTypes.COMMAND):
-            command = data["cmd"]
-            self.logger.info(f"Received command: {command}")
-            await self.command.run_command(player, command, self.world_state)
-        else:
-            LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
-
-    async def websocket_handler(websocket, path):
-        while True:
-            message = await websocket.recv()
-            await websocket.send(f"Received message: {message}")
 
     async def exit_handler(self, signal, frame):
         self.logger.debug(f"enter, signal: {signal}, frame: {frame}")
@@ -134,160 +153,117 @@ class Connection:
         self.logger.debug(f"exit, returning: {valid}")
         return valid
 
-    # used to update webpage on user count
-    async def update_website_users_online(self, world_state):
-        self.logger.debug("enter")
+    async def register(self, request, websocket):
+        self.logger.debug(f"enter, request: {request['username']}")
 
-        # Send the number of connected players to each player
-        for player in self.players:
-            try:
-                await EventUtility.send_message(
-                    GetClientEvent(len(self.players)), player.websocket
-                )
-            except Exception as e:
-                self.logger.error(
-                    f"Error: {ExceptionUtility.get_exception_information(e)}"
-                )
+
+        # # if the name is already taken, request another
+        # matching_players = [p for p in self.players if p.name == request["username"]]
+        # if matching_players != []:
+        #     self.logger.debug(
+        #         f"Name ({matching_players[0].name}) is already taken, requesting a different one.."
+        #     )
+        #     await self.new_user(websocket, dupe=True)
+
+        # Send asyncio queue to world with request information so a new player can be created
+        self.logger.debug(f"Creating new player: {request['username']}")        
+        player_data = {
+            "username": request["username"],
+            "websocket": websocket, 
+            "ip": websocket.remote_address,
+            "token": request["token"]
+        }
+        await self.to_world_queue.put({"type": "CREATE_PLAYER", "player_data": player_data})
+
+        await EventUtility.send_message(
+            WelcomeEvent(f"Welcome {request['username']}!", request["username"]), websocket
+        )
+
         self.logger.debug("exit")
 
-    async def register(self, player, world_state):
-        self.logger.debug(f"enter, player: {player.name}")
+    async def check_username_in_use(self, request, websocket):
+        self.logger.debug(f"enter, request: {request['username']}")
+        in_use = False
+        
+        player_data = {
+            "username": request["username"],
+            "websocket": websocket, 
+            "ip": websocket.remote_address,
+            "token": request["token"]
+        }
+        connectionEvent = ConnectionEvent(
+            event_type=EventEnum.PLAYER_CHECK_DUPLICATE,
+            message=player_data
+        )
+        await self.from_world_queue.put(connectionEvent.to_json())
+        
+        # wait for a response from the world
+        while True:
+            if not self.to_world_queue.empty():
+                world_message = await self.to_world_queue.get()
+                self.logger.debug(f"Received message from world: {world_message}")
+                if world_message["type"] == EventEnum.PLAYER_CHECK_DUPLICATE:
+                    break
+                self.to_world_queue.task_done()
 
-        # if the name is empty, request another
-        if not await self.check_valid_name(player.name):
-            self.logger.debug(
-                f"Name ({player.name}) is invalid, requesting a different one.."
-            )
-            await self.new_user(world_state, player.websocket, invalid_username=True)
+        # check if the name is in use
+        if world_message["in_use"]:
+            in_use = True
 
-        # if the name is already taken, request another
-        matching_players = [p for p in self.players if p.name == player.name]
-        if matching_players != []:
-            self.logger.debug(
-                f"Name ({matching_players[0].name}) is already taken, requesting a different one.."
-            )
-            await self.new_user(world_state, player.websocket, dupe=True)
-
-        self.players.append(player)
-        await self.update_website_users_online(world_state)
-
-        # send msg to everyone
-        for p in self.players:
-            if p.name == player.name:
-                await EventUtility.send_message(
-                    WelcomeEvent(f"Welcome {player.name}!", player.name), p.websocket
-                )
-                await EventUtility.send_message(
-                    InventoryEvent(player.inventory), p.websocket
-                )
-            else:
-                await EventUtility.send_message(
-                    AnnouncementEvent(f"{player.name} joined the game!"), p.websocket
-                )
         self.logger.debug("exit")
-
-        return player, world_state
+        return in_use
 
     # calls at the beginning of the connection.  websocket connection here is the real connection
-    async def new_user(
-        self, world_state, websocket, dupe=False, invalid_username=False
+    async def new_connection(self, websocket, dupe=False, invalid_username=False
     ):
-        player = None
-
-        self.logger.debug(
-            f"enter, duplicate user flow: {dupe}, empty username flow: {invalid_username}"
-        )
-        self.logger.info(f"{websocket.remote_address}")
-        ip = websocket.remote_address[0]
+        self.logger.debug(f"enter, duplicate user flow: {dupe}, empty username flow: {invalid_username}")
         self.logger.info("A new user has connected to NehsaMUD from {ip}")
 
         # get the client hostname
         self.logger.info("Requesting username")
-        if dupe:
-            await EventUtility.send_message(
-                EventUtility.DuplicateNameEvent(), websocket
-            )
-        elif invalid_username:
-            await EventUtility.send_message(EventUtility.InvalidNameEvent(), websocket)
-        else:
-            await EventUtility.send_message(
-                EventUtility.UsernameRequestEvent(WorldSettings.WORLD_NAME), websocket
-            )
-        self.logger.info("Awaiting client name response from client..")
+        await EventUtility.send_message(
+            event_object=UsernameRequestEvent(WorldSettings.WORLD_NAME), 
+            websocket=websocket
+        )
+
+        self.logger.info("Awaiting username response from client..")
         msg = await websocket.recv()
         self.logger.info("Message received: {msg}")
         request = json.loads(msg)
-        player_race = choice(list(RaceEnum))
-        player_class = choice(list(PlayerClassEnum)).name
-        player_intelligence = randint(1, 50)
-        player_hp = randint(1, 50)
-        player_strength = randint(1, 50)
-        player_agility = randint(1, 50)
-        player_location = world_state.environments.rooms[0]
-        player_perception = randint(1, 50)
-        player_faith = randint(1, 50)
-        player_determination = randint(1, 50)
-        age = randint(1, 75)
-        level = randint(1, 75)
-        pronoun = choice(list(Pronouns))
 
-        inventory = Inventory(
-            items=[],
-            money=MoneyUtility(1000001),
-            logger=self.logger,
-        )
+        if request["type"] == EventUtility.get_event_type_id(EventEnum.USERNAME_ANSWER):
+            self.logger.debug("username answer received")
+            
+            # check if token exists of if this is new user 
+            if "token" in request:
+                # check if token is valid
+                if not Auth.validate_token(request["token"]):
+                    self.logger.debug("token is invalid")
+                    await EventUtility.send_message(InvalidTokenEvent(), websocket)
+                    return
+            else:
+                # generate a new token
+                request["token"] = Auth.generate_token(request["username"])
 
-        # random characteristics
-        eye_color = choice(list(EyeColorEnum)).name
-        hair_color = choice(list(HairColorEnum)).name
-        tattoes_placement = choice(list(TattooPlacementEnum)).name
-        tattoes_severity = choice(list(TattooSeverityEnum)).name
-        scars = choice(list(ScarEnum)).name
-        hair_length = choice(list(HairLengthEnum)).name
-
-        player = Player(
-            eye_color=eye_color,
-            hair_color=hair_color,
-            hair_length=hair_length,
-            tattoes_placement=tattoes_placement,
-            tattoes_severity=tattoes_severity,
-            scars=scars,
-            name=request["username"],
-            level=level,
-            race=player_race,
-            pronoun=pronoun,
-            age=age,
-            player_class=player_class,
-            intelligence=player_intelligence,
-            hp=player_hp,
-            strength=player_strength,
-            agility=player_agility,
-            location_id=player_location,
-            perception=player_perception,
-            determination=player_determination,
-            faith=player_faith,
-            inventory=inventory,
-            ip=ip,
-            websocket=websocket,
-        )
-
-        if request["type"] == EventUtility.get_event_type_id(
-            EventType.USERNAME_ANSWER
-        ):
-            await self.register(player, world_state)
-
-            # move player to initial room
-            player, world_state = await world_state.move_room_player(
-                player.location_id, player
-            )
-
-            # send initial status
-            await player.send_status()
+            # validate the username
+            valid = await self.check_valid_name(request["username"])
+            if not valid:
+                self.logger.debug("username is invalid")
+                await EventUtility.send_message(InvalidNameEvent(), websocket)
+                return
+            
+            # validate name not already taken
+            in_use = await self.check_username_in_use(request, websocket)
+            if in_use:
+                self.logger.debug("username is already in use")
+                await EventUtility.send_message(DuplicateNameEvent(), websocket)
+                return
+            
+            await self.register(request, websocket)
         else:
             raise Exception(f"Shananigans? received request: {request['type']}")
 
         self.logger.debug("exit")
-        return world_state
 
     # called when a client disconnects
     async def unregister(self, player, world_state, change_name=False):
@@ -296,32 +272,32 @@ class Connection:
         self.players = [i for i in self.players if not i.websocket == player.websocket]
         await self.update_website_users_online(world_state)
 
-        # let folks know someone left
-        if change_name:
-            await world_state.alert_world(
-                f"{player.name} is changing their name..", player=player
-            )
-        else:
-            await world_state.alert_world(
-                f"{player.name} left the game.", player=player
-            )
+        # # let folks know someone left
+        # if change_name:
+        #     await world_state.alert_world(
+        #         f"{player.name} is changing their name..", player=player
+        #     )
+        # else:
+        #     await world_state.alert_world(
+        #         f"{player.name} left the game.", player=player
+        #     )
 
         self.logger.info(f"new player count: {len(self.players)}")
         self.logger.debug("register: exit")
         return world_state
 
-    async def get_player(self, websocket):
-        self.logger.debug("enter")
-        player = None
-        if self.players == []:
-            return player
+    # async def get_player(self, websocket):
+    #     self.logger.debug("enter")
+    #     player = None
+    #     if self.players == []:
+    #         return player
 
-        for p in self.players:
-            if p.websocket == websocket:
-                player = p
-                break
-        self.logger.debug(f"exit, returning: {player.name}")
-        return player
+    #     for p in self.players:
+    #         if p.websocket == websocket:
+    #             player = p
+    #             break
+    #     self.logger.debug(f"exit, returning: {player.name}")
+    #     return player
 
     async def find_player_by_name(self, name):
         self.logger.debug("enter")
@@ -336,13 +312,11 @@ class Connection:
         self.logger.debug(f"exit, returning: {player.name}")
         return player
 
-
-# start websocket server
-@staticmethod
-async def start_websocket_server(mud, host, port):
-    if host is None:
-        async with websockets.serve(mud.main, "localhost", int(port), max_size=9000000):
-            await asyncio.Future()  # Run forever
-    else:
-        async with websockets.serve(mud.main, host, int(port), max_size=9000000):
-            await asyncio.Future()
+    # start websocket server
+    async def start_websocket_server(self, mud, host, port):
+        if host is None:
+            async with websockets.serve(mud.main, "localhost", int(port), max_size=9000000):
+                await asyncio.Future()  # Run forever
+        else:
+            async with websockets.serve(mud.main, host, int(port), max_size=9000000):
+                await asyncio.Future()

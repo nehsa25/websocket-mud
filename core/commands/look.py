@@ -27,7 +27,7 @@ class Look:
         self.logger.debug("Initializing Look() class")
 
         if self.ai_images is None:
-            self.ai_images = AIImages(self.logger)
+            self.ai_images = AIImages()
 
     async def process_look_direction(self, wanted_direction, player, world_state):
         self.logger.debug("enter")

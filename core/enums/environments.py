@@ -4,10 +4,12 @@ from enum import Enum
 class EnvironmentEnum(Enum):
     TOWNSMEE = "townsmee"
     BEACH = "beach"
-    FOREST = "forest"
+    KINGSFOREST = "kings forest"
+    DARKFOREST = "Dark forest"
+    REDFOREST = "Red forest"
     JUNGLE = "jungle"
     BREACH = "breach"
     GRAVEYARD = "graveyard"
-    UNIVERSITY = "university"
+    SMEEUNIVERSITY = "university"
     CAVES = "caves"
-
+    UNDERWORLD = "underworld"

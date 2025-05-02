@@ -14,12 +14,13 @@ class WeaponSource(SourceInterface):
             ItemWeaponData(
                 name="Falchion",
                 item_type=ItemEnum.WEAPON.value,
-                damage="1d6",
                 weight=4,
                 verb="swing",
                 plural_verb="swings",
                 description="A curved sword with a single edge.",
+                effects=[],
                 quality=100,
-                attacks=[],
+                damage="1d6", 
+                speed=100
             )
         ]

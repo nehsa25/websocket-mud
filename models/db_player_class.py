@@ -13,7 +13,10 @@ class DBPlayerClass(Base):
     name: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     description: Mapped[Optional[str]] = mapped_column(String)
     abilities: Mapped[Optional[str]] = mapped_column(String)
+    directives: Mapped[Optional[str]] = mapped_column(String)
     base_experience_adjustment: Mapped[Optional[int]]
+    playable: Mapped[Optional[bool]] = mapped_column(default=True)
+
     mobs = None
 
     def __repr__(self) -> str:

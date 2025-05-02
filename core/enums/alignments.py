@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class AlignmentEnum(Enum):
-    GOOD = "good"  # attacks evil players only
-    NEUTRAL = "neutral" # only attacks if attacked
-    EVIL = "evil"  # attacks good players only
-    CHAOTIC = "chaotic" # attacks all players
+    GOOD = "good"
+    NEUTRAL = "neutral"
+    EVIL = "evil"
+    LAWFUL_GOOD = "lawful_good"

@@ -4,7 +4,9 @@ from typing import Dict, List
 class RoomData:
     def __init__(
         self,
+        room_id: int,
         name: str,
+        environment: str,
         description: str,
         monsters: List[str],
         items: List[str],
@@ -13,7 +15,9 @@ class RoomData:
         exits: List[str],
         inside: bool = False,
     ):
+        self.room_id: int = room_id
         self.name = name
+        self.environment = environment
         self.description = description
         self.monsters = monsters
         self.items = items
@@ -28,7 +32,9 @@ class RoomData:
     def to_dict(self) -> Dict:
         """Helper method to convert NPC to a dictionary."""
         return {
+            "room_id": self.room_id,
             "name": self.name,
+            "environment": self.environment,
             "description": self.description,
             "monsters": self.monsters,
             "items": self.items,

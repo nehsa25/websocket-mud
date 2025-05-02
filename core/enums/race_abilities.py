@@ -23,3 +23,4 @@ class RaceAbilityEnum(Enum):
     HEIGHTENED_AGILITY = "heightened_agility"  
     HEIGHTENED_STRENGTH2 = "heightened_strength2"
     POISON_RESISTANCE = "poison_resistance"
+    POISON_IMMUNITY = "poison_immunity"
