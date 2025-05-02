@@ -29,9 +29,6 @@ class World:
         asyncio.create_task(self.emersionEvents.setup())
         self.logger.debug("exit")
 
-        # Example: Send a message to connections
-        await self.from_connections_queue.put("World setup complete!")
-
     # used to update webpage on user count
     async def update_website_users_online(self):
         self.logger.debug("enter")
@@ -62,7 +59,6 @@ class World:
             LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
 
     async def process_connections_queue(self):
-        self.logger.debug("process_connections_queue started")
         while True:
             self.logger.debug("process_connections_queue waiting for message")
             message = await self.from_connections_queue.get()

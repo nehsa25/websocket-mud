@@ -32,17 +32,18 @@ class Mud:
         self.to_connections_queue = asyncio.Queue()
         # Create a queue for messages from connections to the world
         self.from_connections_queue = asyncio.Queue()
+
+        # websocket connections
+        self.connections = Connections(self.to_connections_queue, self.from_connections_queue)
         
         # session state
         self.world = World(self.from_connections_queue, self.to_connections_queue)
 
-        # websocket connections
-        self.connections = Connections(self.to_connections_queue, self.from_connections_queue)
 
     # main loop when client connects
     async def main(self, websocket):
         self.logger.debug("A connection was made!")
-        await self.world.connections.connection_loop(websocket)
+        await self.connections.connection_loop(websocket)
 
 
 @app.route("/health")

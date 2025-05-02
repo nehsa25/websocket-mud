@@ -41,30 +41,24 @@ class Connections:
     def __init__(self, from_world_queue, to_world_queue):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.command = Command()
-        from_world_queue: asyncio.Queue = from_world_queue
-        to_world_queue: asyncio.Queue = to_world_queue
+        self.from_world_queue: asyncio.Queue = from_world_queue
+        self.to_world_queue: asyncio.Queue = to_world_queue
 
     async def connection_loop(self, websocket):
-        self.logger.debug("connection_loop started")
         try:
             # Example: Send a message to the world
             message = {"type": "connection", "message": "New connection established", "ws": websocket.remote_address}
             json_message = json.dumps(message)
-            self.logger.debug(f"About to put message into from_world_queue: {json_message}")
-            await self.to_world_queue.put(json_message)
-            self.logger.debug("Message put into from_world_queue")
+            await self.from_world_queue.put(json_message)
+            self.logger.debug(f"Message put into from_world_queue: {json_message}")
 
             while True:
                 # Listen for messages from the client
                 client_message = await websocket.recv()
-                self.logger.debug(f"Received message from client: {client_message}")
-
-                # Example: Send a message to the world based on client input
-                world_message = {"type": "client_message", "message": f"Client said: {client_message}", "ws": websocket}
+                world_message = {"type": "client_message", "message": client_message, "ws": websocket}
                 json_world_message = json.dumps(world_message)
-                self.logger.debug(f"About to put message into from_world_queue: {json_world_message}")
                 await self.to_world_queue.put(json_world_message)
-                self.logger.debug("Message put into from_world_queue")
+                self.logger.debug(f"Message put into from_world_queue: {json_world_message}")
 
         except Exception as e:
             self.logger.error(f"Error in connection loop: {e}")
