@@ -40,3 +40,4 @@ class EventEnum(Enum):
     PLAYER_CREATE = "player_create"
     PLAYER_CHECK_DUPLICATE = "player_check_duplicate"
     CLIENT_MESSAGE = "client_message"
+    CONNECTION_NEW = "connection_new"

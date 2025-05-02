@@ -3,7 +3,9 @@ import websockets
 from core.enums.events import EventEnum
 from core.events.client_message import ClientMessageEvent
 from core.events.connection import ConnectionEvent
+from core.events.connection_new import NewConnectionEvent
 from core.events.duplicate_name import DuplicateNameEvent
+from core.events.info import InfoEvent
 from core.events.invalid_name import InvalidNameEvent
 from core.events.invalid_token import InvalidTokenEvent
 from core.events.username_request import UsernameRequestEvent
@@ -30,13 +32,12 @@ class Connections:
     async def connection_loop(self, websocket):
         try:
             self.logger.info("A connection was made!")
-            ws = websocket.id.hex
-            msg = ClientMessageEvent("New connection established", ws).to_json()
+            msg = NewConnectionEvent(websocket)
             await self.to_world_queue.put(msg)
 
             while True:
                 client_message = await websocket.recv()
-                await self.to_world_queue.put(ClientMessageEvent(client_message, ws).to_json())
+                await self.to_world_queue.put(ClientMessageEvent(client_message, websocket))
 
         except Exception as e:
             self.logger.error(f"Error in connection loop: {e}")

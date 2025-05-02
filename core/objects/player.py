@@ -1,13 +1,11 @@
 import asyncio
 from random import randint
-from core.enums.alignments import AlignmentEnum
 from core.events.info import InfoEvent
 from core.events.inventory import InventoryEvent
 from core.events.rest import RestEvent
 from core.interfaces.player import PlayerInterface
 from helper.mob import MOBHelper
 from settings.world_settings import WorldSettings
-from core.data.statuses_data import StatusesData
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
@@ -44,14 +42,10 @@ class Player(PlayerInterface, MOBHelper):
 
     def __init__(
         self,
-        name,
-        ip,
         websocket
     ):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Registering new player")
-        self.name = name
-        self.ip = ip
         self.websocket = websocket
 
     async def check_combat(self, room):

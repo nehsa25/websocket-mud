@@ -3,9 +3,11 @@ import json
 from random import randint
 from core.enums.events import EventEnum
 from core.events.get_client import GetClientEvent
+from core.events.username_request import UsernameRequestEvent
 from core.locks import NpcLock
 from core.objects.player import Player
 from core.systems.emersion_events import EmersionEvents
+from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
 from utilities.exception import ExceptionUtility
 from utilities.log_telemetry import LogTelemetryUtility
@@ -48,7 +50,7 @@ class World:
         self.logger.debug(f"enter, player: {player.name}, message: {message}")
 
         # Parse the message as JSON
-        data = json.loads(message)
+        data = json.loads(message["message"]) # this is the actual event from the client
         self.logger.debug(f"Parsed JSON data: {data}")
 
         # Handle different message types
@@ -59,8 +61,8 @@ class World:
         else:
             LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
 
-    async def find_player_by_websocket(self, message):
-        return [a for a in self.players if a.websocket == message["websocket"]]
+    async def find_player_by_websocket(self, websocket):
+        return [a for a in self.players if a.websocket == websocket]
     
     async def process_connections_queue(self):
         while True:
@@ -69,17 +71,19 @@ class World:
             self.logger.debug(f"World received message from connections: {message}")
 
             # assoiciate the message with the player
-            player = await self.find_player_by_websocket(message)
-            if not player:
-                # create new player
-                player = Player(message["websocket"])
-
+            player = await self.find_player_by_websocket(message.websocket)
+            if not player and message.type == EventEnum.CONNECTION_NEW.value:
+                player = Player(message.websocket)
                 self.players.append(player)
                 self.logger.debug(f"New player created: {player.name}")
-            
 
-            # Process the message
-            # await self.process_message(player, message)
+                # request the player to send their name
+                await EventUtility.send_message(
+                    UsernameRequestEvent(WorldSettings.WORLD_NAME), player.websocket
+                )
+            else:     
+                # Process the message
+                await self.process_message(player, message)
 
             self.to_world_queue.task_done()
 
