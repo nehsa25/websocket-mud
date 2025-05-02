@@ -1,35 +1,18 @@
 import re
-from tkinter import EventType
 import websockets
-from random import randint, choice
 from core.enums.events import EventEnum
-from core.enums.player_classes import PlayerClassEnum
-from core.enums.eye_colors import EyeColorEnum
-from core.enums.hair_colors import HairColorEnum
-from core.enums.hair_lengths import HairLengthEnum
-from core.enums.races import RaceEnum
-from core.enums.scars import ScarEnum
-from core.enums.tattoo_placements import TattooPlacementEnum
-from core.enums.tattoo_severitities import TattooSeverityEnum
-from core.events.announcement import AnnouncementEvent
+from core.events.client_message import ClientMessageEvent
 from core.events.connection import ConnectionEvent
 from core.events.duplicate_name import DuplicateNameEvent
-from core.events.get_client import GetClientEvent
 from core.events.invalid_name import InvalidNameEvent
 from core.events.invalid_token import InvalidTokenEvent
-from core.events.inventory import InventoryEvent
-from core.events.map import MapEvent
 from core.events.username_request import UsernameRequestEvent
 from core.events.welcome import WelcomeEvent
-from core.objects.inventory import Inventory
-from core.objects.player import Player
 from settings.world_settings import WorldSettings
 from utilities.auth import Auth
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
-from utilities.money import MoneyUtility
-from utilities.wordsmith import Pronouns
 import asyncio
 import json
 from utilities.command import Command
@@ -38,27 +21,22 @@ from utilities.command import Command
 class Connections:
     connections = []
 
-    def __init__(self, from_world_queue, to_world_queue):
+    def __init__(self, to_connections_queue: asyncio.Queue, to_world_queue: asyncio.Queue): 
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.command = Command()
-        self.from_world_queue: asyncio.Queue = from_world_queue
-        self.to_world_queue: asyncio.Queue = to_world_queue
+        self.from_world_queue = to_world_queue
+        self.to_world_queue = to_connections_queue
 
     async def connection_loop(self, websocket):
         try:
-            # Example: Send a message to the world
-            message = {"type": "connection", "message": "New connection established", "ws": websocket.remote_address}
-            json_message = json.dumps(message)
-            await self.from_world_queue.put(json_message)
-            self.logger.debug(f"Message put into from_world_queue: {json_message}")
+            self.logger.info("A connection was made!")
+            ws = websocket.id.hex
+            msg = ClientMessageEvent("New connection established", ws).to_json()
+            await self.to_world_queue.put(msg)
 
             while True:
-                # Listen for messages from the client
                 client_message = await websocket.recv()
-                world_message = {"type": "client_message", "message": client_message, "ws": websocket}
-                json_world_message = json.dumps(world_message)
-                await self.to_world_queue.put(json_world_message)
-                self.logger.debug(f"Message put into from_world_queue: {json_world_message}")
+                await self.to_world_queue.put(ClientMessageEvent(client_message, ws).to_json())
 
         except Exception as e:
             self.logger.error(f"Error in connection loop: {e}")

@@ -31,18 +31,21 @@ class Mud:
         # Create a queue for messages from the world to connections
         self.to_connections_queue = asyncio.Queue()
         # Create a queue for messages from connections to the world
-        self.from_connections_queue = asyncio.Queue()
+        self.to_world_queue = asyncio.Queue()
 
         # websocket connections
-        self.connections = Connections(self.to_connections_queue, self.from_connections_queue)
-        
+        self.connections = Connections(
+            self.to_connections_queue, self.to_world_queue
+        ) 
+
         # session state
-        self.world = World(self.from_connections_queue, self.to_connections_queue)
+        self.world = World(
+            self.to_world_queue, self.to_connections_queue
+        )
 
 
     # main loop when client connects
     async def main(self, websocket):
-        self.logger.debug("A connection was made!")
         await self.connections.connection_loop(websocket)
 
 

@@ -4,6 +4,7 @@ from random import randint
 from core.enums.events import EventEnum
 from core.events.get_client import GetClientEvent
 from core.locks import NpcLock
+from core.objects.player import Player
 from core.systems.emersion_events import EmersionEvents
 from utilities.events import EventUtility
 from utilities.exception import ExceptionUtility
@@ -11,7 +12,7 @@ from utilities.log_telemetry import LogTelemetryUtility
 
 
 class World:
-    def __init__(self, to_connections_queue, from_connections_queue):
+    def __init__(self, to_connections_queue: asyncio.Queue, to_world_queue: asyncio.Queue): 
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing WorldState() class")
         self.players = []
@@ -22,7 +23,7 @@ class World:
         self.running_image_threads = []
         self.emersionEvents = EmersionEvents()
         self.to_connections_queue = to_connections_queue
-        self.from_connections_queue = from_connections_queue
+        self.to_world_queue = to_world_queue
 
     async def setup_world(self):
         self.logger.debug("enter")
@@ -58,19 +59,29 @@ class World:
         else:
             LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
 
+    async def find_player_by_websocket(self, message):
+        return [a for a in self.players if a.websocket == message["websocket"]]
+    
     async def process_connections_queue(self):
         while True:
             self.logger.debug("process_connections_queue waiting for message")
-            message = await self.from_connections_queue.get()
+            message = await self.to_world_queue.get()
             self.logger.debug(f"World received message from connections: {message}")
 
             # assoiciate the message with the player
-            [a for a in self.players if a.websocket == message["ws"]]
+            player = await self.find_player_by_websocket(message)
+            if not player:
+                # create new player
+                player = Player(message["websocket"])
+
+                self.players.append(player)
+                self.logger.debug(f"New player created: {player.name}")
+            
 
             # Process the message
             # await self.process_message(player, message)
 
-            self.from_connections_queue.task_done()
+            self.to_world_queue.task_done()
 
     async def check_monster_events(self):
         self.logger.debug("enter")

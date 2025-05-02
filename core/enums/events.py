@@ -39,3 +39,4 @@ class EventEnum(Enum):
     INVALID_TOKEN = "invalid_token"
     PLAYER_CREATE = "player_create"
     PLAYER_CHECK_DUPLICATE = "player_check_duplicate"
+    CLIENT_MESSAGE = "client_message"

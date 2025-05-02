@@ -44,64 +44,15 @@ class Player(PlayerInterface, MOBHelper):
 
     def __init__(
         self,
-        eye_color,
-        hair_color,
-        hair_length,
-        tattoes_placement,
-        tattoes_severity,
-        scars,
-        level,
         name,
-        hp,
-        intelligence,
-        faith,
-        pronoun,
-        race,
-        determination,
-        player_class,
-        strength,
-        agility,
-        location_id,
-        perception,
-        inventory,
-        age,
         ip,
-        websocket,
-        alignment=AlignmentEnum.NEUTRAL,
+        websocket
     ):
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing Player() class")
-        self.eye_color = eye_color
-        self.hair_color = hair_color
-        self.hair_length = hair_length
-        self.tattoes_placement = tattoes_placement
-        self.tattoes_severity = tattoes_severity
-        self.scars = scars
+        self.logger.debug("Registering new player")
         self.name = name
-        self.age = age
-        self.level = level
-        self.current_hp = hp
-        self.max_hp = hp
-        self.inventory = inventory
-        self.location_id = location_id
-        self.pronoun = pronoun
-        self.race = race
-        self.player_class = player_class
         self.ip = ip
         self.websocket = websocket
-
-        # whether player is resting, poisoned, etc.
-        self.attributes = AttributesType(
-            int=intelligence,
-            faith=faith,
-            agility=agility,
-            perception=perception,
-            determination=determination,
-            strength=strength,
-            logger=self.logger,
-        )
-        self.statuses = StatusesData()
-        self.alignment = alignment
 
     async def check_combat(self, room):
         self.logger.debug("enter")
