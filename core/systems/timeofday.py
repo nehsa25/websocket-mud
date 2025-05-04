@@ -1,8 +1,8 @@
 
 import asyncio
+from core.enums.send_scope import SendScopeEnum
 from core.enums.time_of_day import TimeOfDayEnum
-from core.events.environment import EnvironmentEvent
-from utilities.events import EventUtility
+from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -18,9 +18,9 @@ class TimeOfDay:
         self.logger.debug("Starting TimeOfDay() class")
 
         # setup day or night
-        asyncio.create_task(self.day_or_night())
+        asyncio.create_task(self.time_loop())
 
-    async def day_or_night(self):
+    async def time_loop(self):
         self.logger.debug("enter")
         while True:
             await asyncio.sleep(self.dayornight_interval * 60)
@@ -32,5 +32,9 @@ class TimeOfDay:
             
             self.logger.info(f"Updating time of day to: {self.dayornight}")
 
-            msg = "It is now " + self.dayornight.name.lower() + "."
-            await EventUtility.alert_world(msg, event_type=EnvironmentEvent)
+            await self.send_time()
+
+    async def send_time(self):
+        self.logger.debug("enter")
+        msg = "It is now " + self.dayornight.name.lower() + "."
+        await InfoEvent(msg, scope=SendScopeEnum.WORLD)

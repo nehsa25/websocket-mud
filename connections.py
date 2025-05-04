@@ -1,6 +1,8 @@
 import websockets
+from core.enums.send_scope import SendScopeEnum
 from core.events.client_message import ClientMessageEvent
 from core.events.connection_new import NewConnectionEvent
+from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 import asyncio
 from utilities.command import Command
@@ -17,7 +19,10 @@ class Connections:
 
     async def connection_loop(self, websocket):
         try:
-            self.logger.info("A connection was made!")
+            await InfoEvent("A connection was made!").send(
+                websocket=websocket,
+                scope=SendScopeEnum.WORLD, 
+                exclude_player=True)
             msg = NewConnectionEvent(websocket)
             await self.to_world_queue.put(msg)
 
@@ -35,28 +40,6 @@ class Connections:
         self.logger.info("An exit signal as been received.  Exiting!")
         # exit stuff..
         self.logger.debug("exit")
-
-
-    # called when a client disconnects
-    async def unregister(self, player, world_state, change_name=False):
-        self.logger.debug(f"unregister: enter, player: {player.name}")
-        self.logger.debug(f"self.players count: {len(self.players)}")
-        self.players = [i for i in self.players if not i.websocket == player.websocket]
-        await self.update_website_users_online(world_state)
-
-        # # let folks know someone left
-        # if change_name:
-        #     await world_state.alert_world(
-        #         f"{player.name} is changing their name..", player=player
-        #     )
-        # else:
-        #     await world_state.alert_world(
-        #         f"{player.name} left the game.", player=player
-        #     )
-
-        self.logger.info(f"new player count: {len(self.players)}")
-        self.logger.debug("register: exit")
-        return world_state
 
     # start websocket server
     async def start_websocket_server(self, mud, host, port):

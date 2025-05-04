@@ -1,8 +1,6 @@
 from copy import deepcopy
 import random
 from core.enums.room_danger_levels import RoomDangerEnum
-from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -124,28 +122,3 @@ class Room:
     def set_exits(self, exits):
         self.exits = exits
         return deepcopy(self)
-
-    async def alert(
-        self,
-        message,
-        exclude_player=False,
-        player=None,
-        event_type=InfoEvent,
-        adjacent_message="",
-    ):
-        self.logger.debug(f"enter, message: {message}")
-        for p in self.players:
-            if exclude_player and player is not None:
-                if p.name != player.name:
-                    self.logger.info(f'alerting {p.name} of "{message}"')
-                    eventObj = event_type(message)
-                    await  eventObj.send(p.websocket)
-            else:
-                await event_type(message).send(p.websocket)
-
-        if adjacent_message != "":
-            for e in self.exits:
-                if e is not None:
-                    await e.alert(
-                        adjacent_message, event_type=event_type, adjacent=False
-                    )

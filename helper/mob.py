@@ -1,3 +1,7 @@
+from core.enums.send_scope import SendScopeEnum
+from core.events.info import InfoEvent
+
+
 class MOBHelper:
     async def equip(self, player, action_eq=True):
         self.logger.debug("enter")
@@ -9,26 +13,19 @@ class MOBHelper:
 
         if action_eq is True and self.equipped is False:
             self.equipped = True
-            await self.world.self.world.utility.send_msg(
-                f"You wield {self.name}.", "info", player.websocket, self.logger
-            )
-            await player.room.alert(
+            await InfoEvent(f"You wield {self.name}.").send(player.websocket)
+            await InfoEvent(
                 f"You notice {player.name} equip {self.name}.",
                 exclude_player=True,
-                player=player,
-            )
+                scope=SendScopeEnum.ROOM,
+            ).send(player.websocket)
 
         if action_eq is False and self.equipped is True:
             self.equipped = False
-            await self.world.self.world.utility.send_msg(
-                f"You unequip {self.name}.", "info", player.websocket, self.logger
+            await InfoEvent(f"You unequip {self.name}.").send(player.websocket)
+            await InfoEvent(f"You notice {player.name} unequip {self.name}.").send(
+                player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
-            await player.room.alert(
-                f"You notice {player.name} unequip {self.name}.",
-                exclude_player=True,
-                player=player,
-            )
-
         self.logger.debug("exit")
 
     async def get(self, player, action_get=True):

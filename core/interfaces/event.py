@@ -10,5 +10,5 @@ class EventInterface:
 
     # send message to websocket
     @abstractmethod
-    async def send(self) -> None:
+    async def send(self, websocket, scope, exclude_player) -> None:
         pass

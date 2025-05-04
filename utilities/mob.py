@@ -2,7 +2,6 @@ import random
 import time
 from enums.alignments import Alignment
 from events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 from ai.dialog import NpcDialog
 
@@ -42,21 +41,10 @@ class Mob:
         return self.entrance_cry
 
     async def stop_combat(self, player):
-        self.logger.debug("enter")
-        await self.alert_room(self.victory_cry, player.room, True, player)
-        self.in_combat = None
-        await self.alert_room(
-            f"{self.name} breaks off combat.", player.room, True, player
-        )
-        self.logger.debug("exit")
+        pass
 
     async def break_combat(self, room):
-        self.logger.debug("enter")
-        self.in_combat = None
-        await self.alert_room(
-            f"{self.name} breaks off combat.", room, event_type=InfoEvent
-        )
-        self.logger.debug("exit")
+        pass
 
     async def kill(self, room):
         self.is_alive = False
@@ -147,41 +135,7 @@ class Mob:
 
     # responsible for checking combat
     async def check_combat(self, world_state):
-        self.logger.debug("enter")
-
-        # check for alignments opposite of npc
-        if self.in_combat and not len(self.room_id.players) > 0:
-            return world_state
-
-        current_time = time.time()
-        if self.last_check_combat is None:
-            self.last_check_combat = current_time
-        self.logger.debug(
-            f"Time between combat checks: {current_time - self.last_check_combat}"
-        )
-
-        # check players
-        for p in self.room_id.players:
-            if await self.alignment.is_opposing_alignment(self.name, p):
-                self.logger.debug(f"{self.name} is attacking {p.name}".upper())
-                self.room_id.alert(self.get_attack_phrase(p.name))
-
-        # check npcs
-        for n in self.room_id.npcs:
-            if await self.alignment.is_opposing_alignment(self.name, n):
-                self.logger.debug(f"{self.name} is attacking {n.name}".upper())
-                self.room_id.alert(self.get_attack_phrase(n.name))
-
-        # check for monsters
-        for m in self.room_id.monsters:
-            if await self.alignment.is_opposing_alignment(self.name, m):
-                self.logger.debug(f"{self.name} is attacking {m.name}".upper())
-                if len(self.room_id.players) > 0:
-                    await self.room_id.alert(self.get_attack_phrase(m.name))
-
-        self.last_check_combat = current_time
-        self.logger.debug("exit")
-        return world_state
+        pass
 
     # check for dialog options
     async def speak(self, room, world_state):
@@ -207,17 +161,6 @@ class Mob:
         current_interests.append(
             f"disliked players in room: {','.join(disliked_players)}"
         )
-
-        # # get room messages
-        # room_history = await world_state.environments.get_room_history(room.id)
-        # history = None
-        # if len(room_history) > 1:
-        #     history = room_history[len(room_history)-1]
-        # if len(room.players) > 0:
-        #     msg = await self.dialog.intelligize_npc(self, room.description, current_interests, history)
-        # await room.alert(msg)
-        # await world_state.environments.update_room_history(room.id, self.name, msg, world_state)
-
         self.logger.debug("exit")
 
     async def move(self, direction, world_state, isNpc=True):

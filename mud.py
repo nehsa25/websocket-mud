@@ -36,7 +36,7 @@ class Mud:
         self.connections = Connections(self.to_connections_queue, self.to_world_queue)
 
         # session state
-        self.world = World(self.to_world_queue, self.to_connections_queue)
+        self.world = World(self.to_world_queue, self.to_connections_queue, world_service=None)
 
     # main loop when client connects
     async def main(self, websocket):

@@ -1,13 +1,13 @@
 import asyncio
 from random import randint
 
+from core.enums.send_scope import SendScopeEnum
 from core.events.info import InfoEvent
 from core.events.inventory import InventoryEvent
 from core.events.rest import RestEvent
 from core.interfaces.player import PlayerInterface
 from helper.mob import MOBHelper
 from settings.world_settings import WorldSettings
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -53,10 +53,7 @@ class Player(PlayerInterface, MOBHelper):
             self.logger.debug(f"{self.name} - checking combat")
 
     async def break_combat(self, room):
-        self.logger.debug("enter")
-        self.in_combat = None
-        # self.room.alert(f"{self.name} stops fighting.", rooms[self.location_id])
-        self.logger.debug("exit")
+        pass
 
     async def attack(self, room):
         pass
@@ -256,9 +253,7 @@ class Player(PlayerInterface, MOBHelper):
 
         # state you died
         await InfoEvent("You died.").send(self.websocket)
-
-        # alert others in the room where you died that you died..
-        await self.room.alert(f"{self.name} died.", self.room, True, self)
+        await InfoEvent(f"{self.name} died.").send(self.websocket, exclude_player=True, scope=SendScopeEnum.ROOM)
 
         # drop all items
         for item in self.inventory:
@@ -269,11 +264,9 @@ class Player(PlayerInterface, MOBHelper):
         player, world = await world.rooms.move_room(self.DEATH_RESPAWN_ROOM, self, world)
 
         # alert others in the room that new player has arrived
-        await self.room.alert(
-            f"A bright purple spark floods your vision.  When it clears, {self.name} is standing before you.  Naked.",
-            player.room,
-            True,
-            self,
+        await InfoEvent("A bright purple spark floods your vision.").send(self.websocket)
+        await InfoEvent(f"A bright purple spark floods the room.  When it clears, {self.name} is standing naked.").send(
+            self.websocket, exlude_player=True, scope=SendScopeEnum.ROOM
         )
 
         # set hits back to max / force health refresh
@@ -311,9 +304,9 @@ class Player(PlayerInterface, MOBHelper):
                         self.statuses.current_hp = self.max_hp
                         await self.set_rest(False)
                         await InfoEvent("You have fully recovered.").send(self.websocket)
-                        await self.room.alert(
-                            f"{self.name} appears to have fully recovered.",
+                        await InfoEvent(f"{self.name} appears to have fully recovered.").send(
+                            self.websocket,
                             exclude_player=True,
-                            player=self,
+                            scope=SendScopeEnum.ROOM,
                         )
                     await self.send_status()

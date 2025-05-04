@@ -1,5 +1,5 @@
 from core.enums.commands import CommandEnum
-from core.events.command import CommandEvent
+from core.enums.send_scope import SendScopeEnum
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 
@@ -19,12 +19,9 @@ class Say:
         self.logger.debug("enter")
         player.room = await world_state.get_room(player.room)
         msg = command.split(" ", 1)[1]
-        await  CommandEvent(f'You say "{msg}"').send(player.websocket)
-        await player.room.alert(
-            f'{player.name} says "{msg}"',
-            exclude_player=True,
-            player=player,
-            event_type=InfoEvent,
+        await InfoEvent(f'You say "{msg}"').send(player.websocket)
+        await InfoEvent(f'{player.name} says "{msg}"').send(
+            player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
         )
         self.logger.debug("exit")
         return player

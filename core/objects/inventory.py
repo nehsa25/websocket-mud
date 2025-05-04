@@ -1,3 +1,4 @@
+from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -25,13 +26,8 @@ class Inventory:
 
             # send message to player
             await InfoEvent(f"You pick up {item.name}.").send(player.websocket)
-
-            # send message to room
-            await player.room.alert(
-                f"{player.name} picks up {wanted_item}.",
-                exclude_player=True,
-                player=player,
-                event_type=InfoEvent,
+            await InfoEvent(f"{player.name} picks up {wanted_item}.").send(
+                player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
 
             # add item to inventory
@@ -40,12 +36,10 @@ class Inventory:
             break
 
         if not found:
-            await player.room.alert(
-                f"{wanted_item} not found.",
+            await ErrorEvent(
+                f"{wanted_item} is not a valid loot target.",
                 exclude_player=True,
-                player=player,
-                event_type=ErrorEvent,
-            )
+            ).send(player.websocket)
 
         self.logger.debug("exit")
 
@@ -60,13 +54,10 @@ class Inventory:
 
             # send message to player
             await InfoEvent(f"You drop {item.name}.").send(player.websocket)
-
-            # send message to room
-            await player.room.alert(
-                f"{player.name} drops {wanted_item} to the ground.",
+            await InfoEvent(f"{player.name} drops {wanted_item}.").send(
+                player.websocket,
                 exclude_player=True,
-                player=player,
-                event_type=ErrorEvent,
+                scope=SendScopeEnum.ROOM
             )
 
             # add item to inventory
@@ -75,11 +66,6 @@ class Inventory:
             break
 
         if not found:
-            await player.room.alert(
-                f"You do not have {wanted_item}.",
-                exclude_player=True,
-                player=player,
-                event_type=ErrorEvent,
-            )
+            await ErrorEvent(f"You do not have {wanted_item}.").send(player.websocket)
 
         self.logger.debug("exit")

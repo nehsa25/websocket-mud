@@ -1,6 +1,8 @@
 import jsonpickle
 from core.enums.events import EventEnum
+from core.enums.send_scope import SendScopeEnum
 from core.interfaces.event import EventInterface
+from services.events import EventService
 
 class NewConnectionEvent(EventInterface):
     """this is the first event of a new connection"""
@@ -16,6 +18,5 @@ class NewConnectionEvent(EventInterface):
     def to_json(self):
         return jsonpickle.encode(self)
 
-    async def send(self, websocket):
-        msg = self.to_json()
-        await websocket.send(str(msg))
+    async def send(self, websocket, scope=SendScopeEnum.PLAYER):
+        await EventService.instance().send_event(self, scope, websocket)

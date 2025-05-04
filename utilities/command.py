@@ -18,7 +18,6 @@ from core.commands.telepath import Telepath
 from core.commands.who import Who
 from core.events.command import CommandEvent
 from core.events.error import ErrorEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 

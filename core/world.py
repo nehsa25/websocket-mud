@@ -1,6 +1,7 @@
 import asyncio
 import json
 from random import randint
+from core.enums.environments import EnvironmentEnum
 from core.enums.events import EventEnum
 from core.events.duplicate_name import DuplicateNameEvent
 from core.events.get_client import GetClientEvent
@@ -10,14 +11,17 @@ from core.locks import NpcLock
 from core.objects.player import Player
 from core.systems.timeofday import TimeOfDay
 from core.systems.emersion_events import EmersionEvents
+from services.world import WorldService
 from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
-from utilities.exception import ExceptionUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
 class World:
-    def __init__(self, to_connections_queue: asyncio.Queue, to_world_queue: asyncio.Queue): 
+    def __init__(self, 
+                 to_connections_queue: asyncio.Queue, 
+                 to_world_queue: asyncio.Queue, 
+                 world_service: WorldService): 
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing WorldState() class")
         self.players = []
@@ -28,6 +32,8 @@ class World:
         self.running_image_threads = []
         self.emersionEvents = EmersionEvents()
         self.timeofDay = TimeOfDay()
+        if not world_service:
+            self.world_service = WorldService()
         self.to_connections_queue = to_connections_queue
         self.to_world_queue = to_world_queue
 
@@ -37,20 +43,7 @@ class World:
         asyncio.create_task(self.timeofDay.start())
         # creates mobs
         # create weather
-        self.logger.debug("exit")
 
-    # used to update webpage on user count
-    async def update_website_users_online(self):
-        self.logger.debug("enter")
-
-        # Send the number of connected players to each player
-        for player in self.players:
-            try:
-                await GetClientEvent(len(self.players)).send(player.websocket)
-            except Exception as e:
-                self.logger.error(
-                    f"Error: {ExceptionUtility.get_exception_information(e)}"
-                )
         self.logger.debug("exit")
 
     async def process_command(self, player, message):
@@ -140,6 +133,12 @@ class World:
                 player = Player(message.websocket)
                 self.players.append(player)
                 self.logger.debug(f"New player created: {player.name}")
+
+                # register the player with the world service
+                await self.world_service.register_player(player, 
+                                                         room_id=1, 
+                                                         environment_id=EnvironmentEnum.TOWNSMEE.value,
+                                                         websocket=message.websocket)
 
                 # request the player to send their name
                 await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(player.websocket)

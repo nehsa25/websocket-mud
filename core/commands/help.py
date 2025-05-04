@@ -1,3 +1,4 @@
+from core.enums.send_scope import SendScopeEnum
 from core.events.help import HelpEvent
 from .attack import Attack
 from .drop import Drop
@@ -81,13 +82,12 @@ class Help:
         self.logger.debug("enter")
 
         # alert the room
-        # player.room.alert(f"You notice {player.name} equip {self.name}.", exclude_player=True, player=player)
-        await InfoEvent("You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read.").send(player.websocket)
-        await player.room.alert(
-            f"{player.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read.",
-            exclude_player=True,
-            player=player,
-        )
+        await InfoEvent(
+            "You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read."
+        ).send(player.websocket)
+        await InfoEvent(
+            f"{player.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read."
+        ).send(player.websocket, scope=SendScopeEnum.ROOM, exclude_player=True)
 
         commands = []
         commands.append(self.CommandHelp(self.look))

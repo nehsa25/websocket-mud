@@ -1,15 +1,15 @@
-from enum import Enum
+from enum import Enum, auto
 
 
 class EnvironmentEnum(Enum):
-    TOWNSMEE = "townsmee"
-    BEACH = "beach"
-    KINGSFOREST = "kings forest"
-    DARKFOREST = "Dark forest"
-    REDFOREST = "Red forest"
-    JUNGLE = "jungle"
-    BREACH = "breach"
-    GRAVEYARD = "graveyard"
-    SMEEUNIVERSITY = "university"
-    CAVES = "caves"
-    UNDERWORLD = "underworld"
+    TOWNSMEE = auto()
+    BEACH = auto()
+    KINGSFOREST = auto()
+    DARKFOREST = auto()
+    REDFOREST = auto()
+    JUNGLE = auto()
+    BREACH = auto()
+    GRAVEYARD = auto()
+    SMEEUNIVERSITY = auto()
+    CAVES = auto()
+    UNDERWORLD = auto()

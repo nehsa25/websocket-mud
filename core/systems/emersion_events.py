@@ -3,7 +3,6 @@ from datetime import datetime
 from random import randint, random
 from core.events.environment import EnvironmentEvent
 from core.events.time import TimeEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 

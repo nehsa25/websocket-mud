@@ -1,4 +1,5 @@
 from core.enums.commands import CommandEnum
+from core.enums.send_scope import SendScopeEnum
 from core.events.direction import DirectionEvent
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
@@ -32,9 +33,7 @@ class Move:
 
         self.logger.debug("enter")
 
-        friendly_direction = await world_state.environments.dirs.get_friendly_name(
-            wanted_direction
-        )
+        friendly_direction = await world_state.environments.dirs.get_friendly_name(wanted_direction)
 
         player.room = await world_state.get_room(player.room)
 
@@ -62,9 +61,7 @@ class Move:
                     await InfoEvent.send(f"{player.name} travels {avail_exit['direction'].name.lower()}.")
 
             # update location
-            player, world_state = await world_state.move_room_player(
-                new_room_id, player
-            )
+            player, world_state = await world_state.move_room_player(new_room_id, player)
 
             # render new room
             await world_state.show_room(player)
@@ -79,15 +76,13 @@ class Move:
                     continue
                 if p.location_id.name == player.room.name:
                     opp_direction = avail_exit["direction"].opposite.name
-                    await InfoEvent(
-                            f"{player.name} arrives from the {opp_direction[1].lower()}."
-                        ).send(player.websocket)
+                    await InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}.").send(
+                        player.websocket
+                    )
         else:
-            await  ErrorEvent("You cannot go in that direction.").send(player.websocket)
-            await player.room.alert(
-                f"{player.name} attempted to go {friendly_direction} but could not!",
-                exclude_player=True,
-                player=player,
+            await ErrorEvent("You cannot go in that direction.").send(player.websocket)
+            await InfoEvent(f"{player.name} attempts to go {friendly_direction} but cannot.").send(
+                player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
         self.logger.debug("exit")
         return player, world_state

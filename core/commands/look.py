@@ -1,6 +1,7 @@
 import asyncio
 from core.ai.image import AIImages
 from core.enums.images import ImageEnum
+from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -89,13 +90,12 @@ class Look:
             await InfoEvent("You look around the room.").send(player.websocket)
 
             # send message to any players in same room that you're being suspicious
-            if player.room:  # Check if player.room exists
-                await player.room.alert(
-                    f"You notice {player.name} gazing around the room.",
-                    exclude_player=True,
-                    player=player,
-                    event_type=InfoEvent,
+            await InfoEvent(f"You notice {player.name} gazing around the room.").send(
+                    player.websocket,
+                    scope=SendScopeEnum.ROOM,
+                    exclude_player=True
                 )
+            
         elif len(look_object.split(" ", 1)) > 1:
             found = False
             look_object = look_object.split(" ", 1)[1].lower()

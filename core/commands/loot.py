@@ -1,4 +1,5 @@
 from core.enums.commands import CommandEnum
+from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -45,14 +46,9 @@ class Loot:
                     player.money.extend(current_monster.money)
                     msg = f"You take {len(current_monster.money)} copper from {monster_name}."
                     await InfoEvent(msg).send(player.websocket)
-
-                    # alert the rest of the room
-                    for room_player in world_state.rooms.rooms[player.room.id].players:
-                        if room_player.websocket != player.websocket:
-                            await InfoEvent(
-                                f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."
-                            ).send(room_player.websocket)
-
+                    await InfoEvent(
+                        f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."
+                    ).send(player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM)
                     # remove from monster
                     current_monster.money = 0
                 else:
