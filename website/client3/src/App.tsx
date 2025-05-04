@@ -260,6 +260,7 @@ function App() {
                 } else {
                     setShowUsernameModal(true);
                 }
+                break;
             case MudEvents.DUPLICATE_NAME:
                 pushGenericEvent(<span className="error-message">That username is already taken.</span>);
                 break;
