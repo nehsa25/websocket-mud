@@ -1,10 +1,11 @@
 import jsonpickle
 from core.enums.events import EventEnum
+from core.interfaces.event import EventInterface
 from utilities.auth import Auth
 from utilities.events import EventUtility
 
 
-class WelcomeEvent:
+class WelcomeEvent(EventInterface):
     type = None
     message = ""
     name = ""

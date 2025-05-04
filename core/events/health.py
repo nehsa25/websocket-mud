@@ -1,9 +1,10 @@
 import jsonpickle
 from core.enums.events import EventEnum
+from core.interfaces.event import EventInterface
 from utilities.events import EventUtility
 
 
-class HealthEvent:
+class HealthEvent(EventInterface):
     type = None
     name = ""
     current_hp = (0,)

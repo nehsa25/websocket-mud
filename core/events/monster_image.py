@@ -1,9 +1,11 @@
 import jsonpickle
+
+from core.interfaces.event import EventInterface
 from ..enums.events import EventEnum
 from utilities.events import EventUtility
 
 
-class MonsterImageEvent:
+class MonsterImageEvent(EventInterface):
     type = None
     image_name = ""
 

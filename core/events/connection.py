@@ -1,8 +1,9 @@
 import jsonpickle
+from core.interfaces.event import EventInterface
 from utilities.events import EventUtility
 
 
-class ConnectionEvent:
+class ConnectionEvent(EventInterface) :
     """this is an event from connection.py to world.py using asyncio queues"""
 
     type = None

@@ -1,7 +1,8 @@
 import jsonpickle
 from core.enums.events import EventEnum
+from core.interfaces.event import EventInterface
 
-class NewConnectionEvent:
+class NewConnectionEvent(EventInterface):
     """this is the first event of a new connection"""
 
     type = None

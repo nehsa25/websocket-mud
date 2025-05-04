@@ -133,7 +133,7 @@ function App() {
                         text-based multi-user_dungeon ("MUDs")
                     </Box>
                     . MUDs were not just challenging and fast-paced, but also highly social
-                    and encouraging. In fact, I met my wife playing a MUD.
+                    and encouraging. I met my wife playing a MUD.
                 </Text>
 
                 <Heading size="md" mt={4}>

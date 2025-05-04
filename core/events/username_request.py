@@ -1,9 +1,10 @@
 import jsonpickle
 from core.enums.events import EventEnum
+from core.interfaces.event import EventInterface
 from utilities.events import EventUtility
 
 
-class UsernameRequestEvent:
+class UsernameRequestEvent(EventInterface):
     world_name = ""
     type = None
 
