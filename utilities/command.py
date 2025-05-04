@@ -84,7 +84,7 @@ class Command:
         lowercase_cmd = command.lower()
 
         # send back the command we received as info - (this could just be printed client side and save the traffic cost)
-        await EventUtility.send_message(CommandEvent(command), player.websocket)
+        await CommandEvent(command).send(player.websocket)
 
         # if the player is dead, don't do anything..
         if player.current_hp <= 0:
@@ -140,9 +140,7 @@ class Command:
         elif lowercase_cmd == "rest":
             player, world_state = await self.rest.execute(player, world_state)
         else:  # you're going to say it to the room..
-            await EventUtility.send_message(
-                ErrorEvent(f'"{command}" is not a valid command.'), player.websocket
-            )
+            await ErrorEvent(f'"{command}" is not a valid command.').send(player.websocket)
 
         self.logger.debug("exit")
         return player

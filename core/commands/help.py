@@ -1,3 +1,4 @@
+from core.events.help import HelpEvent
 from .attack import Attack
 from .drop import Drop
 from .equip import Equip
@@ -17,7 +18,6 @@ from .inventory import Inventory
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
-from utilities.events import EventUtility
 
 
 class Help:
@@ -82,12 +82,7 @@ class Help:
 
         # alert the room
         # player.room.alert(f"You notice {player.name} equip {self.name}.", exclude_player=True, player=player)
-        await player.send_message(
-            InfoEvent(
-                "You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read."
-            ),
-            player.websocket,
-        )
+        await InfoEvent("You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read.").send(player.websocket)
         await player.room.alert(
             f"{player.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read.",
             exclude_player=True,
@@ -111,7 +106,5 @@ class Help:
         commands.append(self.CommandHelp(self.rest))
         commands.append(self.CommandHelp(self.say))
         commands.append(self.CommandHelp(self.system))
-        await EventUtility.send_message(
-            EventUtility.HelpEvent(commands), player.websocket
-        )
+        await HelpEvent(commands).send(player.websocket)
         self.logger.debug("exit")

@@ -1,13 +1,11 @@
 import asyncio
 from random import randint
 
-from sqlalchemy import select
 from core.events.info import InfoEvent
 from core.events.inventory import InventoryEvent
 from core.events.rest import RestEvent
 from core.interfaces.player import PlayerInterface
 from helper.mob import MOBHelper
-from models.db_players import DBPlayer
 from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
@@ -43,10 +41,7 @@ class Player(PlayerInterface, MOBHelper):
     attack_task = None
     alignment = None
 
-    def __init__(
-        self,
-        websocket
-    ):
+    def __init__(self, websocket):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Registering new player")
         self.websocket = websocket
@@ -242,23 +237,14 @@ class Player(PlayerInterface, MOBHelper):
     async def rest(self, rest: bool):
         self.logger.debug("enter")
         if rest:
-            EventUtility.send_message(
-                RestEvent("You start resting.", is_resting=True),
-                self.websocket,
-            )
+            RestEvent("You start resting.", is_resting=True).send(self.websocket)
             self.statuses.is_resting = True
         else:
             if self.statuses.is_resting:
                 self.statuses.is_resting = False
-                await EventUtility.send_message(
-                    RestEvent("You are no longer resting.", is_resting=False),
-                    self.websocket,
-                )
+                await RestEvent("You are no longer resting.", is_resting=False).send(self.websocket)
             else:
-                await EventUtility.send_message(
-                    InfoEvent("You were not resting to begin with."),
-                    self.websocket,
-                )
+                await InfoEvent("You were not resting to begin with.").send(self.websocket)
         self.logger.debug("exit")
 
     # cancels all tasks and states you died if you die
@@ -269,7 +255,7 @@ class Player(PlayerInterface, MOBHelper):
         self.in_combat = False
 
         # state you died
-        await EventUtility.send_message(InfoEvent("You died."), self.websocket)
+        await InfoEvent("You died.").send(self.websocket)
 
         # alert others in the room where you died that you died..
         await self.room.alert(f"{self.name} died.", self.room, True, self)
@@ -301,10 +287,7 @@ class Player(PlayerInterface, MOBHelper):
     async def get_inventory(self):
         self.logger.debug("enter")
         self.logger.info(f"{self.name}: sending updated inventory")
-        await EventUtility.send_message(
-            InventoryEvent(self.inventory),
-            self.websocket,
-        )
+        await InventoryEvent(self.inventory).send(self.websocket)
         self.logger.debug("exit")
 
     # increases hp when resting
@@ -320,14 +303,14 @@ class Player(PlayerInterface, MOBHelper):
                 if self.statuses.current_hp < self.max_hp:
                     heal = randint(1, 3)
                     if heal == 1:
-                        await EventUtility.send_message(InfoEvent(f"You recover {heal} hitpoint."), self.websocket)
+                        await InfoEvent(f"You recover {heal} hitpoint.").send(self.websocket)
                     else:
-                        await EventUtility.send_message(InfoEvent(f"You recover {heal} hitpoints."), self.websocket)
+                        await InfoEvent(f"You recover {heal} hitpoints.").send(self.websocket)
                     self.statuses.current_hp += 3
                     if self.statuses.current_hp >= self.max_hp:
                         self.statuses.current_hp = self.max_hp
                         await self.set_rest(False)
-                        await EventUtility.send_message(InfoEvent("You have fully recovered."), self.websocket)
+                        await InfoEvent("You have fully recovered.").send(self.websocket)
                         await self.room.alert(
                             f"{self.name} appears to have fully recovered.",
                             exclude_player=True,

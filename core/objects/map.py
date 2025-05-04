@@ -199,5 +199,4 @@ class Map:
         self.logger.debug(f"Mini map URL: {mini_map_url}")
 
         # send map event
-        map_event = EventUtility.MapEvent(full_map_url, mini_map_url)
-        await EventUtility.send_message(map_event, player.websocket)
+        await EventUtility.MapEvent(full_map_url, mini_map_url).send(player.websocket)

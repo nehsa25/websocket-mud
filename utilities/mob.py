@@ -64,9 +64,7 @@ class Mob:
 
         if self.death_cry is not None:
             for player in room["players"]:
-                await EventUtility.send_message(
-                    InfoEvent(self.death_cry), player.websocket
-                )
+                await InfoEvent(self.death_cry).send(player.websocket)
 
     # respawn mobs after a certain amount of time
     async def respawn(self, world_state):

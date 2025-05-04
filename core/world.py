@@ -8,6 +8,7 @@ from core.events.invalid_name import InvalidNameEvent
 from core.events.username_request import UsernameRequestEvent
 from core.locks import NpcLock
 from core.objects.player import Player
+from core.systems.timeofday import TimeOfDay
 from core.systems.emersion_events import EmersionEvents
 from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
@@ -26,12 +27,16 @@ class World:
         self.running_map_threads = []
         self.running_image_threads = []
         self.emersionEvents = EmersionEvents()
+        self.timeofDay = TimeOfDay()
         self.to_connections_queue = to_connections_queue
         self.to_world_queue = to_world_queue
 
-    async def setup_world(self):
+    async def start_world(self):
         self.logger.debug("enter")
-        asyncio.create_task(self.emersionEvents.setup())
+        asyncio.create_task(self.emersionEvents.start())
+        asyncio.create_task(self.timeofDay.start())
+        # creates mobs
+        # create weather
         self.logger.debug("exit")
 
     # used to update webpage on user count
@@ -41,7 +46,7 @@ class World:
         # Send the number of connected players to each player
         for player in self.players:
             try:
-                await EventUtility.send_message(GetClientEvent(len(self.players)), player.websocket)
+                await GetClientEvent(len(self.players)).send(player.websocket)
             except Exception as e:
                 self.logger.error(
                     f"Error: {ExceptionUtility.get_exception_information(e)}"
@@ -137,9 +142,7 @@ class World:
                 self.logger.debug(f"New player created: {player.name}")
 
                 # request the player to send their name
-                await EventUtility.send_message(
-                    UsernameRequestEvent(WorldSettings.WORLD_NAME), player.websocket
-                )
+                await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(player.websocket)
             else:
                 # get the real message
                 json_msg = json.loads(message.message)
@@ -148,18 +151,14 @@ class World:
                     is_ok = self.check_valid_name(json_msg["username"])
                     if not is_ok:
                         self.logger.debug(f"Invalid name: {json_msg['username']}")
-                        await EventUtility.send_message(
-                            InvalidNameEvent(json_msg["username"]), player.websocket
-                        )
+                        await InvalidNameEvent(json_msg["username"]).send(player.websocket)
                         continue
 
                     # check for duplicate name
                     ps = [p for p in self.players if p.name == json_msg["username"]]
                     if len(ps) > 0:
                         self.logger.debug(f"Duplicate name: {json_msg['username']}")
-                        await EventUtility.send_message(
-                            DuplicateNameEvent(json_msg["username"]), player.websocket
-                        )
+                        await DuplicateNameEvent(json_msg["username"]).send(player.websocket)
                         continue
 
                     player.name = json_msg["username"]      
@@ -169,7 +168,7 @@ class World:
                     # await db.update_player()          
                 
                     # send the player
-                    await EventUtility.send_message(GetClientEvent(len(self.players)), player.websocket)
+                    await GetClientEvent(len(self.players)).send(player.websocket)
                 else:
                     # Process a generic command
                     await self.process_command(player, message)

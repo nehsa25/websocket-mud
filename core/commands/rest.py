@@ -1,5 +1,5 @@
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
+from core.events.rest import RestEvent
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -19,22 +19,13 @@ class Rest:
         monsters_in_room = len(player.room.monsters)
         if player.in_combat is True or monsters_in_room > 0:
             player.statuses.is_resting = False
-            await EventUtility.send_message(
-                EventUtility.RestEvent(
-                    "You cannot rest at this time.  You are in combat.",
-                    rest_error=True,
-                    is_resting=False,
-                ),
-                player.websocket,
-            )
+            await RestEvent(
+                "You cannot rest at this time.  You are in combat.", 
+                rest_error=True, 
+                is_resting=False).send(player.websocket)
         else:
             # message staying you're starting to rest
-            await EventUtility.send_message(
-                EventUtility.RestEvent(
-                    "You settle to rest.", rest_error=False, is_resting=True
-                ),
-                player.websocket,
-            )
+            await RestEvent("You settle to rest.", rest_error=False, is_resting=True).send(player.websocket)
 
             # set an attribute that we can use later
             player.statuses.is_resting = True

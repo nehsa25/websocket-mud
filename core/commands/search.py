@@ -1,7 +1,6 @@
 from random import random
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -23,9 +22,7 @@ class Search:
         if success is True:
             if len(world_state.rooms.rooms[player.room.id].hidden_items) > 0:
                 for item in world_state.rooms.rooms[player.room.id].hidden_items:
-                    await EventUtility.send_message(
-                        InfoEvent(f"You found {item.name}!"), player.websocket
-                    )
+                    await InfoEvent(f"You found {item.name}!").send(player.websocket)
 
                     # remove from "hidden items"
                     world_state.rooms.rooms[player.room.id].hidden_items.remove(item)
@@ -33,16 +30,11 @@ class Search:
                     # add to items in room
                     world_state.rooms.rooms[player.room.id].items.append(item)
             else:
-                await EventUtility.send_message(
-                    InfoEvent(
+                await InfoEvent(
                         "After an exhaustive search, you find nothing and give up."
-                    ),
-                    player.websocket,
-                )
+                    ).send(player.websocket)
         else:
-            await EventUtility.send_message(
-                InfoEvent("You search around but notice nothing."), player.websocket
-            )
+            await InfoEvent(f"{player.name} searches the room but finds nothing.").send(player.websocket)
 
         self.logger.info(f"player {player.name} search yielded results: {success}")
         self.logger.debug("exit")

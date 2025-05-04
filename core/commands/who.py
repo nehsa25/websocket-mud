@@ -1,5 +1,5 @@
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
+from core.events.announcement import AnnouncementEvent
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -20,9 +20,6 @@ class Who:
         for player in world_state.players.players:
             players += f"{player.name}<br>"
 
-        await EventUtility.send_message(
-            EventUtility.AnnouncementEvent(f"Players Online:<br>{players}"),
-            player.websocket,
-        )
+        await AnnouncementEvent(f"Players Online:<br>{players}").send(player.websocket)
         self.logger.debug("exit")
         return player

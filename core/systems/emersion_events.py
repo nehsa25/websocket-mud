@@ -1,7 +1,6 @@
 import asyncio
 from datetime import datetime
 from random import randint, random
-from core.enums.time_of_day import TimeOfDayEnum
 from core.events.environment import EnvironmentEvent
 from core.events.time import TimeEvent
 from utilities.events import EventUtility
@@ -15,10 +14,9 @@ class EmersionEvents:
     def __init__(self):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing EmersionEvents() class")
-
         self.logger.debug("Done initializing EmersionEvents() class")
 
-    async def setup(self):
+    async def start(self):
         await self.rain()
         await self.thunder()
         await self.breeze()
@@ -57,36 +55,8 @@ class EmersionEvents:
             )
             msg = f"You hear a {bang_type} {distance}.."
             for p in self.players.players:
-                await self.send_message(EnvironmentEvent(msg), p.websocket)
+                await EnvironmentEvent(msg).send(p.websocket)
 
-    # sets day or night
-    async def day_or_night(self):
-        self.logger.debug("enter")
-
-        if self.dayornight == TimeOfDayEnum.NIGHT:
-            await self.alert_world(
-                "It is night.", event_type=EnvironmentEvent
-            )
-        else:
-            await self.alert_world(
-                "You see light off to the distance. It is daytime.", event_type=EnvironmentEvent
-            )
-
-        # for each monster in room still alive
-        while not self.shutdown:
-            await asyncio.sleep(self.dayornight_interval * 60)
-            self.logger.info(
-                f"{method_name}: Checking: check_day_or_night", self.logger
-            )
-            self.dayornight = (
-                TimeOfDayEnum.DAY
-                if self.dayornight == TimeOfDayEnum.NIGHT
-                else TimeOfDayEnum.NIGHT
-            )
-            await self.alert_world(
-                f"It is now {self.dayornight.name.lower()}.",
-                event_type=EnvironmentEvent,
-            )
 
     # just return the current date/time
     async def get_system_time(self):
@@ -94,7 +64,7 @@ class EmersionEvents:
         while not self.shutdown:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
             for p in self.players.players:
-                await self.send_message(TimeEvent(time), p.websocket)
+                await TimeEvent(time).send(p.websocket)
 
             # sleep 10 minutes
             await asyncio.sleep(60 * 10)
@@ -107,22 +77,16 @@ class EmersionEvents:
             self.logger.debug(f"Will run rain1 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent("It begins to rain.."),
-                    p.websocket,
-                )
+                await EnvironmentEvent("It begins to rain..").send(p.websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
             self.logger.debug(f"Will run rain2 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent(
-                        "The rain pitter-patters to a stop and the sun begins to shine through the clouds.."
-                    ),
-                    p.websocket,
-                )
+                await EnvironmentEvent(
+                    "The rain pitter-patters to a stop and the sun begins to shine through the clouds.."
+                    ).send(p.websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -132,10 +96,7 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: thunder")
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent("You hear thunder off in the distance.."),
-                    p.websocket,
-                )
+                await EnvironmentEvent("You hear thunder off in the distance..").send(p.websocket)
 
     # A gentle breeze blows by you..
     async def breeze(self):
@@ -146,10 +107,7 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: breeze")
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent("A gentle breeze blows by you.."),
-                    p.websocket,
-                )
+                await EnvironmentEvent("A gentle breeze blows by you..").send(p.websocket)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -163,10 +121,7 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: eerie_silence")
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent("An eerie silence engulfs the area.."),
-                    p.websocket,
-                )
+                await EnvironmentEvent("An eerie silence engulfs the area..").send(p.websocket)
 
     # Eyes are watching you..
     async def being_observed(self):
@@ -180,9 +135,6 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: being_observed")
             for p in self.players.players:
-                await EventUtility.send_message(
-                    EnvironmentEvent(
-                        "You are being observed. You glance around and behind you but cannot determine from where."
-                    ),
-                    p.websocket,
-                )
+                await EnvironmentEvent(
+                    "You are being observed. You glance around and behind you but cannot determine from where."
+                    ).send(p.websocket)

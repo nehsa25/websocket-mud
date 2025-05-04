@@ -9,7 +9,7 @@ from utilities.log_telemetry import LogTelemetryUtility
 
 
 class Weather:
-    start_description = None
+    start_description = "The sun is shining brightly."
     weather_type = None
     current_season = None
     weather_strength = None
@@ -18,8 +18,6 @@ class Weather:
     logger = None
     weather_room_description = None
     weather = None
-    dayornight = TimeOfDayEnum.NOON
-    dayornight_interval = 30
     eyeswatching_event = None
     check_for_attack_event = None
     breeze_event = None
@@ -38,26 +36,17 @@ class Weather:
     is_storming = False
 
     def __init__(self):
-        self.weather_type = random.choice(list(WeatherTypeEnum))
-        self.weather_strength = random.choice(list(WeatherStrengthEnum))
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing WorldEvents.Weather() class")
-        self.set_weather_descriptions()            
-        self.start_description = "The sun is shining brightly."
+        self.logger.debug("Initializing Weather class")    
+
+        self.weather_type = random.choice(list(WeatherTypeEnum))
+        self.weather_strength = random.choice(list(WeatherStrengthEnum))       
         self.weather_type = WeatherTypeEnum.SUN
         self.current_season = WeatherSeasonEnum.SUMMER
         self.weather_strength = WeatherStrengthEnum.LIGHT
+        self.set_weather_descriptions() 
 
         # setup weather events
-        self.eyeswatching_event = self.being_observed()
-        # self.weather.check_for_attack_event = self.check_monster_events()
-        self.breeze_event = self.breeze()
-        self.rain_event = self.rain()
-        self.eerie_event = self.eerie_silence()
-        self.thunder_event = self.thunder()
-        self.time_event = self.get_system_time()
-        self.bang_event = self.bang()
-        self.dayornight_event = self.day_or_night()
         self.admin_stats_event = self.get_admin_status()
         self.get_weather_season_event = self.get_weather_season()
         self.get_weather_event = self.get_weather()

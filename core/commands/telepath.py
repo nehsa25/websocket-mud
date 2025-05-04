@@ -1,6 +1,5 @@
 from core.enums.commands import CommandEnum
 from core.events.command import CommandEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -21,12 +20,8 @@ class Telepath:
         msg = command.split(" ", 1)[1]
         target_player = world_state.players.find_player_by_name(target_player_name)
         if target_player is not None and player.can_telepath():
-            await EventUtility.send_message(
-                CommandEvent(f'You whisper "{msg}" to {target_player.name}'),
-                player.websocket,
-            )
-            await target_player.websocket.send(
-                CommandEvent(f'{player.name} whispers "{msg}" to you.')
-            )
+            await CommandEvent(f'You whisper "{msg}" to {target_player.name}').send(player.websocket)
+            await CommandEvent(f'{player.name} whispers "{msg}" to you.').send(target_player.websocket)
+
         self.logger.debug("exit")
         return player

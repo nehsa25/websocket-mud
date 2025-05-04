@@ -5,7 +5,6 @@ from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
 
 
 class Look:
@@ -42,33 +41,26 @@ class Look:
                 break
 
         if valid_direction is True:
-            await EventUtility.send_message(
-                InfoEvent(
-                    f"You look to the {avail_exit['direction'].name.capitalize()}."
-                ),
-                player.websocket,
-            )
+            await InfoEvent(
+                f"{player.name} looks to the {wanted_direction}.", player.room.id
+            ).send(player.websocket)
 
             # send message to any players in same room
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
-                    await EventUtility.send_message(
-                        InfoEvent(
-                            f"You notice {player.name} looking to the {wanted_direction}."
-                        ),
-                        p.websocket,
-                    )
+                    await InfoEvent(
+                        f"{player.name} looks to the {wanted_direction}.", p.websocket
+                    ).send(p.websocket)
 
             await world_state.show_room(player, look_location_room=avail_exit["id"])
         else:
             for direction in self.Share.MudDirections.pretty_directions:
                 if (wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower()):
-                    await EventUtility.send_message(
-                        ErrorEvent(f"{direction[1]} is not a valid direction to look."),
-                        player.websocket,
-                    )
+                    await ErrorEvent(
+                        f"'{wanted_direction}' is not a valid direction to look."
+                    ).send(player.websocket)
         self.logger.debug("exit")
 
     async def execute(self, look_object, player, world_state):
@@ -94,9 +86,7 @@ class Look:
                     )
                 )
             )
-            await EventUtility.send_message(
-                InfoEvent("You look around the room."), player.websocket
-            )
+            await InfoEvent("You look around the room.").send(player.websocket)
 
             # send message to any players in same room that you're being suspicious
             if player.room:  # Check if player.room exists
@@ -135,10 +125,7 @@ class Look:
                 )
 
                 msg = await player.get_player_description()
-                await EventUtility.send_message(
-                    InfoEvent(msg),
-                    player.websocket,
-                )
+                await InfoEvent(msg).send(player.websocket)
                 if found:
                     return
 
@@ -161,10 +148,7 @@ class Look:
                                 )
                             )
                         )
-                        await EventUtility.send_message(
-                            InfoEvent(await p.get_player_description()),
-                            player.websocket,
-                        )
+                        InfoEvent(await p.get_player_description()).send(player.websocket)
                         break
                 if found:
                     return
@@ -191,9 +175,9 @@ class Look:
                                 )
                             )
                         )
-                        await EventUtility.send_message(
-                            InfoEvent(npc.description), player.websocket
-                        )
+                        await InfoEvent(
+                            f"{player.name} looks at {npc.name}."
+                        ).send(player.websocket)
                         break
                 if found:
                     return
@@ -218,9 +202,7 @@ class Look:
                                 )
                             )
                         )
-                        await EventUtility.send_message(
-                            InfoEvent(monster.description), player.websocket
-                        )
+                        await InfoEvent(monster.description).send(player.websocket)
                         break
                 if found:
                     return
@@ -243,16 +225,12 @@ class Look:
                                 )
                             )
                         )
-                        await EventUtility.send_message(
-                            InfoEvent(item.description), player.websocket
-                        )
+                        await InfoEvent(item.description).send(player.websocket) 
                         break
                 if found:
                     return
 
             if not found:
-                await EventUtility.send_message(
-                    ErrorEvent("You don't notice anything."), player.websocket
-                )
+                await ErrorEvent("You don't notice anything.").send(player.websocket)
 
         self.logger.debug("exit")

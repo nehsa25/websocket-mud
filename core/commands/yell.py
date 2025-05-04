@@ -1,7 +1,6 @@
 from core.enums.commands import CommandEnum
 from core.events.command import CommandEvent
 from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -20,9 +19,7 @@ class Yell:
         self.logger.debug("enter")
         msg = command.split(" ", 1)[1]
         adjacent_message = "You hear a loud yell from the adjacent room."
-        await EventUtility.send_message(
-            CommandEvent(f'You yell "{msg}"'), player.websocket
-        )
+        await CommandEvent(f'You yell "{msg}"').send(player.websocket)
         await player.room.alert(
             f'{player.name} yells "{msg}"',
             exclude_player=True,

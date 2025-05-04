@@ -1,0 +1,36 @@
+
+import asyncio
+from core.enums.time_of_day import TimeOfDayEnum
+from core.events.environment import EnvironmentEvent
+from utilities.events import EventUtility
+from utilities.log_telemetry import LogTelemetryUtility
+
+
+class TimeOfDay:
+    dayornight = None
+    dayornight_interval = 120  # in minutes
+
+    def __init__(self):
+        self.logger = LogTelemetryUtility.get_logger(__name__)
+        self.logger.debug("Initializing TimeOfDay() class")     
+
+    async def start(self):
+        self.logger.debug("Starting TimeOfDay() class")
+
+        # setup day or night
+        asyncio.create_task(self.day_or_night())
+
+    async def day_or_night(self):
+        self.logger.debug("enter")
+        while True:
+            await asyncio.sleep(self.dayornight_interval * 60)
+            
+            if self.dayornight == TimeOfDayEnum.NOON:
+                self.dayornight = TimeOfDayEnum.NIGHT
+            else:
+                self.dayornight = TimeOfDayEnum.NOON
+            
+            self.logger.info(f"Updating time of day to: {self.dayornight}")
+
+            msg = "It is now " + self.dayornight.name.lower() + "."
+            await EventUtility.alert_world(msg, event_type=EnvironmentEvent)

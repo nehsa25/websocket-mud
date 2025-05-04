@@ -1,7 +1,7 @@
 from core.enums.commands import CommandEnum
+from core.events.direction import DirectionEvent
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -52,24 +52,14 @@ class Move:
                 await player.set_rest(False)
 
             # update you
-            await EventUtility.send_message(
-                EventUtility.DirectionEvent(
-                    f"You travel {avail_exit['direction'].name.capitalize()}."
-                ),
-                player.websocket,
-            )
+            await DirectionEvent(f"You travel {avail_exit['direction'].name.capitalize()}.").send(player.websocket)
 
             # Update users you've left
             for p in world_state.players.players:
                 if player.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
-                    await EventUtility.send_message(
-                        InfoEvent(
-                            f"{player.name} travels {avail_exit['direction'].name.lower()}."
-                        ),
-                        p.websocket,
-                    )
+                    await InfoEvent.send(f"{player.name} travels {avail_exit['direction'].name.lower()}.")
 
             # update location
             player, world_state = await world_state.move_room_player(
@@ -89,16 +79,11 @@ class Move:
                     continue
                 if p.location_id.name == player.room.name:
                     opp_direction = avail_exit["direction"].opposite.name
-                    await EventUtility.send_message(
-                        InfoEvent(
+                    await InfoEvent(
                             f"{player.name} arrives from the {opp_direction[1].lower()}."
-                        ),
-                        p.websocket,
-                    )
+                        ).send(player.websocket)
         else:
-            await EventUtility.send_message(
-                ErrorEvent("You cannot go in that direction."), player.websocket
-            )
+            await  ErrorEvent("You cannot go in that direction.").send(player.websocket)
             await player.room.alert(
                 f"{player.name} attempted to go {friendly_direction} but could not!",
                 exclude_player=True,

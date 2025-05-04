@@ -1,7 +1,6 @@
 from core.enums.commands import CommandEnum
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -33,17 +32,11 @@ class Loot:
                     break
 
         if current_monster is None:
-            await EventUtility.send_message(
-                ErrorEvent(f"{wanted_monster} is not a valid loot target."),
-                player.websocket,
-            )
+            await ErrorEvent(f"{wanted_monster} is not a valid loot target.").send(player.websocket)
         else:
             if monster.is_alive is True:
-                await EventUtility.send_message(
-                    ErrorEvent(
-                        f"You cannot loot {current_monster.name}.  It wouldn't like that."
-                    ),
-                    player.websocket,
+                await ErrorEvent(f"You cannot loot {current_monster.name}.  It wouldn't like that.").send(
+                    player.websocket
                 )
             else:
                 # take money
@@ -51,24 +44,18 @@ class Loot:
                 if len(current_monster.money) > 0:
                     player.money.extend(current_monster.money)
                     msg = f"You take {len(current_monster.money)} copper from {monster_name}."
-                    await EventUtility.send_message(InfoEvent(msg), player.websocket)
+                    await InfoEvent(msg).send(player.websocket)
 
                     # alert the rest of the room
                     for room_player in world_state.rooms.rooms[player.room.id].players:
                         if room_player.websocket != player.websocket:
-                            await EventUtility.send_message(
-                                InfoEvent(
-                                    f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."
-                                ),
-                                room_player.websocket,
-                            )
+                            await InfoEvent(
+                                f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."
+                            ).send(room_player.websocket)
 
                     # remove from monster
                     current_monster.money = 0
                 else:
-                    await EventUtility.send_message(
-                        InfoEvent(f"{monster_name} has no money to loot."),
-                        player.websocket,
-                    )
+                    await InfoEvent(f"{monster_name} has no money to loot.").send(player.websocket)
         self.logger.debug("exit")
         return player

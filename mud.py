@@ -10,7 +10,6 @@ from utilities.system import SystemUtility
 from core.world import World
 from flask import Flask, jsonify
 import threading
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 app = Flask(__name__)
 logger = None
@@ -29,21 +28,15 @@ class Mud:
 
         # create our queues and pass them into both World and Connections so the two classes can communicate
 
-        # Create a queue for messages from the world to connections
+        # Create queues for messages world <-> connections
         self.to_connections_queue = asyncio.Queue()
-        # Create a queue for messages from connections to the world
         self.to_world_queue = asyncio.Queue()
 
         # websocket connections
-        self.connections = Connections(
-            self.to_connections_queue, self.to_world_queue
-        ) 
+        self.connections = Connections(self.to_connections_queue, self.to_world_queue)
 
         # session state
-        self.world = World(
-            self.to_world_queue, self.to_connections_queue
-        )
-
+        self.world = World(self.to_world_queue, self.to_connections_queue)
 
     # main loop when client connects
     async def main(self, websocket):
@@ -112,7 +105,7 @@ if __name__ == "__main__":
         loop.create_task(mud.world.process_connections_queue())
 
         # the world needs to run independently of the websocket server
-        loop.run_until_complete(mud.world.setup_world())
+        loop.run_until_complete(mud.world.start_world())
 
         logger.info(f"Server started at {host}:{port}.  Waiting for client connections...")
 

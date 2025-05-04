@@ -4,7 +4,6 @@ from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
 
 
 class Attack:
@@ -41,28 +40,18 @@ class Attack:
             if player.in_combat is None:
                 for p in world_state.rooms.rooms[player.room.id].players:
                     if p.name == player.name:
-                        await EventUtility.send_message(
-                            InfoEvent(f"You begin to attack {current_monster.name}!"),
-                            p.websocket,
-                        )
+                        await InfoEvent(f"You begin to attack {current_monster.name}!").send(p.websocket)
                         p.in_combat = current_monster
                     else:
-                        await EventUtility.send_message(
-                            InfoEvent(
-                                f"{player.name} begins to attack {current_monster.name}!"
-                            ),
-                            p.websocket,
-                        )
+                        await InfoEvent(f"{player.name} begins to attack {current_monster.name}!").send(p.websocket)
 
                 # if you die and go to the crypt then your room id will change..
-                while (current_monster.hitpoints > 0 and player.room.id == world_state.rooms.rooms[player.room.id].id):
+                while current_monster.hitpoints > 0 and player.room.id == world_state.rooms.rooms[player.room.id].id:
                     attack_potential = player.weapon.damage_potential  # determine attack damage
 
                     # for number of swings here
                     num_swings = 1
-                    num_swings += int(
-                        player.attributes.agility / player.weapon.weight_class.value
-                    )
+                    num_swings += int(player.attributes.agility / player.weapon.weight_class.value)
 
                     self.logger.debug(f"We're going to swing {num_swings} times!")
 
@@ -70,9 +59,7 @@ class Attack:
                     for x in range(0, num_swings):
                         self.logger.debug("Swinging!")
                         # attack monster
-                        obj = attack_potential.split(
-                            "d"
-                        )  # obj = obj[0] == 1, obj[1] == 2
+                        obj = attack_potential.split("d")  # obj = obj[0] == 1, obj[1] == 2
                         dice = int(obj[0])  # 1
                         damage_potential = int(obj[1])  # 2
                         damage_multipler = randint(0, damage_potential)
@@ -88,9 +75,7 @@ class Attack:
                                     response = f"You {player.weapon.verb} {current_monster.name} with your {player.weapon.name.lower()} for {str(damage)} damage!"
                                 else:
                                     response = f"You {player.weapon.verb} {current_monster.name} {num_swings} times with your {player.weapon.name.lower()} for {str(damage)} damage!"
-                                await EventUtility.send_message(
-                                    InfoEvent(response), p.websocket
-                                )
+                                await InfoEvent(response).send(p.websocket)
                         else:
                             if damage == 0:
                                 response = f"{player.name} swings wildly and misses!"
@@ -99,18 +84,14 @@ class Attack:
                                     response = f"{player.name} {player.weapon.plural_verb} {current_monster.name} with their {player.weapon.name.lower()} for {str(damage)} damage!"
                                 else:
                                     response = f"{player.name} {player.weapon.plural_verb} {current_monster.name} {num_swings} times with their {player.weapon.name.lower()} for {str(damage)} damage!"
-                                await EventUtility.send_message(
-                                    InfoEvent(response), p.websocket
-                                )
+                                await InfoEvent(response).send(p.websocket)
 
                     # subtract from monsters health
                     current_monster.hitpoints = current_monster.hitpoints - damage
 
                     if current_monster.hitpoints <= 0:
                         # set monster as dead
-                        await current_monster.kill(
-                            world_state.rooms.rooms[player.room.id]
-                        )
+                        await current_monster.kill(world_state.rooms.rooms[player.room.id])
 
                         for p in world_state.rooms.rooms[player.room.id].players:
                             if p.in_combat == current_monster:
@@ -119,9 +100,7 @@ class Attack:
 
                                 # send defeat message
                                 msg = f"You vanquished {current_monster.name}!<br>You received {current_monster.experience} experience."
-                                await EventUtility.send_message(
-                                    InfoEvent(msg), p.websocket
-                                )
+                                await InfoEvent(msg).send(p.websocket)
 
                                 # set combat back to none so we can fight someone else
                                 p.in_combat = None
@@ -134,17 +113,11 @@ class Attack:
                     else:
                         await asyncio.sleep(3)
             else:
-                await EventUtility.send_message(
-                    ErrorEvent(
-                        f"You cannot attack {current_monster.name}.  You are already in combat with {player.in_combat.name}."
-                    ),
-                    player.websocket,
-                )
+                await ErrorEvent(
+                    f"You cannot attack {current_monster.name}.  You are already in combat with {player.in_combat.name}."
+                ).send(player.websocket)
         else:
-            await EventUtility.send_message(
-                ErrorEvent(f"{wanted_monster} is not a valid attack target."),
-                player.websocket,
-            )
+            await ErrorEvent(f"{wanted_monster} is not a valid attack target.").send(player.websocket)
         world_state.rooms.rooms[player.room.id].monsters = room_monsters
         self.logger.debug("exit")
         return player

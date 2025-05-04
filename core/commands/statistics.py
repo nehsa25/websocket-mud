@@ -1,6 +1,5 @@
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -40,6 +39,6 @@ class Statistics:
         * Poisoned {player.statuses.is_poisoned}<br>
         **************************************************<br>
         """
-        await EventUtility.send_message(InfoEvent(player_stats), player.websocket)
+        await InfoEvent(player_stats).send(player.websocket)
         self.logger.debug("exit")
         return player

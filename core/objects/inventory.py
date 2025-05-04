@@ -24,7 +24,7 @@ class Inventory:
             found = True
 
             # send message to player
-            await player.send_message(InfoEvent(f"You pick up {item.name}."), player.websocket)
+            await InfoEvent(f"You pick up {item.name}.").send(player.websocket)
 
             # send message to room
             await player.room.alert(
@@ -59,7 +59,7 @@ class Inventory:
             found = True
 
             # send message to player
-            await player.send_message(InfoEvent(f"You drop {item.name}."), player.websocket)
+            await InfoEvent(f"You drop {item.name}.").send(player.websocket)
 
             # send message to room
             await player.room.alert(

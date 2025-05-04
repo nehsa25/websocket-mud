@@ -12,7 +12,6 @@ from ..events.monster_image import MonsterImageEvent
 from ..events.npc_image import NpcImageEvent
 from ..events.player_image import PlayerImageEvent
 from ..events.room_image import RoomImageEvent
-from utilities.events import EventUtility
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
 from settings.global_settings import GlobalSettings
@@ -229,50 +228,30 @@ class AIImages:
 
                 # send room image event
                 if type == ImageEnum.ROOM:
-                    await EventUtility.send_message(
-                        RoomImageEvent(image_url), player.websocket
-                    )
+                    await RoomImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.ITEM:
-                    await EventUtility.send_message(
-                        ItemImageEvent(image_url), player.websocket
-                    )
+                    await ItemImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.PLAYER:
-                    await EventUtility.send_message(
-                        PlayerImageEvent(image_url), player.websocket
-                    )
+                    await PlayerImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.NPC:
-                    await EventUtility.send_message(
-                        NpcImageEvent(image_url), player.websocket
-                    )
+                    await NpcImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.MONSTER:
-                    await EventUtility.send_message(
-                        MonsterImageEvent(image_url), player.websocket
-                    )
+                    await MonsterImageEvent(image_url).send(player.websocket)
 
             else:
                 self.logger.info("Image already exists:")
                 self.logger.info(image_name)
                 image_url = AWSUtility.generate_public_url(image_name)
                 if type == ImageEnum.ROOM:
-                    await EventUtility.send_message(
-                        RoomImageEvent(image_url), player.websocket
-                    )
+                    await RoomImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.ITEM:
-                    await EventUtility.send_message(
-                        ItemImageEvent(image_url), player.websocket
-                    )
+                    await ItemImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.PLAYER:
-                    await EventUtility.send_message(
-                        PlayerImageEvent(image_url), player.websocket
-                    )
+                    await PlayerImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.NPC:
-                    await EventUtility.send_message(
-                        NpcImageEvent(image_url), player.websocket
-                    )
+                    await NpcImageEvent(image_url).send(player.websocket)
                 elif type == ImageEnum.MONSTER:
-                    await EventUtility.send_message(
-                        MonsterImageEvent(image_url), player.websocket
-                    )
+                    await MonsterImageEvent(image_url).send(player.websocket)
 
         except Exception as e:
             self.logger.error(f"Error: {ExceptionUtility.get_exception_information(e)}")

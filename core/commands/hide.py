@@ -2,7 +2,6 @@ from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
 
 
 class Hide:
@@ -36,14 +35,11 @@ class Hide:
         if found_item is True:
             # remove from inventory
             player.inventory.items.remove(item_obj)
-            await EventUtility.send_message(
-                InfoEvent(f"You hid {item_obj.name}."), player.websocket
-            )
+            await InfoEvent(
+                f"{player.name} hid {item_obj.name}.", player.room.id
+            ).send(player.websocket)
             world_state.rooms.rooms[player.room.id].hidden_items.append(item_obj)
         else:
-            await EventUtility.send_message(
-                ErrorEvent(f"You aren't carrying {wanted_item} to hide."),
-                player.websocket,
-            )
+            await ErrorEvent(f"You aren't carrying {wanted_item} to hide.").send(player.websocket)
         self.logger.debug("exit")
         return player

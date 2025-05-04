@@ -8,10 +8,3 @@ class EventUtility:
     @staticmethod
     def get_event_type_id(event):
         return event.value
-    
-    @staticmethod
-
-    async def send_message(event_object, websocket):
-        msg = event_object.to_json()
-        await websocket.send(str(msg))
-        

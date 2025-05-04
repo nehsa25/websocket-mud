@@ -1,7 +1,6 @@
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
-from utilities.events import EventUtility
 
 
 class Equip:
@@ -23,9 +22,9 @@ class Equip:
         # check if the item is in our inventory
         for item in player.inventory.items:
             if item.name.lower() == wanted_item.lower():
-                await EventUtility.send_message(
-                    InfoEvent(f"You equip {item.name}."), player.websocket
-                )
+                await InfoEvent(
+                    f"{player.name} equips {item.name}.", player.room.id
+                ).send(player.websocket)
                 item.equipped = True
                 found_item = True
                 found_item = item
@@ -35,13 +34,13 @@ class Equip:
             if (
                 found_item.item_type == item.item_type and item.equipped is True
             ) and found_item.name != item.name:
-                await EventUtility.send_message(
-                    f"You unequip {item.name}.", "info", player.websocket
-                )
+                await InfoEvent(
+                    f"{player.name} unequips {item.name}.", player.room.id
+                ).send(player.websocket)
                 item.equipped = False
         if found_item is None:
-            await EventUtility.send_message(
-                f"You cannot equip {wanted_item}.", "error", player.websocket
-            )
+            await InfoEvent(
+                f"{player.name} tried to equip {wanted_item}.", player.room.id
+            ).send(player.websocket)
         self.logger.debug("exit")
         return player

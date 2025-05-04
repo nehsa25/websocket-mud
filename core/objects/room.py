@@ -139,9 +139,9 @@ class Room:
                 if p.name != player.name:
                     self.logger.info(f'alerting {p.name} of "{message}"')
                     eventObj = event_type(message)
-                    await EventUtility.send_message(eventObj, p.websocket)
+                    await  eventObj.send(p.websocket)
             else:
-                await EventUtility.send_message(event_type(message), p.websocket)
+                await event_type(message).send(p.websocket)
 
         if adjacent_message != "":
             for e in self.exits:

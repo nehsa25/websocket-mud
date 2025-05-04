@@ -1,6 +1,6 @@
 from core.enums.commands import CommandEnum
 from core.events.error import ErrorEvent
-from utilities.events import EventUtility
+from core.events.username_change import UsernameChangedEvent
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -25,9 +25,7 @@ class System:
         action_to_take = None
         request = None
         if len(wanted_command) < 1:
-            await EventUtility.send_message(
-                ErrorEvent("Invalid system command"), player.websocket
-            )
+            await ErrorEvent("Invalid system command").send(player.websocket)
             return player
 
         # this is the acton component of the command
@@ -46,11 +44,8 @@ class System:
             player, world_state = await world_state.players.register(
                 player, world_state
             )
-            await EventUtility.send_message(
-                EventUtility.UsernameChangedEvent(
+            await UsernameChangedEvent(
                     f"You are now known as {player.name}", player.name
-                ),
-                player.websocket,
-            )
+                ).send(player.websocket)
         self.logger.debug("exit")
         return player

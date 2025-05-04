@@ -1,7 +1,6 @@
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
-from utilities.events import EventUtility
 
 
 class Experience:
@@ -17,8 +16,6 @@ class Experience:
 
     async def execute(self, player):
         self.logger.debug("enter")
-        await EventUtility.send_message(
-            InfoEvent(f"You have {player.experience} experience."), player.websocket
-        )
+        await InfoEvent(f"You have {player.experience} experience.").send(player.websocket)
         self.logger.debug("exit")
         return player
