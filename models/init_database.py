@@ -290,10 +290,17 @@ class InitializeDatabase:
                         )
                         db_class = class_result.scalar_one_or_none()
 
+                        # Find Role
+                        role_name = p_data.get("role")
+                        role_result = await session.execute(
+                            select(DBRole).where(DBRole.name == role_name)
+                        )
+                        db_role = role_result.scalar_one_or_none()
+                        
                         # Insert into DBPlayer
                         db_player = DBPlayer(
                             name=p_data.get("name"),
-                            role=p_data.get("role"),
+                            role_id=db_role.id if db_role else None,
                             level=p_data.get("level"),
                             pronoun=p_data.get("pronoun"),
                             experience=p_data.get("experience"),
