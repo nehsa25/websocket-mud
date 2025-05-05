@@ -75,7 +75,7 @@ function App() {
         console.log("pushGenericEvent: Entered");
 
         const styledMessage = (
-            <Text className="latest-message">
+            <Text as="span" className="latest-message">
                 {message}
             </Text>
         );
@@ -100,12 +100,12 @@ function App() {
 
         const result = (
             <Box>
-                <Text as="span">
+                <Text as="span" as="span">
                     Welcome to the NehsaMud and the world of{" "}
                     <Flex display="inline-flex">
                         {starTeal} {starPurple} {starRed} {starYellow}
                     </Flex>
-                    <Text as="span" fontWeight="bold" color={importantColor}>
+                    <Text as="span" as="span" fontWeight="bold" color={importantColor}>
                         {worldName}
                     </Text>
                     <Flex display="inline-flex">
@@ -116,7 +116,7 @@ function App() {
                 <Heading size="md" mt={4}>
                     My son, Ethan, and I are making a MUD!
                 </Heading>
-                <Text>
+                <Text as="span">
                     The intent is for NehsaMUD to not just a game but a platform for continuous learning and
                     exploration. We use Python, React, TypeScript, Golang, C#, and various
                     other libraries, tools, and AI within Illisurom, all aiming to create an
@@ -126,7 +126,7 @@ function App() {
                 <Heading size="md" mt={4}>
                     Why a MUD?
                 </Heading>
-                <Text>
+                <Text as="span">
                     It's a tribute to one of the most underappreciated types of game ever
                     created:{" "}
                     <Box as="a" target="_blank" href="https://en.wikipedia.org/wiki/Multi-user_dungeon" fontWeight="semibold" color={importantishColor}>
@@ -157,7 +157,7 @@ function App() {
                             <LuCircleCheck />
                         </List.Indicator>
                         All the images are created via AI. More information on that in the <span style={{ paddingLeft: '5px' }}>
-                            <Text as="a" target="_blank" href="https://www.nehsa.net/aiimage" color="blue.500">
+                            <Text as="span" as="a" target="_blank" href="https://www.nehsa.net/aiimage" color="blue.500">
                                 AI Image Generation
                             </Text>
                         </span>
@@ -167,7 +167,7 @@ function App() {
                             <LuCircleCheck />
                         </List.Indicator>
                         All NPC and monster dialog is AI provided via <span style={{ paddingLeft: '5px' }}>
-                            <Text as="a" target="_blank" href="https://www.nehsa.net/gemini" color="blue.500">
+                            <Text as="span" as="a" target="_blank" href="https://www.nehsa.net/gemini" color="blue.500">
                                 Google Gemini
                             </Text></span>
                     </List.Item>
@@ -203,7 +203,7 @@ function App() {
                     Lastly, NehsaMUD is a side project.
                 </Heading>
 
-                <Text>
+                <Text as="span">
                     We want to recreate an old game using modern technologies. Please
                     understand that NehsaMUD is a side project. It's perpetually mostly
                     broken...
