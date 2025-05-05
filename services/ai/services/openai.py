@@ -1,8 +1,8 @@
 import json
 import os
 import requests
-from core.ai.services.prompt import PromptSettings
 from dontcheckin import Secrets
+from services.ai.services.prompt import PromptSettings
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
 from settings.global_settings import GlobalSettings

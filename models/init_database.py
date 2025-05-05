@@ -296,7 +296,7 @@ class InitializeDatabase:
                             select(DBRole).where(DBRole.name == role_name)
                         )
                         db_role = role_result.scalar_one_or_none()
-                        
+
                         # Insert into DBPlayer
                         db_player = DBPlayer(
                             name=p_data.get("name"),
@@ -305,6 +305,7 @@ class InitializeDatabase:
                             pronoun=p_data.get("pronoun"),
                             experience=p_data.get("experience"),
                             money=p_data.get("money"),
+                            token=p_data.get("token"),
                             attributes_id=db_attributes.id,
                             room_id=room.id if room else None,
                             race_id=db_race.id if db_race else None,

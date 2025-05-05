@@ -5,7 +5,7 @@ import jwt
 
 from dontcheckin import Secrets
 
-class Auth:
+class AuthService:
     SECRET_KEY = Secrets.JWT_SECRET  
 
     @staticmethod
@@ -14,13 +14,13 @@ class Auth:
             'username': username,
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)  # Token expiration
         }
-        token = jwt.encode(payload, Auth.SECRET_KEY, algorithm='HS256')
+        token = jwt.encode(payload, AuthService.SECRET_KEY, algorithm='HS256')
         return token
     
     @staticmethod
     def validate_token(token):
         try:
-            payload = jwt.decode(token, Auth.SECRET_KEY, algorithms=['HS256'])
+            payload = jwt.decode(token, AuthService.SECRET_KEY, algorithms=['HS256'])
             return payload['username']
         except jwt.ExpiredSignatureError:
             return None
@@ -35,6 +35,6 @@ class Auth:
 if __name__ == "__main__":
 
     # Generate a 256-bit secret key (32 bytes)
-    key = Auth.generate_secret_key()
+    key = AuthService.generate_secret_key()
     print("Generated Secret Key:", key)
 

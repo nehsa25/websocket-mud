@@ -1,24 +1,24 @@
 import os
 import jsonpickle
-from .file import AIFile
-from .services.gemini import GeminiAPI
-from .services.openai import OpenAIAPI
 from dontcheckin import Secrets
-from .services.prompt import PromptSettings
+from core.enums.images import ImageEnum
+from core.events.item_image import ItemImageEvent
+from core.events.monster_image import MonsterImageEvent
+from core.events.npc_image import NpcImageEvent
+from core.events.player_image import PlayerImageEvent
+from core.events.room_image import RoomImageEvent
 from enums.ai_generation_services import AIGeneration
-from ..enums.images import ImageEnum
-from ..events.item_image import ItemImageEvent
-from ..events.monster_image import MonsterImageEvent
-from ..events.npc_image import NpcImageEvent
-from ..events.player_image import PlayerImageEvent
-from ..events.room_image import RoomImageEvent
+from services.ai.file import AIFile
+from services.ai.services.gemini import GeminiAPI
+from services.ai.services.openai import OpenAIAPI
+from services.ai.services.prompt import PromptSettings
 from utilities.log_telemetry import LogTelemetryUtility
 from utilities.exception import ExceptionUtility
 from settings.global_settings import GlobalSettings
 from utilities.aws import AWSUtility
 
 
-class AIImages:
+class ImageService:
     style = None
     secrets = Secrets()
     generator = None
@@ -37,7 +37,7 @@ class AIImages:
 
     def __init__(self) -> None:
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing AIImages() class")
+        self.logger.debug("Initializing ImageService() class")
 
         # super seed!
         self.seed = self.create_seed()
@@ -59,7 +59,7 @@ class AIImages:
 
     def add_log_entry(self, log_name, file_name, description):
         self.logger.debug("enter")
-        entry = AIImages.LogEntry(file_name, description).to_json()
+        entry = ImageService.LogEntry(file_name, description).to_json()
         bytes_written = 0
         with open(log_name, "a") as text_file:
             bytes_written = text_file.write(f"{entry}\n")
@@ -72,7 +72,7 @@ class AIImages:
         with open(log_name, "r") as text_file:
             contents = text_file.readlines()
             for line in contents:
-                entry = AIImages.LogEntry(line)
+                entry = ImageService.LogEntry(line)
                 if entry.description == description:
                     result = entry.file_name
         self.logger.info(f"found: {True if result is not None else False}")
@@ -255,3 +255,21 @@ class AIImages:
 
         except Exception as e:
             self.logger.error(f"Error: {ExceptionUtility.get_exception_information(e)}")
+
+    def get_data_file_name(self, image_type, tone):
+        self.logger.debug("enter")
+
+        file_name = ""
+        if image_type == ImageEnum.ROOM:
+            file_name = f"{GlobalSettings.DATA_PATH}/rooms.txt"
+        elif image_type == ImageEnum.ITEM:
+            file_name = f"{GlobalSettings.DATA_PATH}/items.txt"
+        elif image_type == ImageEnum.PLAYER:
+            file_name = f"{GlobalSettings.DATA_PATH}/players.txt"
+        elif image_type == ImageEnum.NPC:
+            file_name = f"{GlobalSettings.DATA_PATH}/npcs.txt"
+        elif image_type == ImageEnum.MONSTER:
+            file_name = f"{GlobalSettings.DATA_PATH}/monsters.txt"
+
+        self.logger.debug("exit")
+        return file_name

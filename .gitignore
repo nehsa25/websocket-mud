@@ -40,3 +40,6 @@ core/events/__pycache__/*
 core/interfaces/__pycache__/*
 game_data.db
 core/objects/__pycache__/*
+services/ai/services/__pycache__/*
+services/ai/__pycache__/*
+core/objects/__pycache__/*

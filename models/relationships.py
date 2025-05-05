@@ -1,5 +1,6 @@
 from models.db_armor import DBArmor
 from models.db_directions import DBDirection
+from models.db_exits import DBExit
 from models.db_items import DBItem
 from models.db_items_food import DBFood
 from models.db_items_lightsources import DBLightsource

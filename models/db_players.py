@@ -10,11 +10,12 @@ class DBPlayer(Base):
     __tablename__ = "players"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str]
-    role: Mapped[str]
     experience: Mapped[int]
     level: Mapped[int]
+    token: Mapped[str]
     money: Mapped[int]
     pronoun: Mapped[str]
+    role_id: Mapped[Optional[int]] = mapped_column(ForeignKey("roles.id"))
     race_id: Mapped[Optional[int]] = mapped_column(ForeignKey("player_classes.id"))
     class_id: Mapped[Optional[int]] = mapped_column(ForeignKey("player_classes.id"))
     attributes_id: Mapped[Optional[int]] = mapped_column(ForeignKey("attributes.id"))

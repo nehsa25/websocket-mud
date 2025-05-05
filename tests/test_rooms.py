@@ -141,14 +141,24 @@ def test_bidirectional_exits(session):
 
 def get_reverse_direction(direction: str) -> str:
     """Helper function to get the reverse direction."""
-    if direction == "north": return "south"
-    elif direction == "south": return "north"
-    elif direction == "east": return "west"
-    elif direction == "west": return "east"
-    elif direction == "northeast": return "southwest"
-    elif direction == "northwest": return "southeast"
-    elif direction == "southeast": return "northwest"
-    elif direction == "southwest": return "northeast"
-    elif direction == "up": return "down"
-    elif direction == "down": return "up"
+    if direction == "north": 
+        return "south"
+    elif direction == "south": 
+        return "north"
+    elif direction == "east": 
+        return "west"
+    elif direction == "west": 
+        return "east"
+    elif direction == "northeast": 
+        return "southwest"
+    elif direction == "northwest": 
+        return "southeast"
+    elif direction == "southeast": 
+        return "northwest"
+    elif direction == "southwest": 
+        return "northeast"
+    elif direction == "up": 
+        return "down"
+    elif direction == "down": 
+        return "up"
     return ""

@@ -1,16 +1,23 @@
 import asyncio
 import json
 from random import randint
+import re
 from core.enums.environments import EnvironmentEnum
 from core.enums.events import EventEnum
+from core.enums.send_scope import SendScopeEnum
 from core.events.duplicate_name import DuplicateNameEvent
 from core.events.get_client import GetClientEvent
+from core.events.info import InfoEvent
 from core.events.invalid_name import InvalidNameEvent
 from core.events.username_request import UsernameRequestEvent
+from core.events.welcome import WelcomeEvent
 from core.locks import NpcLock
 from core.objects.player import Player
 from core.systems.timeofday import TimeOfDay
 from core.systems.emersion_events import EmersionEvents
+from models.db_players import DBPlayer
+from models.world_database import WorldDatabase
+from services.auth import AuthService
 from services.world import WorldService
 from settings.world_settings import WorldSettings
 from utilities.events import EventUtility
@@ -21,10 +28,9 @@ class World:
     def __init__(self, 
                  to_connections_queue: asyncio.Queue, 
                  to_world_queue: asyncio.Queue, 
-                 world_service: WorldService): 
+                 world_service: WorldService):
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing WorldState() class")
-        self.players = []
+        self.logger.debug("Initializing World")
         self.monsters = []
         self.npcs = []
         self.rooms = []
@@ -34,6 +40,9 @@ class World:
         self.timeofDay = TimeOfDay()
         if not world_service:
             self.world_service = WorldService()
+        self.world_database = WorldDatabase()
+        
+        self.auth_service = AuthService()
         self.to_connections_queue = to_connections_queue
         self.to_world_queue = to_world_queue
 
@@ -50,7 +59,7 @@ class World:
         self.logger.debug(f"enter, message: {message}")
 
         # Parse the message as JSON
-        data = json.loads(message.message) # this is the actual event from the client
+        data = json.loads(message.message)  # this is the actual event from the client
         self.logger.debug(f"Parsed JSON data: {data}")
 
         # Handle different message types
@@ -59,11 +68,11 @@ class World:
             self.logger.info(f"Received command: {command}")
             await self.command.run_command(player, command, self.world_state)
         else:
-            LogTelemetryUtility.warn(f"Unknown message type: {data['type']}")
+            self.logger.warn(f"Unknown message type: {data['type']}")
 
     async def find_player_by_websocket(self, websocket):
-        return next((p for p in self.players if p.websocket == websocket), None)
-    
+        return next((p for p in self.world_service.players if p == websocket.id.hex), None)
+
     async def check_valid_name(self, name):
         self.logger.debug("enter")
 
@@ -130,46 +139,63 @@ class World:
             # assoiciate the message with the player
             player = await self.find_player_by_websocket(message.websocket)
             if not player and message.type == EventEnum.CONNECTION_NEW.value:
-                player = Player(message.websocket)
-                self.players.append(player)
-                self.logger.debug(f"New player created: {player.name}")
+                self.world_service.players[message.websocket.id.hex] = None
+
+                await InfoEvent("A user is logging in...").send(
+                    websocket=message.websocket,
+                    scope=SendScopeEnum.WORLD,
+                    exclude_player=True,
+                    player_data=self.world_service.players,
+                )
 
                 # register the player with the world service
-                await self.world_service.register_player(player, 
-                                                         room_id=1, 
-                                                         environment_id=EnvironmentEnum.TOWNSMEE.value,
-                                                         websocket=message.websocket)
+                await self.world_service.register_player(
+                    player, room_id=1, environment_id=EnvironmentEnum.TOWNSMEE.value, websocket=message.websocket
+                )
 
                 # request the player to send their name
-                await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(player.websocket)
-            else:
-                # get the real message
+                await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(message.websocket)
+            elif message.type == EventEnum.CLIENT_MESSAGE.value:
+                # get the real type of the message
                 json_msg = json.loads(message.message)
-                if player and json_msg["type"] == EventEnum.USERNAME_ANSWER.value:
-                    # validate name ok
-                    is_ok = self.check_valid_name(json_msg["username"])
-                    if not is_ok:
-                        self.logger.debug(f"Invalid name: {json_msg['username']}")
-                        await InvalidNameEvent(json_msg["username"]).send(player.websocket)
-                        continue
+                if json_msg.get("type") == EventEnum.USERNAME_ANSWER.value:
+                    # if the user has a token, we can validate it, other, assume they are new
+                    if json_msg.get("token"):
+                        is_valid = await self.auth_service.validate_token(json_msg["token"])
+                        if not is_valid:
+                            self.logger.debug(f"Invalid token: {json_msg['token']}")
+                            await InvalidNameEvent(json_msg["username"]).send(message.websocket)
+                            continue
 
-                    # check for duplicate name
-                    ps = [p for p in self.players if p.name == json_msg["username"]]
-                    if len(ps) > 0:
-                        self.logger.debug(f"Duplicate name: {json_msg['username']}")
-                        await DuplicateNameEvent(json_msg["username"]).send(player.websocket)
-                        continue
+                    else:
+                        # validate name ok
+                        is_ok = self.check_valid_name(json_msg["username"])
+                        if not is_ok:
+                            self.logger.debug(f"Invalid name: {json_msg['username']}")
+                            await InvalidNameEvent(json_msg["username"]).send(message.websocket)
+                            continue
 
-                    player.name = json_msg["username"]      
-                    self.logger.info(f"Player {player.name} connected. Total players: {len(self.players)}")
+                        # create new player
+                        player = Player(json_msg["username"], message.websocket)
 
-                    # update player in db
-                    # await db.update_player()          
-                
+                        # generate a token for the player
+                        player.token = self.auth_service.generate_token(json_msg["username"])
+
+                        # update the db
+                        self.world_service.players[message.websocket.id.hex] = await self.world_database.update_player(player)
+                    
+                    self.logger.info(f"New player {player.name} connected. Total players: {len(self.world_service.players)}")
+
+                    await WelcomeEvent(f"Welcome {player.name}!", player.name, ).send(
+                        player.websocket, scope=SendScopeEnum.PLAYER, player_data=self.world_service.players
+                    )
+
                     # send the player
-                    await GetClientEvent(len(self.players)).send(player.websocket)
+                    await GetClientEvent(len(self.world_service.players)).send(player.websocket)
+                elif player and json_msg["type"] == EventEnum.ANNOUNCEMENT.value:
+                    pass
                 else:
-                    # Process a generic command
+                    # Process a in-game command
                     await self.process_command(player, message)
 
             self.to_world_queue.task_done()

@@ -15,5 +15,5 @@ class InvalidNameEvent(EventInterface):
     def to_json(self):
         return jsonpickle.encode(self)
 
-    async def send(self, websocket, scope=SendScopeEnum.PLAYER):
-        await EventService.instance().send_event(self, scope, websocket)
+    async def send(self, websocket, scope=SendScopeEnum.PLAYER, exclude_player=False, player_data=None):
+        await EventService.instance().send_event(self, scope, websocket, exclude_player, player_data)

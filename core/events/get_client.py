@@ -2,6 +2,7 @@ import jsonpickle
 from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
 from core.interfaces.event import EventInterface
+from services.events import EventService
 from utilities.events import EventUtility
 
 
@@ -16,6 +17,5 @@ class GetClientEvent(EventInterface):
     def to_json(self):
         return jsonpickle.encode(self)
 
-    async def send(self, websocket, scope=SendScopeEnum.PLAYER):
-        # await EventService.instance().send_event(self, scope, websocket)
-        pass
+    async def send(self, websocket, scope=SendScopeEnum.PLAYER, exclude_player=False, player_data=None):
+        await EventService.instance().send_event(self, scope, websocket, exclude_player, player_data)

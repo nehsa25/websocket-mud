@@ -1,9 +1,9 @@
 import asyncio
-from core.ai.image import AIImages
 from core.enums.images import ImageEnum
 from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
 from core.events.info import InfoEvent
+from services.ai.image import AIImages
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
 

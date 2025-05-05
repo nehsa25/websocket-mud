@@ -1,14 +1,27 @@
+from typing import Dict, Set
+from core.data.environment_data import EnvironmentData
+from core.data.room_data import RoomData
 from core.enums.send_scope import SendScopeEnum
 from core.events.get_client import GetClientEvent
+from core.objects.player import Player
+from services.image import ImageService
+from services.map import MapService
+from utilities.log_telemetry import LogTelemetryUtility
 
 
 class WorldService:
     _instance = None
 
     def __init__(self):
-        self.player_data = {}  # player_id: {"websocket": websocket, "room_id": room_id, "environment_id": environment_id}
-        self.room_players = {}  # room_id: set of player_ids
-        self.environment_players = {}  # environment_id: set of player_ids
+        self.logger = LogTelemetryUtility.get_logger(__name__)
+        self.logger.debug("Initializing WorldService")
+        self.players: Dict[str, int] = {} # id is db id and str is websocket. fast lookup for websocket
+        self.room_players: Dict[str, Set[str]] = {}
+        self.environment_players: Dict[str, Set[str]] = {}
+        self.rooms: Dict[str, RoomData] = {}
+        self.environments: Dict[str, EnvironmentData] = {}
+        self.image_service = ImageService()
+        self.map_service = MapService()
 
     @classmethod
     def get_instance(cls):
@@ -21,28 +34,41 @@ class WorldService:
         return WorldService.get_instance()
 
     async def register_player(self, player_id, websocket, room_id, environment_id):
-        self.player_data[player_id] = {"websocket": websocket, "room_id": room_id, "environment_id": environment_id}
+        # Track players in rooms
         if room_id not in self.room_players:
             self.room_players[room_id] = set()
         self.room_players[room_id].add(player_id)
+
+        # Track players in environments
         if environment_id not in self.environment_players:
             self.environment_players[environment_id] = set()
         self.environment_players[environment_id].add(player_id)
 
+        # generate map event
+        # await self.map_service.generate_map()
+
+        # generate room image event
+        # await self.image_service.generate_image()
+
     async def unregister_player(self, player_id):
-        if player_id in self.player_data:
-            data = self.player_data.pop(player_id)
-            room_id = data.get("room_id")
-            environment_id = data.get("environment_id")
+        if player_id in self.players:
+            player = self.players.pop(player_id)
+            room_id = player.room_id
+            environment_id = player.environment_id
+
+            # Remove player from room tracking
             if room_id in self.room_players:
                 self.room_players[room_id].discard(player_id)
+
+            # Remove player from environment tracking
             if environment_id in self.environment_players:
                 self.environment_players[environment_id].discard(player_id)
-            await GetClientEvent(len(self.players)).send(data.websocket, scope=SendScopeEnum.WORLD)
+
+            await GetClientEvent(len(self.players)).send(player.websocket, scope=SendScopeEnum.WORLD)
 
     async def get_player_websocket(self, player_id):
-        data = self.player_data.get(player_id)
-        return data.get("websocket") if data else None
+        player = self.players.get(player_id)
+        return player.websocket if player else None
 
     async def get_players_in_room(self, room_id):
         return list(self.room_players.get(room_id, []))
@@ -51,4 +77,19 @@ class WorldService:
         return list(self.environment_players.get(environment_id, []))
 
     async def get_all_player_websockets(self):
-        return [data["websocket"] for data in self.player_data.values()]
+        return [player.websocket for player in self.players.values()]
+
+    # Methods to manage rooms and environments (optional but good practice)
+    def add_room(self, room: RoomData):
+        if room.room_id not in self.rooms:
+            self.rooms[room.room_id] = room
+
+    def get_room(self, room_id: str) -> RoomData | None:
+        return self.rooms.get(room_id)
+
+    def add_environment(self, environment: EnvironmentData):
+        if environment.environment_id not in self.environments:
+            self.environments[environment.environment_id] = environment
+
+    def get_environment(self, environment_id: str) -> EnvironmentData | None:
+        return self.environments.get(environment_id)
