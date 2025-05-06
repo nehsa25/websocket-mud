@@ -5,6 +5,8 @@ from core.interfaces.source_data import SourceInterface
 
 from core.enums.races import RaceEnum
 from core.enums.player_classes import PlayerClassEnum
+from services.auth import AuthService
+from utilities.log_telemetry import LogTelemetryUtility
 
 
 class PlayerSource(SourceInterface):
@@ -13,10 +15,16 @@ class PlayerSource(SourceInterface):
     initalization of the database.
     """
 
+    auth_service = None
+    def __init__(self):
+        self.logger = LogTelemetryUtility.get_logger(__name__)
+        self.logger.debug("Initializing PlayerSource")
+        self.auth_service = AuthService()
+
     def get_data(self):
         return [
             PlayerData(
-                name="Jesse",
+                name="Bink",
                 role="admin",
                 experience=0,
                 level=1,
@@ -34,5 +42,6 @@ class PlayerSource(SourceInterface):
                 player_race=RaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
                 room_id=1,
+                token=self.auth_service.generate_token("bink")
             )
         ]

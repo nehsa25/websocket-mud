@@ -40,11 +40,11 @@ class Player(PlayerInterface, MOBHelper):
     previous_room = None
     attack_task = None
     alignment = None
+    token = None
 
-    def __init__(self, name, websocket):
+    def __init__(self, websocket):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Player")
-        self.name = name
         self.websocket = websocket
 
     async def check_combat(self, room):

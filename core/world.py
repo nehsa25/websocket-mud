@@ -4,8 +4,8 @@ from random import randint
 import re
 from core.enums.environments import EnvironmentEnum
 from core.enums.events import EventEnum
+from core.enums.rooms import RoomEnum
 from core.enums.send_scope import SendScopeEnum
-from core.events.duplicate_name import DuplicateNameEvent
 from core.events.get_client import GetClientEvent
 from core.events.info import InfoEvent
 from core.events.invalid_name import InvalidNameEvent
@@ -15,7 +15,6 @@ from core.locks import NpcLock
 from core.objects.player import Player
 from core.systems.timeofday import TimeOfDay
 from core.systems.emersion_events import EmersionEvents
-from models.db_players import DBPlayer
 from models.world_database import WorldDatabase
 from services.auth import AuthService
 from services.world import WorldService
@@ -31,17 +30,16 @@ class World:
                  world_service: WorldService):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing World")
+
+        self.world_service = WorldService()
         self.monsters = []
         self.npcs = []
         self.rooms = []
         self.running_map_threads = []
         self.running_image_threads = []
-        self.emersionEvents = EmersionEvents()
-        self.timeofDay = TimeOfDay()
-        if not world_service:
-            self.world_service = WorldService()
-        self.world_database = WorldDatabase()
-        
+        self.emersionEvents = EmersionEvents(self.world_service)
+        self.timeofDay = TimeOfDay(self.world_service)
+        self.world_database = WorldDatabase()        
         self.auth_service = AuthService()
         self.to_connections_queue = to_connections_queue
         self.to_world_queue = to_world_queue
@@ -71,8 +69,16 @@ class World:
             self.logger.warn(f"Unknown message type: {data['type']}")
 
     async def find_player_by_websocket(self, websocket):
-        return next((p for p in self.world_service.players if p == websocket.id.hex), None)
+        if len(self.world_service.players) == 0:
+            self.logger.debug("No players found")
+            return None
+        
+        self.logger.debug(f"Finding player by websocket: {websocket.id.hex}")
+        return next((p for p in self.world_service.players if self.world_service.players[p].websocket == websocket), None)
 
+    async def find_player_by_name(self, name):
+        return next((p for p in self.world_service.players if p.name == name), None)
+    
     async def check_valid_name(self, name):
         self.logger.debug("enter")
 
@@ -136,57 +142,79 @@ class World:
             message = await self.to_world_queue.get()
             self.logger.debug(f"World received message from connections: {message}")
 
-            # assoiciate the message with the player
+            # associate the message with the player
             player = await self.find_player_by_websocket(message.websocket)
-            if not player and message.type == EventEnum.CONNECTION_NEW.value:
-                self.world_service.players[message.websocket.id.hex] = None
+            player_id = message.websocket.id.hex
 
+            if not player and message.type == EventEnum.CONNECTION_NEW.value:
                 await InfoEvent("A user is logging in...").send(
                     websocket=message.websocket,
                     scope=SendScopeEnum.WORLD,
                     exclude_player=True,
                     player_data=self.world_service.players,
                 )
-
+                
                 # register the player with the world service
                 await self.world_service.register_player(
-                    player, room_id=1, environment_id=EnvironmentEnum.TOWNSMEE.value, websocket=message.websocket
-                )
-
-                # request the player to send their name
-                await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(message.websocket)
+                    room_id=RoomEnum.TOWNSMEE_TOWNSQUARE.value,
+                    environment_id=EnvironmentEnum.TOWNSMEE.value, 
+                    websocket=message.websocket
+                )             
             elif message.type == EventEnum.CLIENT_MESSAGE.value:
                 # get the real type of the message
                 json_msg = json.loads(message.message)
                 if json_msg.get("type") == EventEnum.USERNAME_ANSWER.value:
+                    new_player_id = next((a for a in self.world_service.players if self.world_service.players[a].websocket == message.websocket), None)
+                    if new_player_id:
+                        player = self.world_service.players[new_player_id]
+                        player.name = json_msg["name"]
+                        self.world_service.players[player_id] = player
+                    else:
+                        self.logger.warning(f"Player with websocket {message.websocket} not found for name update.")
+
                     # if the user has a token, we can validate it, other, assume they are new
                     if json_msg.get("token"):
-                        is_valid = await self.auth_service.validate_token(json_msg["token"])
-                        if not is_valid:
-                            self.logger.debug(f"Invalid token: {json_msg['token']}")
-                            await InvalidNameEvent(json_msg["username"]).send(message.websocket)
+                        is_valid = self.auth_service.validate_token(json_msg["token"])
+                        if is_valid:                            
+
+                            # if the token is valid but we see a player is already using the name, we can assume this is a browser refresh
+                            # and we can just refresh the player with the new websocket
+                            player = self.world_service.players[message.websocket.id.hex]
+                            if player:
+                                # refresh the player
+                                player.websocket = message.websocket
+                                player.token = json_msg.get("token")
+                                self.world_service.players[message.websocket.id.hex] = player
+                                await WelcomeEvent(f"Welcome back {player.name}!", player.name, json_msg.get("token")).send(
+                                    player.websocket, scope=SendScopeEnum.PLAYER, player_data=self.world_service.players
+                                )
+                            else:
+                                raise Exception("Player not found in world service")
+                        else:
+                            self.logger.debug(f"Invalid token: {json_msg.get("token")}")
+                            await InvalidNameEvent(json_msg["name"]).send(message.websocket)
                             continue
 
                     else:
                         # validate name ok
-                        is_ok = self.check_valid_name(json_msg["username"])
+                        is_ok = self.check_valid_name(json_msg["name"])
                         if not is_ok:
-                            self.logger.debug(f"Invalid name: {json_msg['username']}")
-                            await InvalidNameEvent(json_msg["username"]).send(message.websocket)
+                            self.logger.debug(f"Invalid name: {json_msg['name']}")
+                            await InvalidNameEvent(json_msg["name"]).send(message.websocket)
                             continue
 
                         # create new player
-                        player = Player(json_msg["username"], message.websocket)
+                        player = Player(json_msg["name"], message.websocket)
 
                         # generate a token for the player
-                        player.token = self.auth_service.generate_token(json_msg["username"])
+                        player.token = self.auth_service.generate_token(json_msg["name"])
 
                         # update the db
-                        self.world_service.players[message.websocket.id.hex] = await self.world_database.update_player(player)
+                        self.world_service.players[player_id] = await self.world_database.update_player(player)
                     
                     self.logger.info(f"New player {player.name} connected. Total players: {len(self.world_service.players)}")
 
-                    await WelcomeEvent(f"Welcome {player.name}!", player.name, ).send(
+                    await WelcomeEvent(f"Welcome {player.name}!", player.name, player.token).send(
                         player.websocket, scope=SendScopeEnum.PLAYER, player_data=self.world_service.players
                     )
 

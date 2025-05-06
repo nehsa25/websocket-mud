@@ -3,14 +3,15 @@ from datetime import datetime
 from random import randint, random
 from core.events.environment import EnvironmentEvent
 from core.events.time import TimeEvent
+from services.world import WorldService
 from utilities.log_telemetry import LogTelemetryUtility
 
 
 class EmersionEvents:
     logger = None
     shutdown = False
-    
-    def __init__(self):
+
+    def __init__(self, world_service: WorldService):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing EmersionEvents() class")
         self.logger.debug("Done initializing EmersionEvents() class")
@@ -22,7 +23,6 @@ class EmersionEvents:
         await self.eerie_silence()
         await self.being_observed()
         await self.bang()
-        await self.day_or_night()
         await self.get_system_time()
 
     # A startling bang..
@@ -53,16 +53,15 @@ class EmersionEvents:
                 ]
             )
             msg = f"You hear a {bang_type} {distance}.."
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent(msg).send(p.websocket)
-
 
     # just return the current date/time
     async def get_system_time(self):
         self.logger.debug("enter")
         while not self.shutdown:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await TimeEvent(time).send(p.websocket)
 
             # sleep 10 minutes
@@ -75,17 +74,17 @@ class EmersionEvents:
             rand = randint(2000, 3600 * 2)
             self.logger.debug(f"Will run rain1 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent("It begins to rain..").send(p.websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
             self.logger.debug(f"Will run rain2 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent(
                     "The rain pitter-patters to a stop and the sun begins to shine through the clouds.."
-                    ).send(p.websocket)
+                ).send(p.websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -94,7 +93,7 @@ class EmersionEvents:
             self.logger.debug(f"Will run thunder event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             self.logger.info("Checking: thunder")
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent("You hear thunder off in the distance..").send(p.websocket)
 
     # A gentle breeze blows by you..
@@ -105,7 +104,7 @@ class EmersionEvents:
             self.logger.debug(f"Will run breeze event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             self.logger.info("Checking: breeze")
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent("A gentle breeze blows by you..").send(p.websocket)
 
     # An eerie silence settles on the room..
@@ -119,7 +118,7 @@ class EmersionEvents:
             )
             await asyncio.sleep(rand)
             self.logger.info("Checking: eerie_silence")
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent("An eerie silence engulfs the area..").send(p.websocket)
 
     # Eyes are watching you..
@@ -133,7 +132,7 @@ class EmersionEvents:
             )
             await asyncio.sleep(rand)
             self.logger.info("Checking: being_observed")
-            for p in self.players.players:
+            for p in self.world_service.players:
                 await EnvironmentEvent(
                     "You are being observed. You glance around and behind you but cannot determine from where."
-                    ).send(p.websocket)
+                ).send(p.websocket)

@@ -3,7 +3,6 @@ from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
 from core.interfaces.event import EventInterface
 from services.events import EventService
-from services.auth import AuthService
 from utilities.events import EventUtility
 
 
@@ -17,9 +16,7 @@ class WelcomeEvent(EventInterface):
         self.type = EventUtility.get_event_type_id(EventEnum.WELCOME)
         self.name = name
         self.message = message
-        
-        if token is None:
-            self.token = AuthService.generate_token(name)
+        self.token = token
 
     def to_json(self):
         return jsonpickle.encode(self)

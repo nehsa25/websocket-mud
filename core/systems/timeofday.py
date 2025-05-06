@@ -3,6 +3,7 @@ import asyncio
 from core.enums.send_scope import SendScopeEnum
 from core.enums.time_of_day import TimeOfDayEnum
 from core.events.info import InfoEvent
+from services.world import WorldService
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -10,9 +11,10 @@ class TimeOfDay:
     dayornight = None
     dayornight_interval = 120  # in minutes
 
-    def __init__(self):
+    def __init__(self, world_service: WorldService):
         self.logger = LogTelemetryUtility.get_logger(__name__)
-        self.logger.debug("Initializing TimeOfDay() class")     
+        self.logger.debug("Initializing TimeOfDay() class")   
+        self.world_service = world_service  
 
     async def start(self):
         self.logger.debug("Starting TimeOfDay() class")

@@ -1,11 +1,13 @@
-from typing import Dict, Set
+from typing import Dict, List, Set
 from core.data.environment_data import EnvironmentData
 from core.data.room_data import RoomData
 from core.enums.send_scope import SendScopeEnum
 from core.events.get_client import GetClientEvent
+from core.events.username_request import UsernameRequestEvent
 from core.objects.player import Player
 from services.image import ImageService
 from services.map import MapService
+from settings.world_settings import WorldSettings
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -15,7 +17,7 @@ class WorldService:
     def __init__(self):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing WorldService")
-        self.players: Dict[str, int] = {} # id is db id and str is websocket. fast lookup for websocket
+        self.players: Dict[str, Player] = {}
         self.room_players: Dict[str, Set[str]] = {}
         self.environment_players: Dict[str, Set[str]] = {}
         self.rooms: Dict[str, RoomData] = {}
@@ -33,7 +35,16 @@ class WorldService:
     def instance():
         return WorldService.get_instance()
 
-    async def register_player(self, player_id, websocket, room_id, environment_id):
+    async def register_player(self, websocket, room_id, environment_id):
+        self.logger.debug(f"Registering player: {websocket} in room {room_id} and environment {environment_id}")
+
+        player = Player(websocket)
+
+        player_id = websocket.id.hex
+
+        # get room
+        player.room = self.get_room(room_id)
+
         # Track players in rooms
         if room_id not in self.room_players:
             self.room_players[room_id] = set()
@@ -49,6 +60,12 @@ class WorldService:
 
         # generate room image event
         # await self.image_service.generate_image()
+
+        # add to list
+        self.players[player_id] = player
+
+        # request the player to send their name
+        await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(player.websocket)
 
     async def unregister_player(self, player_id):
         if player_id in self.players:

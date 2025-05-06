@@ -1,3 +1,4 @@
+# auth.py
 import base64
 import secrets
 import datetime
@@ -11,7 +12,7 @@ class AuthService:
     @staticmethod
     def generate_token(username):
         payload = {
-            'username': username,
+            'username': username.lower(),
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)  # Token expiration
         }
         token = jwt.encode(payload, AuthService.SECRET_KEY, algorithm='HS256')

@@ -221,6 +221,9 @@ function App() {
     // Function to process incoming events and update state
     const processEvent = useCallback((data: any): void => {
         console.log("processEvent: Enter for event: " + data.type);
+        const ws = data[1];
+        data = data[0];
+
         switch (data.type) {
             case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
@@ -236,16 +239,23 @@ function App() {
                 // check local storage for nehsamud object
                 const nehsamud = localStorage.getItem("nehsamud");
                 if (nehsamud) {
+                    console.log("Found nehsamud in local storage: " + nehsamud);
                     try {
                         const parsedNehsamud = JSON.parse(nehsamud);
-                        if (parsedNehsamud.username) {
-                            setUsername(parsedNehsamud.username);
+                        if (parsedNehsamud.name) {
+                            setUsername(parsedNehsamud.name);
                             const response = {
                                 type: MudEvents.USERNAME_ANSWER,
-                                username: parsedNehsamud.username,
-                                jwt_token: parsedNehsamud.jwt_token,
+                                name: parsedNehsamud.name,
+                                token: parsedNehsamud.token,
                             };
-                            socket?.send(JSON.stringify(response));
+                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                console.log("Sending username to server: " + parsedNehsamud.name);
+                                ws.send(JSON.stringify(response));
+                            } else {
+                                console.log("WebSocket not connected, cannot send username.");
+                            }
+                            
                             setCurrentRoomTitle(parsedNehsamud.username);
                         } else {
                             throw new Error("Username not found in stored data");
@@ -429,7 +439,7 @@ function App() {
             try {
                 const data = JSON.parse(event.data);
                 console.log('Received data:', data);
-                processEvent(data);
+                processEvent([data, ws]);
             } catch (error) {
                 console.error('Error parsing JSON:', error);
                 console.log('Raw message:', event.data);

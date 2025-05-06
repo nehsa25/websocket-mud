@@ -43,3 +43,4 @@ core/objects/__pycache__/*
 services/ai/services/__pycache__/*
 services/ai/__pycache__/*
 core/objects/__pycache__/*
+core/systems/__pycache__/*
