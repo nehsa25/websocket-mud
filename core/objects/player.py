@@ -41,6 +41,8 @@ class Player(PlayerInterface, MOBHelper):
     attack_task = None
     alignment = None
     token = None
+    socket_id = None
+
 
     def __init__(self, websocket):
         self.logger = LogTelemetryUtility.get_logger(__name__)

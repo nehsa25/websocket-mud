@@ -10,7 +10,7 @@ class AuthService:
     SECRET_KEY = Secrets.JWT_SECRET  
 
     @staticmethod
-    def generate_token(username):
+    def generate_token(username,):
         payload = {
             'username': username.lower(),
             'exp': datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)  # Token expiration

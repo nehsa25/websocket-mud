@@ -306,6 +306,8 @@ class InitializeDatabase:
                             experience=p_data.get("experience"),
                             money=p_data.get("money"),
                             token=p_data.get("token"),
+                            pin=p_data.get("pin"),
+                            salt=p_data.get("salt"),
                             attributes_id=db_attributes.id,
                             room_id=room.id if room else None,
                             race_id=db_race.id if db_race else None,

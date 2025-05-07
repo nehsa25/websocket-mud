@@ -39,4 +39,4 @@ class TimeOfDay:
     async def send_time(self):
         self.logger.debug("enter")
         msg = "It is now " + self.dayornight.name.lower() + "."
-        await InfoEvent(msg, scope=SendScopeEnum.WORLD)
+        await InfoEvent(msg).send(scope=SendScopeEnum.WORLD)

@@ -1,0 +1,85 @@
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+}
+
+.form-grid>div {
+    border: 1px solid #222;
+    padding: 1em;
+}
+
+.button-grid {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 1em;
+}
+
+.new-user-grid {
+    display: grid;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1em;
+}
+
+.username-input, 
+.username-requirements,
+.pin-input, 
+.pin-requirements {
+    max-width: 250px !important; 
+    margin: 0 auto;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    transition: opacity 1s ease-in-out; /* Add transition for opacity */
+
+    &.active {
+        opacity: 1; /* Make the modal visible when active */
+    }
+}
+
+.modal-content {
+    background-color: black;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    min-width: 500px;
+    max-width: 700px;
+    display: grid;
+    grid-template-rows: 1fr;
+    gap: 2em;
+}
+
+.modal-content input[type="text"], .modal-content input[type="password"]{
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.modal-content ul {
+    text-align: left; /* or start */
+}
+
+.modal-content button {
+    background-color: purple;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 0;
+    margin-top: 10px;
+}
+
+.modal-content button:hover {
+    background-color: #3e8e41;
+}

@@ -1,4 +1,4 @@
-from typing import Dict, List, Set
+from typing import Dict, Set
 from core.data.environment_data import EnvironmentData
 from core.data.room_data import RoomData
 from core.enums.send_scope import SendScopeEnum
@@ -40,20 +40,22 @@ class WorldService:
 
         player = Player(websocket)
 
-        player_id = websocket.id.hex
+        player_socket_id = websocket.id.hex
 
         # get room
         player.room = self.get_room(room_id)
 
+        player.socket_id = player_socket_id
+
         # Track players in rooms
         if room_id not in self.room_players:
             self.room_players[room_id] = set()
-        self.room_players[room_id].add(player_id)
+        self.room_players[room_id].add(player_socket_id)
 
         # Track players in environments
         if environment_id not in self.environment_players:
             self.environment_players[environment_id] = set()
-        self.environment_players[environment_id].add(player_id)
+        self.environment_players[environment_id].add(player_socket_id)
 
         # generate map event
         # await self.map_service.generate_map()
@@ -62,7 +64,7 @@ class WorldService:
         # await self.image_service.generate_image()
 
         # add to list
-        self.players[player_id] = player
+        self.players[player_socket_id] = player
 
         # request the player to send their name
         await UsernameRequestEvent(WorldSettings.WORLD_NAME).send(player.websocket)

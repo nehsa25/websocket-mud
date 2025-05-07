@@ -14,6 +14,7 @@ class EmersionEvents:
     def __init__(self, world_service: WorldService):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing EmersionEvents() class")
+        self.world_service = world_service
         self.logger.debug("Done initializing EmersionEvents() class")
 
     async def start(self):
@@ -54,7 +55,7 @@ class EmersionEvents:
             )
             msg = f"You hear a {bang_type} {distance}.."
             for p in self.world_service.players:
-                await EnvironmentEvent(msg).send(p.websocket)
+                await EnvironmentEvent(msg).send(self.world_service.players[p].websocket)
 
     # just return the current date/time
     async def get_system_time(self):
@@ -75,7 +76,7 @@ class EmersionEvents:
             self.logger.debug(f"Will run rain1 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             for p in self.world_service.players:
-                await EnvironmentEvent("It begins to rain..").send(p.websocket)
+                await EnvironmentEvent("It begins to rain..").send(self.world_service.players[p].websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
@@ -84,7 +85,7 @@ class EmersionEvents:
             for p in self.world_service.players:
                 await EnvironmentEvent(
                     "The rain pitter-patters to a stop and the sun begins to shine through the clouds.."
-                ).send(p.websocket)
+                ).send(self.world_service.players[p].websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -94,7 +95,9 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: thunder")
             for p in self.world_service.players:
-                await EnvironmentEvent("You hear thunder off in the distance..").send(p.websocket)
+                await EnvironmentEvent("You hear thunder off in the distance..").send(
+                    self.world_service.players[p].websocket
+                )
 
     # A gentle breeze blows by you..
     async def breeze(self):
@@ -105,7 +108,7 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: breeze")
             for p in self.world_service.players:
-                await EnvironmentEvent("A gentle breeze blows by you..").send(p.websocket)
+                await EnvironmentEvent("A gentle breeze blows by you..").send(self.world_service.players[p].websocket)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -119,7 +122,9 @@ class EmersionEvents:
             await asyncio.sleep(rand)
             self.logger.info("Checking: eerie_silence")
             for p in self.world_service.players:
-                await EnvironmentEvent("An eerie silence engulfs the area..").send(p.websocket)
+                await EnvironmentEvent("An eerie silence engulfs the area..").send(
+                    self.world_service.players[p].websocket
+                )
 
     # Eyes are watching you..
     async def being_observed(self):
@@ -135,4 +140,4 @@ class EmersionEvents:
             for p in self.world_service.players:
                 await EnvironmentEvent(
                     "You are being observed. You glance around and behind you but cannot determine from where."
-                ).send(p.websocket)
+                ).send(self.world_service.players[p].websocket)

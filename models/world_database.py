@@ -81,6 +81,8 @@ class WorldDatabase:
                     # Commit the changes to the database
                     await session.commit()
 
+                    return player_id
+
         except Exception as e:
             self.logger.error(f"Error updating player '{player.name}' in the database: {e}")
         self.logger.debug("exit")

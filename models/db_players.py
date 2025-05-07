@@ -14,6 +14,8 @@ class DBPlayer(Base):
     level: Mapped[int]
     token: Mapped[str]
     money: Mapped[int]
+    pin: Mapped[str]
+    salt: Mapped[str]
     pronoun: Mapped[str]
     role_id: Mapped[Optional[int]] = mapped_column(ForeignKey("roles.id"))
     race_id: Mapped[Optional[int]] = mapped_column(ForeignKey("player_classes.id"))

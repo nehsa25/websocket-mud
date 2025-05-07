@@ -7,6 +7,7 @@ from core.enums.races import RaceEnum
 from core.enums.player_classes import PlayerClassEnum
 from services.auth import AuthService
 from utilities.log_telemetry import LogTelemetryUtility
+from dontcheckin import Secrets
 
 
 class PlayerSource(SourceInterface):
@@ -42,6 +43,8 @@ class PlayerSource(SourceInterface):
                 player_race=RaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
                 room_id=1,
-                token=self.auth_service.generate_token("bink")
+                pin=Secrets.PIN,
+                salt=Secrets.SALT,
+                token=self.auth_service.generate_token("bink"),
             )
         ]

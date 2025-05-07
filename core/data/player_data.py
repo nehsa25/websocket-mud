@@ -4,7 +4,7 @@ from typing import Dict
 class PlayerData:
     def __init__(
         self, name, role, experience, level, money, 
-        pronoun, attributes, alignment, player_race, player_class, room_id, token
+        pronoun, attributes, alignment, player_race, player_class, room_id, token, pin, salt
     ):
         self.name: str = name
         self.role: str = role
@@ -18,6 +18,8 @@ class PlayerData:
         self.player_class: str = player_class
         self.room_id: int = room_id
         self.token: str = token
+        self.pin: str = pin
+        self.salt: str = salt
 
     def __str__(self):
         return self.name
@@ -36,4 +38,6 @@ class PlayerData:
             "player_class": self.player_class,
             "room_id": self.room_id,
             "token": self.token,
+            "pin": self.pin,
+            "salt": self.salt,
         }
