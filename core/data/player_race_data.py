@@ -13,6 +13,7 @@ class PlayerRaceData:
         attributes,
         directives: List[str],
         base_experience_adjustment: int,
+        playable: bool,
     ):
         self.name = name
         self.description = description
@@ -20,6 +21,7 @@ class PlayerRaceData:
         self.attributes = attributes
         self.directives = directives
         self.base_experience_adjustment = base_experience_adjustment
+        self.playable = playable
 
     def __str__(self):
         return self.name
@@ -33,4 +35,5 @@ class PlayerRaceData:
             "attributes": self.attributes.to_dict(),
             "directives": self.directives if self.directives else None,
             "base_experience_adjustment": self.base_experience_adjustment,
+            "playable": self.playable,            
         }

@@ -11,7 +11,8 @@ class PlayerClassData:
         abilities: List[PlayerClassAbilityEnum],
         directives: List[str],
         base_experience_adjustment: int,
-        playable: bool = True,
+        playable: bool,
+        attributes = None,
     ):
         self.name = name
         self.description = description
@@ -19,6 +20,7 @@ class PlayerClassData:
         self.directives = directives
         self.base_experience_adjustment = base_experience_adjustment
         self.playable = playable
+        self.attributes = attributes
 
     def __str__(self):
         return self.name
@@ -32,4 +34,5 @@ class PlayerClassData:
             "directives": [directive for directive in self.directives],
             "base_experience_adjustment": self.base_experience_adjustment,
             "playable": self.playable,
+            "attributes": self.attributes.to_dict(),
         }

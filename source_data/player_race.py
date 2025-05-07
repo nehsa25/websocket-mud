@@ -30,6 +30,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=["answers slowly", "speaks in a deep, rumbling voice"],
                 base_experience_adjustment=400,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.EAREA.value,
@@ -47,6 +48,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=300,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.FAE.value,
@@ -65,6 +67,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=250,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.GOBLIN.value,
@@ -82,6 +85,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=200,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.HALFLING.value,
@@ -101,6 +105,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=150,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.HALFOGRE.value,
@@ -119,6 +124,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=450,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.KOBOLD.value,
@@ -137,6 +143,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=175,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.NYRRISS.value,
@@ -155,6 +162,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=225,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.ORC.value,
@@ -174,6 +182,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=350,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.HUMAN.value,
@@ -191,6 +200,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=0,
+                playable=True,
             ),
             PlayerRaceData(
                 RaceEnum.WEREWOLF.value,
@@ -206,6 +216,7 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=0,
+                playable=False,
             ),
             PlayerRaceData(
                 RaceEnum.UNDEAD.value,
@@ -221,5 +232,6 @@ class PlayerRaceSource(SourceInterface):
                 ),
                 directives=[],
                 base_experience_adjustment=0,
+                playable=False,
             ),
         ]

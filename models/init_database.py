@@ -181,6 +181,12 @@ class InitializeDatabase:
             try:
                 async with world_db_session() as session:
                     async with session.begin():
+                        # Insert into DBAttributes
+                        attributes_data = p_data.get("attributes", {})
+                        db_attributes = DBAttributes(**attributes_data)
+                        session.add(db_attributes)
+                        await session.flush()
+
                         db_player_class = DBPlayerClass(
                             name=p_data.get("name"),
                             description=p_data.get("description"),
@@ -188,6 +194,7 @@ class InitializeDatabase:
                             directives=json.dumps(p_data.get("directives")) if p_data.get("directives") else None,
                             base_experience_adjustment=p_data.get("base_experience_adjustment"),
                             playable=p_data.get("playable"),
+                            attributes_id=db_attributes.id,
                         )
                         session.add(db_player_class)
                         await session.commit()
@@ -251,6 +258,8 @@ class InitializeDatabase:
                             description=p_data.get("description"),
                             abilities=json.dumps(p_data.get("abilities")),
                             directives=json.dumps(directives) if directives else None,
+                            playable=p_data.get("playable"),
+                            base_experience_adjustment=p_data.get("base_experience_adjustment"),
                             attributes_id=db_attributes.id,
                         )
                         session.add(db_player_race)

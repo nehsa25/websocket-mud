@@ -1,6 +1,6 @@
 # models/db_player_class.py
 from typing import Optional
-from sqlalchemy import String
+from sqlalchemy import ForeignKey, String
 from models.base import Base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
@@ -16,7 +16,9 @@ class DBPlayerClass(Base):
     directives: Mapped[Optional[str]] = mapped_column(String)
     base_experience_adjustment: Mapped[Optional[int]]
     playable: Mapped[Optional[bool]] = mapped_column(default=True)
+    attributes_id: Mapped[Optional[int]] = mapped_column(ForeignKey("attributes.id"))
 
+    attributes: None
     mobs = None
 
     def __repr__(self) -> str:

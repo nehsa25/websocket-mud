@@ -1,3 +1,4 @@
+from core.data.attributes_data import AttributesData
 from core.data.player_class_data import PlayerClassData
 from core.enums.monsters import MonsterClassEnum
 from core.enums.npc_classes import NpcClassEnum
@@ -21,6 +22,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["savage", "wild"],
                 base_experience_adjustment=350,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.BARD.value,
@@ -35,6 +44,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["charming", "entertaining"],
                 base_experience_adjustment=250,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.BERSERKER.value,
@@ -43,6 +60,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["frenzied", "unstable"],
                 base_experience_adjustment=400,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.CLERIC.value,
@@ -51,6 +76,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["pious", "devout"],
                 base_experience_adjustment=200,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.DRUID.value,
@@ -59,6 +92,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["earthy", "wild"],
                 base_experience_adjustment=220,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.KNIGHT.value,
@@ -67,6 +108,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["noble", "chivalrous"],
                 base_experience_adjustment=320,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.MAGE.value,
@@ -75,6 +124,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["intellectual", "studious"],
                 base_experience_adjustment=180,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.RANGER.value,
@@ -83,6 +140,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["outdoorsy", "resourceful"],
                 base_experience_adjustment=310,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.ROGUE.value,
@@ -91,6 +156,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["sneaky", "cunning"],
                 base_experience_adjustment=330,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.THIEF.value,
@@ -99,6 +172,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["sneaky", "cunning"],
                 base_experience_adjustment=340,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 PlayerClassEnum.WARRIOR.value,
@@ -107,6 +188,14 @@ class PlayerClassSource(SourceInterface):
                 directives=["brave", "strong"],
                 base_experience_adjustment=300,
                 playable=True,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.GHOUL.value,
@@ -115,6 +204,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.WEREWOLF.value,
@@ -123,6 +220,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.MUMMY.value,
@@ -131,6 +236,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.GHOST.value,
@@ -139,6 +252,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.VAMPIRE.value,
@@ -147,6 +268,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.SKELETON.value,
@@ -155,6 +284,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 MonsterClassEnum.ZOMBIE.value,
@@ -163,6 +300,14 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
             PlayerClassData(
                 NpcClassEnum.MERCHANT.value,
@@ -171,5 +316,13 @@ class PlayerClassSource(SourceInterface):
                 directives=[],
                 base_experience_adjustment=300,
                 playable=False,
+                attributes=AttributesData(
+                    strength=10,
+                    dexterity=10,
+                    constitution=10,
+                    intelligence=10,
+                    wisdom=10,
+                    charisma=10,
+                ),
             ),
         ]
