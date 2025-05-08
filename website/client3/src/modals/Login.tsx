@@ -6,8 +6,9 @@ import { Select } from "@chakra-ui/react";
 import * as argon2 from 'argon2-wasm';
 import { MudEvents } from '../Types/MudEvents';
 import { Step, Stepper } from "react-form-stepper";
-import SwordNext from '../react/SwordNext';
+import SwordNext from '../React/SwordNext/SwordNext';
 import { LuTriangleAlert } from 'react-icons/lu';
+import Bard from '../React/Classes/bard/Bard';
 
 interface LoginModalProps {
     socket: WebSocket | null;
@@ -70,7 +71,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     let raceCollection = useMemo(() => {
         return createListCollection({
-            items: races ?? [],
+            items: races?.filter(c => c.playable) ?? [],
             itemToString: (race) => race.name,
             itemToValue: (race) => race.name,
         });
@@ -78,7 +79,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     let classCollection = useMemo(() => {
         return createListCollection({
-            items: classes ?? [],
+            items: classes?.filter(c => c.playable) ?? [],
             itemToString: (player_class) => player_class.name,
             itemToValue: (player_class) => player_class.name,
         });
@@ -550,12 +551,29 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                         <DataList.ItemValue>{selectedRace?.description}</DataList.ItemValue>
                                     </DataList.Item>
                                     <DataList.Item>
+                                        <DataList.ItemLabel>Image</DataList.ItemLabel>
+                                        <DataList.ItemValue>
+                                            {selectedRace?.name === "arguna" && (<SwordNext />)}
+                                            {selectedRace?.name === "earea" && (<SwordNext />)}
+                                            {selectedRace?.name === "fae" && (<SwordNext />)}
+                                            {selectedRace?.name === "goblin" && (<SwordNext />)}
+                                            {selectedRace?.name === "halfling" && (<SwordNext />)}
+                                            {selectedRace?.name === "half-ogre" && (<SwordNext />)}
+                                            {selectedRace?.name === "kobold" && (<SwordNext />)}
+                                            {selectedRace?.name === "nyrriss" && (<SwordNext />)}
+                                            {selectedRace?.name === "orc" && (<SwordNext />)}
+                                            {selectedRace?.name === "human" && (<SwordNext />)}
+                                            {selectedRace?.name === "wolf" && (<SwordNext />)}
+                                            {selectedRace?.name === "undead" && (<SwordNext />)}
+                                        </DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
                                         <DataList.ItemLabel>Abilities</DataList.ItemLabel>
                                         <DataList.ItemValue>{selectedRace?.abilities}</DataList.ItemValue>
                                     </DataList.Item>
                                     <DataList.Item>
                                         <DataList.ItemLabel>Playable</DataList.ItemLabel>
-                                        <DataList.ItemValue>{selectedRace?.playable ? "Yes":"No"}</DataList.ItemValue>
+                                        <DataList.ItemValue>{selectedRace?.playable ? "Yes" : "No"}</DataList.ItemValue>
                                     </DataList.Item>
                                     <DataList.Item>
                                         <DataList.ItemLabel>Experience Adjustment</DataList.ItemLabel>
@@ -566,9 +584,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                         <DataList.ItemValue>{selectedRace?.directives}</DataList.ItemValue>
                                     </DataList.Item>
                                 </DataList.Root>
-                                <div>
-
-                                </div>
                             </div>
                         </div>
                         <div className="button-grid">
@@ -631,10 +646,57 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                         </List.Root>
                                     </div>
                                 </div>
-                                <div className="class-info-grid">
-                                    <div><p>{selectedClass?.description || "Select a class to see its description."}</p></div>
-                                    <div><p>{selectedClass?.description || ""}</p></div>
-                                    <div><p>{selectedClass?.description || ""}</p></div>
+                                <div className="class-info">
+                                    <DataList.Root gap="2" variant="subtle" key={selectedClass?.id}>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Name</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.name}</DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Description</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.description}</DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Image</DataList.ItemLabel>
+                                            <DataList.ItemValue>
+                                                {selectedClass?.name === "barbarian" && (<SwordNext />)}
+                                                {selectedClass?.name === "bard" && (<Bard />)}
+                                                {selectedClass?.name === "berserker" && (<SwordNext />)}
+                                                {selectedClass?.name === "cleric" && (<SwordNext />)}
+                                                {selectedClass?.name === "druid" && (<SwordNext />)}
+                                                {selectedClass?.name === "knight" && (<SwordNext />)}
+                                                {selectedClass?.name === "mage" && (<SwordNext />)}
+                                                {selectedClass?.name === "ranger" && (<SwordNext />)}
+                                                {selectedClass?.name === "rogue" && (<SwordNext />)}
+                                                {selectedClass?.name === "thief" && (<SwordNext />)}
+                                                {selectedClass?.name === "warrior" && (<SwordNext />)}
+                                                {selectedClass?.name === "ghoul" && (<SwordNext />)}
+                                                {selectedClass?.name === "werewolf" && (<SwordNext />)}
+                                                {selectedClass?.name === "mummy" && (<SwordNext />)}
+                                                {selectedClass?.name === "ghost" && (<SwordNext />)}
+                                                {selectedClass?.name === "vampire" && (<SwordNext />)}
+                                                {selectedClass?.name === "skeleton" && (<SwordNext />)}
+                                                {selectedClass?.name === "zombie" && (<SwordNext />)}
+                                                {selectedClass?.name === "merchant" && (<SwordNext />)}
+                                            </DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Abilities</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.abilities}</DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Playable</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.playable ? "Yes" : "No"}</DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Experience Adjustment</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.baseExperienceAdjustment}</DataList.ItemValue>
+                                        </DataList.Item>
+                                        <DataList.Item>
+                                            <DataList.ItemLabel>Traits</DataList.ItemLabel>
+                                            <DataList.ItemValue>{selectedClass?.directives}</DataList.ItemValue>
+                                        </DataList.Item>
+                                    </DataList.Root>
                                 </div>
                             </div>
                             <div className="button-grid">
