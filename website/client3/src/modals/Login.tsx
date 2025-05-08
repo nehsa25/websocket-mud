@@ -1,7 +1,7 @@
 import './Login.scss';
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { createListCollection, List, ListCollection, Portal } from "@chakra-ui/react";
+import { createListCollection, DataList, List, ListCollection, Portal } from "@chakra-ui/react";
 import { Select } from "@chakra-ui/react";
 import * as argon2 from 'argon2-wasm';
 import { MudEvents } from '../Types/MudEvents';
@@ -20,6 +20,26 @@ interface LoginModalProps {
     pin: string;
     setPin: (pin: string) => void;
     setCurrentRoomTitle: (title: string) => void;
+}
+
+interface MudRace {
+    id: string;
+    name: string;
+    description: string;
+    abilities: string[];
+    playable: boolean;
+    directives: string[];
+    baseExperienceAdjustment: number;
+}
+
+interface MudClass {
+    id: string;
+    name: string;
+    description: string;
+    abilities: string[];
+    playable: boolean;
+    directives: string[];
+    baseExperienceAdjustment: number;
 }
 
 const apiLocation = import.meta.env.VITE_API_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com'
@@ -45,8 +65,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
     const [email, setEmail] = useState<string>("");
     const [emailRepeat, setEmailRepeat] = useState<string>("");
     const [modalClass, setModalClass] = useState<string>('modal');
-    const [selectedClass, setSelectedClass] = useState<string>("");
-    const [selectedRace, setSelectedRace] = useState<string>("");
+    const [selectedClass, setSelectedClass] = useState<MudClass | null>(null);
+    const [selectedRace, setSelectedRace] = useState<MudRace | null>(null);
 
     let raceCollection = useMemo(() => {
         return createListCollection({
@@ -69,7 +89,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             try {
                 const response = await fetch(apiLocation + '/v1/mud/races');
                 const data = await response.json();
-                setRaces(data);                
+                setRaces(data);
             } catch (error) {
                 console.error('Error fetching races:', error);
             }
@@ -217,20 +237,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
             setModalClass('modal');
         }
     }, [showUsernameModal, showNewUserModal]);
-
-    const handleClassChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedClass(event.target.value);
-        console.log('Selected Class:', event.target.value);
-        // You might want to store this selected race in your form data state
-    }, [setSelectedClass]);
-
-
-    const handleRaceChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
-        setSelectedRace(event.target.value);
-        console.log('Selected Race:', event.target.value);
-        // You might want to store this selected race in your form data state
-    }, [setSelectedRace]);
-
 
     return (
         <>
@@ -494,7 +500,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
                         <h2>Step 3: Player Race</h2>
                         <div className="form-grid">
                             <div>
-                                <Select.Root collection={raceCollection}>
+                                <Select.Root collection={raceCollection} onValueChange={(value) => {
+                                    const selected = raceCollection.items.find((race) => race.name === value.value[0]);
+                                    setSelectedRace(selected);
+                                }}>
                                     <Select.HiddenSelect />
                                     <Select.Control>
                                         <Select.Trigger>
@@ -509,7 +518,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                             <Select.Content>
                                                 {raceCollection.items.map((mudRace) => (
                                                     <Select.Item item={mudRace} key={mudRace.id}>
-                                                        {mudRace.name} - {mudRace.description}
+                                                        {mudRace.name}
                                                         <Select.ItemIndicator />
                                                     </Select.Item>
                                                 ))}
@@ -528,13 +537,38 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                         </List.Item>
                                     </List.Root>
                                 </div>
-
-
                             </div>
-                            <div className="race-info-grid">
-                                <div>description</div>
-                                <div>image</div>
-                                <div>attributes</div>
+
+                            <div className="race-info">
+                                <DataList.Root gap="2" variant="subtle" key={selectedRace?.id}>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Name</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.name}</DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Description</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.description}</DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Abilities</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.abilities}</DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Playable</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.playable ? "Yes":"No"}</DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Experience Adjustment</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.baseExperienceAdjustment}</DataList.ItemValue>
+                                    </DataList.Item>
+                                    <DataList.Item>
+                                        <DataList.ItemLabel>Traits</DataList.ItemLabel>
+                                        <DataList.ItemValue>{selectedRace?.directives}</DataList.ItemValue>
+                                    </DataList.Item>
+                                </DataList.Root>
+                                <div>
+
+                                </div>
                             </div>
                         </div>
                         <div className="button-grid">
@@ -559,29 +593,32 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                 <div>
                                     <h2>Select class from drop-down:</h2>
                                     <br />
-                                    <Select.Root collection={classCollection}>
-                                    <Select.HiddenSelect />
-                                    <Select.Control>
-                                        <Select.Trigger>
-                                            <Select.ValueText placeholder="Select Class" />
-                                        </Select.Trigger>
-                                        <Select.IndicatorGroup>
-                                            <Select.Indicator />
-                                        </Select.IndicatorGroup>
-                                    </Select.Control>
-                                    <Portal>
-                                        <Select.Positioner>
-                                            <Select.Content>
-                                            {classCollection.items.map((mudClass) => (
-                                                    <Select.Item item={mudClass} key={mudClass.id}>
-                                                        {mudClass.name} - {mudClass.description}
-                                                        <Select.ItemIndicator />
-                                                    </Select.Item>
-                                                ))}
-                                            </Select.Content>
-                                        </Select.Positioner>
-                                    </Portal>
-                                </Select.Root><br />
+                                    <Select.Root collection={classCollection} onValueChange={(value) => {
+                                        const selected = classCollection.items.find((cls) => cls.name === value.value[0]);
+                                        setSelectedClass(selected);
+                                    }}>
+                                        <Select.HiddenSelect />
+                                        <Select.Control>
+                                            <Select.Trigger>
+                                                <Select.ValueText placeholder="Select Class" />
+                                            </Select.Trigger>
+                                            <Select.IndicatorGroup>
+                                                <Select.Indicator />
+                                            </Select.IndicatorGroup>
+                                        </Select.Control>
+                                        <Portal>
+                                            <Select.Positioner>
+                                                <Select.Content>
+                                                    {classCollection.items.map((mudClass) => (
+                                                        <Select.Item item={mudClass} key={mudClass.id}>
+                                                            {mudClass.name}
+                                                            <Select.ItemIndicator />
+                                                        </Select.Item>
+                                                    ))}
+                                                </Select.Content>
+                                            </Select.Positioner>
+                                        </Portal>
+                                    </Select.Root><br />
 
                                     <div className='class-requirements'>
                                         <List.Root gap="2" variant="plain" align="start">
@@ -593,6 +630,11 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                             </List.Item>
                                         </List.Root>
                                     </div>
+                                </div>
+                                <div className="class-info-grid">
+                                    <div><p>{selectedClass?.description || "Select a class to see its description."}</p></div>
+                                    <div><p>{selectedClass?.description || ""}</p></div>
+                                    <div><p>{selectedClass?.description || ""}</p></div>
                                 </div>
                             </div>
                             <div className="button-grid">

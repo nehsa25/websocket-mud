@@ -100,14 +100,12 @@
     background-color: #3e8e41;
 }
 
-.race-info-grid {
-    display: grid;
-    grid-template-rows: 1fr;
-    gap: 1em;
+.race-info, .class-info {
     overflow: auto;
+    text-align: left;
 }
 
-.race-info-grid div {
+.race-info, .class-info div {
     border: 1px solid #222;
     padding: 1em;
 }
