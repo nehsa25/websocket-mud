@@ -1,6 +1,4 @@
 import { LuCircleCheck } from "react-icons/lu"
-import * as argon2 from 'argon2-wasm';
-
 import {
     useColorModeValue,
 } from "./components/ui/color-mode";
@@ -10,8 +8,7 @@ import {
     Text,
     Box,
     List,
-    Flex,
-    Stack
+    Flex
 } from "@chakra-ui/react";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -25,10 +22,8 @@ import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './Utils/utils';
 import Room from './Widgets/Room/RoomComponent';
-import { v4 as uuidv4 } from 'uuid';
+import Splash from './splash';
 import LoginModal from './modals/Login';
-import Splash from './Splash';
-
 function App() {
     console.log("App: Entered");
     const snap = useSnapshot(appState);

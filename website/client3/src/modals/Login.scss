@@ -24,7 +24,11 @@
 .username-input, 
 .username-requirements,
 .pin-input, 
-.pin-requirements {
+.pin-requirements,
+.firstname-input, 
+.firstname-requirements,
+.email-input, 
+.email-requirements {
     max-width: 250px !important; 
     margin: 0 auto;
 }
@@ -60,7 +64,19 @@
     gap: 2em;
 }
 
-.modal-content input[type="text"], .modal-content input[type="password"]{
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: yellow;
+    z-index: 999; /* Ensure the overlay is above other content */
+}
+
+
+.modal-content input[type="text"], 
+.modal-content input[type="password"]{
     padding: 8px;
     margin: 8px 0;
 }
@@ -82,4 +98,16 @@
 
 .modal-content button:hover {
     background-color: #3e8e41;
+}
+
+.race-info-grid {
+    display: grid;
+    grid-template-rows: 1fr;
+    gap: 1em;
+    overflow: auto;
+}
+
+.race-info-grid div {
+    border: 1px solid #222;
+    padding: 1em;
 }

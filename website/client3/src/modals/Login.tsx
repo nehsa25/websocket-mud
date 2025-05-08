@@ -1,7 +1,8 @@
 import './Login.scss';
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
-import { List } from "@chakra-ui/react";
+import { createListCollection, List, ListCollection, Portal } from "@chakra-ui/react";
+import { Select } from "@chakra-ui/react";
 import * as argon2 from 'argon2-wasm';
 import { MudEvents } from '../Types/MudEvents';
 import { Step, Stepper } from "react-form-stepper";
@@ -21,6 +22,8 @@ interface LoginModalProps {
     setCurrentRoomTitle: (title: string) => void;
 }
 
+const apiLocation = import.meta.env.VITE_API_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com'
+
 const LoginModal: React.FC<LoginModalProps> = ({
     socket,
     showUsernameModal,
@@ -34,9 +37,65 @@ const LoginModal: React.FC<LoginModalProps> = ({
     setCurrentRoomTitle
 }) => {
 
+    const [races, setRaces] = useState<any[]>([]);
+    const [classes, setClasses] = useState<any[]>([]);
     const [activeStep, setActiveStep] = useState(0);
-    const [repeatPin, setRepeatPin] = useState<string>("0000");
+    const [repeatPin, setRepeatPin] = useState<string>("");
+    const [firstname, setFirstName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const [emailRepeat, setEmailRepeat] = useState<string>("");
     const [modalClass, setModalClass] = useState<string>('modal');
+    const [selectedClass, setSelectedClass] = useState<string>("");
+    const [selectedRace, setSelectedRace] = useState<string>("");
+
+    let raceCollection = useMemo(() => {
+        return createListCollection({
+            items: races ?? [],
+            itemToString: (race) => race.name,
+            itemToValue: (race) => race.name,
+        });
+    }, [races]);
+
+    let classCollection = useMemo(() => {
+        return createListCollection({
+            items: classes ?? [],
+            itemToString: (player_class) => player_class.name,
+            itemToValue: (player_class) => player_class.name,
+        });
+    }, [races]);
+
+    useEffect(() => {
+        const fetchRaces = async () => {
+            try {
+                const response = await fetch(apiLocation + '/v1/mud/races');
+                const data = await response.json();
+                setRaces(data);                
+            } catch (error) {
+                console.error('Error fetching races:', error);
+            }
+        };
+
+        const fetchClasses = async () => {
+            try {
+                const response = await fetch(apiLocation + '/v1/mud/classes');
+                const data = await response.json();
+                setClasses(data);
+            } catch (error) {
+                console.error('Error fetching classes:', error);
+            }
+        };
+
+        const fetchData = async () => {
+            await Promise.all([fetchRaces(), fetchClasses()]);
+        };
+
+        fetchData();
+    }, []);
+
+    const submitNewPlayer = useCallback(() => {
+        console.log("submitNewPlayer: Entered");
+    }, []);
+
     const handleUsernameSubmit = useCallback(() => {
         console.log("handleUsernameSubmit: Entered");
         if (username.trim() !== '') {
@@ -54,7 +113,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
                     } catch (e) {
                         console.error("Error while hashing: " + e);
                     }
-
                 })();
 
                 setShowUsernameModal(false); // Close the modal
@@ -68,6 +126,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     const newUser = useCallback(() => {
         console.log("newUser: Entered");
+        setActiveStep(1);
         setModalClass('modal');
         setTimeout(() => {
             setShowNewUserModal(true);
@@ -110,8 +169,43 @@ const LoginModal: React.FC<LoginModalProps> = ({
             return;
         }
 
-        // go to step 2
-        setActiveStep(1);
+        // validate email
+        if (email !== emailRepeat) {
+            alert("Emails do not match");
+            return;
+        }
+
+        // verify it has a @ and . in the email
+        if (!email.includes("@") || !email.includes(".")) {
+            alert("Email must be a valid email address");
+            return;
+        }
+
+        //validate race
+        if (player_race === "") {
+            alert("Please select a playable race");
+            return;
+        }
+
+        //validate class
+        if (player_class === "") {
+            alert("Please select a playable class");
+            return;
+        }
+
+        // validate firstname
+        if (firstname.trim() === '') {
+            alert("First name cannot be empty");
+            return;
+        }
+
+        if (firstname.length < 3 || firstname.length > 25) {
+            alert("First name must be between 3 and 25 characters");
+            return;
+        }
+
+        // if all good, we can send the new user data to the server
+
         console.log("handleNewUserSubmit: Exited");
     }, [socket, username, pin, repeatPin]);
 
@@ -123,19 +217,34 @@ const LoginModal: React.FC<LoginModalProps> = ({
             setModalClass('modal');
         }
     }, [showUsernameModal, showNewUserModal]);
+
+    const handleClassChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedClass(event.target.value);
+        console.log('Selected Class:', event.target.value);
+        // You might want to store this selected race in your form data state
+    }, [setSelectedClass]);
+
+
+    const handleRaceChange = useCallback((event: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedRace(event.target.value);
+        console.log('Selected Race:', event.target.value);
+        // You might want to store this selected race in your form data state
+    }, [setSelectedRace]);
+
+
     return (
         <>
             <Stepper activeStep={activeStep}>
-                <Step label="Login" />
-                <Step label="Character" />
-                <Step label="Confirm" />
+                <Step label="Username" />
+                <Step label="Personal Information" />
+                <Step label="Race" />
+                <Step label="Class" />
+                <Step label="Attributes" />
             </Stepper>
 
-
             {/* Login Modal */}
-            {showUsernameModal && (
+            {showUsernameModal && !showNewUserModal && (
                 <div className={modalClass}>
-
                     <div className="modal-content">
                         <div className="form-grid">
                             <div>
@@ -173,8 +282,8 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 </div>
             )}
 
-            {/* New User Modal */}
-            {showNewUserModal && (
+            {/* New User Modal - Step 1 */}
+            {showNewUserModal && activeStep === 1 && (
                 <div className={modalClass}>
 
                     <div className="modal-content">
@@ -191,7 +300,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                     onChange={(e) => setUsername(e.target.value)}
                                     onKeyDown={(e) => {
                                         if (e.key === 'Enter') {
-                                            handleUsernameSubmit();
+                                            handleNewUserSubmit();
                                         }
                                     }}
                                 />
@@ -222,24 +331,28 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             <div>
                                 <div>
                                     <h2>Enter New Pin</h2>
-                                    <input className="pin-input"
+                                    <input
+                                        type="password"
+                                        className="pin-input"
                                         value={pin}
                                         onChange={(e) => setPin(e.target.value)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
-                                                handleUsernameSubmit();
+                                                handleNewUserSubmit();
                                             }
                                         }}
                                     />
                                 </div>
                                 <div>
-                                    <h2>Repeat Pin</h2>
-                                    <input className="pin-input"
+                                    <input
+                                        type="password"
+                                        placeholder="Repeat Pin"
+                                        className="pin-input"
                                         value={repeatPin}
                                         onChange={(e) => setRepeatPin(e.target.value)}
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') {
-                                                handleUsernameSubmit();
+                                                handleNewUserSubmit();
                                             }
                                         }}
                                     />
@@ -270,7 +383,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                         <div className="button-grid">
                             <div><button onClick={() => setShowNewUserModal(false)} className="mud-button">Cancel</button></div>
                             <div>
-                                <button onClick={() => { handleNewUserSubmit(); }} className="mud-button">
+                                <button onClick={() => { setActiveStep(2); }} className="mud-button">
                                     <SwordNext />
                                 </button>
                             </div>
@@ -278,6 +391,248 @@ const LoginModal: React.FC<LoginModalProps> = ({
                     </div>
                 </div >
             )}
+
+            {/* New User - Step 2 */}
+            {showNewUserModal && activeStep === 2 && (
+                <div className={modalClass}>
+                    <div className="modal-content">
+                        <h2>Step 2: Personal Information</h2>
+                        <div className="form-grid">
+                            <div>
+                                <h2>Enter First Name</h2>
+                                <input className="firstname-input"
+                                    type="text"
+                                    value={firstname}
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleNewUserSubmit();
+                                        }
+                                    }}
+                                /><br />
+
+                                <div className='firstname-requirements'>
+                                    <List.Root gap="2" variant="plain" align="start">
+                                        <List.Item>
+                                            <List.Indicator asChild color="salmon.500">
+                                                <LuTriangleAlert />
+                                            </List.Indicator>
+                                            This is not visible to other players.
+                                        </List.Item>
+                                    </List.Root>
+                                </div>
+                            </div>
+                            <div>
+                                <div>
+                                    <h2>Enter Email</h2>
+                                    <input
+                                        type="text"
+                                        className="email-input"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleNewUserSubmit();
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div>
+                                    <h2>Repeat Email</h2>
+                                    <input
+                                        type="text"
+                                        className="email-input"
+                                        value={emailRepeat}
+                                        onChange={(e) => setEmailRepeat(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') {
+                                                handleNewUserSubmit();
+                                            }
+                                        }}
+                                    />
+                                </div>
+                                <div className='email-requirements'>
+                                    <List.Root gap="2" variant="plain" align="start">
+                                        <List.Item>
+                                            <List.Indicator asChild color="salmon.500">
+                                                <LuTriangleAlert />
+                                            </List.Indicator>
+                                            Email is used for pin recovery.
+                                        </List.Item>
+                                        <List.Item>
+                                            <List.Indicator asChild color="salmon.500">
+                                                <LuTriangleAlert />
+                                            </List.Indicator>
+                                            This is not visible to other players.
+                                        </List.Item>
+                                        <List.Item>
+                                            <List.Indicator asChild color="salmon.500">
+                                                <LuTriangleAlert />
+                                            </List.Indicator>
+                                            Must be a valid email address.
+                                        </List.Item>
+                                    </List.Root>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="button-grid">
+                            <div><button onClick={() => { setActiveStep(1); }} className="mud-button">Back</button></div>
+                            <div>
+                                <button onClick={() => { setActiveStep(3); }} className="mud-button">
+                                    <SwordNext />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* New User - Step 3 */}
+            {showNewUserModal && activeStep === 3 && (
+                <div className={modalClass}>
+                    <div className="modal-content">
+                        <h2>Step 3: Player Race</h2>
+                        <div className="form-grid">
+                            <div>
+                                <Select.Root collection={raceCollection}>
+                                    <Select.HiddenSelect />
+                                    <Select.Control>
+                                        <Select.Trigger>
+                                            <Select.ValueText placeholder="Select Race" />
+                                        </Select.Trigger>
+                                        <Select.IndicatorGroup>
+                                            <Select.Indicator />
+                                        </Select.IndicatorGroup>
+                                    </Select.Control>
+                                    <Portal>
+                                        <Select.Positioner>
+                                            <Select.Content>
+                                                {raceCollection.items.map((mudRace) => (
+                                                    <Select.Item item={mudRace} key={mudRace.id}>
+                                                        {mudRace.name} - {mudRace.description}
+                                                        <Select.ItemIndicator />
+                                                    </Select.Item>
+                                                ))}
+                                            </Select.Content>
+                                        </Select.Positioner>
+                                    </Portal>
+                                </Select.Root>
+
+                                <div className='race-requirements'>
+                                    <List.Root gap="2" variant="plain" align="start">
+                                        <List.Item>
+                                            <List.Indicator asChild color="salmon.500">
+                                                <LuTriangleAlert />
+                                            </List.Indicator>
+                                            You race determines your starting attributes and abilities.
+                                        </List.Item>
+                                    </List.Root>
+                                </div>
+
+
+                            </div>
+                            <div className="race-info-grid">
+                                <div>description</div>
+                                <div>image</div>
+                                <div>attributes</div>
+                            </div>
+                        </div>
+                        <div className="button-grid">
+                            <div><button onClick={() => { setActiveStep(2); }} className="mud-button">Back</button></div>
+                            <div>
+                                <button onClick={() => { setActiveStep(4); }} className="mud-button">
+                                    <SwordNext />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div >
+            )}
+
+            {/* New User - Step 4 */}
+            {
+                showNewUserModal && activeStep === 4 && (
+                    <div className={modalClass}>
+                        <div className="modal-content">
+                            <h2>Step 4: Player Class</h2>
+                            <div className="form-grid">
+                                <div>
+                                    <h2>Select class from drop-down:</h2>
+                                    <br />
+                                    <Select.Root collection={classCollection}>
+                                    <Select.HiddenSelect />
+                                    <Select.Control>
+                                        <Select.Trigger>
+                                            <Select.ValueText placeholder="Select Class" />
+                                        </Select.Trigger>
+                                        <Select.IndicatorGroup>
+                                            <Select.Indicator />
+                                        </Select.IndicatorGroup>
+                                    </Select.Control>
+                                    <Portal>
+                                        <Select.Positioner>
+                                            <Select.Content>
+                                            {classCollection.items.map((mudClass) => (
+                                                    <Select.Item item={mudClass} key={mudClass.id}>
+                                                        {mudClass.name} - {mudClass.description}
+                                                        <Select.ItemIndicator />
+                                                    </Select.Item>
+                                                ))}
+                                            </Select.Content>
+                                        </Select.Positioner>
+                                    </Portal>
+                                </Select.Root><br />
+
+                                    <div className='class-requirements'>
+                                        <List.Root gap="2" variant="plain" align="start">
+                                            <List.Item>
+                                                <List.Indicator asChild color="salmon.500">
+                                                    <LuTriangleAlert />
+                                                </List.Indicator>
+                                                You class determines the primary function of your character.
+                                            </List.Item>
+                                        </List.Root>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="button-grid">
+                                <div><button onClick={() => { setActiveStep(3); }} className="mud-button">Back</button></div>
+                                <div>
+                                    <button onClick={() => { setActiveStep(5); }} className="mud-button">
+                                        <SwordNext />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {/* New User - Step 5 */}
+            {
+                showNewUserModal && activeStep === 5 && (
+                    <div className={modalClass}>
+                        <div className="modal-content">
+                            <h2>Step 5: Finalize Attributes</h2>
+                            <div className="form-grid">
+                                <div>
+                                </div>
+                            </div>
+                            <div className="button-grid">
+                                <div><button onClick={() => { setActiveStep(4); }} className="mud-button">Back</button></div>
+                                <div>
+                                    <button onClick={() => { handleNewUserSubmit(); }} className="mud-button">
+                                        <SwordNext />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+
+            {/* Background Overlay */}
+            {(showUsernameModal || showNewUserModal) && <div className="modal-overlay"></div>}
         </>
     );
 };
