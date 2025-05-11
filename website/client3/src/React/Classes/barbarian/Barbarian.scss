@@ -1,0 +1,28 @@
+.barbarian-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+  }
+  
+  .barbarian-icon .axe-head {
+    color: white;
+    font-weight: bold;
+  }
+  
+  .barbarian-icon .axe-handle {
+    color: #a07040; /* Darker brown for the handle */
+  }
+  
+  .barbarian-icon .axe-grip {
+    color: #555; /* Dark gray for the grip */
+    font-weight: bold;
+  }
+  
+  .barbarian-icon .axe-bottom {
+    color: brown;
+  }
+  
+  .barbarian-icon.disabled {
+    color: #555;
+  }

@@ -7,7 +7,7 @@ interface BardProps {
     className?: string;
 }
 
-const SwordNext: React.FC<BardProps> = ({ disabled, className }) => {
+const Bard: React.FC<BardProps> = ({ disabled, className }) => {
     const luteArt = `
 <span class="lute-top">     __<span class="lute-strings">===</span>__</span>
 <span class="lute-neck">       |<span class="lute-strings">--</span>|</span>
@@ -30,4 +30,4 @@ const SwordNext: React.FC<BardProps> = ({ disabled, className }) => {
     );
 };
 
-export default SwordNext;
+export default Bard;

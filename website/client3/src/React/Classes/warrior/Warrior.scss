@@ -1,0 +1,25 @@
+.warrior-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.warrior-icon .sword-blade {
+    color: #999;
+}
+
+.warrior-icon .sword-handle {
+    color: #a07040;
+}
+
+
+.warrior-icon .sword-bottom, .warrior-icon .sword-pommel  {
+    color: #333;
+}
+
+
+
+.warrior-icon.disabled {
+    color: #555;
+}

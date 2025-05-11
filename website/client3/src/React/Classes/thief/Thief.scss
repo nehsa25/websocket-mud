@@ -1,0 +1,19 @@
+.thief-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+.thief-icon .padlock-handle {
+    color: #a07040;
+}
+
+.thief-icon .padlock-bottom, .thief-icon .padlock-base  {
+    color: brown;
+}
+
+
+
+.thief-icon.disabled {
+    color: #555;
+}

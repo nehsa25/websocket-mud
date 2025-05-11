@@ -1,0 +1,36 @@
+.human-face-container {
+  width: 500px;
+  height: 500px;
+  background-color: red;
+  display: flex; /* To control alignment of the text within */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  background-color: #f0f0f0; /* Optional: Add a background to see the area */
+  border: 1px solid #ccc; /* Optional: Add a border to see the area */
+  font-size: 2em; /* Adjust to scale the ASCII art within */
+  line-height: 0.8; /* Adjust line height as needed */
+  font-family: monospace; /* Ensure consistent character width */
+  white-space: pre; /* Preserve whitespace and line breaks */
+}
+
+.face {
+  background-color: transparent;
+  font-size: 1.5rem;
+}
+
+.hair {
+  color: #795548;
+}
+
+.eyes {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.eyebrows {
+  background-color: transparent;
+}
+
+.nose {
+  background-color: transparent;
+}

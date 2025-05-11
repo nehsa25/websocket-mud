@@ -4,7 +4,38 @@
     gap: 1em;
 }
 
+.form-quad-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1em;
+}
+
 .form-grid>div {
+    border: 1px solid #222;
+    padding: 1em;
+}
+
+.form-grid-condensed {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0;
+}
+
+.form-grid-rows-condensed {
+    display: grid;
+    grid-template-rows: min-content;
+    gap: 0;
+}
+
+.form-grid-condensed>div:nth-child(1) {
+    font-weight: bold;
+    background-color: #222;
+}
+.form-grid-condensed>div:nth-child(2) {
+    background-color: #444;
+}
+
+.form-grid-rows-condensed>div {
     border: 1px solid #222;
     padding: 1em;
 }
@@ -13,6 +44,7 @@
     display: grid;
     grid-template-columns: 1fr 3fr;
     gap: 1em;
+    margin-top: auto;
 }
 
 .new-user-grid {
@@ -40,28 +72,29 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
+    display: flex; 
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    transition: opacity 1s ease-in-out; /* Add transition for opacity */
+    transition: opacity 1s ease-in-out;
 
     &.active {
-        opacity: 1; /* Make the modal visible when active */
+        opacity: 1;
     }
 }
 
-.modal-content {
+.modal-content-grid {
     background-color: black;
     padding: 15px;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     text-align: center;
-    min-width: 500px;
-    max-width: 700px;
-    display: grid;
-    grid-template-rows: 1fr;
-    gap: 2em;
+    width: 100%;
+    max-width: 1200px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column; 
+    height: 100%;
 }
 
 .modal-overlay {
@@ -71,7 +104,7 @@
     width: 100%;
     height: 100%;
     background-color: yellow;
-    z-index: 999; /* Ensure the overlay is above other content */
+    z-index: 999; 
 }
 
 
@@ -103,9 +136,57 @@
 .race-info, .class-info {
     overflow: auto;
     text-align: left;
+    height: 400px;
 }
 
 .race-info, .class-info div {
     border: 1px solid #222;
     padding: 1em;
+}
+
+.attributes-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+    place-items: center;
+}
+
+.attribute-input-group {
+    display: flex; /* Enable button embedding */
+    align-items: center; /* Vertically align input and buttons */
+    width: 100%; /* Make the input group take full width of the cell */
+  }
+  
+  .attribute-input-group input[type="text"] {
+    flex-grow: 1; /* Make the input expand to fill available space */
+    padding: 0.5em;
+    text-align: center;
+  }
+  
+  .attribute-input-group button {
+    background-color: #4CAF50; /* Example button color */
+    color: white;
+    border: none;
+    padding: 0.3em 0.6em;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    margin: 0 0.2em; /* Space between buttons and input */
+    border-radius: 5px;
+  }
+  
+  .attribute-input-group button:hover {
+    opacity: 0.8;
+  }
+
+.attribute-details {
+    text-align: left;
+}
+
+.name-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
 }

@@ -4,7 +4,6 @@ from utilities.log_telemetry import LogTelemetryUtility
 class AttributesData:
     logger = None
     strength: int
-    agility: int
     intelligence: int
     wisdom: int
     charisma: int
@@ -15,7 +14,6 @@ class AttributesData:
     def __init__(
         self,
         strength: int = 0,
-        agility: int = 0,
         intelligence: int = 0,
         wisdom: int = 0,
         charisma: int = 0,
@@ -27,7 +25,6 @@ class AttributesData:
         self.logger.debug("Initializing AttributesEnum class")
         
         self.strength = strength
-        self.agility = agility
         self.intelligence = intelligence
         self.wisdom = wisdom
         self.charisma = charisma
@@ -42,7 +39,6 @@ class AttributesData:
         """Helper method to convert Attributes class to a dictionary."""
         return {
             "strength": self.strength,
-            "agility": self.agility,
             "intelligence": self.intelligence,
             "wisdom": self.wisdom,
             "charisma": self.charisma,

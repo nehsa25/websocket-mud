@@ -1,0 +1,29 @@
+.mage-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.mage-icon .staff-head {
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.mage-icon .staff-handle {
+    color: #a07040;
+}
+
+.mage-icon .staff-bottom, .mage-icon .staff-head  {
+    color: brown;
+}
+
+.staff-glow {
+    color: #ffcc00;
+    text-shadow: 0 0 5px #ffcc00, 0 0 10px #ffcc00, 0 0 15px #ffcc00, 0 0 20px #ffcc00, 0 0 25px #ffcc00, 0 0 30px #ffcc00, 0 0 35px #ffcc00;
+}
+
+
+.mage-icon.disabled {
+    color: #555;
+}

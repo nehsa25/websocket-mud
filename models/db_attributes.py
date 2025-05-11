@@ -9,7 +9,6 @@ class DBAttributes(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     strength: Mapped[Optional[int]]
-    agility: Mapped[Optional[int]]
     intelligence: Mapped[Optional[int]]
     wisdom: Mapped[Optional[int]]
     charisma: Mapped[Optional[int]]
@@ -18,5 +17,5 @@ class DBAttributes(Base):
     luck: Mapped[Optional[int]]
 
     def __repr__(self) -> str:
-        return f"DBAttributes(id={self.id!r}, strength={self.strength!r}, agility={self.agility!r}, intelligence={self.intelligence!r}, wisdom={self.wisdom!r}, charisma={self.charisma!r}, constitution={self.constitution!r}, dexterity={self.dexterity!r}, luck={self.luck!r})"
+        return f"DBAttributes(id={self.id!r}, strength={self.strength!r}, intelligence={self.intelligence!r}, wisdom={self.wisdom!r}, charisma={self.charisma!r}, constitution={self.constitution!r}, dexterity={self.dexterity!r}, luck={self.luck!r})"
     

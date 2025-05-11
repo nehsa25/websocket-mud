@@ -48,8 +48,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.ALCHEMIST.value,
                 wanders=False,
@@ -83,8 +82,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.ARMORER.value,
                 wanders=False,
@@ -119,8 +117,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.BLACKSMITH.value,
                 wanders=False,
@@ -157,8 +154,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.GARDENER.value,
                 wanders=False,
@@ -192,8 +188,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 wanders=True,
                 type=NpcEnum.GUARD.value,
@@ -229,8 +224,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.HEALER.value,
                 wanders=True,
@@ -259,8 +253,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.MAXIMUS.value,
                 wanders=True,
@@ -296,8 +289,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.MERCHANT,
                 wanders=False,
@@ -333,8 +325,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.PRINCESS.value,
                 wanders=False,
@@ -370,8 +361,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.SHERIFF,
                 wanders=False,
@@ -403,8 +393,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.THIEF.value,
                 wanders=False,
@@ -438,8 +427,7 @@ class NpcSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 type=NpcEnum.WIZARD.value,
                 wanders=True,

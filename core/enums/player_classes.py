@@ -21,3 +21,4 @@ class PlayerClassEnum(Enum):
     KNIGHT = "knight"
     NECROMANCER = "necromancer"
     ILLUSIONIST = "illusionist"
+    WIZARD = "wizard"

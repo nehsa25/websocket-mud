@@ -1,0 +1,23 @@
+.cleric-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.cleric-icon .mace-head {
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.cleric-icon .mace-handle {
+    color: #a07040;
+}
+
+.cleric-icon .mace-bottom {
+    color: brown;
+}
+
+.cleric-icon.disabled {
+    color: #555;
+}
