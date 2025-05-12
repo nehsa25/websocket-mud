@@ -1,31 +1,35 @@
 .sword-next-icon {
-    font-family: monospace;
-    white-space: pre-wrap;
-    color: #ddd;
-    font-size: 0.8em;
+  font-family: monospace;
+  white-space: pre-wrap;
+  color: #ddd;
+  font-size: 0.8em;
+}
+
+.sword-hilt {
+  color: #a07040;
+}
+
+.sword-pommel {
+  color: brown;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.sword-blade {
+  color: #333;
+  font-weight: 900;
+  font-size: 1.2rem;
 }
 
 .sword-shiny {
-    color: gold;
-    font-weight: bold;
-  }
-  
-  .sword-hilt {
-    color: #a07040;
-  }
-  
-  .sword-pommel {
-    color: brown;
-    font-weight: bold;
-    font-size: 1rem;
-  }
-  
-  .sword-blade {
-    color: black;
-    font-weight: 900;
-  }
-  
-  .sword-text {
-    color: gold;
-    font-weight: bold;
-  }
+  color: black;
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+.sword-text {
+  color: white;
+  text-shadow: black 0.1em 0.1em 0.2em, silver -0.1em -0.1em 0.2em;
+  font-weight: bold;
+  font-size: 1.2rem;
+}

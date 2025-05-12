@@ -96,7 +96,7 @@ class PlayerRaceSource(SourceInterface):
                 "Cheerful and stout folk from the rolling Greenmeadows. Halflings are renowned for their love of comfort, good food, and peaceful living. They are surprisingly agile and possess an uncanny knack for avoiding danger, often attributed to their inherent luck and sharp intuition.",
                 [
                     RaceAbilityEnum.HEIGHTENED_INTUITION,
-                    RaceAbilityEnum.HEIGHTENED_AGILITY,
+                    RaceAbilityEnum.HEIGHTENED_DEXTERITY,
                     RaceAbilityEnum.LUCK,
                 ],
                 attributes=AttributesData(
@@ -134,10 +134,10 @@ class PlayerRaceSource(SourceInterface):
             ),
             PlayerRaceData(
                 RaceEnum.KOBOLD.value,
-                "Small, reptilian humanoids often dwelling in warrens or underground complexes. Kobolds are known for their cunning and agility, often relying on traps and ambushes to overcome their physical limitations. They have a strong sense of community and are fiercely loyal to their tribe.",
+                "Small, reptilian humanoids often dwelling in warrens or underground complexes. Kobolds are known for their cunning and dexterity, often relying on traps and ambushes to overcome their physical limitations. They have a strong sense of community and are fiercely loyal to their tribe.",
                 [
                     RaceAbilityEnum.HEIGHTENED_INTUITION,
-                    RaceAbilityEnum.HEIGHTENED_AGILITY,
+                    RaceAbilityEnum.HEIGHTENED_DEXTERITY,
                 ],
                 attributes=AttributesData(
                     strength=0,

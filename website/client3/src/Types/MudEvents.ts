@@ -34,6 +34,7 @@
 
 export enum MudEvents {
     NONE = "none",
+    NEW_USER = "new_user",
     DUPLICATE_NAME = "duplicate_name",
     EVENT = "event",
     WELCOME = "welcome",

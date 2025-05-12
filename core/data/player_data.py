@@ -3,21 +3,12 @@ from typing import Dict
 
 class PlayerData:
     def __init__(
-        self, name, role, experience, level, money, 
-        pronoun, attributes, alignment, player_race, player_class, room_id, token, pin, salt
+        self, firstname, lastname, email, role, pin, salt
     ):
-        self.name: str = name
+        self.firstname: str = firstname
+        self.lastname: str = lastname
         self.role: str = role
-        self.experience: int = experience
-        self.level: int = level
-        self.money: int = money
-        self.pronoun: str = pronoun
-        self.attributes = attributes
-        self.alignment: str = alignment
-        self.player_race: str = player_race
-        self.player_class: str = player_class
-        self.room_id: int = room_id
-        self.token: str = token
+        self.email: str = email
         self.pin: str = pin
         self.salt: str = salt
 
@@ -26,18 +17,10 @@ class PlayerData:
 
     def to_dict(self) -> Dict:
         return {
-            "name": self.name,
+            "firstname": self.firstname,
+            "lastname": self.lastname,
             "role": self.role,
-            "experience": self.experience,
-            "level": self.level,
-            "money": self.money,
-            "pronoun": self.pronoun,
-            "attributes": self.attributes.to_dict(),
-            "alignment": self.alignment,
-            "player_race": self.player_race,
-            "player_class": self.player_class,
-            "room_id": self.room_id,
-            "token": self.token,
+            "email": self.email,
             "pin": self.pin,
             "salt": self.salt,
         }

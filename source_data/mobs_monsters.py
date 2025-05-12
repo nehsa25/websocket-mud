@@ -36,8 +36,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Ghoul falls over and dies..",
@@ -66,8 +65,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Zombie collapses into a heap.",
@@ -96,8 +94,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Skeleton falls apart.",
@@ -126,8 +123,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Vampire disintegrates into dust.",
@@ -156,8 +152,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Werewolf howls in pain.",
@@ -186,8 +181,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Ghost fades away.",
@@ -216,8 +210,7 @@ class MonsterSource(SourceInterface):
                     wisdom=10,
                     charisma=10,
                     constitution=10,
-                    luck=10,
-                    agility=10
+                    luck=10
                 ),
                 directives=[],
                 death_cry="Mummy crumbles to dust.",

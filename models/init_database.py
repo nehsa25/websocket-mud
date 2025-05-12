@@ -2,11 +2,13 @@ import json
 from sqlalchemy import inspect, select
 from core.enums.mob_types import MobTypeEnum
 from models.db_alignments import DBAlignments
+from models.db_characters import DBCharacter
 from models.db_environment import DBEnvironment
 from models.db_exits import DBExit
 from models.db_player_race import DBPlayerRace
 from settings.global_settings import GlobalSettings
 from source_data.alignments import AlignmentsSource
+from source_data.character import CharacterSource
 from source_data.environments import EnvironmentsSource
 from source_data.mobs_npcs import NpcSource
 from source_data.player_race import PlayerRaceSource
@@ -276,53 +278,73 @@ class InitializeDatabase:
             try:
                 async with world_db_session() as session:
                     async with session.begin():
-                        # Insert into DBAttributes
-                        attributes_data = p_data.get("attributes", {})
-                        db_attributes = DBAttributes(**attributes_data)
-                        session.add(db_attributes)
-                        await session.flush()
-
-                        # get room from room_id
-                        room = await session.get(DBRoom, p_data.get("room_id"))
-
-                        # Find PlayerRace
-                        race_name = p_data.get("player_race")
-                        race_result = await session.execute(
-                            select(DBPlayerRace).where(DBPlayerRace.name == race_name)
-                        )
-                        db_race = race_result.scalar_one_or_none()
-
-                        # Find PlayerClass
-                        class_name = p_data.get("player_class")
-                        class_result = await session.execute(
-                            select(DBPlayerClass).where(DBPlayerClass.name == class_name)
-                        )
-                        db_class = class_result.scalar_one_or_none()
-
                         # Find Role
                         role_name = p_data.get("role")
                         role_result = await session.execute(
                             select(DBRole).where(DBRole.name == role_name)
                         )
                         db_role = role_result.scalar_one_or_none()
+                        if not db_role:
+                            raise Exception("Role not found: {}".format(role_name))
 
                         # Insert into DBPlayer
                         db_player = DBPlayer(
-                            name=p_data.get("name"),
+                            firstname=p_data.get("firstname"),
+                            lastname=p_data.get("lastname"),
                             role_id=db_role.id if db_role else None,
-                            level=p_data.get("level"),
-                            pronoun=p_data.get("pronoun"),
-                            experience=p_data.get("experience"),
-                            money=p_data.get("money"),
-                            token=p_data.get("token"),
+                            email=p_data.get("email"),
                             pin=p_data.get("pin"),
                             salt=p_data.get("salt"),
-                            attributes_id=db_attributes.id,
-                            room_id=room.id if room else None,
-                            race_id=db_race.id if db_race else None,
-                            class_id=db_class.id if db_class else None,
                         )
                         session.add(db_player)
+                        await session.flush()
+
+                        # character data
+                        character_data = CharacterSource().get_data()
+                        characters_dicts = [cd.to_dict() for cd in character_data]
+                        for c_data in characters_dicts:
+                            # Insert into DBAttributes
+                            attributes_data = c_data.get("attributes", {})
+                            db_attributes = DBAttributes(**attributes_data)
+                            session.add(db_attributes)
+                            await session.flush()
+
+                            # get room from room_id
+                            room = await session.get(DBRoom, p_data.get("room_id"))
+
+                            # Find PlayerRace
+                            race_name = c_data.get("player_race")
+                            race_result = await session.execute(
+                                select(DBPlayerRace).where(DBPlayerRace.name == race_name)
+                            )
+                            db_race = race_result.scalar_one_or_none()
+                            if not db_race:
+                                raise Exception("PlayerRace not found: {}".format(race_name))
+
+                            # Find PlayerClass
+                            class_name = c_data.get("player_class")
+                            class_result = await session.execute(
+                                select(DBPlayerClass).where(DBPlayerClass.name == class_name)
+                            )
+                            db_class = class_result.scalar_one_or_none()
+
+                            db_character = DBCharacter(
+                                name=c_data.get("name"),
+                                level=c_data.get("level"),
+                                sex=c_data.get("sex"),
+                                experience=c_data.get("experience"),
+                                money=c_data.get("money"),
+                                attributes_id=db_attributes.id,
+                                room_id=room.id if room else None,
+                                race_id=db_race.id if db_race else None,
+                                class_id=db_class.id if db_class else None,
+                                alignment_id=c_data.get("alignment_id"),
+                                player_id=db_player.id,
+                            )
+                            session.add(db_character)
+                            await session.flush()
+
+                        # Commit the changes to the database
                         await session.commit()
                         self.logger.debug(f"Inserted Player: '{p_data.get('name')}' with id: {db_player.id}")
 

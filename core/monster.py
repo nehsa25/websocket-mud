@@ -54,7 +54,7 @@ class Monster(PlayerInterface, MOBHelper):
         determination,
         player_class,
         strength,
-        agility,
+        dexterity,
         location_id,
         perception,
         inventory,
@@ -88,7 +88,7 @@ class Monster(PlayerInterface, MOBHelper):
         self.attributes = AttributesType(
             int=intelligence,
             faith=faith,
-            agility=agility,
+            dexterity=dexterity,
             perception=perception,
             determination=determination,
             strength=strength,

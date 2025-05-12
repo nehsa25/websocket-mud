@@ -102,12 +102,12 @@ function App() {
 
         const result = (
             <Box>
-                <Text as="span" as="span">
+                <Text as="span">
                     Welcome to the NehsaMud and the world of{" "}
                     <Flex display="inline-flex">
                         {starTeal} {starPurple} {starRed} {starYellow}
                     </Flex>
-                    <Text as="span" as="span" fontWeight="bold" color={importantColor}>
+                    <Text as="span" fontWeight="bold" color={importantColor}>
                         {worldName}
                     </Text>
                     <Flex display="inline-flex">
@@ -159,7 +159,7 @@ function App() {
                             <LuCircleCheck />
                         </List.Indicator>
                         All the images are created via AI. More information on that in the <span style={{ paddingLeft: '5px' }}>
-                            <Text as="span" as="a" target="_blank" href="https://www.nehsa.net/aiimage" color="blue.500">
+                            <Text as="a" target="_blank" href="https://www.nehsa.net/aiimage" color="blue.500">
                                 AI Image Generation
                             </Text>
                         </span>
@@ -169,7 +169,7 @@ function App() {
                             <LuCircleCheck />
                         </List.Indicator>
                         All NPC and monster dialog is AI provided via <span style={{ paddingLeft: '5px' }}>
-                            <Text as="span" as="a" target="_blank" href="https://www.nehsa.net/gemini" color="blue.500">
+                            <Text as="a" target="_blank" href="https://www.nehsa.net/gemini" color="blue.500">
                                 Google Gemini
                             </Text></span>
                     </List.Item>

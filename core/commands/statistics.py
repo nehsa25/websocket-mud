@@ -28,7 +28,7 @@ class Statistics:
         You have the following attributes:<br>
         * Health {player.current_hp} of {player.max_hp}<br>
         * Strength {player.attributes.strength}<br>
-        * Agility {player.attributes.agility}<br>
+        * dexterity {player.attributes.dexterity}<br>
         * Determination {player.attributes.determination}<br>
         * Faith {player.attributes.faith}<br>
         * Intelligence {player.attributes.intelligence}<br>

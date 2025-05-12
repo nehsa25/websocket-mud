@@ -51,7 +51,7 @@ class Attack:
 
                     # for number of swings here
                     num_swings = 1
-                    num_swings += int(player.attributes.agility / player.weapon.weight_class.value)
+                    num_swings += int(player.attributes.dexterity / player.weapon.weight_class.value)
 
                     self.logger.debug(f"We're going to swing {num_swings} times!")
 

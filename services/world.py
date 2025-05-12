@@ -86,8 +86,15 @@ class WorldService:
             await GetClientEvent(len(self.players)).send(player.websocket, scope=SendScopeEnum.WORLD)
 
     async def get_player_websocket(self, player_id):
-        player = self.players.get(player_id)
-        return player.websocket if player else None
+        return next(
+            (
+                a
+                for a in self.world_service.players
+                if self.world_service.players[a] is not None
+                and self.world_service.players[a].websocket == player_id
+            ),
+            None,
+        )
 
     async def get_players_in_room(self, room_id):
         return list(self.room_players.get(room_id, []))

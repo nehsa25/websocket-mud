@@ -1,8 +1,8 @@
-import './Human.scss';
+import './Nyrriss.scss';
 
 import React from 'react';
 
-interface HumanProps {
+interface NyrrissProps {
     disabled?: boolean;
     className?: string;
     eyecolor?: string;
@@ -13,7 +13,7 @@ interface HumanProps {
     eyebrows?: string;
 }
 
-const human: React.FC<HumanProps> = ({
+const nyrriss: React.FC<NyrrissProps> = ({
     disabled,
     className,
     eyecolor,
@@ -27,7 +27,7 @@ const human: React.FC<HumanProps> = ({
     let eyes = 'O';
     let mouth = `\\    ----    /\n`;
     mouth += `  \\         /  \n`;
-    mouth += `\\--------/`;    
+    mouth += `\\--------/`;
     let bodyType = '';
     let longhair = '';
     let eyeBrow = '';
@@ -48,7 +48,7 @@ const human: React.FC<HumanProps> = ({
         hair = `<span style="${hairStyling}">  _.--""--._\n .\'          \'.</span>`;
         longhair = '';
     } else if (hairstyle === 'short') {
-        hair = `<span style="${hairStyling}">  _.--""--._\n`;        
+        hair = `<span style="${hairStyling}">  _.--""--._\n`;
         hair += `///___\\\\\\'\\</span>`;
         longhair = '';
     } else if (hairstyle === 'longhair') {
@@ -96,9 +96,20 @@ const human: React.FC<HumanProps> = ({
         mouth += `<span style="${facialHairStyle}">\\</span>    ----    <span style="${facialHairStyle}">/</span>\n`;
         mouth += `  \\         /  \n`;
         mouth += `\\--------/`;
-    } 
+    }
 
-    // --- body type ---
+    // --- Eye brows ---
+    const eyebrowStyling = `color: ${eyecolor || 'inherit'};`;
+    eyeBrow = `<span style="${eyebrowStyling}">${eyebrows}</span>`;
+    if (!eyebrows || eyebrows === 'none') {
+        eyeBrow = '  ';
+    } else if (eyebrows === 'thin') {
+        eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
+    } else if (eyebrows === 'bushy') {
+        eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
+    }
+
+    // --- body types ---
     if (body_type === 'none') {
         bodyType = '----\n'
         bodyType += '--|  |--\n'
@@ -129,17 +140,6 @@ const human: React.FC<HumanProps> = ({
         bodyType += '  |        |  \n'
         bodyType += '  |        |  \n'
         bodyType += '-------'
-    }
-
-    // --- Eye brows ---
-    const eyebrowStyling = `color: ${eyecolor || 'inherit'};`;
-    eyeBrow = `<span style="${eyebrowStyling}">${eyebrows}</span>`;
-    if (!eyebrows || eyebrows === 'none') {
-        eyeBrow = '  ';
-    } else if (eyebrows === 'thin') {
-        eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
-    } else if (eyebrows === 'bushy') {
-        eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
     }
 
     // --- Body Type ---
@@ -175,7 +175,7 @@ const human: React.FC<HumanProps> = ({
         bodyType += '-------'
     }
 
-    const humanFaceArt = `
+    const nyrrissFaceArt = `
 <span class="face">
 ${hair}
 /  ${eyeBrow}     ${eyeBrow}  \\
@@ -195,9 +195,9 @@ ${bodyType}
         <div
             className="lute-icon"
             style={{ fontFamily: 'monospace', margin: 0, lineHeight: '0.8' }}
-            dangerouslySetInnerHTML={{ __html: humanFaceArt }}
+            dangerouslySetInnerHTML={{ __html: nyrrissFaceArt }}
         />
     );
 };
 
-export default human;
+export default nyrriss;

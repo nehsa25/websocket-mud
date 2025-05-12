@@ -18,6 +18,14 @@ import Thief from '../React/Classes/thief/Thief';
 import Warrior from '../React/Classes/warrior/Warrior';
 import Warlock from '../React/Classes/warlock/Warlock';
 import Human from '../React/Races/human/Human';
+import Arguna from '../React/Races/arguna/Arguna';
+import Earea from '../React/Races/earea/Earea';
+import Goblin from '../React/Races/goblin/Goblin';
+import HalfOgre from '../React/Races/halfogre/HalfOgre';
+import Kobold from '../React/Races/kobold/Kobold';
+import Nyrriss from '../React/Races/nyrriss/Nyrriss';
+import Orc from '../React/Races/orc/Orc';
+import Fae from '../React/Races/fae/Fae';
 
 interface LoginModalProps {
     socket: WebSocket | null;
@@ -72,6 +80,11 @@ interface BodyType {
     description: string;
 }
 
+interface SexType {
+    id: string;
+    name: string;
+}
+
 interface EyeColorType {
     id: string;
     name: string;
@@ -97,6 +110,29 @@ interface FacialHairStyleType {
     name: string;
 }
 
+class NewUserRequest {
+    type: MudEvents = MudEvents.NEW_USER;
+    username: string = "";
+    pin: string = "";
+    firstname: string = "";
+    email: string = "";
+    race: string = "";
+    class: string = "";
+    hairStyle: string = "";
+    hairColor: string = "";
+    eyeColor: string = "";
+    eyeBrow: string = "";
+    bodyType: string = "";
+    sex: string = "";
+    strength: number = 0;
+    intelligence: number = 0;
+    wisdom: number = 0;
+    charisma: number = 0;
+    constitution: number = 0;
+    dexterity: number = 0;
+    luck: number = 0;
+}
+
 const apiLocation = import.meta.env.VITE_API_LOCATION ?? 'wss://mud-be.3aynhf1tn4zjy.us-west-2.cs.amazonlightsail.com'
 
 const LoginModal: React.FC<LoginModalProps> = ({
@@ -114,10 +150,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     const [races, setRaces] = useState<any[]>([]);
     const [classes, setClasses] = useState<any[]>([]);
     const [activeStep, setActiveStep] = useState(0);
-    const [repeatPin, setRepeatPin] = useState<string>("");
-    const [firstname, setFirstName] = useState<string>("");
-    const [email, setEmail] = useState<string>("");
-    const [emailRepeat, setEmailRepeat] = useState<string>("");
+    const [repeatPin, setRepeatPin] = useState<string>("0000");
+    const [firstname, setFirstName] = useState<string>("Jesse");
+    const [email, setEmail] = useState<string>("jesse.stone@nehsa.net");
+    const [emailRepeat, setEmailRepeat] = useState<string>("jesse.stone@nehsa.net");
     const [modalClass, setModalClass] = useState<string>('modal');
     const [selectedClass, setSelectedClass] = useState<MudClass | null>(null);
     const [selectedRace, setSelectedRace] = useState<MudRace | null>(null);
@@ -129,6 +165,45 @@ const LoginModal: React.FC<LoginModalProps> = ({
     const [dexterity, setDexterity] = useState<number>(0);
     const [luck, setLuck] = useState<number>(0);
     const [attributesRemaining, setAttributesRemaining] = useState<number>(5);
+    const [showTerms, setShowTerms] = useState<boolean>(false);
+    const [showTermsClicked, setShowTermsClicked] = useState<boolean>(false);
+
+    const printAbilities = useCallback(() => {
+        if (!selectedClass) {
+            return <div />;
+        }
+        return (
+            <div>
+                {selectedRace && selectedRace?.abilities}
+                {selectedClass && selectedClass?.abilities}
+            </div>
+        );
+    }, [selectedClass, selectedRace]);
+
+    const printTraits = useCallback(() => {
+        if (!selectedClass) {
+            return <div />;
+        }
+        return (
+            <div>
+                {selectedRace && selectedRace?.directives}
+                {selectedClass && selectedClass?.directives}
+            </div>
+        );
+    }, [selectedClass, selectedRace]);
+
+    // sex types
+    const [selectedSex, setSelectedSex] = useState<SexType>();
+    let sexCollection = useMemo(() => {
+        return createListCollection({
+            items: [
+                { id: 'female', name: 'Female' },
+                { id: 'mail', name: 'Male' },
+            ],
+            itemToString: (selectedSex) => selectedSex.name,
+            itemToValue: (selectedSex) => selectedSex.name,
+        });
+    }, [selectedSex]);
 
     // body types
     const [selectedBodyType, setSelectedBodyType] = useState<BodyType>();
@@ -179,7 +254,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
             items: [
                 { id: 'thin', name: 'thin' },
                 { id: 'bushy', name: 'bushy' },
-                { id: 'obtuse', name: 'obtuse' },
             ],
             itemToString: (eyebrow) => eyebrow.name,
             itemToValue: (eyebrow) => eyebrow.name,
@@ -261,40 +335,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
         });
     }, [races]);
 
-    useEffect(() => {
-        const fetchRaces = async () => {
-            try {
-                const response = await fetch(apiLocation + '/v1/mud/races');
-                const data = await response.json();
-                setRaces(data);
-                setSelectedRace(data[0]);
-            } catch (error) {
-                console.error('Error fetching races:', error);
-            }
-        };
-
-        const fetchClasses = async () => {
-            try {
-                const response = await fetch(apiLocation + '/v1/mud/classes');
-                const data = await response.json();
-                setClasses(data);
-                setSelectedClass(data[0]);
-            } catch (error) {
-                console.error('Error fetching classes:', error);
-            }
-        };
-
-        const fetchData = async () => {
-            await Promise.all([fetchRaces(), fetchClasses()]);
-        };
-
-        fetchData();
-    }, []);
-
-    const submitNewPlayer = useCallback(() => {
-        console.log("submitNewPlayer: Entered");
-    }, []);
-
     const handleUsernameSubmit = useCallback(() => {
         console.log("handleUsernameSubmit: Entered");
         if (username.trim() !== '') {
@@ -324,7 +364,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [socket, username, pin, setShowUsernameModal, setCurrentRoomTitle]);
 
     const newUser = useCallback(() => {
-        console.log("newUser: Entered");
         setActiveStep(1);
         setModalClass('modal');
         setTimeout(() => {
@@ -333,6 +372,89 @@ const LoginModal: React.FC<LoginModalProps> = ({
         }, 50);
     }, []);
 
+    const handleStep1Next = useCallback(() => {
+        if (!username) {
+            alert("Please provide a character name. This is the name you will be seen as within the game.");
+            return;
+        }
+        if (!pin) {
+            alert("Please provide a pin. This is used to log in to the game.");
+            return;
+        }
+        setActiveStep(2);
+    }, [username, pin]);
+
+    const handleStep2Next = useCallback(() => {
+        if (!firstname) {
+            alert("Please provide a first name. Email address is optional.");
+            return;
+        }
+        setActiveStep(3);
+    }, [firstname]);
+
+    const handleStep3Next = useCallback(() => {
+        if (!selectedRace) {
+            alert("Please select a character race.");
+            return;
+        }
+        setActiveStep(4);
+    }, [selectedRace]);
+
+    const handleStep4Next = useCallback(() => {
+        if (!selectedClass) {
+            alert("Please select a character class.");
+            return;
+        }
+        setActiveStep(5);
+    }, [selectedClass]);
+
+    const handleStep5Next = useCallback(() => {
+        if (!selectedSex) {
+            alert("Please select a sex");
+            return;
+        }
+
+        if (!selectedBodyType) {
+            alert("Please select a body type");
+            return;
+        }
+
+        if (!selectedEyeColor) {
+            alert("Please select an eye color");
+            return;
+        }
+
+        if (!selectedEyeBrow) {
+            alert("Please select an eye brow type");
+            return;
+        }
+
+        if (!selectedHairColor) {
+            alert("Please select a hair color");
+            return;
+        }
+
+        if (!selectedHairStyle) {
+            alert("Please select a hair style");
+            return;
+        }
+
+        if (!selectedFacialHairStyle) {
+            alert("Please select a facial hair style");
+            return;
+        }
+        setActiveStep(6);
+    }, [selectedSex, selectedBodyType, selectedEyeColor, selectedEyeBrow, selectedHairColor, selectedHairStyle, selectedFacialHairStyle]);
+
+    const handleStep6Next = useCallback(() => {
+        setActiveStep(7);
+    }, []);
+
+    const handleStep7Next = useCallback(() => {
+        setActiveStep(8);
+    }, []);
+
+    // final step
     const handleNewUserSubmit = useCallback(() => {
         console.log("handleNewUserSubmit: Entered");
 
@@ -368,26 +490,14 @@ const LoginModal: React.FC<LoginModalProps> = ({
             return;
         }
 
-        // validate email
-        if (email !== emailRepeat) {
-            alert("Emails do not match");
-            return;
-        }
-
-        // verify it has a @ and . in the email
-        if (!email.includes("@") || !email.includes(".")) {
-            alert("Email must be a valid email address");
-            return;
-        }
-
         //validate race
-        if (player_race === "") {
+        if (selectedRace?.name === "") {
             alert("Please select a playable race");
             return;
         }
 
         //validate class
-        if (player_class === "") {
+        if (selectedClass?.name === "") {
             alert("Please select a playable class");
             return;
         }
@@ -404,6 +514,41 @@ const LoginModal: React.FC<LoginModalProps> = ({
         }
 
         // if all good, we can send the new user data to the server
+        if (socket && socket.readyState === WebSocket.OPEN) {
+            (async () => {
+                try {
+                    const hash = await argon2.hash({ pass: pin.trim(), salt: uuidv4(), time: 2, mem: 19456, hashLen: 32 });
+                    console.log("hash = " + hash);
+                    const req = new NewUserRequest();
+                    req.type = MudEvents.NEW_USER;
+                    req.username = username.trim();
+                    req.pin = hash;
+                    req.firstname = firstname.trim();
+                    req.email = email.trim();
+                    req.race = selectedRace?.name ?? "";
+                    req.class = selectedClass?.name ?? "";
+                    req.hairStyle = selectedHairStyle?.name ?? "";
+                    req.hairColor = selectedHairColor?.name ?? "";
+                    req.eyeColor = selectedEyeColor?.name ?? "";
+                    req.eyeBrow = selectedEyeBrow?.name ?? "";
+                    req.bodyType = selectedBodyType?.name ?? "";
+                    req.sex = selectedSex?.name ?? "";
+                    req.strength = strength;
+                    req.intelligence = intelligence;
+                    req.wisdom = wisdom;
+                    req.charisma = charisma;
+                    req.constitution = constitution;
+                    req.dexterity = dexterity;
+                    req.luck = luck;
+                    socket.send(JSON.stringify(req));
+                    setShowNewUserModal(false); // Close the modal
+                    setCurrentRoomTitle(username.trim());
+                } catch (e) {
+                    console.error("Error: " + e);
+                }
+            }
+            )();
+        }
 
         console.log("handleNewUserSubmit: Exited");
     }, [socket, username, pin, repeatPin]);
@@ -456,6 +601,35 @@ const LoginModal: React.FC<LoginModalProps> = ({
         setLuck(newLuck);
     }, [baseAttributes, setStrength, setIntelligence, setWisdom, setCharisma, setConstitution, setDexterity, setLuck]);
 
+    useEffect(() => {
+        const fetchRaces = async () => {
+            try {
+                const response = await fetch(apiLocation + '/v1/mud/races');
+                const data = await response.json();
+                setRaces(data);
+                setSelectedRace(data[0]);
+            } catch (error) {
+                console.error('Error fetching races:', error);
+            }
+        };
+
+        const fetchClasses = async () => {
+            try {
+                const response = await fetch(apiLocation + '/v1/mud/classes');
+                const data = await response.json();
+                setClasses(data);
+                setSelectedClass(data[0]);
+            } catch (error) {
+                console.error('Error fetching classes:', error);
+            }
+        };
+
+        const fetchData = async () => {
+            await Promise.all([fetchRaces(), fetchClasses()]);
+        };
+
+        fetchData();
+    }, []);
 
     useEffect(() => {
         updateAttributes(selectedRace, selectedClass);
@@ -474,10 +648,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [attributesRemaining]);
 
     const decreaseStrength = useCallback(() => {
+        if (strength <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setStrength((prev) => Math.max(prev - 1, 0));
-    }
-        , []);
+    }, [setAttributesRemaining, setStrength, attributesRemaining]);
 
     const increaseStrength = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -489,9 +663,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setStrength, attributesRemaining]);
 
     const decreaseIntelligence = useCallback(() => {
+        if (intelligence <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setIntelligence((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setIntelligence, attributesRemaining]);
 
     const increaseIntelligence = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -503,9 +678,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setIntelligence, attributesRemaining]);
 
     const decreaseWisdom = useCallback(() => {
+        if (wisdom <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setWisdom((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setWisdom, attributesRemaining]);
 
     const increaseWisdom = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -517,9 +693,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setWisdom, attributesRemaining]);
 
     const decreaseCharisma = useCallback(() => {
+        if (charisma <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setCharisma((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setCharisma, attributesRemaining]);
 
     const increaseCharisma = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -531,9 +708,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setCharisma, attributesRemaining]);
 
     const decreaseConstitution = useCallback(() => {
+        if (constitution <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setConstitution((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setConstitution, attributesRemaining]);
 
     const increaseConstitution = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -545,9 +723,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setConstitution, attributesRemaining]);
 
     const decreaseDexterity = useCallback(() => {
+        if (dexterity <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setDexterity((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setDexterity, attributesRemaining]);
 
     const increaseDexterity = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -559,9 +738,10 @@ const LoginModal: React.FC<LoginModalProps> = ({
     }, [setAttributesRemaining, setDexterity, attributesRemaining]);
 
     const decreaseLuck = useCallback(() => {
+        if (luck <= 0) return;
         setAttributesRemaining((prev) => prev + 1);
         setLuck((prev) => Math.max(prev - 1, 0));
-    }, []);
+    }, [setAttributesRemaining, setLuck, attributesRemaining]);
 
     const increaseLuck = useCallback(() => {
         if (attributesRemaining > 0) {
@@ -724,7 +904,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             <div className="button-grid">
                                 <div><button onClick={() => setShowNewUserModal(false)} className="mud-button">Cancel</button></div>
                                 <div>
-                                    <button onClick={() => { setActiveStep(2); }} className="mud-button">
+                                    <button onClick={() => { handleStep1Next() }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -733,7 +913,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                     </div >
                 )}
 
-            {/* New User - Step 2 */}
+            {/* New User - Step 2 Personal information */}
             {
                 showNewUserModal && activeStep === 2 && (
                     <div className={modalClass}>
@@ -775,16 +955,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                     </div>
                                 </div>
                                 <div>
-                                    <div className='firstname-requirements'>
-                                        <List.Root gap="2" variant="plain" align="start">
-                                            <List.Item>
-                                                <List.Indicator asChild color="salmon.500">
-                                                    <LuTriangleAlert />
-                                                </List.Indicator>
-                                                This is not visible to other players.
-                                            </List.Item>
-                                        </List.Root>
-                                    </div>
                                     <div className='email-requirements'>
                                         <List.Root gap="2" variant="plain" align="start">
                                             <List.Item>
@@ -797,7 +967,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                                 <List.Indicator asChild color="salmon.500">
                                                     <LuTriangleAlert />
                                                 </List.Indicator>
-                                                This is not visible to other players.
+                                                This information is not visible to other players.
                                             </List.Item>
                                             <List.Item>
                                                 <List.Indicator asChild color="salmon.500">
@@ -813,9 +983,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                 <div><button onClick={() => { setActiveStep(1); }} className="mud-button">Back</button></div>
                                 <div>
                                     <button onClick={() => {
-                                        if (!firstname) {
-                                            alert("Please provide a first name. Email address is optional (but is only used if you need a pin reset)."); return;
-                                        } setActiveStep(3);
+                                        handleStep2Next()
                                     }} className="mud-button">
                                         <SwordNext />
                                     </button>
@@ -909,7 +1077,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             <div className="button-grid">
                                 <div><button onClick={() => { setActiveStep(2); }} className="mud-button">Back</button></div>
                                 <div>
-                                    <button onClick={() => { setActiveStep(4); }} className="mud-button">
+                                    <button onClick={() => { handleStep3Next() }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -918,7 +1086,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                     </div>
                 )}
 
-            {/* New User - Step 4 */}
+            {/* New User - Step 4 - class */}
             {
                 showNewUserModal && activeStep === 4 && (
                     <div className={modalClass}>
@@ -1007,7 +1175,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             <div className="button-grid">
                                 <div><button onClick={() => { setActiveStep(3); }} className="mud-button">Back</button></div>
                                 <div>
-                                    <button onClick={() => { setActiveStep(5); }} className="mud-button">
+                                    <button onClick={() => { handleStep4Next() }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -1026,6 +1194,34 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             </div>
                             <div className="form-grid">
                                 <div className="form-grid-rows-condensed">
+                                    <div>
+                                        <Select.Root size="xs" collection={sexCollection} onValueChange={(value) => {
+                                            const selected = sexCollection.items.find((bt) => bt.name === value.value[0]);
+                                            setSelectedSex(selected);
+                                        }}
+                                        >
+                                            <Select.Control>
+                                                <Select.Trigger>
+                                                    <Select.ValueText placeholder="Select Sex" />
+                                                </Select.Trigger>
+                                                <Select.IndicatorGroup>
+                                                    <Select.Indicator />
+                                                </Select.IndicatorGroup>
+                                            </Select.Control>
+                                            <Portal>
+                                                <Select.Positioner>
+                                                    <Select.Content>
+                                                        {sexCollection.items.map((sex) => (
+                                                            <Select.Item item={sex} key={sex.id}>
+                                                                {sex.name}
+                                                                <Select.ItemIndicator />
+                                                            </Select.Item>
+                                                        ))}
+                                                    </Select.Content>
+                                                </Select.Positioner>
+                                            </Portal>
+                                        </Select.Root>
+                                    </div>
                                     <div>
                                         <Select.Root size="xs" collection={bodyTypeCollection} onValueChange={(value) => {
                                             const selected = bodyTypeCollection.items.find((bt) => bt.name === value.value[0]);
@@ -1191,23 +1387,110 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                     </div>
                                 </div>
                                 <div>
-                                    {
-                                        selectedRace?.name == "human" && (
-                                            <Human
-                                                eyecolor={selectedEyeColor?.id}
-                                                haircolor={selectedHairColor?.id}
-                                                hairstyle={selectedHairStyle?.id}
-                                                body_type={selectedBodyType?.id}
-                                                facial_hair={selectedFacialHairStyle?.id}
-                                            />
-                                        )}
+                                    {selectedRace?.name == "human" && (
+                                        <Human
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
 
+                                    {selectedRace?.name == "arguna" && (
+                                        <Arguna
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "earea" && (
+                                        <Earea
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "fae" && (
+                                        <Fae
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "goblin" && (
+                                        <Goblin
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "halfogre" && (
+                                        <HalfOgre
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "kobold" && (
+                                        <Kobold
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "nyrriss" && (
+                                        <Nyrriss
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
+
+                                    {selectedRace?.name == "orc" && (
+                                        <Orc
+                                            eyecolor={selectedEyeColor?.id}
+                                            eyebrows={selectedEyeBrow?.id}
+                                            haircolor={selectedHairColor?.id}
+                                            hairstyle={selectedHairStyle?.id}
+                                            body_type={selectedBodyType?.id}
+                                            facial_hair={selectedFacialHairStyle?.id}
+                                        />
+                                    )}
                                 </div>
                             </div>
                             <div className="button-grid">
                                 <div><button onClick={() => { setActiveStep(4); }} className="mud-button">Back</button></div>
                                 <div>
-                                    <button onClick={() => { setActiveStep(6); }} className="mud-button">
+                                    <button onClick={() => { handleStep5Next() }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -1385,7 +1668,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
                             <div className="button-grid">
                                 <div><button onClick={() => { setActiveStep(5); }} className="mud-button">Back</button></div>
                                 <div>
-                                    <button onClick={() => { setActiveStep(7); }} className="mud-button">
+                                    <button onClick={() => { handleStep6Next() }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -1404,112 +1687,187 @@ const LoginModal: React.FC<LoginModalProps> = ({
                                 <h2>Step 7 of 7: Summary</h2><br />
                             </div>
                             <div>
-                                <div className="form-quad-grid">
+                                <div className="form-tri-grid">
                                     <div>
-                                        Player
+                                        Player Information
+
                                         <div className="form-grid-condensed">
-                                            <div>Username</div><div>value</div>
+                                            <div>Pin</div><div>{pin}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Pin</div><div>value</div>
+                                            <div>Name</div><div>{firstname}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Name</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Email</div><div>value</div>
+                                            <div>Email</div><div>{email}</div>
                                         </div>
                                     </div>
                                     <div>
+                                        {selectedRace?.name == "human" && (
+                                            <Human
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "arguna" && (
+                                            <Arguna
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "earea" && (
+                                            <Earea
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "fae" && (
+                                            <Fae
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "goblin" && (
+                                            <Goblin
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "halfogre" && (
+                                            <HalfOgre
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "kobold" && (
+                                            <Kobold
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "nyrriss" && (
+                                            <Nyrriss
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+
+                                        {selectedRace?.name == "orc" && (
+                                            <Orc
+                                                eyecolor={selectedEyeColor?.id}
+                                                eyebrows={selectedEyeBrow?.id}
+                                                haircolor={selectedHairColor?.id}
+                                                hairstyle={selectedHairStyle?.id}
+                                                body_type={selectedBodyType?.id}
+                                                facial_hair={selectedFacialHairStyle?.id}
+                                            />
+                                        )}
+                                    </div>
+                                    <div>
+                                        Character Information
+                                        <div className="form-grid-condensed">
+                                            <div>Name</div><div>{username}</div>
+                                        </div>
+                                        <div className="form-grid-condensed">
+                                            <div>Race</div><div>{selectedRace?.name}</div>
+                                        </div>
+                                        <div className="form-grid-condensed">
+                                            <div>Class</div><div>{selectedClass?.name}</div>
+                                        </div><br /><br />
+
                                         Description
                                         <div className="form-grid-condensed">
-                                            <div>Hair Style</div><div>value</div>
+                                            <div>Hair Style</div><div>{selectedHairStyle?.name}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Hair Color</div><div>value</div>
+                                            <div>Facial Hair</div><div>{selectedFacialHairStyle?.name}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Eye Color</div><div>value</div>
+                                            <div>Hair Color</div><div>{selectedHairColor?.name}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Eye Brows</div><div>value</div>
+                                            <div>Eye Color</div><div>{selectedEyeColor?.name}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Body Type</div><div>value</div>
+                                            <div>Eye Brows</div><div>{selectedEyeBrow?.name}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Sex</div><div>value</div>
+                                            <div>Body Type</div><div>{selectedBodyType?.name}</div>
                                         </div>
-                                    </div>
-                                    <div>
+                                        <div className="form-grid-condensed">
+                                            <div>Sex</div><div>{selectedSex?.name}</div>
+                                        </div><br /><br />
+
                                         Attributes
                                         <div className="form-grid-condensed">
-                                            <div>Race</div><div>value</div>
+                                            <div>Strength</div><div>{strength}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Class</div><div>value</div>
+                                            <div>Dexerity</div><div>{dexterity}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Strength</div><div>value</div>
+                                            <div>Intelligence</div><div>{intelligence}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Dexerity</div><div>value</div>
+                                            <div>Wisdom</div><div>{wisdom}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Intelligence</div><div>value</div>
+                                            <div>Luck</div><div>{luck}</div>
                                         </div>
                                         <div className="form-grid-condensed">
-                                            <div>Wisdom</div><div>value</div>
-                                        </div>
+                                            <div>Charisma</div><div>{charisma}</div>
+                                        </div><br /><br />
                                         <div className="form-grid-condensed">
-                                            <div>Luck</div><div>value</div>
-                                        </div>
+                                            <div>Abilities</div><div>{printAbilities()}</div>
+                                        </div><br /><br />
                                         <div className="form-grid-condensed">
-                                            <div>Charisma</div><div>value</div>
+                                            <div>Traits</div><div>{printTraits()}</div>
                                         </div>
                                     </div>
-                                    <div>
-                                        Traits
-                                        <div className="form-grid-condensed">
-                                            <div>Race</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Class</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Strength</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Dexerity</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Intelligence</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Wisdom</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Luck</div><div>value</div>
-                                        </div>
-                                        <div className="form-grid-condensed">
-                                            <div>Charisma</div><div>value</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <Human
-                                        eyecolor={selectedEyeColor?.id}
-                                        haircolor={selectedHairColor?.id}
-                                        hairstyle={selectedHairStyle?.id}
-                                        body_type={selectedBodyType?.id}
-                                        facial_hair={selectedFacialHairStyle?.id}
-                                    />
                                 </div>
                             </div>
                             <div className="button-grid">
                                 <div><button onClick={() => { setActiveStep(6); }} className="mud-button">Back</button></div>
                                 <div>
-                                    <button onClick={() => { handleNewUserSubmit(); }} className="mud-button">
+                                    <button onClick={() => { handleStep7Next(); }} className="mud-button">
                                         <SwordNext />
                                     </button>
                                 </div>
@@ -1519,10 +1877,58 @@ const LoginModal: React.FC<LoginModalProps> = ({
                 )
             }
 
+            {/* New User - Step 8 - Terms and Conditions */}
+            {
+                showNewUserModal && activeStep === 8 && (
+                    <div className={modalClass}>
+                        <div className="modal-content-grid">
+                            <div>
+                                <h2>Terms and Conditions</h2><br />
+                            </div>
+                            <div>
+                                <Text>
+                                    By using this service, you agree to the following terms and conditions:<br /><br />
+
+                                    NehsaMUD is a text-based online game that is provided "as is" without any warranties or guarantees.<br />
+                                    The game is intended for entertainment purposes only, and the developers are not responsible for any damages or losses incurred as a result of using the game.<br /><br />
+
+                                    YOU ACKNOWLEDGE AND AGREE THAT YOUR ACCESS TO AND PLAY OF THE GAME IS ENTIRELY AT YOUR OWN RISK.
+                                </Text>
+                            </div>
+                            <div className="button-grid">
+                                <div><button onClick={() => { setActiveStep(7); }} className="mud-button">Back</button></div>
+                                <div>
+                                    <button onClick={() => { handleNewUserSubmit(); }} className="mud-button">
+                                        <SwordNext />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            };
+
+            {/* Terms and Conditions (clicked by link) */}
+            {showTerms && showTermsClicked && (
+                <div className="modal-content-grid">
+                    <div>
+                        <h2>Terms and Conditions</h2><br />
+                    </div>
+                    <div>
+                        <p>By using this service, you agree to the following terms and conditions...</p>
+                        <button onClick={() => { setShowTermsClicked(false); setShowTerms(false) }} className="mud-button">Close</button>
+                    </div>
+                </div>
+            )}
+
+            {/* Background Overlay */}
+            {(showUsernameModal || showNewUserModal) && <div className="modal-overlay"></div>}
+
             {/* Background Overlay */}
             {(showUsernameModal || showNewUserModal) && <div className="modal-overlay"></div>}
         </>
-    );
+    )
 };
+
 
 export default LoginModal;

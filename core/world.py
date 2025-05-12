@@ -155,10 +155,10 @@ class World:
             self.logger.debug(f"World received message from connections: {message}")
 
             # associate the message with the player
-            player = await self.find_player_by_websocket(message.websocket)
+            playerWebsocket = await self.find_player_by_websocket(message.websocket)
             player_socket_id = message.websocket.id.hex
 
-            if not player and message.type == EventEnum.CONNECTION_NEW.value:
+            if not playerWebsocket and message.type == EventEnum.CONNECTION_NEW.value:
                 await InfoEvent("A user is logging in...").send(
                     websocket=message.websocket,
                     scope=SendScopeEnum.WORLD,
@@ -184,19 +184,11 @@ class World:
                         continue
 
                     # if this is an answer, we should already have a player object
-                    new_player_id = next(
-                        (
-                            a
-                            for a in self.world_service.players
-                            if self.world_service.players[a] is not None
-                            and self.world_service.players[a].websocket == message.websocket
-                        ),
-                        None,
-                    )
+                    new_player_id = await self.world_service.get_player_websocket(message.websocket)
                     if new_player_id:
-                        player = self.world_service.players[new_player_id]
-                        player.name = json_msg["username"]
-                        self.world_service.players[player_socket_id] = player
+                        playerWebsocket = self.world_service.players[new_player_id]
+                        playerWebsocket.name = json_msg["username"]
+                        self.world_service.players[player_socket_id] = playerWebsocket
                     else:
                         self.logger.warning(f"Player with websocket {message.websocket} not found for name update.")
 
@@ -209,16 +201,16 @@ class World:
                             found_player_socket_id = await self.find_player_by_name(json_msg["username"])
                             if found_player_socket_id and self.world_service.players[found_player_socket_id].socket_id != player_socket_id:
                                 self.logger.debug("Player likely pressed refresh (F5). Updating existing player websocket information.")                         
-                                player.websocket = message.websocket
-                                player.token = json_msg.get("token")
-                                self.world_service.players[player_socket_id] = player
+                                playerWebsocket.websocket = message.websocket
+                                playerWebsocket.token = json_msg.get("token")
+                                self.world_service.players[player_socket_id] = playerWebsocket
 
                                 # remove bad player from the world service
                                 if len(self.world_service.players) > 0:
                                     del self.world_service.players[found_player_socket_id]
 
                                 # update the db
-                                await self.world_database.update_player(player)
+                                await self.world_database.update_player(playerWebsocket)
                         else:
                             self.logger.debug(f"Invalid token: {json_msg.get('token')}")
                             await InvalidNameEvent(json_msg["name"]).send(message.websocket)
@@ -234,7 +226,7 @@ class World:
                         player.token = self.auth_service.generate_token(json_msg["username"])
 
                         # update the db
-                        player.id = await self.world_database.update_player(player)
+                        player.id = await self.world_database.update_player(playerWebsocket)
 
                         # update the player in the world service
                         self.world_service.players[player_socket_id] = player
@@ -243,17 +235,19 @@ class World:
                         f"New player {player.name} connected. Total players: {len(self.world_service.players)}"
                     )
 
-                    await WelcomeEvent(f"Welcome {player.name}!", player.name, player.token).send(
-                        player.websocket, scope=SendScopeEnum.PLAYER, player_data=self.world_service.players
+                    await WelcomeEvent(f"Welcome {playerWebsocket.name}!", playerWebsocket.name, playerWebsocket.token).send(
+                        playerWebsocket.websocket, scope=SendScopeEnum.PLAYER, player_data=self.world_service.players
                     )
 
                     # send the player
-                    await GetClientEvent(len(self.world_service.players)).send(player.websocket)
-                elif player and json_msg["type"] == EventEnum.ANNOUNCEMENT.value:
+                    await GetClientEvent(len(self.world_service.players)).send(playerWebsocket.websocket)
+                elif playerWebsocket and json_msg["type"] == EventEnum.ANNOUNCEMENT.value:
                     pass
+                elif playerWebsocket and json_msg["type"] == EventEnum.NEW_USER.value:
+                    await self.world_database.update_player(playerWebsocket)
                 else:
                     # Process a in-game command
-                    await self.process_command(player, message)
+                    await self.process_command(playerWebsocket, message)
 
             self.to_world_queue.task_done()
 

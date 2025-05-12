@@ -30,7 +30,7 @@ class Unit(UnitTypes):
     type = None
     hp = None
     strength = None
-    agility = None
+    dexterity = None
     perception = None
     wanders = None
     logger = None
@@ -40,14 +40,14 @@ class Unit(UnitTypes):
         self.logger.debug("Initializing Unit() class")
 
     def generate_unit(
-        self, title, name, hp, strength, agility, perception, description, wanders=False
+        self, title, name, hp, strength, dexterity, perception, description, wanders=False
     ):
         self.logger.debug("enter")
         self.name = name
         self.title = title
         self.hp = hp
         self.strength = strength
-        self.agility = agility
+        self.dexterity = dexterity
         self.perception = perception
         self.description = description
         self.wanders = wanders

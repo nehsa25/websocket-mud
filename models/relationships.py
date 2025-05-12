@@ -75,6 +75,8 @@ def define_relationships():
     DBPlayer.attributes = relationship("DBAttribute", back_populates="attributes")
     DBPlayer.race = relationship("DBPlayerRace", back_populates="players")
     DBPlayer.player_class = relationship("DBPlayerClass", back_populates="players")
+    DBPlayer.characters = relationship(back_populates="player")
+
 
     # PlayerRace
     DBPlayerRace.mobs = relationship("DBMob", back_populates="player_races")

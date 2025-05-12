@@ -9,9 +9,9 @@ interface SwordNextProps {
 
 const SwordNext: React.FC<SwordNextProps> = ({ disabled, className }) => {
     const swordArt = `
-<span class="sword-pommel">                  |</span>  <span class="sword-hilt">|</span><span class="sword-shiny">============================\\</span></span>
-<span class="sword-pommel">         [===========</span><span class="sword-hilt">|</span><span class="sword-text">NEXT</span>| </span><span class="sword-blade">>>>>>>>>>>>>>>>>>>>>>>><span class="sword-shiny">></span></span>
-<span class="sword-pommel">                  |</span>  <span class="sword-hilt">|</span><span class="sword-shiny">============================/</span></span>
+<span class="sword-pommel">                  [</span>  <span class="sword-hilt">|</span><span class="sword-shiny">============================\\</span></span>
+<span class="sword-pommel">              [===========</span><span class="sword-hilt">|</span><span class="sword-text">NEXT</span>  </span><span class="sword-blade">>>>>>>>>>>>>>>>>>>>>><span class="">></span></span>
+<span class="sword-pommel">                  [</span>  <span class="sword-hilt">|</span><span class="sword-shiny">============================/</span></span>
     `;
 
     return (

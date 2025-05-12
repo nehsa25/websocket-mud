@@ -23,7 +23,6 @@ class AttributesData:
     ) -> None:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing AttributesEnum class")
-        
         self.strength = strength
         self.intelligence = intelligence
         self.wisdom = wisdom

@@ -2,6 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from core.enums.alignments import AlignmentEnum
+from core.objects.player import Player
 from models.db_attributes import DBAttributes
 from models.db_players import DBPlayer
 from settings.global_settings import GlobalSettings
@@ -21,7 +22,7 @@ class WorldDatabase:
     async def close(self):
         await self.engine.dispose()
 
-    async def update_player(self, player):
+    async def update_player(self, player: Player):
         """Updates the player's information in the database, inserting if it doesn't exist."""
         self.logger.debug("enter")
         player_id = None

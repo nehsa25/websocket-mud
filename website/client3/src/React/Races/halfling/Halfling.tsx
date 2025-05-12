@@ -1,8 +1,8 @@
-import './Human.scss';
+import './Goblin.scss';
 
 import React from 'react';
 
-interface HumanProps {
+interface GoblinProps {
     disabled?: boolean;
     className?: string;
     eyecolor?: string;
@@ -13,7 +13,7 @@ interface HumanProps {
     eyebrows?: string;
 }
 
-const human: React.FC<HumanProps> = ({
+const goblin: React.FC<GoblinProps> = ({
     disabled,
     className,
     eyecolor,
@@ -27,7 +27,7 @@ const human: React.FC<HumanProps> = ({
     let eyes = 'O';
     let mouth = `\\    ----    /\n`;
     mouth += `  \\         /  \n`;
-    mouth += `\\--------/`;    
+    mouth += `\\--------/`;
     let bodyType = '';
     let longhair = '';
     let eyeBrow = '';
@@ -48,7 +48,7 @@ const human: React.FC<HumanProps> = ({
         hair = `<span style="${hairStyling}">  _.--""--._\n .\'          \'.</span>`;
         longhair = '';
     } else if (hairstyle === 'short') {
-        hair = `<span style="${hairStyling}">  _.--""--._\n`;        
+        hair = `<span style="${hairStyling}">  _.--""--._\n`;
         hair += `///___\\\\\\'\\</span>`;
         longhair = '';
     } else if (hairstyle === 'longhair') {
@@ -96,39 +96,6 @@ const human: React.FC<HumanProps> = ({
         mouth += `<span style="${facialHairStyle}">\\</span>    ----    <span style="${facialHairStyle}">/</span>\n`;
         mouth += `  \\         /  \n`;
         mouth += `\\--------/`;
-    } 
-
-    // --- body type ---
-    if (body_type === 'none') {
-        bodyType = '----\n'
-        bodyType += '--|  |--\n'
-        bodyType += '  |  |  \n'
-        bodyType += '  |  |  \n'
-        bodyType += '----'
-    } else if (body_type === 'thin') {
-        bodyType = '----\n'
-        bodyType += '--|  |--\n'
-        bodyType += '  |  |  \n'
-        bodyType += '  |  |  \n'
-        bodyType += '----'
-    } else if (body_type === 'average') {
-        bodyType = '------\n'
-        bodyType += '--|    |--\n'
-        bodyType += '  |    |  \n'
-        bodyType += '  |    |  \n'
-        bodyType += '------'
-    } else if (body_type === 'large') {
-        bodyType = '------\n'
-        bodyType += '--|      |--\n'
-        bodyType += '  |      |  \n'
-        bodyType += '  |      |  \n'
-        bodyType += '------'
-    } else {
-        bodyType = '--------\n'
-        bodyType += '--|        |--\n'
-        bodyType += '  |        |  \n'
-        bodyType += '  |        |  \n'
-        bodyType += '-------'
     }
 
     // --- Eye brows ---
@@ -175,7 +142,7 @@ const human: React.FC<HumanProps> = ({
         bodyType += '-------'
     }
 
-    const humanFaceArt = `
+    const goblinFaceArt = `
 <span class="face">
 ${hair}
 /  ${eyeBrow}     ${eyeBrow}  \\
@@ -195,9 +162,9 @@ ${bodyType}
         <div
             className="lute-icon"
             style={{ fontFamily: 'monospace', margin: 0, lineHeight: '0.8' }}
-            dangerouslySetInnerHTML={{ __html: humanFaceArt }}
+            dangerouslySetInnerHTML={{ __html: goblinFaceArt }}
         />
     );
 };
 
-export default human;
+export default goblin;

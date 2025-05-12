@@ -132,21 +132,21 @@ class Player(PlayerInterface, MOBHelper):
 
     async def get_dexterity_description(self):
         self.logger.debug("enter")
-        agility = ""
-        if self.attributes.agility <= 10:
-            agility = "sluggish"
-        elif 10 < self.attributes.agility <= 20:
-            agility = "slow"
-        elif 20 < self.attributes.agility <= 30:
-            agility = "poorly coordinated"
-        elif 30 < self.attributes.agility <= 40:
-            agility = "average"
-        elif 40 < self.attributes.agility <= 50:
-            agility = "quick"
-        elif self.attributes.agility > 50:
-            agility = "lightning fast"
+        dexterity = ""
+        if self.attributes.dexterity <= 10:
+            dexterity = "sluggish"
+        elif 10 < self.attributes.dexterity <= 20:
+            dexterity = "slow"
+        elif 20 < self.attributes.dexterity <= 30:
+            dexterity = "poorly coordinated"
+        elif 30 < self.attributes.dexterity <= 40:
+            dexterity = "average"
+        elif 40 < self.attributes.dexterity <= 50:
+            dexterity = "quick"
+        elif self.attributes.dexterity > 50:
+            dexterity = "lightning fast"
         self.logger.debug("exit")
-        return agility
+        return dexterity
 
     async def get_constitution(self):
         pass
@@ -221,7 +221,7 @@ class Player(PlayerInterface, MOBHelper):
     #     intelligence = await self.get_player_intelligence_description()
     #     physique = await self.get_player_strength_description()
     #     health_status = await self.get_player_health_description()
-    #     agility = await self.get_player_agility_description()
+    #     dexterity = await self.get_player_dexterity_description()
     #     perception = await self.get_player_perception_description(self.pronoun)
     #     determination = await self.get_player_determination_description()
     #     faith = await self.get_player_faith_description()
@@ -229,7 +229,7 @@ class Player(PlayerInterface, MOBHelper):
 
     #     msg = f"""
     #     {self.name} is a level {self.level}, {age} {sex} {self.race.name.capitalize()} {self.player_class.name.capitalize()}. {self.pronoun.value.pronoun.capitalize()} has {self.eye_color} eyes, {self.hair_length}, {self.hair_color} hair and is of {hitpoint_status} health.
-    #     {self.pronoun.value.pronoun.capitalize()} has a {physique} body and {self.pronoun.value.pronoun} moves with {agility} agility.  {self.name} appears {perception}, {intelligence}, {faith}, and {determination}.<br><br>
+    #     {self.pronoun.value.pronoun.capitalize()} has a {physique} body and {self.pronoun.value.pronoun} moves with {dexterity} dexterity.  {self.name} appears {perception}, {intelligence}, {faith}, and {determination}.<br><br>
     #     {self.name} appears to be {health_status} and is {is_resting}. Her mood is {self.statuses.mood.name.lower()}."""
     #     self.logger.debug("exit")
     #     return msg

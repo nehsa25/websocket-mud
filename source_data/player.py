@@ -1,10 +1,7 @@
 from core.data.player_data import PlayerData
-from core.data.attributes_data import AttributesData
-from core.enums.alignments import AlignmentEnum
+from core.enums.roles import RoleEnum
 from core.interfaces.source_data import SourceInterface
 
-from core.enums.races import RaceEnum
-from core.enums.player_classes import PlayerClassEnum
 from services.auth import AuthService
 from utilities.log_telemetry import LogTelemetryUtility
 from dontcheckin import Secrets
@@ -25,26 +22,11 @@ class PlayerSource(SourceInterface):
     def get_data(self):
         return [
             PlayerData(
-                name="Bink",
-                role="admin",
-                experience=0,
-                level=1,
-                money=0,
-                pronoun="he",
-                attributes=AttributesData(
-                    strength=10,
-                    dexterity=10,
-                    constitution=10,
-                    intelligence=10,
-                    wisdom=10,
-                    charisma=10,
-                ),
-                alignment=AlignmentEnum.NEUTRAL.value,
-                player_race=RaceEnum.HUMAN.value,
-                player_class=PlayerClassEnum.WARRIOR.value,
-                room_id=1,
+                firstname="Jesse",
+                lastname="Stone",
+                role=RoleEnum.ADMIN.value,
+                email="jesse.stone@nehsa.net",
                 pin=Secrets.PIN,
-                salt=Secrets.SALT,
-                token=self.auth_service.generate_token("bink"),
+                salt=Secrets.SALT
             )
         ]

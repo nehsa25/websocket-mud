@@ -1,8 +1,8 @@
-import './Human.scss';
+import './Earea.scss';
 
 import React from 'react';
 
-interface HumanProps {
+interface EareaProps {
     disabled?: boolean;
     className?: string;
     eyecolor?: string;
@@ -13,7 +13,7 @@ interface HumanProps {
     eyebrows?: string;
 }
 
-const human: React.FC<HumanProps> = ({
+const earea: React.FC<EareaProps> = ({
     disabled,
     className,
     eyecolor,
@@ -98,40 +98,7 @@ const human: React.FC<HumanProps> = ({
         mouth += `\\--------/`;
     } 
 
-    // --- body type ---
-    if (body_type === 'none') {
-        bodyType = '----\n'
-        bodyType += '--|  |--\n'
-        bodyType += '  |  |  \n'
-        bodyType += '  |  |  \n'
-        bodyType += '----'
-    } else if (body_type === 'thin') {
-        bodyType = '----\n'
-        bodyType += '--|  |--\n'
-        bodyType += '  |  |  \n'
-        bodyType += '  |  |  \n'
-        bodyType += '----'
-    } else if (body_type === 'average') {
-        bodyType = '------\n'
-        bodyType += '--|    |--\n'
-        bodyType += '  |    |  \n'
-        bodyType += '  |    |  \n'
-        bodyType += '------'
-    } else if (body_type === 'large') {
-        bodyType = '------\n'
-        bodyType += '--|      |--\n'
-        bodyType += '  |      |  \n'
-        bodyType += '  |      |  \n'
-        bodyType += '------'
-    } else {
-        bodyType = '--------\n'
-        bodyType += '--|        |--\n'
-        bodyType += '  |        |  \n'
-        bodyType += '  |        |  \n'
-        bodyType += '-------'
-    }
-
-    // --- Eye brows ---
+    // --- eye brows ---
     const eyebrowStyling = `color: ${eyecolor || 'inherit'};`;
     eyeBrow = `<span style="${eyebrowStyling}">${eyebrows}</span>`;
     if (!eyebrows || eyebrows === 'none') {
@@ -175,7 +142,7 @@ const human: React.FC<HumanProps> = ({
         bodyType += '-------'
     }
 
-    const humanFaceArt = `
+    const eareaFaceArt = `
 <span class="face">
 ${hair}
 /  ${eyeBrow}     ${eyeBrow}  \\
@@ -195,9 +162,9 @@ ${bodyType}
         <div
             className="lute-icon"
             style={{ fontFamily: 'monospace', margin: 0, lineHeight: '0.8' }}
-            dangerouslySetInnerHTML={{ __html: humanFaceArt }}
+            dangerouslySetInnerHTML={{ __html: eareaFaceArt }}
         />
     );
 };
 
-export default human;
+export default earea;
