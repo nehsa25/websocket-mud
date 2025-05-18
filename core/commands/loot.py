@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
@@ -18,13 +19,13 @@ class Loot:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Loot() class")
 
-    async def execute(self, command, player, world_state):
+    async def execute(self, command: str, player: PlayerData):
         self.logger.debug("enter")
         wanted_monster = command.split(" ", 1)[1]  # loot skeleton
 
         # see if this monster is in the room.
         current_monster = None
-        for monster in world_state.rooms.rooms[player.room.id].monsters:
+        for monster in self.world_service.rooms.rooms[player.room.id].monsters:
             monster_name = monster.name.lower().strip()
             monster_name_parts = monster_name.split(" ")
             for name in monster_name_parts:
@@ -47,11 +48,10 @@ class Loot:
                     msg = f"You take {len(current_monster.money)} copper from {monster_name}."
                     await InfoEvent(msg).send(player.websocket)
                     await InfoEvent(
-                        f"{player.name} picks up {len(current_monster.money)} copper from {monster_name}."
+                        f"{player.selected_character.name} picks up {len(current_monster.money)} copper from {monster_name}."
                     ).send(player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM)
                     # remove from monster
                     current_monster.money = 0
                 else:
                     await InfoEvent(f"{monster_name} has no money to loot.").send(player.websocket)
         self.logger.debug("exit")
-        return player

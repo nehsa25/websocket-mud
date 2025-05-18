@@ -39,4 +39,6 @@ class TimeOfDay:
     async def send_time(self):
         self.logger.debug("enter")
         msg = "It is now " + self.dayornight.name.lower() + "."
+        for player in self.world_service.player_registry.get_players():
+                await InfoEvent(msg).send(player=player.websocket, scope=SendScopeEnum.PLAYER)
         await InfoEvent(msg).send(scope=SendScopeEnum.WORLD)

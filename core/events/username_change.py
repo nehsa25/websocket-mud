@@ -1,12 +1,12 @@
 import jsonpickle
 from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from services.events import EventService
 from utilities.events import EventUtility
 
 
-class UsernameChangedEvent(EventInterface):
+class UsernameChangedEvent(WebsocketInterface):
     type = None
     name = ""
     message = ""

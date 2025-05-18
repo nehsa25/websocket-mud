@@ -1,9 +1,8 @@
 import websockets
-from core.events.client_message import ClientMessageEvent
-from core.events.connection_new import NewConnectionEvent
+from core.enums.events import EventEnum
+from queues.game_message import GameMessage
 from utilities.log_telemetry import LogTelemetryUtility
 import asyncio
-from utilities.command import Command
 
 
 class Connections:
@@ -12,18 +11,30 @@ class Connections:
     def __init__(self, to_connections_queue: asyncio.Queue, to_world_queue: asyncio.Queue): 
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Connections")
-        self.command = Command()
         self.from_world_queue = to_world_queue
         self.to_world_queue = to_connections_queue
 
     async def connection_loop(self, websocket):
         try:
-            msg = NewConnectionEvent(websocket)
-            await self.to_world_queue.put(msg)
+            # convert to event using EventGameInterface and fill in origin
+            message: GameMessage = GameMessage(
+                type=EventEnum.CONNECTION_NEW.value, 
+                payload=None, 
+                origin="connection", 
+                websocket=websocket) 
+            
+            # this message is sent to the world queue to register the new connection
+            await self.to_world_queue.put(message)
 
+            # we then sit here while the connection is active, waiting for messages from the client
             while True:
                 client_message = await websocket.recv()
-                await self.to_world_queue.put(ClientMessageEvent(client_message, websocket))
+                message: GameMessage = GameMessage(
+                type=EventEnum.CLIENT_MESSAGE.value, 
+                payload=client_message, 
+                origin="connection", 
+                websocket=websocket) 
+                await self.to_world_queue.put(message)
 
         except Exception as e:
             self.logger.error(f"Error in connection loop: {e}")

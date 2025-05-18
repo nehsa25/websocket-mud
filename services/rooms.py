@@ -4,7 +4,60 @@
 # from utilities.log_telemetry import LogTelemetryUtility
 
 
-# class Room:
+from typing import List
+from sqlalchemy import select
+from models.db_room import DBRoom
+from models.world_database import WorldDatabase
+from utilities.log_telemetry import LogTelemetryUtility
+
+
+class RoomRegistry:
+    rooms: List[DBRoom] = {}
+
+    def __init__(self, world_database: WorldDatabase):
+        self.logger = LogTelemetryUtility.get_logger(__name__)
+        self.logger.debug("Initializing Room() class")
+        self.world_database = world_database
+
+    async def get_all_db_rooms(self):
+        ### called at the start of game to load all rooms into memory
+        ### Get all rooms in the database
+
+        rooms: List[DBRoom] = {}
+
+        try:
+            async with self.world_database.async_session() as session:
+                async with session.begin():
+                    room_result = await session.execute(select(DBRoom))
+                    rooms = room_result.scalars().all()
+        except Exception as e:
+            self.logger.error(f"Error getting room: {e}")
+
+        if rooms is None or len(rooms) == 0:
+            raise Exception("Problem getting rooms from database.")
+
+        self.rooms = rooms
+
+    async def get_room_by_id(self, room_id: int):
+        ### Find the room in the database
+
+        rooms: List[RoomRegistry] = [a for a in self.rooms if a.id == room_id]
+        if rooms is None or len(rooms) == 0:
+            raise Exception(f"Problem getting room from memory for id: {room_id}")
+
+        return rooms[0]
+    
+    async def get_room_by_name(self, room_name: str):
+        ### Find the room in the database
+
+        rooms: List[RoomRegistry] = [a for a in self.rooms if a.name == room_name]
+        if rooms is None or len(rooms) == 0:
+            raise Exception(f"Problem getting room from memory for room_name: {room_name}")
+
+        return rooms[0]
+
+
+
 #     class BasicRoom:
 #         class BasicExit:
 #             name = ""
@@ -66,7 +119,7 @@
 
 #             for player in room.players:
 #                 self.players.append(
-#                     self.BasicMob(player.name, player.alignment, player.description)
+#                     self.BasicMob(player.selected_character.name, player.alignment, player.description)
 #                 )
 #             self.players = self.players
 

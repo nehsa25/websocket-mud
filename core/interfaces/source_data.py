@@ -4,6 +4,7 @@ from typing import Dict
 
 
 class SourceInterface(ABC):
+    """ Populating database """
 
     @abstractmethod
     def get_data(self) -> Dict:

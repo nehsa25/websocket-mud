@@ -1,5 +1,6 @@
 import os
 
+from dontcheckin import Secrets
 from enums.ai_generation_services import AIGeneration
 from enums.level import Level
 
@@ -7,7 +8,7 @@ from enums.level import Level
 class GlobalSettings:
     ENVIRONMENT = os.environ.get("MUD_ENV", "development")
     DATABASE_PATH = os.path.join(os.getcwd(), "game_data.db")
-    DATABASE_STRING = "sqlite+aiosqlite:///game_data.db"
+    DATABASE_STRING = Secrets.DATABASE
     DATA_LOCATION = "C:/src/nehsa/websocket-mud/website/client3/public"
     FILE_LEVEL = Level.DEBUG
     CONSOLE_LEVEL = Level.DEBUG

@@ -18,7 +18,7 @@ class DBRoom(Base):
     npcs = None
     monsters = None
     items = None
-    players = None
+    characters = None
     exits = None
 
     def __repr__(self) -> str:

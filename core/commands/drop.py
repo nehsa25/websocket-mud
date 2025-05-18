@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
 
@@ -15,9 +16,8 @@ class Drop:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Drop() class")
 
-    async def execute(self, command, player, world_state):
+    async def execute(self, command: str, player: PlayerData):
         self.logger.debug("enter")
         wanted_item = command.split(" ", 1)[1].lower()
         await player.inventory.drop_item(wanted_item, player)
         self.logger.debug("exit")
-        return player, world_state

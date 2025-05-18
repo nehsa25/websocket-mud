@@ -1,9 +1,10 @@
 from sqlalchemy import select
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from core.data.player_data import PlayerData
 from core.enums.alignments import AlignmentEnum
-from core.objects.player import Player
 from models.db_attributes import DBAttributes
+from models.db_characters import DBCharacter
 from models.db_players import DBPlayer
 from settings.global_settings import GlobalSettings
 from utilities.log_telemetry import LogTelemetryUtility
@@ -22,7 +23,7 @@ class WorldDatabase:
     async def close(self):
         await self.engine.dispose()
 
-    async def update_player(self, player: Player):
+    async def update_player(self, player: PlayerData):
         """Updates the player's information in the database, inserting if it doesn't exist."""
         self.logger.debug("enter")
         player_id = None
@@ -31,7 +32,7 @@ class WorldDatabase:
                 async with session.begin():
                     # Find the player in the database
                     player_result = await session.execute(
-                        select(DBPlayer).where(DBPlayer.name == player.name)
+                        select(DBCharacter).where(DBCharacter.name == player.selected_character.name)
                     )
                     db_player = player_result.scalar_one_or_none()
 
@@ -46,7 +47,7 @@ class WorldDatabase:
                         db_player.alignment_id = player.alignment_id
                         db_player.attributes_id = player.attributes_id
 
-                        self.logger.info(f"Player '{player.name}' updated in the database.")
+                        self.logger.info(f"Player '{player.username}' updated in the database.")
                     else:
                         # initial attributes
                         db_attributes = DBAttributes(
@@ -62,7 +63,7 @@ class WorldDatabase:
 
                         # Create a new player object
                         db_player = DBPlayer(
-                            name=player.name,
+                            name=player.username,
                             level=player.level,
                             experience=player.experience,
                             room_id=1,
@@ -77,7 +78,7 @@ class WorldDatabase:
                         session.add(db_player)
                         await session.flush()
                         player_id = db_player.id
-                        self.logger.info(f"Player '{player.name}' created in the database ID: {db_player.id}.")
+                        self.logger.info(f"Player '{player.username}' created in the database ID: {db_player.id}.")
 
                     # Commit the changes to the database
                     await session.commit()
@@ -85,6 +86,7 @@ class WorldDatabase:
                     return player_id
 
         except Exception as e:
-            self.logger.error(f"Error updating player '{player.name}' in the database: {e}")
+            self.logger.error(f"Error updating player '{player.username}' in the database: {e}")
         self.logger.debug("exit")
         return player_id
+

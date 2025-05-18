@@ -1,5 +1,5 @@
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from utilities.log_telemetry import LogTelemetryUtility
 
 
@@ -21,7 +21,7 @@ class EventService:
         return EventService.get_instance()
 
     async def send_event(self, 
-                         event: EventInterface, 
+                         event: WebsocketInterface, 
                          scope: SendScopeEnum, 
                          websocket=None, 
                          exclude_player=False,

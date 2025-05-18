@@ -28,7 +28,7 @@ class Directions:
     def __init__(self):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing direction() class")
-
+        
         self.up = Up()
         self.down = Down()
         self.north = North()

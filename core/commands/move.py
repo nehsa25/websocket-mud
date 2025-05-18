@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.enums.send_scope import SendScopeEnum
 from core.events.direction import DirectionEvent
@@ -27,15 +28,15 @@ class Move:
     def __init__(self):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Move() class")
-
-    async def execute(self, wanted_direction, player, world_state):
+        
+    async def execute(self, wanted_direction: str, player: PlayerData):
         self.logger.debug("Executing Move command")
 
         self.logger.debug("enter")
 
-        friendly_direction = await world_state.environments.dirs.get_friendly_name(wanted_direction)
+        friendly_direction = await self.world_service.environments.dirs.get_friendly_name(wanted_direction)
 
-        player.room = await world_state.get_room(player.room)
+        player.room = await self.world_service.get_room(player.room)
 
         will_travel = False
         new_room_id = None
@@ -54,35 +55,34 @@ class Move:
             await DirectionEvent(f"You travel {avail_exit['direction'].name.capitalize()}.").send(player.websocket)
 
             # Update users you've left
-            for p in world_state.players.players:
-                if player.name == p.name:
+            for p in self.world_service.player_registry.players.players:
+                if player.selected_character.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
-                    await InfoEvent.send(f"{player.name} travels {avail_exit['direction'].name.lower()}.")
+                    await InfoEvent.send(f"{player.selected_character.name} travels {avail_exit['direction'].name.lower()}.")
 
             # update location
-            player, world_state = await world_state.move_room_player(new_room_id, player)
+            player, self.world_service = await self.world_service.move_room_player(new_room_id, player)
 
             # render new room
-            await world_state.show_room(player)
+            await self.world_service.show_room(player)
 
             # your combat will end but the monster/other players shouldn't
             if player.in_combat:
-                await player.break_combat(world_state.rooms.rooms)
+                await player.break_combat(self.world_service.rooms.rooms)
 
             # send message to any players in same room that you're arriving at
-            for p in world_state.players.players:
-                if player.name == p.name:
+            for p in self.world_service.player_registry.players.players:
+                if player.selected_character.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
                     opp_direction = avail_exit["direction"].opposite.name
-                    await InfoEvent(f"{player.name} arrives from the {opp_direction[1].lower()}.").send(
+                    await InfoEvent(f"{player.selected_character.name} arrives from the {opp_direction[1].lower()}.").send(
                         player.websocket
                     )
         else:
             await ErrorEvent("You cannot go in that direction.").send(player.websocket)
-            await InfoEvent(f"{player.name} attempts to go {friendly_direction} but cannot.").send(
+            await InfoEvent(f"{player.selected_character.name} attempts to go {friendly_direction} but cannot.").send(
                 player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
         self.logger.debug("exit")
-        return player, world_state

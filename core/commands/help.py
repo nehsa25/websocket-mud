@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.send_scope import SendScopeEnum
 from core.events.help import HelpEvent
 from .attack import Attack
@@ -22,16 +23,6 @@ from utilities.log_telemetry import LogTelemetryUtility
 
 
 class Help:
-    class CommandHelp:
-        command = ""
-        description = ""
-        examples = []
-
-        def __init__(self, command):
-            self.command = command.command
-            self.description = command.description
-            self.examples = command.examples
-
     logger = None
     command = "help"
     examples = []
@@ -76,7 +67,7 @@ class Help:
         self.say = Say()
         self.system = System()
 
-    async def execute(self, player):
+    async def execute(self, player: PlayerData):
         self.logger.debug("Executing Help command")
 
         self.logger.debug("enter")
@@ -86,25 +77,25 @@ class Help:
             "You recall a small instructional pamphlet handed to you by the guard. You pull it out and begin to read."
         ).send(player.websocket)
         await InfoEvent(
-            f"{player.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read."
+            f"{player.selected_character.name} pulls out a small, off-color pamphlet with a giant question mark on the cover and begins to read."
         ).send(player.websocket, scope=SendScopeEnum.ROOM, exclude_player=True)
 
         commands = []
-        commands.append(self.CommandHelp(self.look))
-        commands.append(self.CommandHelp(self.get))
-        commands.append(self.CommandHelp(self.inventory))
-        commands.append(self.CommandHelp(self.drop))
-        commands.append(self.CommandHelp(self.search))
-        commands.append(self.CommandHelp(self.move))
-        commands.append(self.CommandHelp(self.experience))
-        commands.append(self.CommandHelp(self.hide))
-        commands.append(self.CommandHelp(self.statistics))
-        commands.append(self.CommandHelp(self.equip))
-        commands.append(self.CommandHelp(self.attack))
-        commands.append(self.CommandHelp(self.loot))
-        commands.append(self.CommandHelp(self.who))
-        commands.append(self.CommandHelp(self.rest))
-        commands.append(self.CommandHelp(self.say))
-        commands.append(self.CommandHelp(self.system))
+        commands.append(self.look.description)
+        commands.append(self.get.description)
+        commands.append(self.inventory.description)
+        commands.append(self.drop.description)
+        commands.append(self.search.description)
+        commands.append(self.move.description)
+        commands.append(self.experience.description)
+        commands.append(self.hide.description)
+        commands.append(self.statistics.description)
+        commands.append(self.equip.description)
+        commands.append(self.attack.description)
+        commands.append(self.loot.description)
+        commands.append(self.who.description)
+        commands.append(self.rest.description)
+        commands.append(self.say.description)
+        commands.append(self.system.description)
         await HelpEvent(commands).send(player.websocket)
         self.logger.debug("exit")

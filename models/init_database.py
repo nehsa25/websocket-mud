@@ -329,15 +329,22 @@ class InitializeDatabase:
                             db_class = class_result.scalar_one_or_none()
 
                             db_character = DBCharacter(
-                                name=c_data.get("name"),
+                                firstname=c_data.get("firstname"),
+                                lastname=c_data.get("lastname"),
                                 level=c_data.get("level"),
                                 sex=c_data.get("sex"),
+                                eye_brow=c_data.get("eye_brow"),
+                                eye_color=c_data.get("eye_color"),
+                                body_type=c_data.get("body_type"),
+                                facial_hair=c_data.get("facial_hair"),
+                                hair_color=c_data.get("hair_color"),
+                                hair_style=c_data.get("hair_style"),                                
                                 experience=c_data.get("experience"),
                                 money=c_data.get("money"),
                                 attributes_id=db_attributes.id,
                                 room_id=room.id if room else None,
-                                race_id=db_race.id if db_race else None,
-                                class_id=db_class.id if db_class else None,
+                                player_race_id=db_race.id if db_race else None,
+                                player_class_id=db_class.id if db_class else None,
                                 alignment_id=c_data.get("alignment_id"),
                                 player_id=db_player.id,
                             )
@@ -350,6 +357,7 @@ class InitializeDatabase:
 
             except Exception as e:
                 self.logger.error(f"Error inserting Player '{p_data.get('name')}': {e}")
+                pass
 
     async def populate_npc_and_related_tables(self, npc_data_source, world_db_session):
         """Populates the mob and npc tables."""

@@ -1,12 +1,13 @@
 import jsonpickle
+from core.data.room_data import RoomData
 from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from services.events import EventService
 from utilities.events import EventUtility
 
 
-class RoomEvent(EventInterface):
+class RoomEvent(WebsocketInterface):
     type = None
     name = ""
     description = ""
@@ -17,16 +18,10 @@ class RoomEvent(EventInterface):
     npcs = []
 
     def __init__(
-        self, name, description, items, exits, monsters, players, npcs
+        self, room: RoomData
     ) -> None:
         self.type = EventUtility.get_event_type_id(EventEnum.ROOM)
-        self.name = name
-        self.description = description
-        self.items = items
-        self.exits = exits
-        self.monsters = monsters
-        self.players = players
-        self.npcs = npcs
+        self.room: RoomData = room
 
     def to_json(self):
         return jsonpickle.encode(self)

@@ -108,11 +108,11 @@ class Npc(PlayerInterface, MOBHelper):
     async def attack(self, room):
         pass
 
-    async def speak(self, room, world_state):
+    async def speak(self, room):
         pass
 
     async def move(
-        self, direction, world_state, isNpc=True
+        self, direction, isNpc=True
     ):
         pass
 

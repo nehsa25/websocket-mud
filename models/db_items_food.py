@@ -12,6 +12,7 @@ class DBFood(Base):
     id: Mapped[int] = mapped_column(ForeignKey("items.id"), primary_key=True)
     freshness: Mapped[Optional[int]]
     item = None
+    food_effects = None
 
     def __repr__(self) -> str:
         return f"DBFood(id={self.id!r}, freshness={self.freshness!r})"

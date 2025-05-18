@@ -1,13 +1,13 @@
 import jsonpickle
 
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from services.events import EventService
 from ..enums.events import EventEnum
 from utilities.events import EventUtility
 
 
-class ItemImageEvent(EventInterface):
+class ItemImageEvent(WebsocketInterface):
     type = None
     image_name = ""
 

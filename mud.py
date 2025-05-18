@@ -36,7 +36,7 @@ class Mud:
         self.connections = Connections(self.to_connections_queue, self.to_world_queue)
 
         # session state
-        self.world = World(self.to_world_queue, self.to_connections_queue, world_service=None)
+        self.world = World(self.to_world_queue, self.to_connections_queue)
 
     # main loop when client connects
     async def main(self, websocket):
@@ -102,7 +102,7 @@ if __name__ == "__main__":
         asyncio.set_event_loop(loop)
 
         # Start the queue processing task
-        loop.create_task(mud.world.process_connections_queue())
+        loop.create_task(mud.world.process_messages())
 
         # the world needs to run independently of the websocket server
         loop.run_until_complete(mud.world.start_world())

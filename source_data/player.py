@@ -14,6 +14,7 @@ class PlayerSource(SourceInterface):
     """
 
     auth_service = None
+
     def __init__(self):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing PlayerSource")
@@ -27,6 +28,6 @@ class PlayerSource(SourceInterface):
                 role=RoleEnum.ADMIN.value,
                 email="jesse.stone@nehsa.net",
                 pin=Secrets.PIN,
-                salt=Secrets.SALT
+                salt=Secrets.SALT,
             )
         ]

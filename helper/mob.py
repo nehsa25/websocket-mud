@@ -15,7 +15,7 @@ class MOBHelper:
             self.equipped = True
             await InfoEvent(f"You wield {self.name}.").send(player.websocket)
             await InfoEvent(
-                f"You notice {player.name} equip {self.name}.",
+                f"You notice {player.selected_character.name} equip {self.name}.",
                 exclude_player=True,
                 scope=SendScopeEnum.ROOM,
             ).send(player.websocket)
@@ -23,7 +23,7 @@ class MOBHelper:
         if action_eq is False and self.equipped is True:
             self.equipped = False
             await InfoEvent(f"You unequip {self.name}.").send(player.websocket)
-            await InfoEvent(f"You notice {player.name} unequip {self.name}.").send(
+            await InfoEvent(f"You notice {player.selected_character.name} unequip {self.name}.").send(
                 player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
         self.logger.debug("exit")

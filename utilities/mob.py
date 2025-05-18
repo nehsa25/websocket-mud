@@ -1,9 +1,10 @@
 import random
 import time
-from enums.alignments import Alignment
-from events.info import InfoEvent
+from core.data.player_data import PlayerData
+from core.enums.alignments import AlignmentEnum
+from core.events.info import InfoEvent
+from services.ai.dialog import NpcDialog
 from utilities.log_telemetry import LogTelemetryUtility
-from ai.dialog import NpcDialog
 
 
 class Mob:
@@ -32,7 +33,7 @@ class Mob:
 
         self.title = title
         self.description = description
-        self.alignment = Alignment.NEUTRAL
+        self.alignment = AlignmentEnum.NEUTRAL.value
         self.dialog = NpcDialog()
 
     # announce we're here!
@@ -40,7 +41,7 @@ class Mob:
         # eventually we can use the room to indicate which direciton the monster came from/going to
         return self.entrance_cry
 
-    async def stop_combat(self, player):
+    async def stop_combat(self, player: PlayerData):
         pass
 
     async def break_combat(self, room):
@@ -55,8 +56,8 @@ class Mob:
                 await InfoEvent(self.death_cry).send(player.websocket)
 
     # respawn mobs after a certain amount of time
-    async def respawn(self, world_state):
-        self.logger.info(f"{self.name} checking for respawn: {world_state}")
+    async def respawn(self):
+        self.logger.info(f"{self.name} checking for respawn: {self.world_service}")
 
         # # look through each room
         # for room in rooms:
@@ -104,7 +105,7 @@ class Mob:
         return self
 
     # responsible for moving npc
-    async def wander(self, world_state, is_npc):
+    async def wander(self, is_npc):
         self.logger.debug(f"enter: {self.name}")
         if not self.wanders:
             self.logger.info(f"{self.name} - I don't wander")
@@ -114,7 +115,7 @@ class Mob:
 
         # get random direction
         direction = None
-        room = await world_state.get_room(self.room_id)
+        room = await self.world_service.get_room(self.room_id)
         if self.last_direction is None:
             direction = random.choice(room.exits)
         else:
@@ -127,18 +128,18 @@ class Mob:
         if direction is None or direction == []:
             raise Exception(f"{self.name} - No exits found")
 
-        self, world_state = await self.move(direction, world_state, is_npc)
+        self, self.world_service = await self.move(direction, is_npc)
         self.last_direction = direction
 
         self.logger.debug("exit")
-        return world_state
+        return self.world_service
 
     # responsible for checking combat
-    async def check_combat(self, world_state):
+    async def check_combat(self):
         pass
 
     # check for dialog options
-    async def speak(self, room, world_state):
+    async def speak(self, room):
         self.logger.debug("enter")
 
         # gather things we may be interested in
@@ -163,23 +164,23 @@ class Mob:
         )
         self.logger.debug("exit")
 
-    async def move(self, direction, world_state, isNpc=True):
+    async def move(self, direction, isNpc=True):
         self.logger.debug("enter")
         self.logger.debug(f"{self.name} is moving {direction}")
-        room = await world_state.get_room(self.room_id)
+        room = await self.world_service.get_room(self.room_id)
         room_id = [
             a
             for a in room.exits
             if a["direction"].name.lower() == direction["direction"].name.lower()
         ][0]
         if isNpc:
-            self, world_state = await world_state.move_room_npc(
+            self, self.world_service = await self.world_service.move_room_npc(
                 room_id["id"], self, direction
             )
         else:
-            self, world_state = await world_state.move_room_monster(
+            self, self.world_service = await self.world_service.move_room_monster(
                 room_id["id"], self, direction
             )
 
         self.logger.debug("exit")
-        return self, world_state
+        return self, self.world_service

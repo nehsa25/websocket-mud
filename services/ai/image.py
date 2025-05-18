@@ -29,7 +29,7 @@ class AIImages:
         file_name = None
         description = None
 
-        def __init__(self, file_name, description) -> None:
+        def __init__(self, file_name: str, description: str) -> None:
             self.file_name = file_name
             self.description = description
 
@@ -99,7 +99,6 @@ class AIImages:
         item_name,
         item_description,
         player,
-        world_state,
         inside=False,
         type=ImageEnum.ROOM,
     ):
@@ -117,7 +116,7 @@ class AIImages:
 
                 # update rooms description with weather
                 if not inside:
-                    item_description = world_state.weather.add_weather_description(
+                    item_description = self.world_service.weather.add_weather_description(
                         item_description
                     )
 

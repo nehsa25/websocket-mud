@@ -1,10 +1,10 @@
 import jsonpickle
 from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from services.events import EventService
 
-class NewConnectionEvent(EventInterface):
+class NewConnectionEvent(WebsocketInterface):
     """this is the first event of a new connection"""
 
     type = None

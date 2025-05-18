@@ -1,4 +1,5 @@
 import asyncio
+from core.data.player_data import PlayerData
 from core.enums.images import ImageEnum
 from core.enums.send_scope import SendScopeEnum
 from core.events.error import ErrorEvent
@@ -29,11 +30,11 @@ class Look:
         if self.ai_images is None:
             self.ai_images = AIImages()
 
-    async def process_look_direction(self, wanted_direction, player, world_state):
+    async def process_look_direction(self, wanted_direction: str, player: PlayerData):
         self.logger.debug("enter")
         valid_direction = False
 
-        player.room = await world_state.get_room(player.room)
+        player.room = await self.world_service.get_room(player.room)
 
         # check if it's a valid direction in the room
         for avail_exit in player.room.exits:
@@ -43,19 +44,19 @@ class Look:
 
         if valid_direction is True:
             await InfoEvent(
-                f"{player.name} looks to the {wanted_direction}.", player.room.id
+                f"{player.selected_character.name} looks to the {wanted_direction}.", player.room.id
             ).send(player.websocket)
 
             # send message to any players in same room
-            for p in world_state.players.players:
-                if player.name == p.name:
+            for p in self.world_service.player_registry.players.players:
+                if player.selected_character.name == p.name:
                     continue
                 if p.location_id.name == player.room.name:
                     await InfoEvent(
-                        f"{player.name} looks to the {wanted_direction}.", p.websocket
+                        f"{player.selected_character.name} looks to the {wanted_direction}.", p.websocket
                     ).send(p.websocket)
 
-            await world_state.show_room(player, look_location_room=avail_exit["id"])
+            await self.world_service.show_room(player, look_location_room=avail_exit["id"])
         else:
             for direction in self.Share.MudDirections.pretty_directions:
                 if (wanted_direction.lower() == direction[0].lower() or wanted_direction.lower() == direction[1].lower()):
@@ -64,25 +65,24 @@ class Look:
                     ).send(player.websocket)
         self.logger.debug("exit")
 
-    async def execute(self, look_object, player, world_state):
+    async def execute(self, look_object, player):
         self.logger.debug("Executing Look command")
 
         self.logger.debug(f"enter, direction: {look_object}")
 
-        player.room = await world_state.get_room(
+        player.room = await self.world_service.get_room(
             player.location_id
         )  # Use player.location
 
         # do we just want to look around the room?
         if look_object == "" or look_object == "l" or look_object == "look":
-            room = await world_state.show_room(player)
+            room = await self.world_service.show_room(player)
             self.running_image_threads.append(
                 asyncio.create_task(
                     self.ai_images.generate_image(
                         item_name=self.sanitize_filename(f"{player.room.name}_room") + ".png",
                         item_description=room.description,
                         player=player,
-                        world_state=world_state,
                         type=ImageEnum.ROOM,
                     )
                 )
@@ -90,7 +90,7 @@ class Look:
             await InfoEvent("You look around the room.").send(player.websocket)
 
             # send message to any players in same room that you're being suspicious
-            await InfoEvent(f"You notice {player.name} gazing around the room.").send(
+            await InfoEvent(f"You notice {player.selected_character.name} gazing around the room.").send(
                     player.websocket,
                     scope=SendScopeEnum.ROOM,
                     exclude_player=True
@@ -101,24 +101,23 @@ class Look:
             look_object = look_object.split(" ", 1)[1].lower()
 
             # are we looking in a direction?
-            if world_state.environments.dirs.is_valid_direction(look_object):
+            if self.world_service.environments.dirs.is_valid_direction(look_object):
                 found = True
-                await self.process_look_direction(look_object, player, world_state)
+                await self.process_look_direction(look_object, player, self.world_service)
                 if found:
                     return
 
             # are we looking at ourselve?
-            if look_object in player.name.lower():
+            if look_object in player.selected_character.name.lower():
                 found = True
                 player_description = await player.get_player_description()
 
                 self.running_image_threads.append(
                     asyncio.create_task(
                         self.ai_images.generate_image(
-                            item_name=self.create_unique_name(f"{player.name}_player") + ".png",
+                            item_name=self.create_unique_name(f"{player.selected_character.name}_player") + ".png",
                             item_description=player_description,
                             player=player,
-                            world_state=world_state,
                             type=ImageEnum.PLAYER,
                         )
                     )
@@ -139,11 +138,10 @@ class Look:
                             asyncio.create_task(
                                 self.ai_images.generate_image(
                                     item_name=self.create_unique_name(
-                                        f"{player.name}_player"
+                                        f"{player.selected_character.name}_player"
                                     ) + ".png",
                                     item_description=description,
                                     player=player,
-                                    world_state=world_state,
                                     type=ImageEnum.PLAYER,
                                 )
                             )
@@ -166,17 +164,16 @@ class Look:
                             asyncio.create_task(
                                 self.ai_images.generate_image(
                                     item_name=self.create_unique_name(
-                                        f"{player.name}_npc"
+                                        f"{player.selected_character.name}_npc"
                                     ) + ".png",
                                     item_description=npc.description,
                                     player=player,
-                                    world_state=world_state,
                                     type=ImageEnum.NPC,
                                 )
                             )
                         )
                         await InfoEvent(
-                            f"{player.name} looks at {npc.name}."
+                            f"{player.selected_character.name} looks at {npc.name}."
                         ).send(player.websocket)
                         break
                 if found:
@@ -193,11 +190,10 @@ class Look:
                             asyncio.create_task(
                                 self.ai_images.generate_image(
                                     item_name=self.create_unique_name(
-                                        f"{player.name}_monster"
+                                        f"{player.selected_character.name}_monster"
                                     ) + ".png",
                                     item_description=monster.description,
                                     player=player,
-                                    world_state=world_state,
                                     type=ImageEnum.MONSTER,
                                 )
                             )
@@ -216,11 +212,10 @@ class Look:
                             asyncio.create_task(
                                 self.ai_images.generate_image(
                                     item_name=self.create_unique_name(
-                                        f"{player.name}_item"
+                                        f"{player.selected_character.name}_item"
                                     ) + ".png",
                                     item_description=item.description,
                                     player=player,
-                                    world_state=world_state,
                                     type=ImageEnum.ITEM,
                                 )
                             )

@@ -35,9 +35,10 @@ class ImageService:
         def to_json(self):
             return jsonpickle.encode(self)
 
-    def __init__(self) -> None:
+    def __init__(self, world_service) -> None:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing ImageService() class")
+        self.world_service = world_service
 
         # super seed!
         self.seed = self.create_seed()
@@ -51,7 +52,7 @@ class ImageService:
     def create_seed(self):
         self.logger.debug("enter")
         seed = 0
-        for letter in enumerate("ethandrakestone + 12141999"):
+        for letter in enumerate(Secrets.AI_IMAGE_SEED):
             seed += ord(letter[1])
         self.logger.info(f"image seed: {seed}")
         self.logger.debug(f"exit, seed: {seed}")
@@ -98,7 +99,6 @@ class ImageService:
         item_name,
         item_description,
         player,
-        world_state,
         inside=False,
         type=ImageEnum.ROOM,
     ):
@@ -116,7 +116,7 @@ class ImageService:
 
                 # update rooms description with weather
                 if not inside:
-                    item_description = world_state.weather.add_weather_description(
+                    item_description = self.world_service.weather.add_weather_description(
                         item_description
                     )
 

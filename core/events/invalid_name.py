@@ -1,12 +1,12 @@
 import jsonpickle
 from core.enums.events import EventEnum
 from core.enums.send_scope import SendScopeEnum
-from core.interfaces.event import EventInterface
+from core.interfaces.websocket import WebsocketInterface
 from services.events import EventService
 from utilities.events import EventUtility
 
 
-class InvalidNameEvent(EventInterface):
+class InvalidNameEvent(WebsocketInterface):
     type = None
 
     def __init__(self):

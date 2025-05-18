@@ -19,6 +19,7 @@ class DBExit(Base):
     northwest: Mapped[Optional[int]] = mapped_column(String, nullable=True)
     southeast: Mapped[Optional[int]] = mapped_column(String, nullable=True)
     southwest: Mapped[Optional[int]] = mapped_column(String, nullable=True)
+    room = None  # This will be set up in the relationships module
 
     def __repr__(self) -> str:
         return f"DBExit(id={self.id!r})"

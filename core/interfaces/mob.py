@@ -1,21 +1,24 @@
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+from typing import List
+
+from core.data.room_data import RoomData
 
 
-class MOBInterface:
-    name = ""
-    title = ""
-    description = ""
-    common_phrases = []
-    interests = []
-    schedules = []
-    wander_event = None
-    last_direction = None
-    wanders = False
-    room_id = None
-    prev_room_id = None
-    last_check_combat = None
-    alignment = None
-    in_combat = False
+class MOBInterface(ABC):
+    name: str
+    title: str
+    description: str
+    common_phrases: List[str]
+    interests: List[str]
+    schedules: List[str]
+    wander_event: object
+    last_direction: str
+    wanders: bool
+    room: "RoomData"  # the quotes makes this a foward reference (it won't be evaluated until later thus preventing circular imports)
+    prev_room_id: "RoomData"  # the quotes makes this a foward reference (it won't be evaluated until later thus preventing circular imports)
+    last_check_combat: int
+    alignment: bool
+    in_combat: bool
 
     # announce we're here!
     @abstractmethod
@@ -23,7 +26,7 @@ class MOBInterface:
         pass
 
     @abstractmethod
-    async def stop_combat(self, player):
+    async def stop_combat(self):
         pass
 
     @abstractmethod
@@ -35,21 +38,21 @@ class MOBInterface:
         pass
 
     @abstractmethod
-    async def respawn(self, world_state):
+    async def respawn(self):
         pass
 
     @abstractmethod
-    async def wander(self, world_state, is_npc):
+    async def wander(self, is_npc):
         pass
 
     @abstractmethod
-    async def check_combat(self, world_state):
+    async def check_combat(self):
         pass
 
     @abstractmethod
-    async def speak(self, room, world_state):
+    async def speak(self, room):
         pass
 
     @abstractmethod
-    async def move(self, direction, world_state, isNpc=True):
+    async def move(self, direction, isNpc=True):
         pass

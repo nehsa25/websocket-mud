@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.events.error import ErrorEvent
 from core.events.username_change import UsernameChangedEvent
@@ -19,7 +20,7 @@ class System:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing System() class")
 
-    async def execute(self, command, extra, player, world_state):
+    async def execute(self, command: str, extra: str, player: PlayerData):
         self.logger.debug("enter")
         wanted_command = command.split(" ")
         action_to_take = None
@@ -35,17 +36,16 @@ class System:
             if len(wanted_command) == 3 or extra:
                 request = wanted_command[2].capitalize()
 
-            player.name = request
+            player.selected_character.name = request
 
             # check if user already in system (they should be)
-            world_state = await world_state.players.unregister(
-                player, world_state, change_name=True
+            self.world_service = await self.world_service.player_registry.players.unregister(
+                player, self.world_service, change_name=True
             )
-            player, world_state = await world_state.players.register(
-                player, world_state
+            player, self.world_service = await self.world_service.player_registry.players.register(
+                player, self.world_service
             )
             await UsernameChangedEvent(
-                    f"You are now known as {player.name}", player.name
+                    f"You are now known as {player.selected_character.name}", player.selected_character.name
                 ).send(player.websocket)
         self.logger.debug("exit")
-        return player

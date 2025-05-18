@@ -54,15 +54,15 @@ class EmersionEvents:
                 ]
             )
             msg = f"You hear a {bang_type} {distance}.."
-            for p in self.world_service.players:
-                await EnvironmentEvent(msg).send(self.world_service.players[p].websocket)
+            for p in self.world_service.player_registry.players:
+                await EnvironmentEvent(msg).send(self.world_service.player_registry.players[p].websocket)
 
     # just return the current date/time
     async def get_system_time(self):
         self.logger.debug("enter")
         while not self.shutdown:
             time = datetime.datetime.now().strftime("%I:%M%p on %B %d")
-            for p in self.world_service.players:
+            for p in self.world_service.player_registry.players:
                 await TimeEvent(time).send(p.websocket)
 
             # sleep 10 minutes
@@ -75,17 +75,17 @@ class EmersionEvents:
             rand = randint(2000, 3600 * 2)
             self.logger.debug(f"Will run rain1 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
-            for p in self.world_service.players:
-                await EnvironmentEvent("It begins to rain..").send(self.world_service.players[p].websocket)
+            for p in self.world_service.player_registry.players:
+                await EnvironmentEvent("It begins to rain..").send(self.world_service.player_registry.players[p].websocket)
 
             # wait for it to stop
             rand = randint(100, 500)
             self.logger.debug(f"Will run rain2 event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
-            for p in self.world_service.players:
+            for p in self.world_service.player_registry.players:
                 await EnvironmentEvent(
                     "The rain pitter-patters to a stop and the sun begins to shine through the clouds.."
-                ).send(self.world_service.players[p].websocket)
+                ).send(self.world_service.player_registry.players[p].websocket)
 
     # You hear thunder off in the distane..
     async def thunder(self):
@@ -94,9 +94,9 @@ class EmersionEvents:
             self.logger.debug(f"Will run thunder event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             self.logger.info("Checking: thunder")
-            for p in self.world_service.players:
+            for p in self.world_service.player_registry.players:
                 await EnvironmentEvent("You hear thunder off in the distance..").send(
-                    self.world_service.players[p].websocket
+                    self.world_service.player_registry.players[p].websocket
                 )
 
     # A gentle breeze blows by you..
@@ -107,8 +107,8 @@ class EmersionEvents:
             self.logger.debug(f"Will run breeze event in {str(rand)} seconds...")
             await asyncio.sleep(rand)
             self.logger.info("Checking: breeze")
-            for p in self.world_service.players:
-                await EnvironmentEvent("A gentle breeze blows by you..").send(self.world_service.players[p].websocket)
+            for p in self.world_service.player_registry.players:
+                await EnvironmentEvent("A gentle breeze blows by you..").send(self.world_service.player_registry.players[p].websocket)
 
     # An eerie silence settles on the room..
     async def eerie_silence(self):
@@ -121,9 +121,9 @@ class EmersionEvents:
             )
             await asyncio.sleep(rand)
             self.logger.info("Checking: eerie_silence")
-            for p in self.world_service.players:
+            for p in self.world_service.player_registry.players:
                 await EnvironmentEvent("An eerie silence engulfs the area..").send(
-                    self.world_service.players[p].websocket
+                    self.world_service.player_registry.players[p].websocket
                 )
 
     # Eyes are watching you..
@@ -137,7 +137,7 @@ class EmersionEvents:
             )
             await asyncio.sleep(rand)
             self.logger.info("Checking: being_observed")
-            for p in self.world_service.players:
+            for p in self.world_service.player_registry.players:
                 await EnvironmentEvent(
                     "You are being observed. You glance around and behind you but cannot determine from where."
-                ).send(self.world_service.players[p].websocket)
+                ).send(self.world_service.player_registry.players[p].websocket)

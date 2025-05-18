@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from utilities.log_telemetry import LogTelemetryUtility
 
@@ -15,9 +16,8 @@ class Get:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Get() class")
 
-    async def execute(self, command, player, world_state):
+    async def execute(self, command: str, player: PlayerData):
         self.logger.debug("enter")
         wanted_item = command.split(" ", 1)[1].lower()
         await player.inventory.get_item(wanted_item, player)
         self.logger.debug("exit")
-        return player, world_state

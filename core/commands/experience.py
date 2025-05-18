@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -14,8 +15,7 @@ class Experience:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Experience() class")
 
-    async def execute(self, player):
+    async def execute(self, player: PlayerData):
         self.logger.debug("enter")
         await InfoEvent(f"You have {player.experience} experience.").send(player.websocket)
         self.logger.debug("exit")
-        return player

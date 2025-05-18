@@ -2,7 +2,8 @@ import os
 import re
 import pydot
 from core.enums.image_size import ImageSizeEnum
-from utilities.events import EventUtility
+from core.events.map import MapEvent
+from services.world import WorldService
 from utilities.exception import ExceptionUtility
 from settings.global_settings import GlobalSettings
 from utilities.log_telemetry import LogTelemetryUtility
@@ -12,9 +13,10 @@ from utilities.aws import AWSUtility
 class MapService:
     logger = None
 
-    def __init__(self) -> None:
+    def __init__(self, world_service: WorldService) -> None:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing MapService() class")
+        self.world_service = world_service
 
     async def sanitize_svg_output(self, map_output, area_identifier, ImageSize=ImageSizeEnum.LARGE):
         self.logger.debug(f"enter with area_identifier: {area_identifier} and ImageSize: {ImageSize}")
@@ -27,7 +29,7 @@ class MapService:
         self.logger.debug("exit")
         return map_output
 
-    async def _generate_map(self, room, image_name, player, world_state, area_identifier, is_mini=False):
+    async def _generate_map(self, room, image_name, player, area_identifier, is_mini=False):
         self.logger.debug(
             f"enter with image_name: {image_name}, area_identifier: {area_identifier}, is_mini: {is_mini}"
         )
@@ -113,7 +115,7 @@ class MapService:
             await add_rooms_recursive(current_room, 1, current_room)
         else:
             # generate map
-            for room in world_state.environments.rooms:
+            for room in self.world_service.environments.rooms:
                 room_name = room.name
                 room_exits = room.exits
 
@@ -175,28 +177,28 @@ class MapService:
         self.logger.debug(f"Image URL from S3: {image_url}")
         return image_url
 
-    async def generate_full_map(self, room, image_name, player, world_state, area_identifier):
+    async def generate_full_map(self, room, image_name, player, area_identifier):
         self.logger.debug(f"generate_full_map: enter with image_name: {image_name}, area_identifier: {area_identifier}")
-        result = await self._generate_map(room, image_name, player, world_state, area_identifier, is_mini=False)
+        result = await self._generate_map(room, image_name, player, area_identifier, is_mini=False)
         self.logger.debug(f"generate_full_map: exit with result: {result}")
         return result
 
-    async def generate_mini_map(self, room, image_name, player, world_state, area_identifier):
+    async def generate_mini_map(self, room, image_name, player, area_identifier):
         self.logger.debug(f"generate_mini_map: enter with image_name: {image_name}, area_identifier: {area_identifier}")
-        result = await self._generate_map(room, image_name, player, world_state, area_identifier, is_mini=True)
+        result = await self._generate_map(room, image_name, player, area_identifier, is_mini=True)
         self.logger.debug(f"generate_mini_map: exit with result: {result}")
         return result
 
-    async def generate_map(self, room, image_name, player, world_state, area_identifier):
+    async def generate_map(self, room, image_name, player, area_identifier):
         self.logger.debug(f"enter with image_name: {image_name}, area_identifier: {area_identifier}")
 
         # generate full map
-        full_map_url = await self.generate_full_map(room, image_name, player, world_state, area_identifier)
+        full_map_url = await self.generate_full_map(room, image_name, player, area_identifier)
         self.logger.debug(f"Full map URL: {full_map_url}")
 
         # generate mini map
-        mini_map_url = await self.generate_mini_map(room, image_name, player, world_state, area_identifier)
+        mini_map_url = await self.generate_mini_map(room, image_name, player, area_identifier)
         self.logger.debug(f"Mini map URL: {mini_map_url}")
 
         # send map event
-        await EventUtility.MapEvent(full_map_url, mini_map_url).send(player.websocket)
+        await MapEvent(full_map_url, mini_map_url).send(player.websocket)

@@ -1,3 +1,4 @@
+import inspect
 import logging
 import os
 from opentelemetry import trace, context
@@ -121,12 +122,21 @@ class LogTelemetryUtility:
         if self.logger:
             current_context = context.get_current()
 
+            frame = inspect.currentframe().f_back.f_back
+
+            lineno = frame.f_lineno
+            method_name = frame.f_code.co_name
+
             # Create span
             with self.tracer.start_as_current_span(
                 message, context=current_context
             ) as current_span:
                 if current_span is not trace.INVALID_SPAN:
                     current_span.set_attribute("log.message", message)
+                    current_span.set_attribute("log.line_number", lineno)
+                    current_span.set_attribute("log.method", method_name)
+                    current_span.set_attribute("log.level", level)
+                    current_span.set_attribute("log.logger_name", self.logger.name)
                 self.logger.log(level, message)
 
     @staticmethod

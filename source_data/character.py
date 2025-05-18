@@ -1,7 +1,12 @@
-
 from core.data.attributes_data import AttributesData
 from core.data.character_data import CharacterData
 from core.enums.alignments import AlignmentEnum
+from core.enums.body_types import BodyTypesEnum
+from core.enums.eye_brows import EyeBrowEnum
+from core.enums.eye_colors import EyeColorEnum
+from core.enums.facial_hair import FacialHairEnum
+from core.enums.hair_colors import HairColorEnum
+from core.enums.hair_styles import HairStylesEnum
 from core.enums.sex import SexEnum
 from core.interfaces.source_data import SourceInterface
 
@@ -27,7 +32,8 @@ class CharacterSource(SourceInterface):
     def get_data(self):
         return [
             CharacterData(
-                name="Bink",
+                firstname="Bink",
+                lastname="Brightlights",
                 experience=0,
                 level=1,
                 money=0,
@@ -44,9 +50,16 @@ class CharacterSource(SourceInterface):
                 player_race=RaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
                 room_id=1,
+                eye_brow=EyeBrowEnum.THIN.value,
+                eye_color=EyeColorEnum.HAZEL.value,
+                body_type=BodyTypesEnum.AVERAGE.value,
+                facial_hair=FacialHairEnum.BEARD.value,
+                hair_color=HairColorEnum.BROWN.value,
+                hair_style=HairStylesEnum.BALD.value,
             ),
             CharacterData(
-                name="Ashen",
+                firstname="Ashen",
+                lastname="Nehsa",
                 experience=0,
                 level=1,
                 money=0,
@@ -63,5 +76,11 @@ class CharacterSource(SourceInterface):
                 player_race=RaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
                 room_id=1,
+                eye_brow=EyeBrowEnum.ARCHED.value,
+                eye_color=EyeColorEnum.HAZEL.value,
+                body_type=BodyTypesEnum.THIN.value,
+                facial_hair=FacialHairEnum.BEARD.value,
+                hair_color=HairColorEnum.BROWN.value,
+                hair_style=HairStylesEnum.BALD.value,
             ),
         ]

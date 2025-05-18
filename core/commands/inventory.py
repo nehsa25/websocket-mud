@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from utilities.log_telemetry import LogTelemetryUtility
 from core.enums.commands import CommandEnum
 
@@ -17,8 +18,8 @@ class Inventory:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Inventory() class")
         self.items = []  # Initialize the items list here
-
-    async def execute(self, player):
+        
+    async def execute(self, player: PlayerData):
         self.logger.debug("enter")
         await player.send_inventory()
         self.logger.debug("exit")

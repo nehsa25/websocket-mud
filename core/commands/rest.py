@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.events.rest import RestEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -14,7 +15,7 @@ class Rest:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Rest() class")
 
-    async def execute(self, player, world_state):
+    async def execute(self, player: PlayerData):
         self.logger.debug("enter")
         monsters_in_room = len(player.room.monsters)
         if player.in_combat is True or monsters_in_room > 0:
@@ -31,7 +32,6 @@ class Rest:
             player.statuses.is_resting = True
 
         # press enter (refresh the room)
-        await world_state.show_room(player)
+        await self.world_service.show_room(player)
 
         self.logger.debug("exit")
-        return player, world_state

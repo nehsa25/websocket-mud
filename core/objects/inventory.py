@@ -26,7 +26,7 @@ class Inventory:
 
             # send message to player
             await InfoEvent(f"You pick up {item.name}.").send(player.websocket)
-            await InfoEvent(f"{player.name} picks up {wanted_item}.").send(
+            await InfoEvent(f"{player.selected_character.name} picks up {wanted_item}.").send(
                 player.websocket, exclude_player=True, scope=SendScopeEnum.ROOM
             )
 
@@ -54,7 +54,7 @@ class Inventory:
 
             # send message to player
             await InfoEvent(f"You drop {item.name}.").send(player.websocket)
-            await InfoEvent(f"{player.name} drops {wanted_item}.").send(
+            await InfoEvent(f"{player.selected_character.name} drops {wanted_item}.").send(
                 player.websocket,
                 exclude_player=True,
                 scope=SendScopeEnum.ROOM

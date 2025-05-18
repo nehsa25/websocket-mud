@@ -1,3 +1,4 @@
+from core.data.player_data import PlayerData
 from core.enums.commands import CommandEnum
 from core.events.info import InfoEvent
 from utilities.log_telemetry import LogTelemetryUtility
@@ -14,10 +15,10 @@ class Statistics:
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Statistics() class")
 
-    async def execute(self, player):
+    async def execute(self, player: PlayerData):
         self.logger.debug("enter")
         player_stats = f"""        
-        Hello {player.name}<br>
+        Hello {player.selected_character.name}<br>
         **************************************************<br>
         Level: {player.level}<br>
         Experience: {player.experience}<br>
@@ -41,4 +42,3 @@ class Statistics:
         """
         await InfoEvent(player_stats).send(player.websocket)
         self.logger.debug("exit")
-        return player
