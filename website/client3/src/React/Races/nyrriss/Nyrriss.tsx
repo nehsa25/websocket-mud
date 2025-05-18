@@ -106,9 +106,11 @@ const nyrriss: React.FC<NyrrissProps> = ({
     } else if (eyebrows === 'thin') {
         eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
     } else if (eyebrows === 'bushy') {
+        eyeBrow = `<span style="${eyebrowStyling}">==</span>`;
+    } else if (eyebrows === 'arched') {
         eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
     }
-
+    
     // --- body types ---
     if (body_type === 'none') {
         bodyType = '----\n'

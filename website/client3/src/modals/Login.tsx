@@ -254,6 +254,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
             items: [
                 { id: 'thin', name: 'thin' },
                 { id: 'bushy', name: 'bushy' },
+                { id: 'arched', name: 'arched' },
             ],
             itemToString: (eyebrow) => eyebrow.name,
             itemToValue: (eyebrow) => eyebrow.name,
@@ -754,14 +755,6 @@ const LoginModal: React.FC<LoginModalProps> = ({
 
     return (
         <>
-            <Stepper activeStep={activeStep}>
-                <Step label="Username" />
-                <Step label="Personal Information" />
-                <Step label="Race" />
-                <Step label="Class" />
-                <Step label="Attributes" />
-            </Stepper>
-
             {/* Login Modal */}
             {
                 showUsernameModal && !showNewUserModal && (

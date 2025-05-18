@@ -97,11 +97,11 @@ function processCommand(data, msg) {
       break;
     case 'health':
       if (data.message != "") {
-        // f"{player.name}|{str(player.hitpoints)}/{str(player.max_hitpoints)}|R"
+        // f"{player.username}|{str(player.hitpoints)}/{str(player.max_hitpoints)}|R"
         values = data.message.split('|');
         num_items = values.length;
         console.log("num items: " + num_items);
-        name = values[0]; // player.name
+        name = values[0]; // player.username
         hitpoints = parseInt(values[1].split('/')[0]);
         console.log("hitpoints: " + hitpoints);
         max_hitpoints = parseInt(values[1].split('/')[1]);

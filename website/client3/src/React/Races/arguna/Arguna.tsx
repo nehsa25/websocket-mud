@@ -106,8 +106,11 @@ const arguna: React.FC<ArgunaProps> = ({
     } else if (eyebrows === 'thin') {
         eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
     } else if (eyebrows === 'bushy') {
+        eyeBrow = `<span style="${eyebrowStyling}">==</span>`;
+    } else if (eyebrows === 'arched') {
         eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
     }
+
 
     // --- Body Type ---
     if (body_type === 'none') {

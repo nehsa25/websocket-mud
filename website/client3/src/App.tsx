@@ -24,6 +24,8 @@ import { getUsername } from './Utils/utils';
 import Room from './Widgets/Room/RoomComponent';
 import Splash from './splash';
 import LoginModal from './modals/Login';
+import { LuExternalLink } from "react-icons/lu"
+
 function App() {
     console.log("App: Entered");
     const snap = useSnapshot(appState);

@@ -98,7 +98,7 @@ const halfogre: React.FC<HalfOgreProps> = ({
         mouth += `\\--------/`;
     } 
 
-    // --- eye brows ---
+    // --- Eye brows ---
     const eyebrowStyling = `color: ${eyecolor || 'inherit'};`;
     eyeBrow = `<span style="${eyebrowStyling}">${eyebrows}</span>`;
     if (!eyebrows || eyebrows === 'none') {
@@ -106,6 +106,8 @@ const halfogre: React.FC<HalfOgreProps> = ({
     } else if (eyebrows === 'thin') {
         eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
     } else if (eyebrows === 'bushy') {
+        eyeBrow = `<span style="${eyebrowStyling}">==</span>`;
+    } else if (eyebrows === 'arched') {
         eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
     }
 

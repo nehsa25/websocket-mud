@@ -106,6 +106,8 @@ const goblin: React.FC<GoblinProps> = ({
     } else if (eyebrows === 'thin') {
         eyeBrow = `<span style="${eyebrowStyling}">--</span>`;
     } else if (eyebrows === 'bushy') {
+        eyeBrow = `<span style="${eyebrowStyling}">==</span>`;
+    } else if (eyebrows === 'arched') {
         eyeBrow = `<span style="${eyebrowStyling}">^^</span>`;
     }
 
