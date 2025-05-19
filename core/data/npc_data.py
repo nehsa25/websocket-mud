@@ -12,8 +12,9 @@ class NpcData:
         alignment: str,  # e.g., "NEUTRAL"
         attributes,
         experience: int,
-        race_name: str,
-        class_name: str,
+        player_race: str,
+        player_class: str,
+        level: int,
         death_cry: str,
         entrance_cry: str,
         victory_cry: str,
@@ -33,8 +34,9 @@ class NpcData:
         self.title = title
         self.directives = directives
         self.room_id = room_id
-        self.race_name = race_name
-        self.class_name = class_name
+        self.player_race = player_race
+        self.player_class = player_class
+        self.level = level
         self.wanders = wanders
         self.experience = experience
         self.death_cry = death_cry
@@ -61,8 +63,9 @@ class NpcData:
             "title": self.title,
             "directives": json.dumps(self.directives),
             "room_id": self.room_id,
-            "race_name": self.race_name,
-            "class_name": self.class_name,
+            "player_race": self.player_race,
+            "player_class": self.player_class,
+            "level": self.level,
             "wanders": self.wanders,
             "attributes": self.attributes.to_dict() if self.attributes else None,
             "money": self.money,

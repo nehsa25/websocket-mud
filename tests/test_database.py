@@ -54,7 +54,7 @@ async def get_table_record_count_sqlalchemy(engine: AsyncEngine, table_name: str
         ("items", 10),
         ("lightsource_items", 1),
         ("mob_types", 4),
-        ("mobs", 19),
+        ("mobs", 21),
         ("monsters", 7),
         ("npcs", 12),
         ("player_classes", 16),

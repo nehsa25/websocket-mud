@@ -5,6 +5,7 @@ from models.base import Base
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 
+
 class DBEnvironment(Base):
     __tablename__ = "environments"
 
@@ -13,6 +14,7 @@ class DBEnvironment(Base):
     description: Mapped[Optional[str]] = mapped_column(String)
     spawn_monsters: Mapped[Optional[bool]]
     spawn_guards: Mapped[Optional[bool]]
+    rooms = None
 
     def __repr__(self) -> str:
         return f"DBEnvironment(id={self.id!r}, name={self.name!r})"

@@ -31,7 +31,7 @@ function App() {
     const snap = useSnapshot(appState);
 
     // State variables for dynamic data
-    const [title, setCurrentRoomTitle] = useState<string>("");
+    const [chracterName, setChracterName] = useState<string>("");
     const [roomDescription, setCurrentRoomDescription] = useState<string>("");
     const [npcs, setCurrentRoomNpcs] = useState<string>("");
     const [items, setCurrentRoomItems] = useState<string>("");
@@ -228,16 +228,23 @@ function App() {
         return result;
     }, [importantColor, importantishColor]);
 
+    const processRoom = useCallback((room: any): void => {
+        console.log("processRoom: Entered");
+        pushGenericEvent(<Room data={room} />);
+    }, []);
+
     // Function to process incoming events and update state
     const processEvent = useCallback((data: any): void => {
-        console.log("processEvent: Enter for event: " + data.type);
+        console.log(data);
         const ws = data[1];
         data = data[0];
+        console.log("processEvent: Enter for event: " + data.type);
 
         switch (data.type) {
             case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
-                setCurrentRoomTitle(data?.name?.trim());
+                setChracterName(data?.name?.trim());
+                processRoom(data?.character?.room);
                 localStorage.setItem("nehsamud", JSON.stringify(data));
                 break;
             case MudEvents.BOOK:
@@ -275,7 +282,7 @@ function App() {
                                 console.log("WebSocket not connected, cannot send username.");
                             }
 
-                            setCurrentRoomTitle(parsedNehsamud.username);
+                            setChracterName(parsedNehsamud.username);
                         } else {
                             throw new Error("Username not found in stored data");
                         }
@@ -287,7 +294,15 @@ function App() {
                         break;
                     }
                 } else {
-                    setShowUsernameModal(true);
+                    console.log("No nehsamud found in local storage");
+                    //setShowUsernameModal(true);
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        const response = {
+                            type: MudEvents.USERNAME_ANSWER,
+                            username: "guest"
+                        };
+                        ws.send(JSON.stringify(response));
+                    }
                 }
                 break;
             case MudEvents.DUPLICATE_NAME:
@@ -309,7 +324,7 @@ function App() {
                 pushGenericEvent(<span className="time-message">{data.time}</span>);
                 break;
             case MudEvents.CHANGE_NAME:
-                setCurrentRoomTitle(data.name);
+                setChracterName(data.name);
                 pushGenericEvent(<span className="info-message">Your name has been changed to {data.name}.</span>);
                 break;
             case MudEvents.COMMAND:
@@ -380,7 +395,7 @@ function App() {
                 break;
             case MudEvents.ROOM:
                 console.log("Room: " + data.room);
-                pushGenericEvent(<Room data={data} />);
+                processRoom(data?.room);
                 break;
             case MudEvents.HUNGER:
                 setHungry(data.hunger || <FontAwesomeIcon icon={faSmile} />);
@@ -512,8 +527,8 @@ function App() {
                     <Game
                         socket={socket}
                         username={username}
-                        title={title}
-                        setTitle={setCurrentRoomTitle}
+                        title={chracterName}
+                        setTitle={setChracterName}
                         roomDescription={roomDescription}
                         setRoomDescription={setCurrentRoomDescription}
                         npcs={npcs} setNpcs={setCurrentRoomNpcs}
@@ -554,7 +569,7 @@ function App() {
                 </div>
                 <div className="sidepanel-component">
                     <SidePanel
-                        title={title}
+                        title={chracterName}
                         health={health}
                         hungry={hungry}
                         thirsty={thirsty}
@@ -571,17 +586,17 @@ function App() {
             </div>
 
             <LoginModal
-    socket={socket}
-    showUsernameModal={showUsernameModal}
-    setShowUsernameModal={setShowUsernameModal}
-    showNewUserModal={showNewUserModal}
-    setShowNewUserModal={setShowNewUserModal}
-    username={username}
-    setUsername={setUsername}
-    pin={pin}
-    setPin={setPin}
-    setCurrentRoomTitle={setCurrentRoomTitle}
-   />
+                socket={socket}
+                showUsernameModal={showUsernameModal}
+                setShowUsernameModal={setShowUsernameModal}
+                showNewUserModal={showNewUserModal}
+                setShowNewUserModal={setShowNewUserModal}
+                username={username}
+                setUsername={setUsername}
+                pin={pin}
+                setPin={setPin}
+                setCurrentRoomTitle={setChracterName}
+            />
         </div>
     );
     console.log("App: Exited");

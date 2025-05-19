@@ -1,6 +1,7 @@
 from models.db_armor import DBArmor
 from models.db_characters import DBCharacter
 from models.db_directions import DBDirection
+from models.db_environment import DBEnvironment
 from models.db_exits import DBExit
 from models.db_items import DBItem
 from models.db_items_food import DBFood
@@ -16,74 +17,90 @@ from models.db_room import DBRoom
 from models.db_effects import DBEffect
 from sqlalchemy.orm import relationship
 
+from utilities.log_telemetry import LogTelemetryUtility
+
 def define_relationships():
-    # Directions
-    DBDirection.opposite = relationship("DBDirection", remote_side=[DBDirection.id], backref="reverse_direction")
+    logger = LogTelemetryUtility.get_logger(__name__)
+    logger.debug("Defining relationships...")
 
-    # Rooms
-    DBRoom.exits = relationship("DBExit", back_populates="room")
-    DBRoom.items = relationship("DBItem", back_populates="room")
-    DBRoom.npcs = relationship("DBNpc", back_populates="room")
-    DBRoom.monsters = relationship("DBMonster", back_populates="room")
-    DBRoom.characters = relationship("DBCharacter", back_populates="room")
+    logger.debug("...directions")
+    DBDirection.opposite = relationship("DBDirection", remote_side=[DBDirection.id], 
+                                        backref="reverse_direction")
+    
+    logger.debug("...rooms")
+    DBRoom.environment = relationship("DBEnvironment", back_populates="rooms")
+    DBRoom.npcs = relationship("DBNpc", back_populates="rooms")
+    DBRoom.monsters = relationship("DBMonster", back_populates="rooms")
+    DBRoom.items = relationship("DBItem", back_populates="rooms")
+    DBRoom.characters = relationship("DBCharacter", back_populates="rooms")
+    DBRoom.exits = relationship("DBExit", back_populates="rooms")  
 
-    # Exits
+    logger.debug("...environments")
+    DBEnvironment.rooms = relationship("DBRoom", back_populates="environments")
+
+    logger.debug("...exits")
     DBExit.room = relationship("DBRoom", back_populates="exits")
 
-    # Items
+    logger.debug("...items")
     DBItem.room = relationship("DBRoom", back_populates="items")
-    DBItem.food = relationship("DBFood", back_populates="item", uselist=False)
-    DBItem.lightsource = relationship("DBLightsource", back_populates="item", uselist=False)
-    DBItem.weapon = relationship("DBWeapon", back_populates="item", uselist=False)
-    DBItem.armor = relationship("DBArmor", back_populates="item", uselist=False)
+    DBItem.food = relationship("DBFood", back_populates="items", uselist=False)
+    DBItem.lightsource = relationship("DBLightsource", back_populates="items", uselist=False)
+    DBItem.weapon = relationship("DBWeapon", back_populates="items", uselist=False)
+    DBItem.armor = relationship("DBArmor", back_populates="items", uselist=False)
     DBItem.effects = relationship("DBEffect", secondary="item_effects", back_populates="items")
 
-    # Food
-    DBFood.item = relationship("DBItem", back_populates="food")
-    DBFood.food_effects = relationship("DBFoodEffect", back_populates="food")
+    logger.debug("...food")
+    DBFood.item = relationship("DBItem", back_populates="food_items")
+    DBFood.food_effects = relationship("DBFoodEffect", back_populates="food_items")
 
-    # Lightsource
-    DBLightsource.item = relationship("DBItem", back_populates="lightsource")
+    logger.debug("...lightsources")
+    DBLightsource.item = relationship("DBItem", back_populates="lightsources")
 
-    # Weapon
-    DBWeapon.item = relationship("DBItem", back_populates="weapon")
+    logger.debug("...weapons")
+    DBWeapon.item = relationship("DBItem", back_populates="weapons")
 
-    # Armor
-    DBArmor.item = relationship("DBItem", back_populates="armor")
+    logger.debug("...armor")
+    DBArmor.item = relationship("DBItem", back_populates="armors")
 
-    # Effects
+    logger.debug("...effects")
     DBEffect.items = relationship("DBItem", secondary="item_effects", back_populates="effects")
 
-    # Mobs
-    DBMob.npc = relationship("DBNpc", back_populates="mob", uselist=False)
-    DBMob.monster = relationship("DBMonster", back_populates="mob", uselist=False)
-    DBMob.directives = relationship("DBDirectives", secondary="mob_directives", back_populates="directives")
+    logger.debug("...mob")
+    DBMob.npc = relationship("DBNpc", back_populates="mobs", uselist=False)
+    DBMob.monster = relationship("DBMonster", back_populates="mobs", uselist=False)
+    DBMob.directives = relationship("DBDirectives", secondary="mob_directives", back_populates="mobs")
     DBMob.player_race = relationship("DBPlayerRace", back_populates="mobs")
     DBMob.player_class = relationship("DBPlayerClass", back_populates="mobs")
     DBMob.mob_type = relationship("DBMOBType", back_populates="mobs")
-    DBMob.room = relationship("DBRoom", back_populates="npcs")
+    DBMob.room = relationship("DBRoom", back_populates="mobs")
+    DBMob.attributes = relationship("DBAttribute", back_populates="mobs")
+    DBMob.alignment = relationship("DBAlignment", back_populates="mobs")
+    
 
-    # Npc
-    DBNpc.mob = relationship("DBMob", back_populates="npc")    
-    DBNpc.directives = relationship("DBDirectivesNpcs", back_populates="npc")
+    logger.debug("...npcs")
+    DBNpc.mob = relationship("DBMob", back_populates="npcs")    
+    DBNpc.directives = relationship("DBDirectivesNpcs", back_populates="npcs")
 
-    # Monster
-    DBMonster.mob = relationship("DBMob", back_populates="monster")
-    DBMonster.directives = relationship("DBDirectivesMonsters", back_populates="monster")
+    logger.debug("...monsters")
+    DBMonster.mob = relationship("DBMob", back_populates="monsters")
+    DBMonster.directives = relationship("DBDirectivesMonsters", back_populates="monsters")
 
-    # character
-    DBCharacter.attributes = relationship("DBAttribute", back_populates="attributes")
-    DBCharacter.race = relationship("DBPlayerRace", back_populates="players")
-    DBCharacter.player_class = relationship("DBPlayerClass", back_populates="players")
-    DBCharacter.characters = relationship(back_populates="player")
+    logger.debug("...characters")
+    DBCharacter.attributes = relationship("DBAttribute", back_populates="characters")
+    DBCharacter.player_race = relationship("DBPlayerRace", back_populates="characters")
+    DBCharacter.player_class = relationship("DBPlayerClass", back_populates="characters")
+    DBCharacter.room = relationship("DBRoom", back_populates="characters")
+    DBCharacter.alignment = relationship("DBAlignment", back_populates="characters")
+    DBCharacter.role = relationship("DBRole", back_populates="characters")
+    DBCharacter.player = relationship(back_populates="characters")
 
-    # PlayerRace
+    logger.debug("...player races")
     DBPlayerRace.mobs = relationship("DBMob", back_populates="player_races")
     DBPlayerRace.directives = relationship("DBDirectivesRaces", back_populates="player_races")
 
-    # PlayerClass
+    logger.debug("...player classes")
     DBPlayerClass.mobs = relationship("DBMob", back_populates="player_classes")
     DBPlayerRace.directives = relationship("DBDirectivesClasses", back_populates="player_classes")
 
-    # Player
-    DBPlayer.characters = relationship("DBCharacter", back_populates="player")
+    logger.debug("...players")
+    DBPlayer.characters = relationship("DBCharacter", back_populates="players")

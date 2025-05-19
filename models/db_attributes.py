@@ -15,6 +15,7 @@ class DBAttributes(Base):
     constitution: Mapped[Optional[int]]
     dexterity: Mapped[Optional[int]]
     luck: Mapped[Optional[int]]
+    mob = None
 
     def __repr__(self) -> str:
         return f"DBAttributes(id={self.id!r}, strength={self.strength!r}, intelligence={self.intelligence!r}, wisdom={self.wisdom!r}, charisma={self.charisma!r}, constitution={self.constitution!r}, dexterity={self.dexterity!r}, luck={self.luck!r})"

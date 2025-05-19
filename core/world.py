@@ -106,7 +106,7 @@ class World:
                     )
                     if player:
                         self.logger.debug(
-                            f"Player found: {player}, looking for characters with name: {wanted_username}"
+                            f"Player found: {player.websocket_id}, looking for characters with name: {wanted_username}"
                         )
                         if player.characters is None or len(player.characters) == 0:
                             raise Exception(f"Player {player.selected_character.name} has no characters.")
@@ -118,7 +118,7 @@ class World:
 
                         self.world_service.player_registry.add_new_player(player)
                         self.logger.debug(
-                            f"Player updated in world service: {self.world_service.player_registry.players[player_socket_id]}"
+                            f"Player updated in world service: {player_socket_id}"
                         )
                     else:
                         raise Exception(f"Player with websocket {message.websocket} not found for name update.")
@@ -182,11 +182,6 @@ class World:
                     room = await self.world_service.room_registry.get_room_by_id(player.selected_character.room_id)
                     if not room:
                         raise Exception(f"Room with id {player.room_id} not found in room registry.")
-
-                    # send the room
-                    await RoomEvent(room).send(
-                        player.websocket,
-                    )
 
                 elif player and json_msg["type"] == EventEnum.NEW_USER.value:
                     await self.world_database.update_player(player)

@@ -6,56 +6,88 @@
 
 from typing import List
 from sqlalchemy import select
+from core.data.room_data import RoomData
 from models.db_room import DBRoom
 from models.world_database import WorldDatabase
 from utilities.log_telemetry import LogTelemetryUtility
+from sqlalchemy.orm import selectinload
 
 
 class RoomRegistry:
-    rooms: List[DBRoom] = {}
+    rooms: List[RoomData] = {}
 
     def __init__(self, world_database: WorldDatabase):
         self.logger = LogTelemetryUtility.get_logger(__name__)
         self.logger.debug("Initializing Room() class")
         self.world_database = world_database
 
+    async def ConvertDBRoomToRoomData(self, db_room: DBRoom):
+        ### Convert the DBRoom to a RoomData object
+        room_data = RoomData(
+            room_id=db_room.id,
+            name=db_room.name,
+            description=db_room.description,
+            inside=db_room.inside,
+            monsters=db_room.monsters,
+            items=db_room.items,
+            npcs=db_room.npcs,
+            characters=db_room.characters,
+            exits=db_room.exits,
+        )
+        return room_data
+
+    async def ConvertDBRoomsToRoomDatas(self, db_rooms: List[DBRoom]):
+        ### Convert the DBRoom to a RoomData object
+        rooms: List["RoomData"] = []
+        for db_room in db_rooms:
+            rooms.append(await self.ConvertDBRoomToRoomData(db_room))
+        return rooms
+
     async def get_all_db_rooms(self):
         ### called at the start of game to load all rooms into memory
         ### Get all rooms in the database
 
-        rooms: List[DBRoom] = {}
+        rooms: List[RoomData] = {}
 
         try:
             async with self.world_database.async_session() as session:
                 async with session.begin():
-                    room_result = await session.execute(select(DBRoom))
-                    rooms = room_result.scalars().all()
+                    room_result = await session.execute(
+                        select(DBRoom)
+                        # .options(
+                        #     selectinload(DBRoom.exits),
+                        #     selectinload(DBRoom.monsters),
+                        #     selectinload(DBRoom.items),
+                        #     selectinload(DBRoom.npcs),
+                        #     selectinload(DBRoom.characters),
+                        # )
+                    )
+                    rooms = await self.ConvertDBRoomsToRoomDatas(room_result.scalars().all())
         except Exception as e:
             self.logger.error(f"Error getting room: {e}")
 
-        if rooms is None or len(rooms) == 0:
+        if rooms is None:
             raise Exception("Problem getting rooms from database.")
 
         self.rooms = rooms
 
     async def get_room_by_id(self, room_id: int):
-        ### Find the room in the database
+        """Find the room in the database"""
 
-        rooms: List[RoomRegistry] = [a for a in self.rooms if a.id == room_id]
+        rooms: List[RoomRegistry] = [a for a in self.rooms if a.room_id == room_id]
         if rooms is None or len(rooms) == 0:
             raise Exception(f"Problem getting room from memory for id: {room_id}")
 
         return rooms[0]
-    
+
     async def get_room_by_name(self, room_name: str):
-        ### Find the room in the database
+        """Find the room in the database"""
 
         rooms: List[RoomRegistry] = [a for a in self.rooms if a.name == room_name]
         if rooms is None or len(rooms) == 0:
             raise Exception(f"Problem getting room from memory for room_name: {room_name}")
 
-        return rooms[0]
-
+        return await self.ConvertDBRoomToRoomData(rooms[0])
 
 
 #     class BasicRoom:

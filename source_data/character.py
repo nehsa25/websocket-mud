@@ -7,10 +7,11 @@ from core.enums.eye_colors import EyeColorEnum
 from core.enums.facial_hair import FacialHairEnum
 from core.enums.hair_colors import HairColorEnum
 from core.enums.hair_styles import HairStylesEnum
+from core.enums.rooms import RoomEnum
 from core.enums.sex import SexEnum
 from core.interfaces.source_data import SourceInterface
 
-from core.enums.races import RaceEnum
+from core.enums.races import PlayerRaceEnum
 from core.enums.player_classes import PlayerClassEnum
 from services.auth import AuthService
 from utilities.log_telemetry import LogTelemetryUtility
@@ -47,9 +48,9 @@ class CharacterSource(SourceInterface):
                     charisma=10,
                 ),
                 alignment=AlignmentEnum.NEUTRAL.value,
-                player_race=RaceEnum.HUMAN.value,
+                player_race=PlayerRaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
-                room_id=1,
+                room_id=RoomEnum.TOWNSMEE_TOWNSQUARE.value,
                 eye_brow=EyeBrowEnum.THIN.value,
                 eye_color=EyeColorEnum.HAZEL.value,
                 body_type=BodyTypesEnum.AVERAGE.value,
@@ -73,9 +74,9 @@ class CharacterSource(SourceInterface):
                     charisma=10,
                 ),
                 alignment=AlignmentEnum.NEUTRAL.value,
-                player_race=RaceEnum.HUMAN.value,
+                player_race=PlayerRaceEnum.HUMAN.value,
                 player_class=PlayerClassEnum.WARRIOR.value,
-                room_id=1,
+                room_id=RoomEnum.TOWNSMEE_TOWNSQUARE.value,
                 eye_brow=EyeBrowEnum.ARCHED.value,
                 eye_color=EyeColorEnum.HAZEL.value,
                 body_type=BodyTypesEnum.THIN.value,

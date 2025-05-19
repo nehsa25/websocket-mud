@@ -1,11 +1,13 @@
 import json
 from sqlalchemy import inspect, select
+from core.enums.alignments import AlignmentEnum
 from core.enums.mob_types import MobTypeEnum
-from models.db_alignments import DBAlignments
+from models.db_alignments import DBAlignment
 from models.db_characters import DBCharacter
 from models.db_environment import DBEnvironment
 from models.db_exits import DBExit
 from models.db_player_race import DBPlayerRace
+from models.relationships import define_relationships
 from settings.global_settings import GlobalSettings
 from source_data.alignments import AlignmentsSource
 from source_data.character import CharacterSource
@@ -60,6 +62,7 @@ class InitializeDatabase:
         self.db_path = GlobalSettings.DATABASE_STRING
         self.logger.debug("Initializing Database() class")
         self.logger.info(f"Database path: {self.db_path}")
+        # define_relationships()
 
     async def generate_rooms(self):
         pass
@@ -76,7 +79,7 @@ class InitializeDatabase:
             # alignments data
             alignments_data = AlignmentsSource().get_data()
             ad_dicts = [ad.to_dict() for ad in alignments_data]
-            await self.populate_table(DBAlignments, ad_dicts, world_db.async_session)
+            await self.populate_table(DBAlignment, ad_dicts, world_db.async_session)
 
             # environments
             environments_data = EnvironmentsSource().get_data()
@@ -203,7 +206,59 @@ class InitializeDatabase:
                         self.logger.debug(f"Inserted Class: '{p_data.get('name')}'")
             except Exception as e:
                 self.logger.error(f"Error inserting class '{p_data.get('name')}': {e}")
-    
+
+    async def populate_mob_item(self, mob_type, info, the_sess):
+        # Insert into DBAttributes
+        db_attributes = info.get("attributes", {})
+        db_attributes = DBAttributes(**db_attributes)
+        the_sess.add(db_attributes)
+        await the_sess.flush()
+
+        # Find PlayerRace
+        player_race = info.get("player_race")
+        player_race_result = await the_sess.execute(select(DBPlayerRace).where(DBPlayerRace.name == player_race))
+        db_player_race: DBPlayerRace = player_race_result.scalar_one_or_none()
+        if db_player_race is None:
+            raise Exception("PlayerRace not found: {}", player_race)
+
+        # Find PlayerClass
+        player_class = info.get("player_class")
+        player_class_result = await the_sess.execute(select(DBPlayerClass).where(DBPlayerClass.name == player_class))
+        db_player_class: DBPlayerClass = player_class_result.scalar_one_or_none()
+        if db_player_class is None:
+            raise Exception("PlayerClass not found: {}", player_class)
+
+        # Find Alignment
+        alignment_name = info.get("alignment")
+        alignment_result = await the_sess.execute(select(DBAlignment).where(DBAlignment.name == alignment_name))
+        db_alignment: DBAlignment = alignment_result.scalar_one_or_none()
+
+        # Find mobtype
+        mobtype_name = mob_type
+        mobtype_result = await the_sess.execute(select(DBMOBType).where(DBMOBType.type == mobtype_name))
+        db_mobtype: DBMOBType = mobtype_result.scalar_one_or_none()
+
+        db_mob = DBMob(
+            name=info.get("name"),
+            pronoun=info.get("pronoun"),
+            level=info.get("level"),
+            description=info.get("description"),
+            experience=info.get("experience"),
+            money=info.get("money"),
+            title=info.get("title"),
+            room_id=info.get("room_id"),
+            alignment_id=db_alignment.id,
+            attributes_id=db_attributes.id,
+            mob_type_id=db_mobtype.id,
+            attributes=info.get("attributes"),
+            player_race_id=db_player_race.id,
+            player_class_id=db_player_class.id
+        )
+        the_sess.add(db_mob)
+        await the_sess.flush()  # Get the generated mob.id
+
+        return db_mob
+
     async def populate_room_and_related_tables(self, room_data_source, world_db_session):
         """Populates the room and attributes tables."""
         for p_data in room_data_source:
@@ -222,23 +277,32 @@ class InitializeDatabase:
                         await session.flush()
 
                         # get environment from environment_id
-                        environment = await session.get(DBEnvironment, p_data.get("environment_id"))
+                        environment_result = await session.execute(
+                            select(DBEnvironment).where(DBEnvironment.name == p_data.get("environment_name"))
+                        )
+                        environment = environment_result.scalar_one_or_none()
+                        if not environment:
+                            raise Exception("Environment not found: {}".format(p_data.get("environment_name")))
 
                         # Insert into DBRoom
                         db_room = DBRoom(
-                            name=p_data.get("name"),
-                            environment_id=environment.id if environment else None,
-                            description=p_data.get("description"),
-                            inside=p_data.get("inside"),
                             room_id=p_data.get("room_id"),
-                            exits_id=db_exit.id,
+                            name=p_data.get("name"),
+                            description=p_data.get("description"),
+                            environment_id=environment.id if environment else None,
+                            monsters=p_data.get("monsters"),
+                            items=p_data.get("items"),
+                            npcs=p_data.get("npcs"),
+                            characters=p_data.get("characters"),
+                            exit_id=db_exit.id if db_exit else None,
+                            inside=p_data.get("inside"),
                         )
                         session.add(db_room)
                         await session.flush()
 
-                        self.logger.debug(f"Inserted race: '{p_data.get('name')}'")
+                        self.logger.debug(f"Inserted room: '{p_data.get('name')}'")
             except Exception as e:
-                self.logger.error(f"Error inserting race '{p_data.get('name')}': {e}")
+                self.logger.error(f"Error inserting room '{p_data.get('name')}': {e}")
 
     async def populate_race_and_related_tables(self, player_data_source, world_db_session):
         """Populates the player and attributes tables."""
@@ -273,17 +337,15 @@ class InitializeDatabase:
 
     async def populate_player_and_related_tables(self, player_data_source, world_db_session):
         """Populates the player and attributes tables."""
-        player_data = player_data_source
-        for p_data in player_data:
+        player_source = player_data_source
+        for p_data in player_source:
             try:
                 async with world_db_session() as session:
                     async with session.begin():
                         # Find Role
                         role_name = p_data.get("role")
-                        role_result = await session.execute(
-                            select(DBRole).where(DBRole.name == role_name)
-                        )
-                        db_role = role_result.scalar_one_or_none()
+                        role_result = await session.execute(select(DBRole).where(DBRole.name == role_name))
+                        db_role: DBRole = role_result.scalar_one_or_none()
                         if not db_role:
                             raise Exception("Role not found: {}".format(role_name))
 
@@ -300,53 +362,23 @@ class InitializeDatabase:
                         await session.flush()
 
                         # character data
-                        character_data = CharacterSource().get_data()
-                        characters_dicts = [cd.to_dict() for cd in character_data]
+                        character_source = CharacterSource().get_data()
+                        characters_dicts = [cd.to_dict() for cd in character_source]
                         for c_data in characters_dicts:
-                            # Insert into DBAttributes
-                            attributes_data = c_data.get("attributes", {})
-                            db_attributes = DBAttributes(**attributes_data)
-                            session.add(db_attributes)
-                            await session.flush()
-
-                            # get room from room_id
-                            room = await session.get(DBRoom, p_data.get("room_id"))
-
-                            # Find PlayerRace
-                            race_name = c_data.get("player_race")
-                            race_result = await session.execute(
-                                select(DBPlayerRace).where(DBPlayerRace.name == race_name)
-                            )
-                            db_race = race_result.scalar_one_or_none()
-                            if not db_race:
-                                raise Exception("PlayerRace not found: {}".format(race_name))
-
-                            # Find PlayerClass
-                            class_name = c_data.get("player_class")
-                            class_result = await session.execute(
-                                select(DBPlayerClass).where(DBPlayerClass.name == class_name)
-                            )
-                            db_class = class_result.scalar_one_or_none()
+                            db_mob: DBMob = await self.populate_mob_item(MobTypeEnum.PLAYER.value, c_data, session)
 
                             db_character = DBCharacter(
                                 firstname=c_data.get("firstname"),
                                 lastname=c_data.get("lastname"),
-                                level=c_data.get("level"),
-                                sex=c_data.get("sex"),
                                 eye_brow=c_data.get("eye_brow"),
                                 eye_color=c_data.get("eye_color"),
                                 body_type=c_data.get("body_type"),
                                 facial_hair=c_data.get("facial_hair"),
                                 hair_color=c_data.get("hair_color"),
-                                hair_style=c_data.get("hair_style"),                                
-                                experience=c_data.get("experience"),
-                                money=c_data.get("money"),
-                                attributes_id=db_attributes.id,
-                                room_id=room.id if room else None,
-                                player_race_id=db_race.id if db_race else None,
-                                player_class_id=db_class.id if db_class else None,
-                                alignment_id=c_data.get("alignment_id"),
+                                hair_style=c_data.get("hair_style"),
+                                role_id=db_role.id,
                                 player_id=db_player.id,
+                                mob_id=db_mob.id,
                             )
                             session.add(db_character)
                             await session.flush()
@@ -361,157 +393,54 @@ class InitializeDatabase:
 
     async def populate_npc_and_related_tables(self, npc_data_source, world_db_session):
         """Populates the mob and npc tables."""
-        for npc_info in npc_data_source:
+        for npc_source in npc_data_source:
             try:
                 async with world_db_session() as session:
                     async with session.begin():
-                        # Insert into DBAttributes
-                        attributes_data = npc_info.get("attributes", {})
-                        db_attributes = DBAttributes(**attributes_data)
-                        session.add(db_attributes)
-                        await session.flush()
+                        db_mob = await self.populate_mob_item(MobTypeEnum.NPC.value, npc_source, session)
 
-                        # Find PlayerRace
-                        race_name = npc_info.get("race_name")
-                        race_result = await session.execute(
-                            select(DBPlayerRace).where(DBPlayerRace.name == race_name)
+                        db_npc = DBNpc(
+                            mob_id=db_mob.id,
+                            interests=npc_source.get("interests"),
+                            respawn_rate_secs=npc_source.get("respawn_rate_secs"),
+                            wanders=npc_source.get("wanders"),
+                            death_cry=npc_source.get("death_cry"),
+                            entrance_cry=npc_source.get("entrance_cry"),
+                            victory_cry=npc_source.get("victory_cry"),
+                            flee_cry=npc_source.get("flee_cry"),
                         )
-                        db_race = race_result.scalar_one_or_none()
-
-                        # Find PlayerClass
-                        class_name = npc_info.get("class_name")
-                        class_result = await session.execute(
-                            select(DBPlayerClass).where(DBPlayerClass.name == class_name)
-                        )
-                        db_class = class_result.scalar_one_or_none()
-
-                        # Find Alignment
-                        alignment_name = npc_info.get("alignment")
-                        alignment_result = await session.execute(
-                            select(DBAlignments).where(DBAlignments.name == alignment_name)
-                        )
-                        db_alignment = alignment_result.scalar_one_or_none()
-
-                        # Find mobtype
-                        mobtype_name = MobTypeEnum.NPC.value
-                        mobtype_result = await session.execute(
-                            select(DBMOBType).where(DBMOBType.type == mobtype_name)
-                        )
-                        db_mobtype = mobtype_result.scalar_one_or_none()                                  
-
-                        mob_data = {
-                            "name": npc_info.get("name"),
-                            "pronoun": npc_info.get("pronoun"),
-                            "description": npc_info.get("description"),
-                            "damage_potential": npc_info.get("damage_potential"),
-                            "experience": npc_info.get("experience"),
-                            "money": npc_info.get("money"),
-                            "room_id": npc_info.get("room_id"),
-                            "alignment_id": db_alignment.id,
-                            "attributes_id": db_attributes.id,
-                            "mob_type_id": db_mobtype.id,
-                            "death_cry": npc_info.get("death_cry"),
-                            "entrance_cry": npc_info.get("entrance_cry"),
-                            "victory_cry": npc_info.get("victory_cry"),
-                            "flee_cry": npc_info.get("flee_cry"),
-                            "attributes": npc_info.get("attributes"),
-                            "race_id": db_race.id,
-                            "class_id": db_class.id,
-                            "respawn_rate_secs": npc_info.get("respawn_rate_secs"),
-                            "wanders": npc_info.get("wanders"),
-                        }
-                        db_mob = DBMob(**mob_data)
-                        session.add(db_mob)
-                        await session.flush()  # Get the generated mob.id
-
-                        npc_specific_data = {
-                            "mob_id": db_mob.id,
-                            "title": npc_info.get("title"),
-                            "interests": npc_info.get("interests"),
-                        }
-                        db_npc = DBNpc(**npc_specific_data)
                         session.add(db_npc)
-                        self.logger.debug(f"Inserted NPC '{npc_info.get('name')}' with mob_id: {db_mob.id}")
+                        self.logger.debug(f"Inserted NPC '{npc_source.get('name')}' with mob_id: {db_mob.id}")
 
             except Exception as e:
-                self.logger.error(f"Error inserting NPC '{npc_info.get('name')}': {e}")
+                self.logger.error(f"Error inserting NPC '{npc_source.get('name')}': {e}")
+                pass
 
     async def populate_monster_and_related_tables(self, monster_data_source, world_db_session):
         """Populates the mob and monster tables."""
-        for monster_info in monster_data_source:
+        for monster_source in monster_data_source:
             try:
                 async with world_db_session() as session:
                     async with session.begin():
-                        # Insert into DBAttributes
-                        attributes_data = monster_info.get("attributes", {})
-                        db_attributes = DBAttributes(**attributes_data)
-                        session.add(db_attributes)
-                        await session.flush()
+                        db_mob = await self.populate_mob_item(MobTypeEnum.MONSTER.value, monster_source, session)
 
-                        # Find PlayerRace
-                        race_name = monster_info.get("race_name")
-                        race_result = await session.execute(
-                            select(DBPlayerRace).where(DBPlayerRace.name == race_name)
+                        db_monster = DBMonster(
+                            mob_id=db_mob.id,
+                            possible_adjectives=monster_source.get("possible_adjectives"),
+                            adjective_chance=monster_source.get("adjective_chance"),
+                            respawn_rate_secs=monster_source.get("respawn_rate_secs"),
+                            wanders=monster_source.get("wanders"),
+                            death_cry=monster_source.get("death_cry"),
+                            entrance_cry=monster_source.get("entrance_cry"),
+                            victory_cry=monster_source.get("victory_cry"),
+                            flee_cry=monster_source.get("flee_cry"),
                         )
-                        db_race = race_result.scalar_one_or_none()
-
-                        # Find PlayerClass
-                        class_name = monster_info.get("class_name")
-                        class_result = await session.execute(
-                            select(DBPlayerClass).where(DBPlayerClass.name == class_name)
-                        )
-                        db_class = class_result.scalar_one_or_none()
-
-                        # Find Alignment
-                        alignment_name = monster_info.get("alignment")
-                        alignment_result = await session.execute(
-                            select(DBAlignments).where(DBAlignments.name == alignment_name)
-                        )
-                        db_alignment = alignment_result.scalar_one_or_none()
-
-                        # Find mobtype
-                        mobtype_name = MobTypeEnum.MONSTER.value
-                        mobtype_result = await session.execute(
-                            select(DBMOBType).where(DBMOBType.type == mobtype_name)
-                        )
-                        db_mobtype = mobtype_result.scalar_one_or_none()                        
-
-                        mob_data = {
-                            "name": monster_info.get("name"),
-                            "pronoun": monster_info.get("pronoun"),
-                            "description": monster_info.get("description"),
-                            "damage_potential": monster_info.get("damage_potential"),
-                            "experience": monster_info.get("experience"),
-                            "money": monster_info.get("money"),
-                            "room_id": monster_info.get("room_id"),
-                            "attributes_id": db_attributes.id,
-                            "alignment_id": db_alignment.id,
-                            "mob_type_id": db_mobtype.id,
-                            "death_cry": monster_info.get("death_cry"),
-                            "entrance_cry": monster_info.get("entrance_cry"),
-                            "victory_cry": monster_info.get("victory_cry"),
-                            "flee_cry": monster_info.get("flee_cry"),
-                            "attributes": monster_info.get("attributes"),
-                            "race_id": db_race.id,
-                            "class_id": db_class.id,
-                            "respawn_rate_secs": monster_info.get("respawn_rate_secs"),
-                            "wanders": monster_info.get("wanders"),
-                        }
-                        db_mob = DBMob(**mob_data)
-                        session.add(db_mob)
-                        await session.flush()  # Get the generated mob.id
-
-                        monster_specific_data = {
-                            "mob_id": db_mob.id,
-                            "possible_adjectives": monster_info.get("possible_adjectives"),
-                            "adjective_chance": monster_info.get("adjective_chance"),
-                        }
-                        db_monster = DBMonster(**monster_specific_data)
                         session.add(db_monster)
-                        self.logger.debug(f"Inserted Monster '{monster_info.get('name')}' with mob_id: {db_mob.id}")
+                        self.logger.debug(f"Inserted Monster '{monster_source.get('name')}' with mob_id: {db_mob.id}")
 
             except Exception as e:
-                self.logger.error(f"Error inserting Monster '{monster_info.get('name')}': {e}")
+                self.logger.error(f"Error inserting Monster '{monster_source.get('name')}': {e}")
+                pass
 
     async def populate_item_and_related_tables(self, model_class, data, async_session):
         """Helper function to populate item-related tables."""

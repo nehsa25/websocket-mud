@@ -5,6 +5,16 @@ from typing import Dict
 
 from core.data.attributes_data import AttributesData
 from core.data.room_data import RoomData
+from core.enums.alignments import AlignmentEnum
+from core.enums.body_types import BodyTypesEnum
+from core.enums.eye_brows import EyeBrowEnum
+from core.enums.eye_colors import EyeColorEnum
+from core.enums.facial_hair import FacialHairEnum
+from core.enums.hair_colors import HairColorEnum
+from core.enums.hair_styles import HairStylesEnum
+from core.enums.player_classes import PlayerClassEnum
+from core.enums.races import PlayerRaceEnum
+from core.enums.rooms import RoomEnum
 from core.enums.send_scope import SendScopeEnum
 from core.enums.sex import SexEnum
 from core.events.info import InfoEvent
@@ -28,16 +38,16 @@ class CharacterData(CharacterInterface, MOBInterface):
                 money: int = 0,
                 sex: str = "",
                 attributes={},
-                alignment: str = "",
-                player_race: str = "",
-                player_class: str = "",
-                room_id=1,
-                eye_brow: str = "",
-                eye_color: str = "",
-                body_type: str = "",
-                facial_hair: str = "",
-                hair_color: str = "",
-                hair_style: str = "",
+                alignment: str = AlignmentEnum.NEUTRAL.value,
+                player_race: str = PlayerRaceEnum.HUMAN.value,
+                player_class: str = PlayerClassEnum.WARRIOR.value,
+                eye_brow: str = EyeBrowEnum.BUSHY.value,
+                eye_color: str = EyeColorEnum.BROWN.value,
+                body_type: str = BodyTypesEnum.AVERAGE.value,
+                facial_hair: str = FacialHairEnum.NONE.value,
+                hair_color: str = HairColorEnum.BROWN.value,
+                hair_style: str = HairStylesEnum.SHORTHAIR.value,
+                room_id: int = RoomEnum.TOWNSMEE_TOWNSQUARE.value,
                 room: "RoomData" = None
     ):
         self.logger = LogTelemetryUtility.get_logger(__name__)
@@ -46,8 +56,9 @@ class CharacterData(CharacterInterface, MOBInterface):
         self.lastname: str = lastname
         self.experience: int = experience
         self.level: int = level
-        self.money: int = money
+        self.money: int = money        
         self.room = room
+        self.room_id: int = room_id
 
         if sex == "":
             self.sex: str = SexEnum.MALE
@@ -77,7 +88,6 @@ class CharacterData(CharacterInterface, MOBInterface):
         self.alignment: str = alignment
         self.player_race: str = player_race
         self.player_class: str = player_class
-        self.room_id: int = room_id
         self.facial_hair: str = facial_hair
 
     def __str__(self):

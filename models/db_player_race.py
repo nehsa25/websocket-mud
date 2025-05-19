@@ -22,4 +22,4 @@ class DBPlayerRace(Base):
     mobs = None
 
     def __repr__(self) -> str:
-        return f"DBPlayerRace(id={self.id!r}, race_name={self.race_name!r})"
+        return f"DBPlayerRace(id={self.id!r}, player_race={self.race_name!r})"

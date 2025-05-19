@@ -26,18 +26,12 @@ const Room: React.FC<RoomProps> = ({
     // Use Chakra UI's useColorModeValue hook
     const importantColor = useColorModeValue("red.600", "red.400");
     const importantishColor = useColorModeValue("blue.600", "blue.400");
-
+    const [roomName, setRoomName] = useState<string>("");
     const [roomDescription, setRoomDescription] = useState<string>("");
+    const [roomCharacters, setRoomCharacters] = useState<string>("");
     const [roomNpcs, setRoomNpcs] = useState<string>("");
     const [roomItems, setRoomItems] = useState<string>("");
     const [roomExits, setRoomExits] = useState<string>("");
-
-    console.log("Room: State variables initialized:", {
-        roomDescription,
-        roomNpcs,
-        roomItems,
-        roomExits
-    });
 
     const colorizeMessage = useCallback((message: string): JSX.Element => {
         console.log("colorizeMessage: Entered");
@@ -70,33 +64,6 @@ const Room: React.FC<RoomProps> = ({
         return <>{parts}</>;
     }, []);
 
-    // Function to add a dashed border around the string
-    const addBorder = useCallback((message: string): JSX.Element => {
-        console.log("addBorder: Entered");
-        let roomTitle = message;
-        roomTitle = roomTitle.replace(/---\\d*/g, ' ');
-        let desc = "";
-        const descriptionLength = roomTitle.length;
-        if (descriptionLength < 160) {
-            for (let i = 0; i < descriptionLength + 4; i++) {
-                desc += '-';
-            }
-        } else {
-            desc += "---------------------------------------------------------------------------------------------------------------------------------------------------------------";
-        }
-        console.log("addBorder: Exited");
-        return (
-            <>
-                <hr className="hr-border" />
-                <span className="room-title">
-                    {desc}
-                    <br />| {roomTitle} |<br />
-                    {desc}
-                </span>
-            </>
-        );
-    }, []);
-
     // Function to add a bar under the string
     const addBar = useCallback((message: string): JSX.Element => {
         console.log("addBar: Entered");
@@ -110,82 +77,60 @@ const Room: React.FC<RoomProps> = ({
     }, []);
 
     useEffect(() => {
-        console.log("Room: useEffect - data prop changed");
         if (data) {
-            console.log("Room: useEffect - data is truthy");
-            setRoomDescription(data.description || "");
+            console.log("Room Data", data);
+            setRoomName(data.name || '');
+            setRoomDescription(data.description || '');
+            setRoomCharacters(data.characters || '');
             setRoomNpcs(data.npcs || '');
             setRoomItems(data.items || '');
             setRoomExits(data.exits || '');
-
-            console.log("Room: useEffect - State variables updated:", {
-                roomDescription: data.description || "",
-                roomNpcs: data.npcs || '',
-                roomItems: data.items || '',
-                roomExits: data.exits || ''
-            });
-        } else {
-            console.log("Room: useEffect - data is falsy");
         }
     }, [data]);
 
-    const roomName = useCallback(() => {
-        if (data && data.name) {
-            return data.name.replace(/---\d+$/, '');
-        }
-        return '';
-    }, [data]);
-
-    console.log("Room: Rendering component");
     return (
         <Box>
             {data && (
                 <>
                     <div className="room">
                         <div className="room-title">
-                            {roomName()}
+                            {roomName}
                         </div>
 
-                        <div className="room-description-message">
-                            {colorizeMessage(addBar(data.description))}
-                        </div>
+                        {roomDescription && (
+                            <div className="room-description-message">
+                                {colorizeMessage(addBar(roomDescription))}
+                            </div>
+                        )}
 
-                        {data.players && (
-                            <>
-                                <div className="room-people-container">
-                                    <span className="room-section-title">People: </span>
-                                    <span className="room-section-value">{data.players}</span>
-                                </div>
-                            </>
+                        {roomCharacters && (
+                            <div className="room-people-container">
+                                <span className="room-section-title">People: </span>
+                                <span className="room-section-value">{roomCharacters}</span>
+                            </div>
                         )}
 
 
-                        {data.npcs && (
-                            <>
-                                <div className="room-npcs-container">
-                                    <span className="room-section-title">NPCs: </span>
-                                    <span className="room-section-value">{data.npcs}</span>
-                                </div>
-                            </>
+                        {roomNpcs && (
+                            <div className="room-npcs-container">
+                                <span className="room-section-title">NPCs: </span>
+                                <span className="room-section-value">{roomNpcs}</span>
+                            </div>
                         )}
 
-                        {data.items && (
-                            <>
-                                <div className="room-items-container">
-                                    <span className="room-section-title">Items: </span>
-                                    <span className="room-section-value">{data.items}</span>
-                                </div>
-                            </>
+                        {roomItems && (
+                            <div className="room-items-container">
+                                <span className="room-section-title">Items: </span>
+                                <span className="room-section-value">{roomItems}</span>
+                            </div>
                         )}
 
 
-                        {data.exits && (
-                            <>
-                                <div className="room-exits-container">
-                                    <span className="room-section-title">Exits: </span>
-                                    <span className="room-section-value">{data.exits}</span>
-                                </div>
-                            </>
+                        {roomExits && (
+                            <div className="room-exits-container">
+                                <span className="room-section-title">Exits: </span>
+                                <span className="room-section-value">{roomExits}</span>
+                            </div>
                         )}
 
                     </div>
