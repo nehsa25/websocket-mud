@@ -1,3 +1,5 @@
+import { randomBytes } from "crypto";
+
 const medievalNames = [
     "Aelric", "Aldred", "Alaric", "Baldwin", "Bartholomew", "Beorn", "Cedric", "Dunstan",
     "Eamon", "Edmund", "Einar", "Elric", "Finnian", "Godric", "Grimbald", "Hadrian",

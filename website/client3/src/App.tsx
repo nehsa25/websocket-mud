@@ -1,5 +1,4 @@
 import { LuCircleCheck } from "react-icons/lu"
-
 import {
     useColorModeValue,
 } from "./components/ui/color-mode";
@@ -9,8 +8,7 @@ import {
     Text,
     Box,
     List,
-    Flex,
-    Stack
+    Flex
 } from "@chakra-ui/react";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
@@ -24,13 +22,16 @@ import { appState } from './store';
 import { useSnapshot } from 'valtio';
 import { getUsername } from './Utils/utils';
 import Room from './Widgets/Room/RoomComponent';
+import Splash from './splash';
+import LoginModal from './modals/Login';
+import { LuExternalLink } from "react-icons/lu"
 
 function App() {
     console.log("App: Entered");
     const snap = useSnapshot(appState);
 
     // State variables for dynamic data
-    const [title, setCurrentRoomTitle] = useState<string>("");
+    const [chracterName, setChracterName] = useState<string>("");
     const [roomDescription, setCurrentRoomDescription] = useState<string>("");
     const [npcs, setCurrentRoomNpcs] = useState<string>("");
     const [items, setCurrentRoomItems] = useState<string>("");
@@ -53,13 +54,16 @@ function App() {
     const [worldName, setWorldName] = useState<string>("NehsaMUD");
 
     // Modal state
+    const [showNewUserModal, setShowNewUserModal] = useState<boolean>(false);
     const [showUsernameModal, setShowUsernameModal] = useState<boolean>(false);
     const [username, setUsername] = useState<string>(getUsername());
+    const [pin, setPin] = useState<string>("0000");
 
     // WebSocket state
     const [socket, setSocket] = useState<WebSocket | null>(null);
 
     // Refs for scrolling and input
+    const [isFirstMessageReceived, setIsFirstMessageReceived] = useState<boolean>(false);
     const scrollMe = useRef<HTMLDivElement>(null);
     const sendcommandarea = useRef<HTMLInputElement>(null);
 
@@ -75,10 +79,10 @@ function App() {
         console.log("pushGenericEvent: Entered");
 
         const styledMessage = (
-            <Text className="latest-message">
-              {message}
+            <Text as="span" className="latest-message">
+                {message}
             </Text>
-          );
+        );
         setMudEvents(prevEvents => [...prevEvents, styledMessage]);
         if (scrollMe.current) {
             scrollMe.current.scrollTop = scrollMe.current.scrollHeight;
@@ -116,7 +120,7 @@ function App() {
                 <Heading size="md" mt={4}>
                     My son, Ethan, and I are making a MUD!
                 </Heading>
-                <Text>
+                <Text as="span">
                     The intent is for NehsaMUD to not just a game but a platform for continuous learning and
                     exploration. We use Python, React, TypeScript, Golang, C#, and various
                     other libraries, tools, and AI within Illisurom, all aiming to create an
@@ -126,14 +130,14 @@ function App() {
                 <Heading size="md" mt={4}>
                     Why a MUD?
                 </Heading>
-                <Text>
+                <Text as="span">
                     It's a tribute to one of the most underappreciated types of game ever
                     created:{" "}
                     <Box as="a" target="_blank" href="https://en.wikipedia.org/wiki/Multi-user_dungeon" fontWeight="semibold" color={importantishColor}>
                         text-based multi-user_dungeon ("MUDs")
                     </Box>
                     . MUDs were not just challenging and fast-paced, but also highly social
-                    and encouraging. In fact, I met my wife playing a MUD.
+                    and encouraging. I met my wife playing a MUD.
                 </Text>
 
                 <Heading size="md" mt={4}>
@@ -185,13 +189,31 @@ function App() {
                         Various NPCs can interact with the real world, including scraping
                         webpages, the weather, or other data, and return it in-game.
                     </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
+                        Events between the websocket server and world state are handled asyncio message queues.
+                    </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
+                        LocalStorage and JWT tokens are used for session management.
+                    </List.Item>
+                    <List.Item>
+                        <List.Indicator asChild color="green.500">
+                            <LuCircleCheck />
+                        </List.Indicator>
+                        Pins are stored securely using Argon2id hashing.
+                    </List.Item>
                 </List.Root>
 
                 <Heading size="md" mt={4}>
                     Lastly, NehsaMUD is a side project.
                 </Heading>
 
-                <Text>
+                <Text as="span">
                     We want to recreate an old game using modern technologies. Please
                     understand that NehsaMUD is a side project. It's perpetually mostly
                     broken...
@@ -206,12 +228,24 @@ function App() {
         return result;
     }, [importantColor, importantishColor]);
 
+    const processRoom = useCallback((room: any): void => {
+        console.log("processRoom: Entered");
+        pushGenericEvent(<Room data={room} />);
+    }, []);
+
     // Function to process incoming events and update state
     const processEvent = useCallback((data: any): void => {
+        console.log(data);
+        const ws = data[1];
+        data = data[0];
         console.log("processEvent: Enter for event: " + data.type);
+
         switch (data.type) {
             case MudEvents.WELCOME:
                 pushGenericEvent(data.message);
+                setChracterName(data?.name?.trim());
+                processRoom(data?.character?.room);
+                localStorage.setItem("nehsamud", JSON.stringify(data));
                 break;
             case MudEvents.BOOK:
                 pushGenericEvent(<span className="book-message">{data.book?.title} by {data.book?.author}</span>);
@@ -220,7 +254,56 @@ function App() {
                 setWorldName(data.world_name || "NehsaMUD");
                 const welcomeMessage = generateWelcomeMessage(worldName, importantColor, importantishColor);
                 pushGenericEvent(welcomeMessage);
-                setShowUsernameModal(true);
+
+                // check local storage for nehsamud object
+                const nehsamud = localStorage.getItem("nehsamud");
+                if (nehsamud) {
+                    console.log("Found nehsamud in local storage: " + nehsamud);
+                    try {
+                        const parsedNehsamud = JSON.parse(nehsamud);
+                        if (parsedNehsamud.name) {
+                            setUsername(parsedNehsamud.name);
+                            if (parsedNehsamud.token == null) {
+                                // prompt for pin
+                                setShowUsernameModal(true);
+                            }
+
+                            const response = {
+                                type: MudEvents.USERNAME_ANSWER,
+                                username: parsedNehsamud.name,
+                                token: parsedNehsamud.token,
+                                pin: parsedNehsamud.pin,
+                            };
+
+                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                console.log("Sending username to server: " + parsedNehsamud.name);
+                                ws.send(JSON.stringify(response));
+                            } else {
+                                console.log("WebSocket not connected, cannot send username.");
+                            }
+
+                            setChracterName(parsedNehsamud.username);
+                        } else {
+                            throw new Error("Username not found in stored data");
+                        }
+                    } catch (error) {
+                        console.error('Error parsing stored user data:', error);
+                        //  Handle the error (e.g., clear the local storage, prompt for login)
+                        localStorage.removeItem('nehsaUser');
+                        setShowUsernameModal(true);
+                        break;
+                    }
+                } else {
+                    console.log("No nehsamud found in local storage");
+                    //setShowUsernameModal(true);
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        const response = {
+                            type: MudEvents.USERNAME_ANSWER,
+                            username: "guest"
+                        };
+                        ws.send(JSON.stringify(response));
+                    }
+                }
                 break;
             case MudEvents.DUPLICATE_NAME:
                 pushGenericEvent(<span className="error-message">That username is already taken.</span>);
@@ -234,14 +317,14 @@ function App() {
             case MudEvents.INFO:
                 pushGenericEvent(<span className="info-message">{data.message}</span>);
                 break;
-            case MudEvents.ANNOUCEMENT:
+            case MudEvents.ANNOUNCEMENT:
                 pushGenericEvent(<span className="announcement-message">{data.message}</span>);
                 break;
             case MudEvents.TIME:
                 pushGenericEvent(<span className="time-message">{data.time}</span>);
                 break;
             case MudEvents.CHANGE_NAME:
-                setCurrentRoomTitle(data.name);
+                setChracterName(data.name);
                 pushGenericEvent(<span className="info-message">Your name has been changed to {data.name}.</span>);
                 break;
             case MudEvents.COMMAND:
@@ -312,7 +395,7 @@ function App() {
                 break;
             case MudEvents.ROOM:
                 console.log("Room: " + data.room);
-                pushGenericEvent(<Room data={data} />);
+                processRoom(data?.room);
                 break;
             case MudEvents.HUNGER:
                 setHungry(data.hunger || <FontAwesomeIcon icon={faSmile} />);
@@ -355,21 +438,10 @@ function App() {
         importantishColor
     ]);
 
-    // Function to handle username submission
-    const handleUsernameSubmit = useCallback(() => {
-        console.log("handleUsernameSubmit: Entered");
-        if (username.trim() !== '') {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const response = { type: MudEvents.USERNAME_ANSWER, username: username.trim() };
-                socket.send(JSON.stringify(response));
-                setCurrentRoomTitle(username.trim()); // Update the title state
-                setShowUsernameModal(false); // Close the modal
-            } else {
-                console.log("Websocket not connected");
-            }
-        }
-        console.log("handleUsernameSubmit: Exited");
-    }, [socket, username, setCurrentRoomTitle, setShowUsernameModal]);
+    const newUser = useCallback(() => {
+        console.log("newUser: Entered");
+        setShowNewUserModal(true);
+    }, []);
 
     // WebSocket connection setup
     useEffect(() => {
@@ -388,9 +460,10 @@ function App() {
 
         ws.onmessage = (event) => {
             try {
+                setIsFirstMessageReceived(true);
                 const data = JSON.parse(event.data);
                 console.log('Received data:', data);
-                processEvent(data);
+                processEvent([data, ws]);
             } catch (error) {
                 console.error('Error parsing JSON:', error);
                 console.log('Raw message:', event.data);
@@ -442,6 +515,10 @@ function App() {
         setIsSidePanelCollapsed(!isSidePanelCollapsed);
     };
 
+    if (!isFirstMessageReceived) {
+        return <Splash />;
+    }
+
     console.log("App: Rendering");
     const result = (
         <div className="game-container">
@@ -450,8 +527,8 @@ function App() {
                     <Game
                         socket={socket}
                         username={username}
-                        title={title}
-                        setTitle={setCurrentRoomTitle}
+                        title={chracterName}
+                        setTitle={setChracterName}
                         roomDescription={roomDescription}
                         setRoomDescription={setCurrentRoomDescription}
                         npcs={npcs} setNpcs={setCurrentRoomNpcs}
@@ -486,14 +563,13 @@ function App() {
                         setMood={setMood}
                         importantColor={importantColor}
                         importantishColor={importantishColor}
-                        processEvent={processEvent}
                         generateWelcomeMessage={generateWelcomeMessage}
                         isSidePanelCollapsed={isSidePanelCollapsed}
                     />
                 </div>
                 <div className="sidepanel-component">
                     <SidePanel
-                        title={title}
+                        title={chracterName}
                         health={health}
                         hungry={hungry}
                         thirsty={thirsty}
@@ -509,25 +585,18 @@ function App() {
                 </div>
             </div>
 
-            {/* Basic Modal */}
-            {showUsernameModal && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>Enter Username</h2>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    handleUsernameSubmit();
-                                }
-                            }}
-                        />
-                        <button onClick={handleUsernameSubmit} className="mud-button">To Adventure!</button>
-                    </div>
-                </div>
-            )}
+            <LoginModal
+                socket={socket}
+                showUsernameModal={showUsernameModal}
+                setShowUsernameModal={setShowUsernameModal}
+                showNewUserModal={showNewUserModal}
+                setShowNewUserModal={setShowNewUserModal}
+                username={username}
+                setUsername={setUsername}
+                pin={pin}
+                setPin={setPin}
+                setCurrentRoomTitle={setChracterName}
+            />
         </div>
     );
     console.log("App: Exited");

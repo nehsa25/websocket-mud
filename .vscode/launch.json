@@ -28,7 +28,8 @@
             "request": "launch",
             "program": "mud.py",
             "args": [
-                " --host=localhost"
+                "--development",
+                "--reset"
             ],
             "console": "integratedTerminal",
         },

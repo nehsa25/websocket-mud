@@ -1,7 +1,7 @@
-import { MudEvents } from "./mudevents.type";
+import { MudEvents } from "./EventUtility.type";
 
 export class MudEvent {
-    type: MudEvents = MudEvents.NONE;
+    type: MudEvents = EventUtility.NONE;
     message: string = "";
     name: string = "";
     description: string = "";

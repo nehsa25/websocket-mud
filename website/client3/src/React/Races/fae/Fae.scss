@@ -1,0 +1,36 @@
+.fae-face-container {
+  width: 500px;
+  height: 500px;
+  background-color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  font-size: 2em;
+  line-height: 0.8;
+  font-family: monospace;
+  white-space: pre;
+}
+
+.face {
+  background-color: transparent;
+  font-size: 1.5rem;
+}
+
+.hair {
+  color: #795548;
+}
+
+.eyes {
+  color: #2196f3;
+  font-weight: bold;
+}
+
+.eyebrows {
+  background-color: transparent;
+}
+
+.nose {
+  background-color: transparent;
+}

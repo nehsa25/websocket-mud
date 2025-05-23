@@ -1,0 +1,23 @@
+.warlock-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.warlock-icon .sword-blade {
+    color: lime;
+}
+
+.warlock-icon .sword-handle {
+    color: #a07040;
+}
+
+
+.warlock-icon .sword-bottom, .warlock-icon .sword-pommel  {
+    color: brown;
+}
+
+.warlock-icon.disabled {
+    color: #555;
+}

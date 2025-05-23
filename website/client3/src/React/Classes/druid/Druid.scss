@@ -1,0 +1,23 @@
+.druid-icon {
+    font-family: monospace;
+    white-space: pre-wrap;
+    color: #ddd;
+    font-size: 0.8em;
+}
+
+.druid-icon .staff-head {
+    color: #c0c0c0;
+    font-weight: bold;
+}
+
+.druid-icon .staff-handle {
+    color: #a07040;
+}
+
+.druid-icon .staff-bottom {
+    color: brown;
+}
+
+.druid-icon.disabled {
+    color: #555;
+}

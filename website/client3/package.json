@@ -15,12 +15,17 @@
     "@emotion/styled": "^11.14.0",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "argon2-browser": "^1.18.0",
+    "argon2-wasm": "^0.9.0",
     "dart-sass": "^1.25.0",
     "framer-motion": "^12.6.2",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-form-stepper": "^2.0.3",
+    "react-hook-form": "^7.56.2",
     "react-icons": "^5.5.0",
+    "uuid": "^11.1.0",
     "valtio": "^2.1.4"
   },
   "devDependencies": {
